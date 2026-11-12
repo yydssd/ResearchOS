@@ -94,6 +94,54 @@ def get_report(run_id: str):
         return memo
 
 
+@app.get("/research/{run_id}/sources")
+def get_sources(run_id: str):
+    """Return discovered works and their versions, with verification state.
+
+    Inspection-only: candidates and versions are discovery metadata; they never
+    appear as evidence (plan §14).
+    """
+    from research_os.storage.repositories import SqlSourceVersionRepository, SqlWorkRepository
+
+    with session_scope() as session:
+        if SqlRunRepository(session).get(run_id) is None:
+            raise HTTPException(status_code=404, detail="run not found")
+        versions = SqlSourceVersionRepository(session).list_by_run(run_id)
+        if not versions:
+            return {"run_id": run_id, "works": []}
+        work_repo = SqlWorkRepository(session)
+        grouped: dict[str, list] = {}
+        for version in versions:
+            grouped.setdefault(version.work_id, []).append(version)
+        works = []
+        for work_id, group in grouped.items():
+            work = work_repo.get(work_id)
+            works.append(
+                {
+                    "work_id": work_id,
+                    "canonical_title": work.canonical_title if work else None,
+                    "versions": [
+                        {
+                            "id": v.id,
+                            "title": v.title,
+                            "source_type": v.source_type.value,
+                            "source_tier": v.source_tier.value if v.source_tier else None,
+                            "verified": v.verified,
+                            "verification_notes": v.verification_notes,
+                            "doi": v.doi,
+                            "arxiv_id": v.arxiv_id,
+                            "version": v.version,
+                            "year": v.year,
+                            "venue": v.venue,
+                            "url": v.url,
+                        }
+                        for v in group
+                    ],
+                }
+            )
+        return {"run_id": run_id, "works": works}
+
+
 @app.get("/research/{run_id}/claims")
 def get_claims(run_id: str):
     """Return the claims scoped to this run."""

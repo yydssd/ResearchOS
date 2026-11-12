@@ -28,6 +28,10 @@ from research_os.orchestration.tasks import complete_task, create_task
 from research_os.reporting.memo import build_memo_from_run
 from research_os.research.claim_builder import ClaimBuilder, HeuristicClaimBuilder
 from research_os.research.evidence_extractor import EvidenceExtractor, HeuristicEvidenceExtractor
+from research_os.sources.discovery import collect_candidates, dedupe_candidates
+from research_os.sources.providers import ProviderError, SearchProvider, build_providers
+from research_os.sources.query import build_queries
+from research_os.sources.resolver import resolve_candidates
 from research_os.storage.repositories import (
     SqlClaimEvidenceRelationRepository,
     SqlClaimRepository,
@@ -35,6 +39,7 @@ from research_os.storage.repositories import (
     SqlEvidenceRepository,
     SqlQuestionRepository,
     SqlRunRepository,
+    SqlSourceCandidateRepository,
     SqlSourceVersionRepository,
     SqlWorkRepository,
 )
@@ -48,10 +53,14 @@ class Supervisor:
         session: Session,
         evidence_extractor: EvidenceExtractor | None = None,
         claim_builder: ClaimBuilder | None = None,
+        providers: list[SearchProvider] | None = None,
     ) -> None:
         self._session = session
         self._extractor = evidence_extractor or HeuristicEvidenceExtractor()
         self._builder = claim_builder or HeuristicClaimBuilder()
+        # Injected for tests/offline runs; otherwise resolved from settings at
+        # call time so configuration changes are picked up without re-import.
+        self._providers = providers
 
     # -- state & events -----------------------------------------------------
 
@@ -102,6 +111,156 @@ class Supervisor:
         SqlRunRepository(self._session).create(run)
         self._log(run.id, EventType.RUN_CREATED, "run created", {"question": question_text})
         return run
+
+    def get_run(self, run_id: str) -> ResearchRun | None:
+        """Fetch lightweight run state (status, phase, warnings, budget)."""
+        return SqlRunRepository(self._session).get(run_id)
+
+    def run_source_discovery(
+        self,
+        run_id: str,
+        limit: int = 15,
+        max_queries: int = 2,
+        fixture_dir: str | None = None,
+    ) -> dict[str, Any]:
+        """Phase 2 (plan §14): question -> queries -> providers -> candidates
+        -> canonical works + verified versions.
+
+        The supervisor owns budget accounting (plan §26): every provider call is
+        counted here, and a provider failure is persisted as a typed event
+        instead of aborting the run.
+        """
+        run = SqlRunRepository(self._session).get(run_id)
+        if run is None:
+            raise KeyError(f"run {run_id} not found")
+        question = SqlQuestionRepository(self._session).get(run.question_id)
+        if question is None:
+            raise KeyError(f"question {run.question_id} not found")
+
+        providers = self._providers or build_providers(settings.provider_names, fixture_dir=fixture_dir)
+        self._transition(run, RunStatus.RESEARCHING, "discover")
+        task = create_task(self._session, run.id, TaskType.DISCOVER_SOURCES, status=TaskStatus.RUNNING)
+        queries = build_queries(question.question, max_queries=max_queries)
+
+        def before_search(provider_name: str, query: str) -> bool:
+            """Count the call and stop the loop once the global budget is spent."""
+            if run.budget.exceeded():
+                self._log(
+                    run.id,
+                    EventType.BUDGET_EXCEEDED,
+                    "search budget exhausted; discovery stopped",
+                    {"provider": provider_name},
+                    failure_type=FailureType.BUDGET_EXCEEDED,
+                )
+                return False
+            run.budget.search_calls += 1
+            SqlRunRepository(self._session).update(run)
+            return True
+
+        def on_error(provider_name: str, exc: ProviderError) -> None:
+            self._log(
+                run.id,
+                EventType.FAILURE,
+                f"{provider_name} search failed: {exc}",
+                {"provider": provider_name},
+                failure_type=exc.failure_type,
+            )
+
+        outcome = collect_candidates(
+            providers, queries, limit, before_search=before_search, on_error=on_error
+        )
+        # Running several queries through the same provider returns the same
+        # record more than once; dedupe before it inflates budget/coverage counts.
+        candidates = dedupe_candidates(outcome.candidates)
+
+        candidate_repo = SqlSourceCandidateRepository(self._session)
+        candidate_repo.create_many(candidates, run_id=run.id)
+
+        resolutions = resolve_candidates(candidates)
+        work_repo = SqlWorkRepository(self._session)
+        version_repo = SqlSourceVersionRepository(self._session)
+        verified = 0
+        unverified = 0
+
+        for resolution in resolutions:
+            work_repo.create(resolution.work)
+            for version in resolution.versions:
+                version_repo.create(version, run_id=run.id)
+            for candidate_id, version_id in resolution.candidate_to_version.items():
+                candidate_repo.attach_resolution(candidate_id, resolution.work.id, version_id)
+
+            for version in resolution.versions:
+                if version.verified:
+                    verified += 1
+                    self._log(
+                        run.id,
+                        EventType.SOURCE_VERIFIED,
+                        f"verified: {version.title}",
+                        {
+                            "source_version_id": version.id,
+                            "work_id": resolution.work.id,
+                            "tier": version.source_tier.value if version.source_tier else None,
+                            "notes": version.verification_notes,
+                        },
+                    )
+                else:
+                    unverified += 1
+                    self._log(
+                        run.id,
+                        EventType.FAILURE,
+                        f"unverified source: {version.title}: {'; '.join(version.verification_notes)}",
+                        {"source_version_id": version.id, "work_id": resolution.work.id},
+                        failure_type=(
+                            FailureType.SOURCE_IDENTITY_AMBIGUOUS
+                            if resolution.ambiguous
+                            else FailureType.SOURCE_UNAVAILABLE
+                        ),
+                    )
+
+        run.budget.sources_discovered += len(candidates)
+        SqlRunRepository(self._session).update(run)
+        self._log(
+            run.id,
+            EventType.SOURCE_DISCOVERED,
+            f"{len(candidates)} candidates -> {len(resolutions)} works",
+            {
+                "candidates": len(candidates),
+                "works": len(resolutions),
+                "verified": verified,
+                "unverified": unverified,
+                "queries": queries,
+                "errors": outcome.errors,
+            },
+        )
+
+        if not candidates:
+            complete_task(self._session, task, output_ids=[])
+            self._transition(run, RunStatus.FAILED, "no candidates discovered")
+            self._log(
+                run.id,
+                EventType.TASK_FAILED,
+                "no source candidates discovered",
+                failure_type=FailureType.SEARCH_STAGNATION,
+            )
+        else:
+            complete_task(
+                self._session,
+                task,
+                output_ids=[v.id for r in resolutions for v in r.versions],
+            )
+            run.current_phase = "sources-ready"
+            SqlRunRepository(self._session).update(run)
+
+        return {
+            "run_id": run.id,
+            "queries": queries,
+            "candidates": len(candidates),
+            "works": len(resolutions),
+            "verified": verified,
+            "unverified": unverified,
+            "resolutions": resolutions,
+            "errors": outcome.errors,
+        }
 
     def run_vertical_slice(
         self,

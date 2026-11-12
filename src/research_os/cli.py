@@ -10,9 +10,15 @@ import json
 import sys
 
 from research_os.storage.database import init_db, session_scope
-from research_os.storage.repositories import SqlClaimRepository, SqlRunRepository
+from research_os.storage.repositories import (
+    SqlClaimRepository,
+    SqlRunRepository,
+    SqlSourceVersionRepository,
+    SqlWorkRepository,
+)
 from research_os.orchestration.supervisor import Supervisor
 from research_os.reporting.memo import build_memo_from_run, inspect_claim
+from research_os.sources.providers import build_providers
 
 
 def _cmd_run(args: argparse.Namespace) -> int:
@@ -29,6 +35,67 @@ def _cmd_run(args: argparse.Namespace) -> int:
             print(f"report: {result['report_path']}")
         else:
             print(f"run_id: {run.id} (created; pass --source to run the vertical slice)")
+    return 0
+
+
+def _cmd_discover(args: argparse.Namespace) -> int:
+    """Run Phase-2 source discovery and print a summary (plan §14).
+
+    ``--fixture DIR`` replays recorded candidates instead of hitting live APIs,
+    which keeps demos and regression runs reproducible.
+    """
+    init_db()
+    providers = build_providers(["fixture"], fixture_dir=args.fixture) if args.fixture else None
+    with session_scope() as session:
+        supervisor = Supervisor(session, providers=providers)
+        run = supervisor.create_run(question_text=args.question, domain=args.domain)
+        result = supervisor.run_source_discovery(
+            run.id, limit=args.limit, max_queries=args.max_queries, fixture_dir=args.fixture
+        )
+        print(f"run_id:     {result['run_id']}")
+        print(f"queries:    {' | '.join(result['queries'])}")
+        print(f"candidates: {result['candidates']}")
+        print(f"works:      {result['works']}")
+        print(f"verified:   {result['verified']}  unverified: {result['unverified']}")
+        for error in result["errors"]:
+            print(f"provider error: {error}", file=sys.stderr)
+        if result["candidates"] == 0:
+            print("no candidates discovered; run marked FAILED", file=sys.stderr)
+            return 1
+    return 0
+
+
+def _cmd_sources(args: argparse.Namespace) -> int:
+    """List discovered works and their versions with verification state."""
+    init_db()
+    with session_scope() as session:
+        run = SqlRunRepository(session).get(args.run_id)
+        if run is None:
+            print(f"run {args.run_id} not found", file=sys.stderr)
+            return 1
+        versions = SqlSourceVersionRepository(session).list_by_run(args.run_id)
+        if not versions:
+            print("no sources discovered for this run", file=sys.stderr)
+            return 1
+
+        works = SqlWorkRepository(session)
+        grouped: dict[str, list] = {}
+        for version in versions:
+            grouped.setdefault(version.work_id, []).append(version)
+
+        for work_id, group in grouped.items():
+            work = works.get(work_id)
+            title = work.canonical_title if work else work_id
+            print(f"{title}  ({len(group)} version(s))")
+            for version in group:
+                marker = "verified" if version.verified else "UNVERIFIED"
+                identifier = version.doi or version.arxiv_id or "-"
+                tier = version.source_tier.value if version.source_tier else "UNKNOWN"
+                venue = f" · {version.venue}" if version.venue else ""
+                year = f" · {version.year}" if version.year else ""
+                print(f"  [{marker}] {tier} · {identifier}{year}{venue}")
+                for note in version.verification_notes:
+                    print(f"      note: {note}")
     return 0
 
 
@@ -98,6 +165,18 @@ def main(argv: list[str] | None = None) -> int:
     p_status = sub.add_parser("status", help="show run status")
     p_status.add_argument("run_id")
     p_status.set_defaults(func=_cmd_status)
+
+    p_discover = sub.add_parser("discover", help="run Phase-2 source discovery")
+    p_discover.add_argument("--question", required=True)
+    p_discover.add_argument("--domain", default=None)
+    p_discover.add_argument("--limit", type=int, default=15, help="results per provider per query")
+    p_discover.add_argument("--max-queries", type=int, default=2)
+    p_discover.add_argument("--fixture", default=None, help="replay local candidate JSON instead of live APIs")
+    p_discover.set_defaults(func=_cmd_discover)
+
+    p_sources = sub.add_parser("sources", help="list discovered works and versions")
+    p_sources.add_argument("run_id")
+    p_sources.set_defaults(func=_cmd_sources)
 
     p_claims = sub.add_parser("claims", help="list claims")
     p_claims.add_argument("run_id")
