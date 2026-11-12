@@ -12,6 +12,7 @@ from typing import Protocol
 
 from research_os.domain.enums import ClaimStatus, ClaimType, ConfidenceLabel, EvidenceRelation
 from research_os.domain.models import Claim, ClaimEvidenceRelation, Evidence, new_id
+from research_os.research.lexicon import DATASETS
 
 _CLAIM_MARKERS = re.compile(
     r"(improve|outperform|achieve|gain|reduc|increase|enable|demonstrate|show|report|reach|"
@@ -23,24 +24,7 @@ _SPECULATION_MARKERS = re.compile(
     r"we hope|in principle|generalizes to other)",
     re.IGNORECASE,
 )
-_DATASETS = [
-    "Rain100H",
-    "Rain100L",
-    "SIDD",
-    "DND",
-    "GoPro",
-    "REDS",
-    "ImageNet",
-    "COCO",
-    "CIFAR-10",
-    "CIFAR-100",
-    "BSD",
-    "Set5",
-    "Set14",
-    "Urban100",
-    "Manga109",
-    "Cityscapes",
-]
+_DATASETS = DATASETS
 
 
 class ClaimBuilder(Protocol):

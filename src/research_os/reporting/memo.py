@@ -12,12 +12,13 @@ from dataclasses import dataclass, field
 from sqlalchemy.orm import Session
 
 from research_os.domain.enums import ClaimStatus, EvidenceRelation
-from research_os.domain.models import Claim, Evidence, SourceVersion
+from research_os.domain.models import Claim, Evidence, QuantitativeEvidence, SourceVersion
 from research_os.storage.repositories import (
     SqlClaimEvidenceRelationRepository,
     SqlClaimRepository,
     SqlEvidenceRepository,
     SqlQuestionRepository,
+    SqlQuantitativeEvidenceRepository,
     SqlRunRepository,
     SqlSourceVersionRepository,
 )
@@ -32,6 +33,7 @@ class RunGraph:
     claims: list[Claim]
     supports: dict[str, list[Evidence]] = field(default_factory=dict)
     counterevidence: dict[str, list[Evidence]] = field(default_factory=dict)
+    quantitative: dict[str, list[QuantitativeEvidence]] = field(default_factory=dict)
 
 
 def collect_run_graph(session: Session, run_id: str) -> RunGraph | None:
@@ -63,6 +65,11 @@ def collect_run_graph(session: Session, run_id: str) -> RunGraph | None:
         elif r.relation == EvidenceRelation.CONTRADICTS:
             counter.setdefault(r.claim_id, []).append(ev)
 
+    quantitative: dict[str, list[QuantitativeEvidence]] = {}
+    for fact in SqlQuantitativeEvidenceRepository(session).list_all():
+        if fact.evidence_id in ev_ids:
+            quantitative.setdefault(fact.evidence_id, []).append(fact)
+
     return RunGraph(
         run_id=run_id,
         question_text=question_text,
@@ -71,6 +78,7 @@ def collect_run_graph(session: Session, run_id: str) -> RunGraph | None:
         claims=claims,
         supports=supports,
         counterevidence=counter,
+        quantitative=quantitative,
     )
 
 
@@ -78,6 +86,73 @@ def _confidence_of(claim: Claim) -> str:
     if claim.status == ClaimStatus.UNSUPPORTED:
         return "LOW — no supporting evidence found (heuristic assessment)"
     return claim.confidence_label.value
+
+
+def _render_text(text: str) -> str:
+    """Collapse line breaks for Markdown display only.
+
+    Stored evidence keeps the exact source slice (offsets must stay valid), but a
+    quote that wraps mid-sentence would break the memo layout.
+    """
+    return " ".join(text.split())
+
+
+def _location(evidence: Evidence) -> str:
+    """Human-checkable pointer into the source (plan §2.2).
+
+    Page/section come from the chunk, and the character range lets a reader
+    verify the quote verbatim inside the chunk.
+    """
+    parts = [part for part in (evidence.page_label, evidence.section) if part]
+    if evidence.char_start is not None and evidence.char_end is not None:
+        parts.append(f"chars {evidence.char_start}-{evidence.char_end}")
+    if not parts:
+        parts.append(evidence.chunk_id or "unlocated")
+    return " · ".join(parts)
+
+
+def _quant_suffix(facts: list[QuantitativeEvidence]) -> str:
+    if not facts:
+        return ""
+    rendered = []
+    for fact in facts:
+        unit = {"dB": " dB", "percent": "%"}.get(fact.protocol or "", "")
+        where = f" on {fact.dataset}" if fact.dataset else ""
+        rendered.append(f"{fact.metric} {fact.value:g}{unit}{where}")
+    return f"  [quant: {'; '.join(rendered)}]"
+
+
+def _render_quantitative_section(graph: RunGraph) -> list[str]:
+    """Group numbers by dataset+metric; ungrouped numbers invite bad comparisons."""
+    lines = ["# Quantitative Evidence", ""]
+    grouped: dict[tuple[str, str], list[tuple[str, QuantitativeEvidence]]] = {}
+    for evidence_id, facts in graph.quantitative.items():
+        for fact in facts:
+            key = (fact.dataset or "unspecified", fact.metric or "unspecified")
+            grouped.setdefault(key, []).append((evidence_id, fact))
+
+    if not grouped:
+        lines.append("- No quantitative values were extracted from the evidence.")
+        lines.append("")
+        return lines
+
+    lines.append(
+        "Values are grouped by dataset and metric: numbers measured on different datasets are "
+        "not directly comparable（不可直接比较），so they must not be merged into one ranking."
+    )
+    lines.append("")
+    lines.append("| Dataset | Metric | Value | Comparator | Evidence |")
+    lines.append("| --- | --- | --- | --- | --- |")
+    for (dataset, metric), items in sorted(grouped.items()):
+        for evidence_id, fact in items:
+            comparator = "—"
+            if fact.comparator_value is not None:
+                comparator = f"{fact.comparator_value:g}"
+                if fact.comparator:
+                    comparator += f" ({fact.comparator})"
+            lines.append(f"| {dataset} | {metric} | {fact.value:g} | {comparator} | {evidence_id} |")
+    lines.append("")
+    return lines
 
 
 def render_memo(graph: RunGraph) -> str:
@@ -108,7 +183,7 @@ def render_memo(graph: RunGraph) -> str:
     for i, claim in enumerate(graph.claims, start=1):
         lines.append(f"## Finding {i}")
         lines.append("")
-        lines.append(f"**Claim:** {claim.text}")
+        lines.append(f"**Claim:** {_render_text(claim.text)}")
         if claim.scope:
             lines.append(f"")
             lines.append(f"- Scope: {claim.scope}")
@@ -120,8 +195,10 @@ def render_memo(graph: RunGraph) -> str:
         supporting = graph.supports.get(claim.id, [])
         if supporting:
             for ev in supporting:
-                loc = ev.page_label or ev.section or ev.chunk_id
-                lines.append(f"- {ev.text}  _(source {ev.source_version_id}; {loc})_")
+                lines.append(
+                    f"- {_render_text(ev.text)}  _(source {ev.source_version_id}; {_location(ev)})_"
+                    f"{_quant_suffix(graph.quantitative.get(ev.id, []))}"
+                )
         else:
             lines.append("- _None._")
         counter = graph.counterevidence.get(claim.id, [])
@@ -129,8 +206,9 @@ def render_memo(graph: RunGraph) -> str:
             lines.append("")
             lines.append("**Counterevidence:**")
             for ev in counter:
-                lines.append(f"- {ev.text}  _(source {ev.source_version_id}; {ev.page_label or ev.section})_")
+                lines.append(f"- {_render_text(ev.text)}  _(source {ev.source_version_id}; {_location(ev)})_")
         lines.append("")
+    lines.extend(_render_quantitative_section(graph))
     lines.append("# Contradictions and Open Questions")
     lines.append("")
     lines.append("- No pairwise contradiction assessment was run in the Week-1 slice (Phase 5).")
@@ -182,7 +260,25 @@ def inspect_claim(session: Session, run_id: str, claim_id: str) -> dict | None:
                 "evidence_text": ev.text,
                 "source_version_id": ev.source_version_id,
                 "source_title": sv.title if sv else None,
-                "source_location": ev.page_label or ev.section or ev.chunk_id,
+                "source_location": _location(ev),
+                "chunk_id": ev.chunk_id,
+                "section": ev.section,
+                "page_label": ev.page_label,
+                "page_index": ev.page_index,
+                "char_range": [ev.char_start, ev.char_end]
+                if ev.char_start is not None and ev.char_end is not None
+                else None,
+                "content_hash": ev.content_hash,
+                "quantitative": [
+                    {
+                        "dataset": fact.dataset,
+                        "metric": fact.metric,
+                        "value": fact.value,
+                        "comparator_value": fact.comparator_value,
+                        "protocol": fact.protocol,
+                    }
+                    for fact in graph.quantitative.get(ev.id, [])
+                ],
                 "local_path": sv.local_path if sv else None,
             }
         )

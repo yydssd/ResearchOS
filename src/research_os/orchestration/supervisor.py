@@ -27,17 +27,24 @@ from research_os.domain.models import (
 from research_os.orchestration.tasks import complete_task, create_task
 from research_os.reporting.memo import build_memo_from_run
 from research_os.research.claim_builder import ClaimBuilder, HeuristicClaimBuilder
-from research_os.research.evidence_extractor import EvidenceExtractor, HeuristicEvidenceExtractor
+from research_os.research.evidence_extractor import (
+    EvidenceExtractor,
+    HeuristicEvidenceExtractor,
+    has_location,
+)
+from research_os.research.quantitative import HeuristicQuantitativeExtractor, QuantitativeExtractor
 from research_os.sources.discovery import collect_candidates, dedupe_candidates
 from research_os.sources.providers import ProviderError, SearchProvider, build_providers
 from research_os.sources.query import build_queries
 from research_os.sources.resolver import resolve_candidates
 from research_os.storage.repositories import (
+    SqlChunkRepository,
     SqlClaimEvidenceRelationRepository,
     SqlClaimRepository,
     SqlEventRepository,
     SqlEvidenceRepository,
     SqlQuestionRepository,
+    SqlQuantitativeEvidenceRepository,
     SqlRunRepository,
     SqlSourceCandidateRepository,
     SqlSourceVersionRepository,
@@ -54,10 +61,12 @@ class Supervisor:
         evidence_extractor: EvidenceExtractor | None = None,
         claim_builder: ClaimBuilder | None = None,
         providers: list[SearchProvider] | None = None,
+        quantitative_extractor: QuantitativeExtractor | None = None,
     ) -> None:
         self._session = session
         self._extractor = evidence_extractor or HeuristicEvidenceExtractor()
         self._builder = claim_builder or HeuristicClaimBuilder()
+        self._quantitative = quantitative_extractor or HeuristicQuantitativeExtractor()
         # Injected for tests/offline runs; otherwise resolved from settings at
         # call time so configuration changes are picked up without re-import.
         self._providers = providers
@@ -303,16 +312,42 @@ class Supervisor:
             self._log(run.id, EventType.TASK_FAILED, "no sources could be loaded", failure_type=FailureType.SOURCE_UNAVAILABLE)
             return {"run_id": run.id, "status": run.status.value, "memo": ""}
 
-        # 2) evidence extraction
+        # Chunks are persisted before extraction so every Evidence.chunk_id stays
+        # resolvable after the run (plan §15: provenance must survive the process).
+        SqlChunkRepository(self._session).create_many(all_chunks)
+
+        # 2) evidence extraction, gated on locatability (plan §2.2)
         extract_task = create_task(self._session, run.id, TaskType.EXTRACT_EVIDENCE, status=TaskStatus.RUNNING)
-        evidence = self._extractor.extract(all_chunks)
+        raw_evidence = self._extractor.extract(all_chunks)
+        evidence = [ev for ev in raw_evidence if has_location(ev)]
+        rejected = len(raw_evidence) - len(evidence)
+        if rejected:
+            self._log(
+                run.id,
+                EventType.FAILURE,
+                f"{rejected} evidence object(s) rejected: no source location",
+                {"rejected": rejected},
+                failure_type=FailureType.CITATION_LOCATION_MISSING,
+            )
+            run.warnings.append(f"CITATION_LOCATION_MISSING: {rejected} evidence object(s) lacked a location")
+            SqlRunRepository(self._session).update(run)
+
         ev_repo = SqlEvidenceRepository(self._session)
         for ev in evidence:
             ev_repo.create(ev)
         complete_task(self._session, extract_task, output_ids=[ev.id for ev in evidence])
-        self._log(run.id, EventType.EVIDENCE_EXTRACTED, f"{len(evidence)} evidence objects", {"count": len(evidence)})
 
-        # 3) claim construction + relations
+        # 3) quantitative evidence (plan §15): structured numbers, separate table
+        facts = self._quantitative.extract(evidence)
+        SqlQuantitativeEvidenceRepository(self._session).create_many(facts)
+        self._log(
+            run.id,
+            EventType.EVIDENCE_EXTRACTED,
+            f"{len(evidence)} evidence objects, {len(facts)} quantitative facts",
+            {"count": len(evidence), "quantitative": len(facts), "rejected": rejected},
+        )
+
+        # 4) claim construction + relations
         build_task = create_task(self._session, run.id, TaskType.BUILD_CLAIM)
         claims, relations = self._builder.build(evidence)
         claim_repo = SqlClaimRepository(self._session)
@@ -325,7 +360,7 @@ class Supervisor:
         self._log(run.id, EventType.CLAIM_BUILT, f"{len(claims)} claims, {len(relations)} relations",
                   {"claims": len(claims), "relations": len(relations)})
 
-        # 4) memo
+        # 5) memo
         self._transition(run, RunStatus.SYNTHESIZING, "memo")
         memo = build_memo_from_run(self._session, run.id) or ""
         out_dir = reports_dir or DEFAULT_REPORTS_DIR
