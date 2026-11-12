@@ -20,6 +20,8 @@ _SKIP_TAGS = frozenset({"script", "style", "nav", "footer", "header", "aside", "
 # Elements whose text becomes one provenance-bearing block.
 _BLOCK_TAGS = frozenset({"p", "li", "blockquote", "pre", "td", "figcaption"})
 _HEADING_TAGS = frozenset({"h1", "h2", "h3", "h4", "h5", "h6"})
+# Content containers: when a page has one, only text inside it is content.
+_CONTENT_TAGS = frozenset({"main", "article"})
 
 
 def _collapse(text: str) -> str:
@@ -27,20 +29,27 @@ def _collapse(text: str) -> str:
 
 
 class _SectionParser(HTMLParser):
-    """Collects (section, text) blocks; headings define the current section."""
+    """Collects (section, text, in_content) blocks; headings define the section."""
 
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
-        self.blocks: list[tuple[str | None, str]] = []
+        self.blocks: list[tuple[str | None, str, bool]] = []
         self._section: str | None = None
         self._buffer: list[str] = []
         self._heading_buffer: list[str] = []
         self._in_heading = False
         self._skip_depth = 0
+        self._content_depth = 0
 
     def handle_starttag(self, tag: str, attrs) -> None:
         if tag in _SKIP_TAGS:
             self._skip_depth += 1
+            return
+        if tag in _CONTENT_TAGS:
+            # Flush before entering so text that precedes <main> is not attributed
+            # to the content container.
+            self._flush()
+            self._content_depth += 1
             return
         if tag in _HEADING_TAGS:
             self._flush()
@@ -55,6 +64,10 @@ class _SectionParser(HTMLParser):
     def handle_endtag(self, tag: str) -> None:
         if tag in _SKIP_TAGS:
             self._skip_depth = max(0, self._skip_depth - 1)
+            return
+        if tag in _CONTENT_TAGS:
+            self._flush()
+            self._content_depth = max(0, self._content_depth - 1)
             return
         if tag in _HEADING_TAGS and self._in_heading:
             self._section = _collapse("".join(self._heading_buffer)) or self._section
@@ -76,7 +89,7 @@ class _SectionParser(HTMLParser):
         text = _collapse("".join(self._buffer))
         self._buffer = []
         if text:
-            self.blocks.append((self._section, text))
+            self.blocks.append((self._section, text, self._content_depth > 0))
 
 
 def html_to_pages(raw_html: str) -> list[PageText]:
@@ -84,14 +97,25 @@ def html_to_pages(raw_html: str) -> list[PageText]:
 
     HTML has no reliable page numbers, so page_index is 0 and page_label is
     "html"; the section name carries the locatable provenance instead.
+
+    When the page marks a content container (<main>/<article>), blocks outside it
+    are dropped: on real sites that removes cookie banners and "skip to main
+    content" style chrome, which otherwise becomes fake evidence.
     """
     parser = _SectionParser()
     parser.feed(raw_html)
     parser.close()
     parser._flush()
+
+    has_content_container = any(in_content for _, _, in_content in parser.blocks)
+    selected = [
+        (section, text)
+        for section, text, in_content in parser.blocks
+        if in_content or not has_content_container
+    ]
     return [
         PageText(page_index=0, page_label="html", text=text, section=section)
-        for section, text in parser.blocks
+        for section, text in selected
     ]
 
 

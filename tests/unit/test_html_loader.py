@@ -43,6 +43,18 @@ def test_load_document_dispatches_html(tmp_path):
     assert any("GoPro" in p.text for p in pages)
 
 
+def test_main_container_excludes_site_chrome():
+    page = """<body><div>Skip to main content</div><main>
+    <h2>Abstract</h2><p>Restormer achieves 39.18 dB PSNR on SIDD.</p></main>
+    <footer>Copyright 2026</footer></body>"""
+
+    pages = html_to_pages(page)
+
+    assert len(pages) == 1
+    assert pages[0].section == "Abstract"
+    assert "Skip to main" not in pages[0].text
+
+
 def test_source_type_detects_html_and_readme(tmp_path):
     assert source_type_for(tmp_path / "a.html") == SourceType.HTML
     assert source_type_for(tmp_path / "README.md") == SourceType.README
