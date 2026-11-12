@@ -111,7 +111,7 @@ def _location(evidence: Evidence) -> str:
     return " · ".join(parts)
 
 
-def _format_fact_value(fact: QuantitativeEvidence) -> str:
+def _format_fact_value(fact: QuantitativeEvidence, *, with_metric: bool = True) -> str:
     """Render one numeric fact, including the metric-less delta rows (P4 spec §7).
 
     A delta row has no metric and often no absolute value: it records "a 0.11 dB
@@ -119,7 +119,8 @@ def _format_fact_value(fact: QuantitativeEvidence) -> str:
     """
     unit = {"dB": " dB", "percent": "%"}.get(fact.protocol or "", "")
     if fact.metric is not None and fact.value is not None:
-        return f"{fact.metric} {fact.value:g}{unit}"
+        prefix = f"{fact.metric} " if with_metric else ""
+        return f"{prefix}{fact.value:g}{unit}"
     if fact.delta is not None:
         return f"+{fact.delta:g}{unit} (gain)"
     return "—"
@@ -141,7 +142,7 @@ def _render_quantitative_section(graph: RunGraph) -> list[str]:
     grouped: dict[tuple[str, str], list[tuple[str, QuantitativeEvidence]]] = {}
     for evidence_id, facts in graph.quantitative.items():
         for fact in facts:
-            key = (fact.dataset or "unspecified", fact.metric or "unspecified")
+            key = (fact.dataset or "unspecified", fact.metric or fact.protocol or "unspecified")
             grouped.setdefault(key, []).append((evidence_id, fact))
 
     if not grouped:
@@ -163,8 +164,68 @@ def _render_quantitative_section(graph: RunGraph) -> list[str]:
                 comparator = f"{fact.comparator_value:g}"
                 if fact.comparator:
                     comparator += f" ({fact.comparator})"
-            value = _format_fact_value(fact)
-            lines.append(f"| {dataset} | {metric} | {value} | {comparator} | {evidence_id} |")
+            lines.append(f"| {dataset} | {metric} | {_format_fact_value(fact, with_metric=False)} | {comparator} | {evidence_id} |")
+    lines.append("")
+    return lines
+
+
+def _grounding_of(claim, graph: RunGraph) -> str:
+    """How well a claim's numbers are backed: structured fact, raw value, or none.
+
+    Reported separately from confidence because they fail differently: a claim
+    can be well grounded but out of scope, or perfectly scoped with a number no
+    extractor could structure.
+    """
+    supporting = graph.supports.get(claim.id, [])
+    if any(graph.quantitative.get(ev.id) for ev in supporting):
+        return "structured"
+    if "quantitative_unstructured" in (claim.conditions or []):
+        return "unstructured"
+    return "none"
+
+
+def _render_kept_separate(claims) -> list[str]:
+    """Show the claims that look alike but were deliberately not merged.
+
+    This is the visible evidence that identity-based merging did not collapse
+    `A improves Rain100H` into `A improves image restoration` (plan §16).
+    """
+    lines = ["# Claims Kept Separate", ""]
+    groups: dict[tuple[str, str], list] = {}
+    for claim in claims:
+        if not claim.identity_key:
+            continue
+        parts = claim.identity_key.split("|")
+        if len(parts) < 4:
+            continue
+        subject, dataset, metrics = parts[0], parts[2], parts[3]
+        if not dataset or not metrics:
+            continue
+        # Key on each metric separately: "psnr,ssim" and "psnr" still share PSNR,
+        # and that shared metric is what makes the pair look like a duplicate.
+        for metric in metrics.split(","):
+            groups.setdefault((subject, metric), []).append((dataset, claim))
+
+    notable = {key: items for key, items in groups.items() if len({ds for ds, _ in items}) > 1}
+    if not notable:
+        lines.append(
+            "- Every claim stands alone in its scope: no two claims shared a subject and "
+            "metric while differing in dataset."
+        )
+        lines.append("")
+        return lines
+
+    lines.append(
+        "These claims share a subject and a metric but were measured on different scopes, "
+        "so they were **not** merged:"
+    )
+    lines.append("")
+    for (subject, metric) in sorted(notable, key=lambda item: (item[1], item[0])):
+        for dataset, claim in notable[(subject, metric)]:
+            lines.append(
+                f"- `{dataset}` · `{metric}` — {_render_text(claim.text)}"
+                f"  _(status {claim.status.value}, confidence {claim.confidence_label.value})_"
+            )
     lines.append("")
     return lines
 
@@ -198,11 +259,11 @@ def render_memo(graph: RunGraph) -> str:
         lines.append(f"## Finding {i}")
         lines.append("")
         lines.append(f"**Claim:** {_render_text(claim.text)}")
-        if claim.scope:
-            lines.append(f"")
-            lines.append(f"- Scope: {claim.scope}")
+        lines.append("")
+        lines.append(f"- Scope: {claim.scope or 'undetermined'}")
         if claim.conditions:
             lines.append(f"- Conditions: {', '.join(claim.conditions)}")
+        lines.append(f"- Grounding: {_grounding_of(claim, graph)}")
         lines.append(f"- Status: {claim.status.value} · Confidence: {_confidence_of(claim)}")
         lines.append("")
         lines.append("**Evidence:**")
@@ -222,6 +283,7 @@ def render_memo(graph: RunGraph) -> str:
             for ev in counter:
                 lines.append(f"- {_render_text(ev.text)}  _(source {ev.source_version_id}; {_location(ev)})_")
         lines.append("")
+    lines.extend(_render_kept_separate(graph.claims))
     lines.extend(_render_quantitative_section(graph))
     lines.append("# Contradictions and Open Questions")
     lines.append("")
@@ -288,6 +350,7 @@ def inspect_claim(session: Session, run_id: str, claim_id: str) -> dict | None:
                         "dataset": fact.dataset,
                         "metric": fact.metric,
                         "value": fact.value,
+                        "delta": fact.delta,
                         "comparator_value": fact.comparator_value,
                         "protocol": fact.protocol,
                     }
@@ -302,5 +365,8 @@ def inspect_claim(session: Session, run_id: str, claim_id: str) -> dict | None:
         "status": claim.status.value,
         "confidence": claim.confidence_label.value,
         "scope": claim.scope,
+        "conditions": claim.conditions,
+        "identity_key": claim.identity_key,
+        "grounding": _grounding_of(claim, graph),
         "chain": chain,
     }

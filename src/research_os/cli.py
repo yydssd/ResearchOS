@@ -128,7 +128,8 @@ def _cmd_claims(args: argparse.Namespace) -> int:
             print("no claims", file=sys.stderr)
             return 1
         for c in claims:
-            print(f"{c.id}\t[{c.status.value}/{c.confidence_label.value}]\t{c.text}")
+            scope = c.scope or "undetermined"
+            print(f"{c.id}\t[{c.status.value}/{c.confidence_label.value}]\t{scope}\t{c.text}")
     return 0
 
 

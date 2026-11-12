@@ -90,7 +90,7 @@ def test_sentence_wins_over_inherited_dataset():
 def test_value_bucket_differs_when_values_differ():
     low = _identity(
         "On Rain100H, Restormer improves PSNR by 0.42 dB.",
-        quantitative=[QuantitativeEvidence(evidence_id="e", metric="PSNR", value=39.2)],
+        quantitative=[QuantitativeEvidence(evidence_id="e", metric="PSNR", value=39.18)],
     )
     high = _identity(
         "On Rain100H, Restormer improves PSNR by 0.42 dB.",

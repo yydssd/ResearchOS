@@ -347,9 +347,11 @@ class Supervisor:
             {"count": len(evidence), "quantitative": len(facts), "rejected": rejected},
         )
 
-        # 4) claim construction + relations
+        # 4) claim construction + relations. Chunks and quantitative facts are
+        # passed in because identity needs block context (task from the section
+        # heading) and reported values (P4 spec §4/§6).
         build_task = create_task(self._session, run.id, TaskType.BUILD_CLAIM)
-        claims, relations = self._builder.build(evidence)
+        claims, relations = self._builder.build(evidence, quantitative=facts, chunks=all_chunks)
         claim_repo = SqlClaimRepository(self._session)
         rel_repo = SqlClaimEvidenceRelationRepository(self._session)
         for claim in claims:

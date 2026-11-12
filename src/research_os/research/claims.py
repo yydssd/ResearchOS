@@ -55,7 +55,7 @@ CONDITION_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"\b(synthetic|real[- ]world)\b", re.IGNORECASE), "setting"),
     (re.compile(r"\b(video|single[- ]image)\b", re.IGNORECASE), "granularity"),
 )
-_BUCKET_DIGITS = {"PSNR": 1, "SSIM": 3, "LPIPS": 3, "FID": 1, "MAE": 2, "MSE": 2}
+_BUCKET_DIGITS = {"PSNR": 2, "SSIM": 3, "LPIPS": 3, "FID": 1, "MAE": 2, "MSE": 2}
 
 
 @dataclass(frozen=True)
