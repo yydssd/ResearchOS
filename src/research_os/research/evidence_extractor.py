@@ -31,6 +31,19 @@ _MIN_EVIDENCE_CHARS = 60
 # because the dot there is not followed by whitespace.
 _BOUNDARY = re.compile(r"(?<=[.!?])\s+")
 
+# Evidence must be a *complete* sentence: only a terminated clause can carry a
+# falsifiable claim. Web pages are full of long but unterminated label runs
+# ("Bibliographic Explorer Toggle Connected Papers ..."), which pass any length
+# gate yet say nothing, so requiring a terminator is what separates prose from
+# chrome. Trailing closing quotes/brackets are tolerated because prose commonly
+# ends with `."` or `.)`.
+_TERMINAL = re.compile(r"[.!?][\"'”’\)\]]*$")
+
+
+def is_complete_sentence(sentence: str) -> bool:
+    """True when the text ends with sentence punctuation (optionally quoted)."""
+    return bool(_TERMINAL.search(sentence.rstrip()))
+
 
 def sentence_spans(text: str) -> list[tuple[int, int, str]]:
     """Sentence intervals (start, end, sentence) over the unmodified text."""
@@ -80,6 +93,8 @@ class HeuristicEvidenceExtractor:
             for start, end, sentence in sentence_spans(chunk.text):
                 if len(sentence) < _MIN_EVIDENCE_CHARS:
                     continue
+                if not is_complete_sentence(sentence):
+                    continue  # label run or sentence truncated at a page/chunk break
                 if _BOILERPLATE.match(sentence):
                     continue
                 digest = hashlib.sha256(sentence.encode("utf-8")).hexdigest()
