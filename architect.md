@@ -98,6 +98,9 @@ Supervisor 独占预算（`search_calls` / `sources_discovered`）与事件；pr
 | ADR-020 | 主张的 task / dataset 从**块级上下文**继承（章节标题 + 节内首个点名句），不只从句子抽。实测：10 篇文档 215 条主张，单句完整 identity 命中 0 条；task 单句 17%、继承标题后 50% | ACTIVE |
 | ADR-021 | `value_bucket` 进入 identity，数值不一致不合并。合并同键异值会让一条主张内部出现两个矛盾数值，P5 的"比较两条主张"输入模型就再也看不到这个分歧——去重成功、矛盾信号被消灭 | ACTIVE |
 | ADR-022 | `UNSUPPORTED` 只表示"无支撑证据"（推测/未来工作）；"有证据但数值未结构化 / 范围不可判定 / 比较无对照"一律 SUPPORTED + LOW + 命名 flag。否则 unsupported 会退化成"低置信度"的同义词 | ACTIVE |
+| ADR-023 | **参考文献章节整节剔除**（`References` / `Bibliography`，含罗马数字或阿拉伯数字编号变体）。20 篇留出集里 bibliography 贡献 1889/6703 条证据（28%），28 条还成了主张（`[13] Hadsell, R., …`）。参考文献条目是**别人的标题**，不是本文论断；附录不剔除（含真实实验） | ACTIVE |
+| ADR-024 | task 增加**文档级兜底**：章节标题不含任务名时，取文档自身的 task，**优先从摘要读**（后续章节可能研究第二个任务，不能反过来定义论文）。dataset 不做文档级兜底——那是猜不是 scope。20 篇实测：task 有值 11% → 98% | ACTIVE |
+| ADR-025 | 推断出的 `self` 主语标记 `subject_inferred`，但**不改变合并键**（flag 是 provenance 不是 identity）。留出集 459 条 self 中 409 条为推断，抽样 12 条仅 2 条真是 `our method`；默认保留（绑文档 id，不会跨文档合并），但下游需能区分"本文声称"与"本文假设" | ACTIVE |
 
 ## 阶段状态
 
@@ -128,8 +131,10 @@ CLI（主接口）：`research-os run/status/claims/report/inspect-claim` · **`
 6. 通用网页的**散文档**站点文案（如 arXivLabs 说明段，本身是完整句子）仍会入证据；标签碎片已由句界判据挡掉，剩下的是主题相关性问题，属 P7。
 7. 定量抽取只认 ASCII 指标词与数字，表格结构不还原；无指标词的增益已由 `delta` 通道覆盖（P4），但表格与图注中的数值仍抽不到。
 8. 跨源合并在真实语料上几乎不触发：需要同一方法在同一数据集上被他人复现。验收证据来自 `tests/fixtures/claim_merge/`，不来自真实论文。
-9. `SELF` 默认依赖第三方标识黑名单（previous/baseline/SOTA…），漏判会把前人方法的结果算到本文方法头上；相关通道只会降置信，不会纠正归属。
+9. `SELF` 默认依赖第三方标识黑名单（previous/baseline/SOTA…），漏判会把前人方法的结果算到本文方法头上；相关通道只会降置信，不会纠正归属。20 篇实测 459 条 self 中 409 条是**推断**而来（标 `subject_inferred`），抽样 12 条仅 2 条为真自指，其余是机理描述与图注。
 10. 段落级回指只覆盖"段首点名"一种；代词与别名指代抽不到。
+11. **dataset 是主张层的瓶颈**：83% 的主张拿不到 dataset（论文用 "this dataset" / "Table 2" 指代），合并门槛满足率 10%。补齐需要表格解析或代词消解，不属 P4。
+12. 跨源合并实测不触发：20 篇里 111 个可合并键，跨文档命中 0 组。验收靠构造夹具，不靠真实论文。
 
 ## 维护约定（代码注释规则）
 
@@ -151,3 +156,4 @@ CLI（主接口）：`research-os run/status/claims/report/inspect-claim` · **`
 | 2026-11-12 | W2/P3 完成：HTML 加载（stdlib + `<main>` 过滤）、`chunks` 表、证据精确字符偏移、位置缺失拒收、定量证据表与抽取；测试 83→101；ADR-014~017 |
 | 2026-11-12 | P3 收尾修两个真实缺陷：① `claims` 曾全库列主张（跨 run 污染），改为按 run 作用域（ADR-019）；② 真实 arXiv abs 页 19 条证据中 10 条是站点导航标签，加"完整句子"判据后降为 10 条（ADR-018）。真实复跑 38 块 / 10 证据 / 1 主张 / 偏移逐字成立；测试 101→106 |
 | 2026-11-12 | W3/P4 完成：`research/scope.py`（块级继承）、`research/claims.py`（identity 七维 / 合并门槛 / 状态 flag）、claim_builder 改为按身份分组、memo 增 Scope/Conditions/Grounding 与 `# Claims Kept Separate`、定量抽取补 `delta`（无指标词）、ar5iv 公式回声净化；测试 106→147；ADR-020~022 |
+| 2026-11-12 | P4 留出集（20 篇未见论文，清单 `docs/evaluation/holdout-ids-2026-11-12.txt`）跑通：20 文档 / 13871 块 / 4814 证据 / 1160 主张（1063 SUPPORTED）；合并门槛 111/1063（10%）；跨文档合并 **0** 组。暴露并修复三处实现缺陷：参考文献进证据（ADR-023）、task 继承率被 `key()` 的 `"None"` 字面量伪装成 100%（ADR-024）、`Motivated/Extensive/Proposed` 被当方法名 + 推断主语不可区分（ADR-025）；测试 147→163 |

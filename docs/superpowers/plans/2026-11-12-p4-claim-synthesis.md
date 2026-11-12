@@ -936,3 +936,33 @@ git commit -m "feat(claims): surface scope, grounding and kept-separate groups"
 - **Placeholders:** none; every code step shows the code.
 - **Type consistency:** `BlockScope(task, datasets, inherited_from)`; `ClaimIdentity.key()` / `.label()`; `extract_identity(text, *, source_version_id, scope, quantitative)`; `may_merge(a, b)`; `classify_claim(text, identity, evidence, quant_by_evidence)`; `Claim.identity_key`.
 - **Known deviation:** the spec's acceptance #8 lists `Rain100L … 0.11 dB` as `quantitative_unstructured`, but Task 2's delta channel structures exactly that sentence. Task 2 wins: the flag example moves to `test_claim_status.py`, and the spec/acceptance must be updated in Task 8.
+
+---
+
+## Task 9: hold-out evaluation (added after the plan was closed)
+
+The plan closed at 147 tests and tag `w3-p4`. Running 20 unseen papers afterwards was the
+forced check on whether the design generalises; it found three implementation defects that
+fixture-level tests could not see. They are logged as ADR-023~025 / HD-011.
+
+- [x] **Step 1** Harness: `scripts/holdout_claim_quality.py` (live arXiv discovery, ar5iv
+      full text, `--ids-file` for when the network blocks the API). Paper list archived at
+      `docs/evaluation/holdout-ids-2026-11-12.txt`; page cache git-ignored.
+- [x] **Step 2** Fix: bibliography was 28% of all evidence → drop `References`/`Bibliography`
+      sections in the loader (ADR-023).
+- [x] **Step 3** Fix: `ClaimIdentity.key()` rendered `None` as the literal `"None"`, which
+      made the harness report "task 100% inherited". Empty fields now render empty (ADR-024).
+- [x] **Step 4** Fix: `Motivated` / `Extensive` / `Proposed` were read as method names because
+      sentence-initial capitalisation was trusted (ADR-025).
+- [x] **Step 5** Fix: task fell back to the document's own task when a heading names none,
+      read from the abstract first (ADR-024).
+- [x] **Step 6** Flag the defaulted `self` subject as `subject_inferred`, excluded from the
+      merge key (ADR-025).
+- [x] **Step 7** Re-run: 20 docs / 13871 chunks / 4814 evidence / 1160 claims (1063 supported);
+      merge gate 111/1063 (10%); cross-document merges **0**; tests 147 → 163.
+- [x] **Step 8** Sync README (measured table + 3 new limits), architect (ADR-023~025, limits
+      11–12), human_decision (HD-011).
+
+**Not fixed, deliberately:** dataset coverage (17%) is the remaining bottleneck for the merge
+gate. Papers say "this dataset" / "Table 2"; closing it needs table parsing or coreference,
+which is out of P4's scope and does not damage the correctness of what is already emitted.

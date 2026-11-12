@@ -100,10 +100,44 @@ python -m research_os.cli inspect-claim RUN_ID CLAIM_ID    # 含 identity_key / 
 `A improves image restoration`。memo 的 `# Claims Kept Separate` 段把这类"看起来像重复、
 但被刻意分开"的主张列出来，供人工核对。
 
-`Scope` 的 task 来自章节标题、dataset 支持"段首点名、后句省略"的继承。这不是设计偏好，
-是实测结果：只看单句时完整 identity 命中率为 0/215。
+`Scope` 的 task 来自章节标题；标题不写任务名时（`1 Introduction`、`8 Further Ablation Study`）
+回退到**文档自身的 task**，优先从摘要读。dataset 支持"段首点名、后句省略"的继承，
+但**只在节内**继承——把它扩到全文就是猜。
 
-留出集评估：`python scripts/holdout_claim_quality.py --papers 20`（联网，取未参与开发的论文）。
+这不是设计偏好，是实测结果：只看单句时完整 identity 命中率为 0/215。
+
+### 留出集实测（20 篇未见论文，2026-11-12）
+
+`python scripts/holdout_claim_quality.py --papers 20`，论文清单见
+`docs/evaluation/holdout-ids-2026-11-12.txt`（缓存页面不入库，可重下）。
+
+| 指标 | 值 |
+| --- | --- |
+| 文档 / 块 / 证据 | 20 / 13871 / 4814 |
+| 定量证据（其中 delta 行） | 170（47） |
+| 主张（SUPPORTED / UNSUPPORTED） | 1160（1063 / 97） |
+| subject 有值：named / self / 无 | 544 / 459 / 60 |
+| 其中 `subject_inferred` | 409 |
+| task 有值 | 1044 / 1063（98%） |
+| dataset 有值 | 183 / 1063（17%） |
+| metric 有值 | 152 / 1063（14%） |
+| **满足合并门槛** | **111 / 1063（10%）** |
+| grounding：structured / unstructured / 无值 | 137 / 17 / 909 |
+| 跨文档合并组数 | **0** |
+
+这轮评估推翻了三处实现（都不是调参问题）：
+
+1. **参考文献被当成证据**：1889/6703 条证据（28%）来自 bibliography，28 条还变成主张
+   （`[13] Hadsell, R., ...`）。现在 loader 直接丢弃 section 标题为 References/Bibliography 的块，
+   附录保留。
+2. **task 继承率是假象**：`key()` 曾把 `None` 渲染成字面量 `"None"`，harness 因此报"task 100% 继承"。
+   改成空字段后真实值只有 11%——因为任务名写在摘要里、不在标题里。加文档级兜底后到 98%。
+3. **subject 精度**：`Motivated` / `Extensive` / `Proposed` 曾因句首大写被当成方法名。
+
+并且暴露一个尚未解决的事实：**瓶颈已经从 task 转移到 dataset**。论文在实验节用
+"Table 2"、"this dataset" 指代，不重复点名，所以 83% 的主张拿不到 dataset，合并门槛因此卡在 10%。
+这是 P5 的输入条件，不是 P4 的 bug。
+
 
 ## 已知限制（截至 P4）
 
@@ -113,10 +147,16 @@ python -m research_os.cli inspect-claim RUN_ID CLAIM_ID    # 含 identity_key / 
 - 证据必须是**完整句子**（以 `.`/`?`/`!` 结尾）：网页里成串的导航标签因此不会混进证据；
   代价是分页/分块处被截断的半句会丢弃（宁可漏收，不可错收）。
 - 仍是完整句子的站点说明文案（如 arXivLabs 段落）会入证据；区分它需要主题相关性，属 P7。
+- 参考文献章节已整节剔除（否则占 28% 证据），但**正文里提到的他人工作**仍会入证据
+  （这类句子靠 `THIRD_PARTY` 词表排除推断主语，不保证全拦）。
 - 定量抽取是启发式：只覆盖 lexicon 内的数据集与指标（PSNR/SSIM/LPIPS/FID/MAE/MSE），
   单位只看数值紧邻 6 字符；表格、图注中的数值抽不到。
 - 78% 的数值句不写指标词，只能记成 `delta` + 单位；这类行无法与有指标词的行直接比较。
-- 跨源合并在真实语料上**几乎不触发**：要等同一方法在同一数据集上被别人复现才命中。
+- **dataset 是当前最大瓶颈**：83% 的主张拿不到 dataset（论文用"this dataset"/"Table 2"指代），
+  合并门槛满足率 10%。补这一块需要表格解析或代词消解，不属 P4。
+- 46% 的主张主语是 `self`，其中 89% 是推断（`subject_inferred`）；抽样 12 条里只有 2 条
+  真的是 `our method`，其余是机理描述和图注。flag 让下游能区分，但没减少误判本身。
+- 跨源合并在真实语料上**不触发**：20 篇里 111 个可合并键，跨文档命中 0 组。
   它的验收证据来自构造夹具（`tests/fixtures/claim_merge/`），不是真实论文。
 - 句子切分按 `[.!?]` + 空白，缩写（`et al.`）会造成过切，目前不影响偏移正确性（宁可切碎不可错位）。
 - 只处理文本层，未做 OCR；扫描版 PDF 无文本则无证据。
