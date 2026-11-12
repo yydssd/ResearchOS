@@ -58,6 +58,8 @@ def init_db(url: str | None = None) -> None:
 # measurable need).
 _ADDED_COLUMNS: dict[str, dict[str, str]] = {
     "source_versions": {"source_tier": "VARCHAR(32)"},
+    "quantitative_evidence": {"delta": "FLOAT"},
+    "claims": {"identity_key": "VARCHAR(256)"},
 }
 
 

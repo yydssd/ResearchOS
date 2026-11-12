@@ -109,6 +109,7 @@ class QuantitativeEvidenceRow(Base):
     comparator: Mapped[str | None] = mapped_column(Text, nullable=True)
     comparator_value: Mapped[float | None] = mapped_column(Float, nullable=True)
     protocol: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    delta: Mapped[float | None] = mapped_column(Float, nullable=True)
 
 
 class EvidenceRow(Base):
@@ -138,6 +139,7 @@ class ClaimRow(Base):
     conditions: Mapped[list] = mapped_column(JSON, default=list)
     status: Mapped[str] = mapped_column(String(32))
     confidence_label: Mapped[str] = mapped_column(String(32), default="LOW")
+    identity_key: Mapped[str | None] = mapped_column(String(256), nullable=True)
 
 
 class ClaimEvidenceRelationRow(Base):

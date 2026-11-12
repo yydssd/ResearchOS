@@ -391,6 +391,7 @@ class SqlQuantitativeEvidenceRepository:
                     comparator=fact.comparator,
                     comparator_value=fact.comparator_value,
                     protocol=fact.protocol,
+                    delta=fact.delta,
                 )
             )
         return facts
@@ -407,6 +408,7 @@ class SqlQuantitativeEvidenceRepository:
             comparator=row.comparator,
             comparator_value=row.comparator_value,
             protocol=row.protocol,
+            delta=row.delta,
         )
 
     def list_by_evidence(self, evidence_id: str) -> list[QuantitativeEvidence]:
@@ -494,6 +496,7 @@ class SqlClaimRepository:
                 conditions=c.conditions,
                 status=c.status.value,
                 confidence_label=c.confidence_label.value,
+                identity_key=c.identity_key,
             )
         )
         return c
@@ -507,6 +510,7 @@ class SqlClaimRepository:
             conditions=row.conditions or [],
             status=ClaimStatus(row.status),
             confidence_label=ConfidenceLabel(row.confidence_label),
+            identity_key=row.identity_key,
         )
 
     def get(self, claim_id: str) -> Claim | None:

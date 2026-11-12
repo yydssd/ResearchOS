@@ -152,6 +152,10 @@ class QuantitativeEvidence(BaseModel):
     comparator: str | None = None
     comparator_value: float | None = None
     protocol: str | None = None
+    # A gain stated without naming a metric ("+0.44 dB", "a 0.11 dB improvement").
+    # 78% of value-bearing sentences look like this, so without `delta` they would
+    # carry no structured fact at all (P4 spec §7).
+    delta: float | None = None
 
 
 class Claim(BaseModel):
@@ -164,6 +168,9 @@ class Claim(BaseModel):
     conditions: list[str] = []
     status: ClaimStatus
     confidence_label: ConfidenceLabel = ConfidenceLabel.LOW
+    # Scope identity used for de-duplication (P4). Two claims merge only when this
+    # key matches AND the merge gate passes; wording similarity never merges.
+    identity_key: str | None = None
 
     @field_validator("text")
     @classmethod

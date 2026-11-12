@@ -27,6 +27,15 @@ _COMPARATOR_RE = re.compile(r"(?:for|than)\s+the\s+([a-z][a-z0-9 \-]{2,30})", re
 _PROPOSED_RE = re.compile(r"\b(?:our|the proposed)\s+(?:method|model|approach)\b", re.IGNORECASE)
 _DATASET_INLINE = re.compile(r"\bon (?:the )?([A-Z][A-Za-z0-9\-]{2,})")
 
+# Delta pass (P4 spec §7). Most result sentences state a gain without naming the
+# metric ("+0.44 dB", "a 0.11 dB improvement"), so requiring a metric word would
+# leave 78% of value-bearing sentences with no structured fact at all.
+_DELTA_WORD = re.compile(r"(gain|improv|increas|reduc|margin|boost|better)", re.IGNORECASE)
+_DELTA_VALUE = re.compile(r"(?P<sign>[+\-−])?\s*(?P<value>\d+(?:\.\d+)?)\s?(?P<unit>dB|%)\b", re.IGNORECASE)
+_DELTA_RANGE = re.compile(
+    r"(\d+(?:\.\d+)?)\s?dB\s*(?:to|→)\s*(\d+(?:\.\d+)?)\s?dB", re.IGNORECASE
+)
+
 
 def _dataset(text: str) -> str | None:
     lowered = text.lower()
@@ -100,6 +109,42 @@ class QuantitativeExtractor(Protocol):
     def extract(self, evidence: list[Evidence]) -> list[QuantitativeEvidence]: ...
 
 
+def _delta_fact(
+    text: str,
+    evidence_id: str,
+    dataset: str | None,
+    comparator: str | None,
+    method: str | None,
+) -> QuantitativeEvidence | None:
+    """A gain stated as "+0.44 dB" / "a 0.11 dB improvement", with no metric name.
+
+    Only called when the metric pass produced nothing, otherwise the same number
+    would be stored twice (once attributed to PSNR, once as a delta).
+    A gain word is required: "0.42 dB" on its own is an absolute measurement.
+    """
+    if not _DELTA_WORD.search(text):
+        return None
+    match = _DELTA_VALUE.search(text)
+    if match is None:
+        return None
+    low, high = None, None
+    span = _DELTA_RANGE.search(text)
+    if span is not None:
+        low, high = float(span.group(1)), float(span.group(2))
+    return QuantitativeEvidence(
+        evidence_id=evidence_id,
+        seq=0,
+        dataset=dataset,
+        metric=None,
+        method=method,
+        value=high,
+        comparator=comparator,
+        comparator_value=low,
+        protocol="dB" if match.group("unit").lower() == "db" else "percent",
+        delta=float(match.group("value")),
+    )
+
+
 class HeuristicQuantitativeExtractor:
     """Regex extraction of metric/value/dataset/comparator per evidence sentence."""
 
@@ -147,6 +192,10 @@ class HeuristicQuantitativeExtractor:
                     protocol=_unit_near(text, value_end),
                 )
             )
+        if not facts:
+            delta_fact = _delta_fact(text, evidence_id, dataset, comparator, method)
+            if delta_fact is not None:
+                facts.append(delta_fact)
         return facts
 
     def extract(self, evidence: list[Evidence]) -> list[QuantitativeEvidence]:

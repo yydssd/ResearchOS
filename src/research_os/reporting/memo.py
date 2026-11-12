@@ -111,14 +111,27 @@ def _location(evidence: Evidence) -> str:
     return " · ".join(parts)
 
 
+def _format_fact_value(fact: QuantitativeEvidence) -> str:
+    """Render one numeric fact, including the metric-less delta rows (P4 spec §7).
+
+    A delta row has no metric and often no absolute value: it records "a 0.11 dB
+    improvement", which is a gain, not a measurement on a dataset.
+    """
+    unit = {"dB": " dB", "percent": "%"}.get(fact.protocol or "", "")
+    if fact.metric is not None and fact.value is not None:
+        return f"{fact.metric} {fact.value:g}{unit}"
+    if fact.delta is not None:
+        return f"+{fact.delta:g}{unit} (gain)"
+    return "—"
+
+
 def _quant_suffix(facts: list[QuantitativeEvidence]) -> str:
     if not facts:
         return ""
     rendered = []
     for fact in facts:
-        unit = {"dB": " dB", "percent": "%"}.get(fact.protocol or "", "")
         where = f" on {fact.dataset}" if fact.dataset else ""
-        rendered.append(f"{fact.metric} {fact.value:g}{unit}{where}")
+        rendered.append(f"{_format_fact_value(fact)}{where}")
     return f"  [quant: {'; '.join(rendered)}]"
 
 
@@ -150,7 +163,8 @@ def _render_quantitative_section(graph: RunGraph) -> list[str]:
                 comparator = f"{fact.comparator_value:g}"
                 if fact.comparator:
                     comparator += f" ({fact.comparator})"
-            lines.append(f"| {dataset} | {metric} | {fact.value:g} | {comparator} | {evidence_id} |")
+            value = _format_fact_value(fact)
+            lines.append(f"| {dataset} | {metric} | {value} | {comparator} | {evidence_id} |")
     lines.append("")
     return lines
 

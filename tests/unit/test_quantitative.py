@@ -76,3 +76,43 @@ def test_extract_from_evidence_links_back_to_evidence_id(tmp_path):
 
     assert facts
     assert all(f.evidence_id == evidence[0].id for f in facts)
+
+
+def test_delta_value_without_metric_is_captured():
+    """78% of value statements never name a metric; without this pass the number
+    stays unstructured and cannot be bucketed or compared at all."""
+    rows = EXTRACTOR.extract_from_text(
+        "The larger learning rate brings a gain of +0.44 dB (39.29 dB to 39.73 dB) on SIDD.",
+        evidence_id="e1",
+    )
+
+    assert len(rows) == 1
+    row = rows[0]
+    assert row.metric is None
+    assert row.delta == 0.44
+    assert row.protocol == "dB"
+    assert row.dataset == "SIDD"
+    # the surrounding range is still recorded, as comparator -> value
+    assert row.comparator_value == 39.29
+    assert row.value == 39.73
+
+
+def test_delta_pass_does_not_duplicate_metric_rows():
+    rows = EXTRACTOR.extract_from_text(
+        "On Rain100H, our method improves PSNR by 0.42 dB.", evidence_id="e1"
+    )
+
+    assert len(rows) == 1
+    assert rows[0].metric == "PSNR"
+    assert rows[0].delta is None
+
+
+def test_delta_requires_a_gain_word():
+    """'0.42 dB' alone is an absolute measurement, not a delta; guessing would
+    invent gains that the paper never claimed."""
+    rows = EXTRACTOR.extract_from_text(
+        "The measured noise floor of the sensor is 0.42 dB on the calibration set.",
+        evidence_id="e1",
+    )
+
+    assert rows == []
