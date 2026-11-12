@@ -52,12 +52,15 @@ SourceVersion(本地文件)
 
 `load_document` 按后缀分派 `.pdf/.md/.markdown/.txt/.html/.htm`；`source_type_for` 识别 `README*` → `SourceType.README`，`.html/.htm` → `SourceType.HTML`。
 
-HTML 解析规则：跳过 `script/style/nav/footer/header/aside/form`；`h1..h6` 结束上一节并开新节；`p/li/blockquote/pre/td` 收集文本；实体（`&amp;` 等）反转义；连续空白折叠。
+HTML 解析规则：跳过 `script/style/nav/footer/header/aside/form`；**页面存在 `<main>`/`<article>` 时只收其内部块**（真实站点验证：arXiv abs 页的 "Skip to main content" 等导航文案被排除）；`h1..h6` 结束上一节并开新节；`p/li/blockquote/pre/td` 收集文本；实体（`&amp;` 等）反转义；连续空白折叠。
 
 ## 5. 分块与偏移
 
 - `chunk_pages()` 逻辑不变，但 `DocumentChunk` 落 `chunks` 表（含 `source_version_id`、`page_index`、`page_label`、`section`、`chunk_index`、`text`、`content_hash`）。
 - `_sentence_spans(text)`：用 `(?<=[.!?])\s+` 在**原文**上找边界（小数点后无空白，天然不被切开），返回 `(start, end, sentence)`；证据 `char_start/char_end` 直接取区间，保证 `text[start:end] == evidence.text`。
+- **证据必须是完整句子**（`is_complete_sentence`：结尾为 `.`/`?`/`!`，允许其后紧跟引号或括号）；长度不足 60 或无法通过此判据的片段不入证据。
+  - 理由：真实 arXiv abs 页上 19 条证据里有 10 条是"长而无句界"的导航标签（`Bibliographic Explorer Toggle …`、`Demos`、`Recommenders and Search Tools`），长度阈值完全拦不住；句界判据是零成本且不误伤散文的分界。实测 19 → 10 条，偏移仍逐字成立。
+  - 代价：分页/分块处被截断的半句会因缺少句界被丢弃（宁可漏收，不可错收）。
 - 已知限制：`et al. 2023` 这类缩写会被误判为句界（记录在案，不修）。
 
 ## 6. 定量证据
@@ -71,7 +74,7 @@ HTML 解析规则：跳过 `script/style/nav/footer/header/aside/form`；`h1..h6
 | dataset | 命中内置数据集词表（Rain100H/SIDD/GoPro/…）或 `on <Capitalized>` |
 | comparator | `compared with/than/over/baseline <X>` 捕获 |
 | comparator_value | `compared with <num>` 或 `from <num> to <num>` |
-| protocol | 句子含 `dB` → `dB`；含 `%` → `percent`；否则 `None` |
+| protocol | 数值**紧邻**的 `dB` → `dB`；紧邻 `%` → `percent`；否则 `None`（不按整句判定，避免给 SSIM 也标上 dB） |
 
 无 metric 或无数值的句子不产出定量记录（宁缺勿错）。
 
@@ -95,3 +98,5 @@ HTML 解析规则：跳过 `script/style/nav/footer/header/aside/form`；`h1..h6
 2. 对 `tests/fixtures/sample_paper.md`：每条证据 `chunk_id` 可在 `chunks` 表查到，且 `chunk.text[char_start:char_end] == evidence.text`。
 3. 同一文档产出 ≥3 条 QuantitativeEvidence（Rain100H 0.42 dB、SIDD 39.18 dB、Rain100L 0.11 dB）。
 4. 构造一条无位置证据 → 不入库，产生 `CITATION_LOCATION_MISSING` 事件。
+5. 导航标签长串（如 `Bibliographic Explorer Toggle …`）即使超过长度阈值也不得成为证据；以 `?` 结尾或引号收尾的散文句必须保留。
+6. 追溯类命令按 `run_id` 作用域输出：空 run 不得打印其它 run 的主张。

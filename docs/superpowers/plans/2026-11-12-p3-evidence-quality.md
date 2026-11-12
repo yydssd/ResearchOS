@@ -33,7 +33,7 @@
 
 **Files:** Create `documents/html.py`; Modify `documents/loader.py`; Test `tests/unit/test_html_loader.py`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 ```python
 from research_os.domain.enums import SourceType
@@ -66,10 +66,10 @@ def test_source_type_detects_html_and_readme(tmp_path):
     assert source_type_for(tmp_path / "notes.md") == SourceType.MARKDOWN
 ```
 
-- [ ] **Step 2: 运行确认失败** — `pytest tests/unit/test_html_loader.py -q` → ImportError
-- [ ] **Step 3: 实现** `html.py`：`_HtmlTextParser(HTMLParser)`，`handle_starttag` 处理 `h1..h6`（开新节）/`p,li,blockquote,pre,td`（开新块）/`script,style,nav,footer,header,aside,form`（置 `_skip=True`）；`handle_endtag` 收块；`handle_data` 累积（`html.unescape`）；`html_to_pages` 折叠空白、丢弃空块。`loader.py` 增加 `.html/.htm` 分派与 README 识别。
-- [ ] **Step 4: 跑通** — 3 passed
-- [ ] **Step 5: Commit** — `git commit -m "feat(documents): html loader with heading-based sections"`
+- [x] **Step 2: 运行确认失败** — `pytest tests/unit/test_html_loader.py -q` → ImportError
+- [x] **Step 3: 实现** `html.py`：`_HtmlTextParser(HTMLParser)`，`handle_starttag` 处理 `h1..h6`（开新节）/`p,li,blockquote,pre,td`（开新块）/`script,style,nav,footer,header,aside,form`（置 `_skip=True`）；`handle_endtag` 收块；`handle_data` 累积（`html.unescape`）；`html_to_pages` 折叠空白、丢弃空块。`loader.py` 增加 `.html/.htm` 分派与 README 识别。
+- [x] **Step 4: 跑通** — 3 passed
+- [x] **Step 5: Commit** — `git commit -m "feat(documents): html loader with heading-based sections"`
 
 ---
 
@@ -77,7 +77,7 @@ def test_source_type_detects_html_and_readme(tmp_path):
 
 **Files:** Modify `storage/tables.py`, `storage/repositories.py`; Test `tests/unit/test_chunk_store.py`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 ```python
 from research_os.documents.chunks import chunk_pages
@@ -99,10 +99,10 @@ def test_chunks_roundtrip_with_provenance(db):
         assert SqlChunkRepository(s).get(chunks[0].id).text == chunks[0].text
 ```
 
-- [ ] **Step 2: 运行确认失败** — ImportError
-- [ ] **Step 3: 实现** `ChunkRow`（id/source_version_id/page_index/page_label/section/chunk_index/text/content_hash，`source_version_id` 建索引）与 `SqlChunkRepository`（`create_many` / `get` / `list_by_source`）。
-- [ ] **Step 4: 跑通** — 1 passed
-- [ ] **Step 5: Commit** — `git commit -m "feat(storage): persist document chunks with provenance"`
+- [x] **Step 2: 运行确认失败** — ImportError
+- [x] **Step 3: 实现** `ChunkRow`（id/source_version_id/page_index/page_label/section/chunk_index/text/content_hash，`source_version_id` 建索引）与 `SqlChunkRepository`（`create_many` / `get` / `list_by_source`）。
+- [x] **Step 4: 跑通** — 1 passed
+- [x] **Step 5: Commit** — `git commit -m "feat(storage): persist document chunks with provenance"`
 
 ---
 
@@ -110,7 +110,7 @@ def test_chunks_roundtrip_with_provenance(db):
 
 **Files:** Modify `research/evidence_extractor.py`; Test `tests/unit/test_evidence_offsets.py`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 ```python
 from research_os.domain.models import DocumentChunk
@@ -145,8 +145,8 @@ def test_has_location_flags_evidence_without_provenance():
     assert has_location(bare) is False
 ```
 
-- [ ] **Step 2: 运行确认失败**
-- [ ] **Step 3: 实现**
+- [x] **Step 2: 运行确认失败**
+- [x] **Step 3: 实现**
 
 ```python
 _BOUNDARY = re.compile(r"(?<=[.!?])\s+")
@@ -171,8 +171,8 @@ def sentence_spans(text: str) -> list[tuple[int, int, str]]:
 
 `has_location(ev)`：`bool(ev.chunk_id or ev.section or ev.page_label)`。
 
-- [ ] **Step 4: 跑通** — 3 passed（注意：旧的 `_split_sentences` 若被其它模块引用需保留或同步改名）
-- [ ] **Step 5: Commit** — `git commit -m "fix(evidence): exact character offsets from original chunk text"`
+- [x] **Step 4: 跑通** — 3 passed（注意：旧的 `_split_sentences` 若被其它模块引用需保留或同步改名）
+- [x] **Step 5: Commit** — `git commit -m "fix(evidence): exact character offsets from original chunk text"`
 
 ---
 
@@ -180,7 +180,7 @@ def sentence_spans(text: str) -> list[tuple[int, int, str]]:
 
 **Files:** Create `research/quantitative.py`; Modify `storage/tables.py`, `storage/repositories.py`; Test `tests/unit/test_quantitative.py`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 ```python
 from research_os.research.quantitative import HeuristicQuantitativeExtractor
@@ -206,11 +206,11 @@ def test_ignores_text_without_metric_or_value():
     assert HeuristicQuantitativeExtractor().extract_from_text("We propose a gated attention block.", evidence_id="e3") == []
 ```
 
-- [ ] **Step 2: 运行确认失败**
-- [ ] **Step 3: 实现** `_METRIC = re.compile(r"\b(PSNR|SSIM|LPIPS|FID|MAE|MSE)\b", re.I)`；对每个指标匹配，在其后 ≤16 字符内取第一个数字（`(\d+(?:\.\d+)?)`）；dataset 用词表 + `\bon (?:the )?([A-Z][A-Za-z0-9\-]{2,})`；comparator_value 用 `compared (?:with|to)\s+(\d+(?:\.\d+)?)` 或 `from\s+(\d+(?:\.\d+)?)\s+to\s+(\d+(?:\.\d+)?)`（后者 value=to）；protocol：含 `dB` → "dB"，含 `%` → "percent"。返回 `list[QuantitativeEvidence]`，与 `HeuristicEvidenceExtractor` 同风格 `extract(evidence: list[Evidence])`。
+- [x] **Step 2: 运行确认失败**
+- [x] **Step 3: 实现** `_METRIC = re.compile(r"\b(PSNR|SSIM|LPIPS|FID|MAE|MSE)\b", re.I)`；对每个指标匹配，在其后 ≤16 字符内取第一个数字（`(\d+(?:\.\d+)?)`）；dataset 用词表 + `\bon (?:the )?([A-Z][A-Za-z0-9\-]{2,})`；comparator_value 用 `compared (?:with|to)\s+(\d+(?:\.\d+)?)` 或 `from\s+(\d+(?:\.\d+)?)\s+to\s+(\d+(?:\.\d+)?)`（后者 value=to）；protocol：含 `dB` → "dB"，含 `%` → "percent"。返回 `list[QuantitativeEvidence]`，与 `HeuristicEvidenceExtractor` 同风格 `extract(evidence: list[Evidence])`。
   表：`quantitative_evidence(evidence_id PK/FK, dataset, metric, method, value, comparator, comparator_value, protocol)`；仓储 `create_many` / `list_by_evidence` / `list_all`。
-- [ ] **Step 4: 跑通** — 4 passed
-- [ ] **Step 5: Commit** — `git commit -m "feat(evidence): deterministic quantitative evidence extraction"`
+- [x] **Step 4: 跑通** — 4 passed
+- [x] **Step 5: Commit** — `git commit -m "feat(evidence): deterministic quantitative evidence extraction"`
 
 ---
 
@@ -218,7 +218,7 @@ def test_ignores_text_without_metric_or_value():
 
 **Files:** Modify `orchestration/supervisor.py`, `reporting/memo.py`; Test `tests/integration/test_evidence_quality.py`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 ```python
 def test_vertical_slice_persists_chunks_offsets_and_quantitative_facts(tmp_path, db):
@@ -234,11 +234,11 @@ def test_evidence_without_location_is_rejected(db):
     ...
 ```
 
-- [ ] **Step 2: 运行确认失败**
-- [ ] **Step 3: 实现**：supervisor 在 chunk 生成后 `SqlChunkRepository.create_many`；抽取后过滤 `has_location`，缺失者记 `CITATION_LOCATION_MISSING` 事件并计入 warnings；再跑定量抽取落库；memo 增加位置与 `# Quantitative Evidence` 段（按 dataset+metric 分组，附「跨数据集不可直接比较」提示）；`inspect_claim` 增加 `chunk_id/section/page_label/char_range`。
-- [ ] **Step 4: 跑通** — 2 passed
-- [ ] **Step 5: 全量回归** — `pytest` 全绿
-- [ ] **Step 6: Commit** — `git commit -m "feat(orchestration): persist chunks, gate provenance, wire quantitative evidence"`
+- [x] **Step 2: 运行确认失败**
+- [x] **Step 3: 实现**：supervisor 在 chunk 生成后 `SqlChunkRepository.create_many`；抽取后过滤 `has_location`，缺失者记 `CITATION_LOCATION_MISSING` 事件并计入 warnings；再跑定量抽取落库；memo 增加位置与 `# Quantitative Evidence` 段（按 dataset+metric 分组，附「跨数据集不可直接比较」提示）；`inspect_claim` 增加 `chunk_id/section/page_label/char_range`。
+- [x] **Step 4: 跑通** — 2 passed
+- [x] **Step 5: 全量回归** — `pytest` 全绿
+- [x] **Step 6: Commit** — `git commit -m "feat(orchestration): persist chunks, gate provenance, wire quantitative evidence"`
 
 ---
 
@@ -246,11 +246,21 @@ def test_evidence_without_location_is_rejected(db):
 
 **Files:** `README.md`, `architect.md`, `human_decision.md`
 
-- [ ] **Step 1** 更新 README（P3 状态、支持格式、测试数）
-- [ ] **Step 2** 更新 architect（阶段表 P3 ✅、ADR-014/015/016、维护记录）
-- [ ] **Step 3** human_decision 追加 HD-009（第三天范围 = P3；HTML 用标准库而非 bs4 属实现派生决策，登记在 architect ADR-014）
-- [ ] **Step 4** 真实跑一次垂直切片，记录产物（证据数/定量条数/memo 片段）
-- [ ] **Step 5** Commit + tag `w2-p3`
+- [x] **Step 1** 更新 README（P3 状态、支持格式、测试数）
+- [x] **Step 2** 更新 architect（阶段表 P3 ✅、ADR-014/015/016、维护记录）
+- [x] **Step 3** human_decision 追加 HD-009（第三天范围 = P3；HTML 用标准库而非 bs4 属实现派生决策，登记在 architect ADR-014）
+- [x] **Step 4** 真实跑一次垂直切片，记录产物（证据数/定量条数/memo 片段）
+- [x] **Step 5** Commit + tag `w2-p3`
+
+---
+
+## Task 7（收尾补做）：真实复跑暴露的两个缺陷
+
+计划内步骤完成后，用真实 arXiv abs 页复跑，发现两个计划未覆盖的质量问题。
+
+- [x] **缺陷 1：`claims` 跨 run 污染** — CLI 用 `SqlClaimRepository.list_all()`，`claims run_a` 会打印全库所有 run 的主张（空 run 也会打印别人的结论）。改为 `list_by_run(run_id)`，新增 `tests/unit/test_cli_claims.py` 两条回归（作用域隔离 + 空 run 不得输出）；
+- [x] **缺陷 2：站点标签成为证据** — 真实页 19 条证据中 10 条是导航标签（"Demos"、"Recommenders and Search Tools"、"Bibliographic and Citation Tools"…），长度阈值拦不住。加 `is_complete_sentence()`（证据结尾必须是 `.!?`，允许尾随引号/括号），19 → 10 条，偏移仍逐字成立；
+- [x] **复跑记录** — 38 块 / 10 证据 / 1 主张（来自 abstract）/ 所有偏移 `chunk.text[a:b] == evidence.text` 成立 / memo 渲染 `chars 204-424`；测试 101 → 106。
 
 ---
 
