@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+
+# Test artifacts
+.pytest_cache/
+.pytest_tmp/
+
+# Project runtime artifacts
+research_os.db
+reports/
+
+# Local env
+.env
