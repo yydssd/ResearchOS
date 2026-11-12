@@ -8,6 +8,7 @@ without a new dependency. If real-world pages later defeat it, swap in bs4 behin
 
 from __future__ import annotations
 
+import re
 from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
@@ -23,9 +24,23 @@ _HEADING_TAGS = frozenset({"h1", "h2", "h3", "h4", "h5", "h6"})
 # Content containers: when a page has one, only text inside it is content.
 _CONTENT_TAGS = frozenset({"main", "article"})
 
+# ar5iv keeps the rendered form and the LaTeX source side by side ("96%96\%",
+# "1×11\times 1", "10×10\times"). Left in place one number reads as two or three,
+# which corrupts numeric extraction and inflates evidence. The patterns are
+# ordered most-specific first: the long form carries the repeated operand, the
+# short form only the trailing command.
+_ECHO_TIMES_LONG = re.compile(r"(\d+(?:\.\d+)?)×(\d+(?:\.\d+)?)\1\\(?:times)\s*\2")
+_ECHO_TIMES_SHORT = re.compile(r"(\d+(?:\.\d+)?×\d+(?:\.\d+)?)\\(?:times)")
+_ECHO_PERCENT = re.compile(r"(\d+(?:\.\d+)?)\%(\d+(?:\.\d+)?)\\%")
+
 
 def _collapse(text: str) -> str:
-    return " ".join(unescape(text).split())
+    """Normalize one block: undo ar5iv's LaTeX echo, then collapse whitespace."""
+    text = unescape(text)
+    text = _ECHO_TIMES_LONG.sub(r"\1×\2", text)  # 1×11\times 1 -> 1×1
+    text = _ECHO_TIMES_SHORT.sub(r"\1", text)  # 10×10\times   -> 10×10
+    text = _ECHO_PERCENT.sub(r"\1%", text)  # 96%96\%       -> 96%
+    return " ".join(text.split())
 
 
 class _SectionParser(HTMLParser):

@@ -4,9 +4,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from research_os.documents.html import html_to_pages
+from research_os.documents.chunks import chunk_pages
+from research_os.documents.html import html_to_pages, load_html
 from research_os.documents.loader import load_document, source_type_for
 from research_os.domain.enums import SourceType
+from research_os.research.evidence_extractor import HeuristicEvidenceExtractor
 
 HTML = """<html><head><style>.x{color:red}</style><script>alert(1)</script></head>
 <body>
@@ -59,3 +61,36 @@ def test_source_type_detects_html_and_readme(tmp_path):
     assert source_type_for(tmp_path / "a.html") == SourceType.HTML
     assert source_type_for(tmp_path / "README.md") == SourceType.README
     assert source_type_for(tmp_path / "notes.md") == SourceType.MARKDOWN
+
+
+def test_latex_echo_is_deduplicated(tmp_path):
+    """ar5iv renders ``96%96\\%`` and ``1×11\\times 1``: the rendered form is
+    immediately repeated as LaTeX source. Left in place, one number reads as two."""
+    page = (
+        "<html><body><main><p>AutoDIR gathers more than 96%96\\% of the votes.</p>"
+        "<p>We use 1×11\\times 1 convolution and a 10×10\\times patch.</p></main></body></html>"
+    )
+    path = tmp_path / "echo.html"
+    path.write_text(page, encoding="utf-8")
+
+    body = " ".join(p.text for p in load_html(path))
+
+    assert "96%96\\%" not in body
+    assert "96% of the votes" in body
+    assert "1×1 convolution" in body
+    assert "10×10 patch" in body
+
+
+def test_deduplication_keeps_offsets_consistent(tmp_path):
+    page = (
+        "<html><body><p>It gathers more than 96%96\\% of the votes in the user study, "
+        "which is far ahead of every competing restoration method.</p></body></html>"
+    )
+    path = tmp_path / "echo2.html"
+    path.write_text(page, encoding="utf-8")
+
+    chunks = chunk_pages(load_html(path), "sv_echo")
+    evidence = HeuristicEvidenceExtractor().extract(chunks)
+
+    assert evidence
+    assert all(chunk.text[e.char_start : e.char_end] == e.text for chunk in chunks for e in evidence)
