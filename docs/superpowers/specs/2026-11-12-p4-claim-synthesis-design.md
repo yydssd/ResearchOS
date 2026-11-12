@@ -160,10 +160,11 @@ state-of-the-art methods`——这一句里没有任何对照数据，把它记�
 7. **数学重复净化**：`96%96\%` → `96%`，且净化后偏移仍 `chunk.text[a:b] == evidence.text`。
 8. **状态标记**：fixture 6 条主张 → **4 SUPPORTED / 2 UNSUPPORTED**：
    `The gating mechanism enables…`（定性，MEDIUM）、Rain100H 与 SIDD（structured，MEDIUM）、
-   `Rain100L … 0.11 dB`（SUPPORTED 但 LOW + `quantitative_unstructured`）、
+   `Rain100L … 0.11 dB`（经 §7 的 delta 通道后同样 structured，MEDIUM）、
    `We believe…` 与 `Future work…`（UNSUPPORTED）。即：只有真正的推测句才降为 unsupported。
-   另加一例 `SwinIR outperforms state-of-the-art methods`（无对照数据）→ SUPPORTED / LOW /
-   `comparative_unsubstantiated`。
+   > 实施偏差（已按此实现）：本文档原先把 `Rain100L … 0.11 dB` 列为 `quantitative_unstructured`，
+   > 但 §7 的 delta 通道恰好能结构化这句，因此该 flag 的回归样例移到
+   > `tests/unit/test_claim_status.py`（无单位、无指标、无定量行的数值句），fixture 里不再出现。
 9. **真实语料回归**：4 篇 ar5iv 全文跑通不报错；identity 完整率从 0% 提升到 ≥10%；
    跨文档合并触发 0 次（记录为已知限制，不作为失败）。
 10. `pytest` 全绿，现有 106 条测试不回归。

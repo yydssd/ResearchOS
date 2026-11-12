@@ -6,12 +6,13 @@
 
 ---
 
-## 当前状态（2026-11-12 · W2 / P3 完成）
+## 当前状态（2026-11-12 · W3 / P4 完成）
 
-- **阶段**：P0 ✅ · P1 ✅ · P2 ✅ · **P3 Evidence Quality ✅**
-- **验收结果**：`pytest` 106 passed（+2 opt-in 真实网络）；分块落库、证据偏移逐字可验证、位置缺失证据被拒收、4 条定量证据（Rain100H PSNR/SSIM、SIDD PSNR 39.18 vs 39.01）
-- **格式覆盖**：PDF · Markdown · README · HTML（真实 arXiv abs 页：38 块 / 10 条证据（句子完整性过滤后）/ 偏移校验通过）
-- **下一步**：P4 Claim Synthesis（归一化、范围/条件抽取、unsupported 检测、不合并跨数据集主张）
+- **阶段**：P0 ✅ · P1 ✅ · P2 ✅ · P3 ✅ · **P4 Claim Synthesis ✅**
+- **验收结果**：`pytest` 147 passed（+2 opt-in 真实网络）；主张带 `identity_key`（七维）、按身份合并、memo 显示 Scope/Conditions/Grounding 与 `# Claims Kept Separate`
+- **格式覆盖**：PDF · Markdown · README · HTML（含 ar5iv 全文；公式回声已净化）
+- **实测口径**：单句 identity 完整率 0/215；引入块级继承后 fixture 6 条主张 = 4 SUPPORTED / 2 UNSUPPORTED
+- **下一步**：P5 Contradiction（两两矛盾评估，≥20 fixtures / ≥85%）；前置条件是本层产出的"同 scope 异方向/异值"主张
 
 ## 架构定位
 
@@ -36,7 +37,7 @@ Python 3.12+（conda `reOS` 环境）· FastAPI · Pydantic v2 · SQLAlchemy · 
 
 `ResearchQuestion` · `ResearchWork`（一作多版本）· `SourceVersion`（verified + `source_tier`）· **`SourceCandidate`（发现候选，独立表）** · `Evidence`（必带来源位置）· `Claim`（6 状态 + 4 置信标签）· `ClaimEvidenceRelation`（5 类关系）· `ContradictionAssessment`（5 类关系）
 
-## 包结构（P2 `sources/` + P3 文档与证据层）
+## 包结构（P2 `sources/` · P3 文档与证据层 · P4 主张层）
 
 | 模块 | 职责 | LLM？ |
 |---|---|---|
@@ -50,16 +51,20 @@ Python 3.12+（conda `reOS` 环境）· FastAPI · Pydantic v2 · SQLAlchemy · 
 | `documents/html.py` | HTML 加载（stdlib parser；优先 `<main>`/`<article>` 内容） | 否 |
 | `documents/chunks.py` | 溯源分块（page/section/chunk_index/content_hash） | 否 |
 | `research/evidence_extractor.py` | 原文区间切句 → 证据 + 精确 char 偏移 + `has_location` 校验 | 否 |
-| `research/quantitative.py` | 定量证据抽取（指标/数值/数据集/对照/单位） | 否 |
-| `research/lexicon.py` | 数据集与指标共享词表 | 否 |
+| `research/quantitative.py` | 定量证据抽取（指标/数值/数据集/对照/单位 + 无指标词 delta） | 否 |
+| `research/scope.py` | 块级 task / dataset 继承（章节标题 + 节内首个点名句），带 provenance | 否 |
+| `research/claims.py` | 主张 identity 七维、合并门槛、状态与质量 flag | 否 |
+| `research/claim_builder.py` | identity → 分组 → 每条证据一条 SUPPORTS | 否 |
+| `research/lexicon.py` | 数据集 / 指标 / 任务词表 + 第三方标识 | 否 |
 
-## 流水线（v3）
+## 流水线（v4）
 
 ```
 Question → 查询生成 → Provider[] → SourceCandidate → 规范化 → 去重/合并
         → canonical Work + SourceVersion[] → 核验
         → 加载（PDF/MD/HTML/README）→ 分块（落库）→ 证据（精确偏移 + 位置校验）
-        → 定量证据 → 主张 → 关系 → 矛盾 → Memo
+        → 定量证据 → 块级 scope → 主张 identity → 合并 → 状态/质量 flag
+        → 关系 → 矛盾 → Memo（Scope / Conditions / Grounding / Kept Separate）
 ```
 
 ## 编排
@@ -90,6 +95,9 @@ Supervisor 独占预算（`search_calls` / `sources_discovered`）与事件；pr
 | ADR-017 | 位置缺失的证据不入库，记 `CITATION_LOCATION_MISSING` 事件并写入 warnings（§2.2：链不完整必须显式标记，不得静默通过） | ACTIVE |
 | ADR-018 | 证据必须是**完整句子**（结尾为 `.!?`，允许其后紧跟引号/括号）。网页里大段导航标签是"长而无句界"的文本，任何长度阈值都拦不住，只有句界判据能把它与散文分开；实测 arXiv abs 页 19→10 条证据，偏移仍逐字成立 | ACTIVE |
 | ADR-019 | 追溯类输出（`claims`、`sources`、`inspect-claim`）一律按 `run_id` 作用域查询，禁止全库 `list_all()` 兜底；跨 run 聚合会让一个研究问题的结论混进另一个的审计链 | ACTIVE |
+| ADR-020 | 主张的 task / dataset 从**块级上下文**继承（章节标题 + 节内首个点名句），不只从句子抽。实测：10 篇文档 215 条主张，单句完整 identity 命中 0 条；task 单句 17%、继承标题后 50% | ACTIVE |
+| ADR-021 | `value_bucket` 进入 identity，数值不一致不合并。合并同键异值会让一条主张内部出现两个矛盾数值，P5 的"比较两条主张"输入模型就再也看不到这个分歧——去重成功、矛盾信号被消灭 | ACTIVE |
+| ADR-022 | `UNSUPPORTED` 只表示"无支撑证据"（推测/未来工作）；"有证据但数值未结构化 / 范围不可判定 / 比较无对照"一律 SUPPORTED + LOW + 命名 flag。否则 unsupported 会退化成"低置信度"的同义词 | ACTIVE |
 
 ## 阶段状态
 
@@ -99,8 +107,8 @@ Supervisor 独占预算（`search_calls` / `sources_discovered`）与事件；pr
 | P1 Vertical Slice | W1 | 本地论文→证据→主张→memo | 6 主张（4 SUPPORTED/2 UNSUPPORTED）·链可查 | ✅ DONE |
 | P2 Source Discovery | W2 | 搜索抽象·规范化·版本合并·canonical work·核验 | 真实跑 26 候选/23 works；arXiv+会议版合并；verified 可分 | ✅ DONE |
 | P3 Evidence Quality | W2 | 多格式加载·分块落库·精确偏移·定量证据 | 分块带溯源；证据偏移逐字可验证；定量成表 | ✅ DONE |
-| P4 Claim Synthesis | W3 | 归一化·范围区分·unsupported 检测 | 不合并跨数据集主张 | TO DO（当前） |
-| P5 Contradiction | W3 | 两两矛盾评估 | ≥20 fixtures·≥85% | TO DO |
+| P4 Claim Synthesis | W3 | 块级 scope·identity 键·按身份合并·支撑性标记 | Rain100H/SIDD 不合并；跨源同值合并；4 SUPPORTED/2 UNSUPPORTED | ✅ DONE |
+| P5 Contradiction | W3 | 两两矛盾评估 | ≥20 fixtures·≥85% | TO DO（当前） |
 | P6 Research Memo | W3 | 结构化 Markdown memo | 主要发现带引用 | TO DO |
 | P7 Falsification | W4 | 反证搜索·负消融（证伪导向） | 对重要主张执行 | TO DO |
 | P8 Evaluation | W4 | Baseline A/B vs ResearchOS 基准 | 5 项指标+成本 | TO DO |
@@ -118,7 +126,10 @@ CLI（主接口）：`research-os run/status/claims/report/inspect-claim` · **`
 4. PDF 章节标题未识别（section 为空），仅页级溯源；需字体启发式，误判风险高，留待后续。
 5. 句子切分对 `et al. 2023` 这类缩写会误判句界；分块/分页处被截断的半句因无句界会被丢弃（宁可漏收，不可错收）。
 6. 通用网页的**散文档**站点文案（如 arXivLabs 说明段，本身是完整句子）仍会入证据；标签碎片已由句界判据挡掉，剩下的是主题相关性问题，属 P7。
-7. 定量抽取只认 ASCII 指标词与数字，表格结构不还原；无指标词的 "0.11 dB improvement" 不会成为定量证据。
+7. 定量抽取只认 ASCII 指标词与数字，表格结构不还原；无指标词的增益已由 `delta` 通道覆盖（P4），但表格与图注中的数值仍抽不到。
+8. 跨源合并在真实语料上几乎不触发：需要同一方法在同一数据集上被他人复现。验收证据来自 `tests/fixtures/claim_merge/`，不来自真实论文。
+9. `SELF` 默认依赖第三方标识黑名单（previous/baseline/SOTA…），漏判会把前人方法的结果算到本文方法头上；相关通道只会降置信，不会纠正归属。
+10. 段落级回指只覆盖"段首点名"一种；代词与别名指代抽不到。
 
 ## 维护约定（代码注释规则）
 
@@ -139,3 +150,4 @@ CLI（主接口）：`research-os run/status/claims/report/inspect-claim` · **`
 | 2026-11-12 | 小测发现并修复 arXiv 零召回缺陷（整句短语搜索 → 逐词 AND + 头2尾3 词元，ADR-013）；测试 80→83；真实小规模复测 15 候选/12 works/2 合并 |
 | 2026-11-12 | W2/P3 完成：HTML 加载（stdlib + `<main>` 过滤）、`chunks` 表、证据精确字符偏移、位置缺失拒收、定量证据表与抽取；测试 83→101；ADR-014~017 |
 | 2026-11-12 | P3 收尾修两个真实缺陷：① `claims` 曾全库列主张（跨 run 污染），改为按 run 作用域（ADR-019）；② 真实 arXiv abs 页 19 条证据中 10 条是站点导航标签，加"完整句子"判据后降为 10 条（ADR-018）。真实复跑 38 块 / 10 证据 / 1 主张 / 偏移逐字成立；测试 101→106 |
+| 2026-11-12 | W3/P4 完成：`research/scope.py`（块级继承）、`research/claims.py`（identity 七维 / 合并门槛 / 状态 flag）、claim_builder 改为按身份分组、memo 增 Scope/Conditions/Grounding 与 `# Claims Kept Separate`、定量抽取补 `delta`（无指标词）、ar5iv 公式回声净化；测试 106→147；ADR-020~022 |

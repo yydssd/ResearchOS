@@ -37,7 +37,7 @@
 - Modify: `src/research_os/documents/html.py` (`_collapse`)
 - Test: `tests/unit/test_html_loader.py`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 def test_latex_echo_is_deduplicated():
@@ -71,12 +71,12 @@ def test_deduplication_keeps_offsets_consistent():
     assert all(c.text[e.char_start : e.char_end] == e.text for c in chunks for e in evidence)
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `pytest tests/unit/test_html_loader.py -q`
 Expected: FAIL — `"96%96\%"` still present.
 
-- [ ] **Step 3: Implement in `_collapse`**
+- [x] **Step 3: Implement in `_collapse`**
 
 ```python
 # ar5iv keeps both the rendered form and the LaTeX source next to each other.
@@ -94,12 +94,12 @@ def _collapse(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `pytest tests/unit/test_html_loader.py -q`
 Expected: PASS (existing 5 + 2 new).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/research_os/documents/html.py tests/unit/test_html_loader.py
@@ -116,7 +116,7 @@ git commit -m "fix(documents): undo ar5iv LaTeX echo before chunking"
 - Modify: `src/research_os/research/quantitative.py`
 - Test: `tests/unit/test_quantitative.py`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 def test_delta_value_without_metric_is_captured():
@@ -144,12 +144,12 @@ def test_delta_pass_does_not_duplicate_metric_rows():
     assert rows[0].delta is None
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `pytest tests/unit/test_quantitative.py -q`
 Expected: FAIL — first test gets 0 rows (`metric` requirement blocks it).
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Add to `QuantitativeEvidence`:
 
@@ -202,12 +202,12 @@ def _delta_record(self, text: str) -> QuantitativeEvidence | None:
     )
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `pytest tests/unit/test_quantitative.py -q`
 Expected: PASS (5 existing + 2 new).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/research_os/domain/models.py src/research_os/storage src/research_os/research/quantitative.py tests/unit/test_quantitative.py
@@ -223,7 +223,7 @@ git commit -m "feat(evidence): capture delta values when no metric is named"
 - Modify: `src/research_os/research/lexicon.py` (+ `TASKS`)
 - Test: `tests/unit/test_scope.py`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 def test_task_is_inherited_from_the_section_heading():
@@ -249,12 +249,12 @@ def test_dataset_is_inherited_from_the_sections_first_naming_sentence():
     assert scopes[chunks[1].id].inherited_from["datasets"] == "section-first-mention"
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `pytest tests/unit/test_scope.py -q`
 Expected: FAIL — `ModuleNotFoundError: research_os.research.scope`.
 
-- [ ] **Step 3: Implement `scope.py`**
+- [x] **Step 3: Implement `scope.py`**
 
 ```python
 """Block-level scope context for claim identity (plan §16, P4 spec §4).
@@ -347,12 +347,12 @@ TASKS: tuple[tuple[str, str], ...] = (
 )
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `pytest tests/unit/test_scope.py -q`
 Expected: PASS, 2 passed.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/research_os/research/scope.py src/research_os/research/lexicon.py tests/unit/test_scope.py
@@ -368,7 +368,7 @@ git commit -m "feat(claims): inherit task and dataset from block context"
 - Modify: `src/research_os/domain/models.py` (`Claim.identity_key`), `tables.py`
 - Test: `tests/unit/test_claim_identity.py`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 def test_dataset_makes_two_claims_different():
@@ -421,12 +421,12 @@ def test_self_subject_is_bound_to_its_source():
     assert a.key() != b.key()
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `pytest tests/unit/test_claim_identity.py -q`
 Expected: FAIL — no module `claims`.
 
-- [ ] **Step 3: Implement `claims.py`** (identity part)
+- [x] **Step 3: Implement `claims.py`** (identity part)
 
 ```python
 """Claim identity: what makes two claims "the same claim" (plan §16).
@@ -599,12 +599,12 @@ Add `identity_key` to `Claim`:
     identity_key: str | None = None
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `pytest tests/unit/test_claim_identity.py -q`
 Expected: PASS, 4 passed.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/research_os/research/claims.py src/research_os/research/lexicon.py src/research_os/domain/models.py src/research_os/storage/tables.py src/research_os/storage/database.py tests/unit/test_claim_identity.py
@@ -619,7 +619,7 @@ git commit -m "feat(claims): deterministic claim identity with source-bound SELF
 - Modify: `src/research_os/research/claim_builder.py`
 - Test: `tests/unit/test_claim_merge.py`, fixtures `tests/fixtures/claim_merge/paper_a.md`, `paper_b.md`, `paper_c.md`
 
-- [ ] **Step 1: Write the fixtures and the failing test**
+- [x] **Step 1: Write the fixtures and the failing test**
 
 `paper_a.md`: `# Results\n\nOn the Rain100H benchmark, Restormer improves PSNR by 0.42 dB.\n`
 `paper_b.md`: `# Results\n\nOn the Rain100H benchmark, Restormer improves PSNR by 0.42 dB.\n`
@@ -646,12 +646,12 @@ def test_our_method_from_two_papers_never_merges():
     assert len(claims) == 2
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `pytest tests/unit/test_claim_merge.py -q`
 Expected: FAIL — 2 claims, because the builder still keys on text.
 
-- [ ] **Step 3: Rewrite `claim_builder.py`**
+- [x] **Step 3: Rewrite `claim_builder.py`**
 
 ```python
 """Claim construction: identity, merge, relation (plan §16).
@@ -753,12 +753,12 @@ class HeuristicClaimBuilder:
 `_is_claim_text` keeps the existing mark/regex pair; `_claim_type` keeps the
 existing comparative/factual split.
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `pytest tests/unit/test_claim_merge.py -q`
 Expected: PASS, 3 passed.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/research_os/research/claim_builder.py tests/unit/test_claim_merge.py tests/fixtures/claim_merge
@@ -773,7 +773,7 @@ git commit -m "feat(claims): merge claims by identity instead of wording"
 - Modify: `src/research_os/research/claims.py`
 - Test: `tests/unit/test_claim_status.py`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 def test_speculation_is_unsupported_without_a_relation():
@@ -806,12 +806,12 @@ def test_comparative_without_control_is_flagged():
     assert "comparative_unsubstantiated" in flags
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `pytest tests/unit/test_claim_status.py -q`
 Expected: FAIL — `classify_claim` missing.
 
-- [ ] **Step 3: Implement `classify_claim` in `claims.py`**
+- [x] **Step 3: Implement `classify_claim` in `claims.py`**
 
 ```python
 SPECULATION = re.compile(
@@ -849,12 +849,12 @@ def classify_claim(text, identity, evidence, quant_by_evidence):
     return ClaimStatus.SUPPORTED, confidence, flags
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `pytest tests/unit/test_claim_status.py -q`
 Expected: PASS, 3 passed.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/research_os/research/claims.py tests/unit/test_claim_status.py
@@ -871,7 +871,7 @@ git commit -m "feat(claims): separate 'unsupported' from 'weak evidence'"
 - Modify: `src/research_os/cli.py`
 - Test: `tests/integration/test_claim_synthesis.py`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 def test_memo_shows_scope_and_keeps_differing_datasets_apart(db, tmp_path):
@@ -885,12 +885,12 @@ def test_memo_shows_scope_and_keeps_differing_datasets_apart(db, tmp_path):
     assert "Rain100H" in memo and "SIDD" in memo
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `pytest tests/integration/test_claim_synthesis.py -q`
 Expected: FAIL — memo has no `Scope:` line.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 supervisor: pass `quantitative=quantitative_evidence, chunks=chunks` into `self._claim_builder.build(...)`.
 memo: Finding block gains
@@ -904,12 +904,12 @@ memo: Finding block gains
 plus a new section listing groups sharing subject+metric but differing in dataset.
 cli: `claims` prints `scope` between status and text.
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `pytest -q`
 Expected: full suite green (≥ 120 passed).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/research_os/orchestration/supervisor.py src/research_os/reporting/memo.py src/research_os/cli.py tests/integration/test_claim_synthesis.py
@@ -922,11 +922,11 @@ git commit -m "feat(claims): surface scope, grounding and kept-separate groups"
 
 **Files:** `README.md`, `architect.md`, `human_decision.md`, this plan's checkboxes
 
-- [ ] **Step 1** README: P4 status line, test count, limitations (real-corpus merge never fires; 78% metric-free values; tables not read).
-- [ ] **Step 2** architect: ADR-020 (block-level scope inheritance), ADR-021 (value in identity so merging cannot erase P5's signal), ADR-022 (`UNSUPPORTED` means no evidence), stage table P4 ✅, limitations.
-- [ ] **Step 3** human_decision: HD-010 (P4 scope = claim synthesis only; the probe-driven redesign is recorded as an ADR, not a human decision).
-- [ ] **Step 4** tick every checkbox above.
-- [ ] **Step 5** Commit + tag `w3-p4`.
+- [x] **Step 1** README: P4 status line, test count, limitations (real-corpus merge never fires; 78% metric-free values; tables not read).
+- [x] **Step 2** architect: ADR-020 (block-level scope inheritance), ADR-021 (value in identity so merging cannot erase P5's signal), ADR-022 (`UNSUPPORTED` means no evidence), stage table P4 ✅, limitations.
+- [x] **Step 3** human_decision: HD-010 (P4 scope = claim synthesis only; the probe-driven redesign is recorded as an ADR, not a human decision).
+- [x] **Step 4** tick every checkbox above.
+- [x] **Step 5** Commit + tag `w3-p4`.
 
 ---
 
