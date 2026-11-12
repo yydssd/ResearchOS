@@ -9,6 +9,7 @@ per-chunk provenance is kept so `inspect-claim` can show where it came from.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 
 from research_os.domain.models import DocumentChunk
@@ -32,6 +33,28 @@ def _task_of(text: str) -> str | None:
     return None
 
 
+_ABSTRACT = re.compile(r"^\s*(?:\d+\.?\s*)?abstract\s*$", re.IGNORECASE)
+
+
+def _document_task(chunks: list[DocumentChunk]) -> str | None:
+    """The paper's own task, used when a heading names none.
+
+    The abstract is read first: a later section may study a second task ("early
+    work studied super-resolution in isolation") without that becoming the
+    document's task. Falls back to the first chunk that names a task at all.
+    """
+    for chunk in chunks:
+        if _ABSTRACT.match(chunk.section or ""):
+            task = _task_of(chunk.text)
+            if task:
+                return task
+    for chunk in chunks:
+        task = _task_of(chunk.text)
+        if task:
+            return task
+    return None
+
+
 def _datasets_of(text: str) -> frozenset[str]:
     low = text.lower()
     return frozenset(d for d in DATASETS if d.lower() in low)
@@ -47,15 +70,20 @@ def build_section_scopes(chunks: list[DocumentChunk]) -> dict[str, BlockScope]:
     """
     scopes: dict[str, BlockScope] = {}
     sections: dict[tuple[str, str | None], list[DocumentChunk]] = {}
+    by_source: dict[str, list[DocumentChunk]] = {}
     for chunk in chunks:
         sections.setdefault((chunk.source_version_id, chunk.section), []).append(chunk)
+        by_source.setdefault(chunk.source_version_id, []).append(chunk)
+    document_tasks = {sv: _document_task(group) for sv, group in by_source.items()}
 
-    for (_source_version, section), group in sections.items():
+    for (source_version, section), group in sections.items():
         heading_task = _task_of(section or "")
         inherited = _datasets_of(section or "")
         provenance: dict[str, str] = {}
         if heading_task:
             provenance["task"] = "heading"
+        elif document_tasks.get(source_version):
+            provenance["task"] = "document"
         if inherited:
             provenance["datasets"] = "heading"
         else:
@@ -65,6 +93,7 @@ def build_section_scopes(chunks: list[DocumentChunk]) -> dict[str, BlockScope]:
                     inherited = found
                     provenance["datasets"] = "section-first-mention"
                     break
+        task = heading_task or document_tasks.get(source_version)
         for chunk in group:
-            scopes[chunk.id] = BlockScope(heading_task, inherited, dict(provenance))
+            scopes[chunk.id] = BlockScope(task, inherited, dict(provenance))
     return scopes

@@ -76,3 +76,56 @@ def test_empty_section_yields_an_empty_scope():
     scopes = build_section_scopes(chunks)
 
     assert scopes[chunks[0].id] == BlockScope(task=None, datasets=frozenset(), inherited_from={})
+
+
+def test_section_without_a_task_falls_back_to_the_document_task():
+    """On the 20-paper hold-out, 1082 of 1242 claim sentences got no task: the
+    task lives in the abstract ("all-in-one image restoration"), while headings
+    say "8 Further Ablation Study" or "1 Introduction". Falling back to the
+    document's own task keeps those claims mergeable without inventing scope."""
+    chunks = [
+        _chunk(0, "Abstract", "We present a unified model for image restoration."),
+        _chunk(1, "8 Further Ablation Study", "Removing the prompt drops the score by 0.3 dB."),
+    ]
+
+    scopes = build_section_scopes(chunks)
+
+    assert scopes[chunks[1].id].task == "image restoration"
+    assert scopes[chunks[1].id].inherited_from["task"] == "document"
+
+
+def test_heading_task_beats_the_document_task():
+    chunks = [
+        _chunk(0, "Abstract", "We present a unified model for image restoration."),
+        _chunk(1, "RGB Image Denoising.", "The gain over the baseline is 0.2 dB."),
+    ]
+
+    scopes = build_section_scopes(chunks)
+
+    assert scopes[chunks[1].id].task == "denoising"
+    assert scopes[chunks[1].id].inherited_from["task"] == "heading"
+
+
+def test_document_task_is_taken_from_the_abstract_first():
+    """A later section may study a second task; the paper's own task is the one
+    the abstract declares."""
+    chunks = [
+        _chunk(0, "Abstract", "We present a unified model for image restoration."),
+        _chunk(1, "Related work", "Early work studied super-resolution in isolation."),
+        _chunk(2, "5 Conclusion", "The method is robust across degradations."),
+    ]
+
+    scopes = build_section_scopes(chunks)
+
+    assert scopes[chunks[2].id].task == "image restoration"
+
+
+def test_document_task_does_not_cross_sources():
+    chunks = [
+        _chunk(0, "Abstract", "We present a unified model for image restoration.", sv="sv_a"),
+        _chunk(1, "5 Conclusion", "The method is robust across degradations.", sv="sv_b"),
+    ]
+
+    scopes = build_section_scopes(chunks)
+
+    assert scopes[chunks[1].id].task is None
