@@ -1,0 +1,274 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/zF46bllS7WFjgcjS7gXLJGUVZng</id>
+  <title>arXiv Query: search_query=all:"all-in-one image restoration"&amp;id_list=&amp;start=0&amp;max_results=10</title>
+  <updated>2026-11-12T10:05:09Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=all:%22all-in-one+image+restoration%22&amp;start=0&amp;max_results=10&amp;id_list=" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>10</opensearch:itemsPerPage>
+  <opensearch:totalResults>86</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2406.18242v1</id>
+    <title>ConStyle v2: A Strong Prompter for All-in-One Image Restoration</title>
+    <updated>2024-06-26T10:46:44Z</updated>
+    <link href="https://arxiv.org/abs/2406.18242v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2406.18242v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>This paper introduces ConStyle v2, a strong plug-and-play prompter designed to output clean visual prompts and assist U-Net Image Restoration models in handling multiple degradations. The joint training process of IRConStyle, an Image Restoration framework consisting of ConStyle and a general restoration network, is divided into two stages: first, pre-training ConStyle alone, and then freezing its weights to guide the training of the general restoration network. Three improvements are proposed in the pre-training stage to train ConStyle: unsupervised pre-training, adding a pretext task (i.e. classification), and adopting knowledge distillation. Without bells and whistles, we can get ConStyle v2, a strong prompter for all-in-one Image Restoration, in less than two GPU days and doesn't require any fine-tuning. Extensive experiments on Restormer (transformer-based), NAFNet (CNN-based), MAXIM-1S (MLP-based), and a vanilla CNN network demonstrate that ConStyle v2 can enhance any U-Net style Image Restoration models to all-in-one Image Restoration models. Furthermore, models guided by the well-trained ConStyle v2 exhibit superior performance in some specific degradation compared to ConStyle.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="eess.IV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-06-26T10:46:44Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Dongqi Fan</name>
+    </author>
+    <author>
+      <name>Junhao Zhang</name>
+    </author>
+    <author>
+      <name>Liang Chang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2601.10192v1</id>
+    <title>From Physical Degradation Models to Task-Aware All-in-One Image Restoration</title>
+    <updated>2026-01-15T08:47:10Z</updated>
+    <link href="https://arxiv.org/abs/2601.10192v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2601.10192v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>All-in-one image restoration aims to adaptively handle multiple restoration tasks with a single trained model. Although existing methods achieve promising results by introducing prompt information or leveraging large models, the added learning modules increase system complexity and hinder real-time applicability. In this paper, we adopt a physical degradation modeling perspective and predict a task-aware inverse degradation operator for efficient all-in-one image restoration. The framework consists of two stages. In the first stage, the predicted inverse operator produces an initial restored image together with an uncertainty perception map that highlights regions difficult to reconstruct, ensuring restoration reliability. In the second stage, the restoration is further refined under the guidance of this uncertainty map. The same inverse operator prediction network is used in both stages, with task-aware parameters introduced after operator prediction to adapt to different degradation tasks. Moreover, by accelerating the convolution of the inverse operator, the proposed method achieves efficient all-in-one image restoration. The resulting tightly integrated architecture, termed OPIR, is extensively validated through experiments, demonstrating superior all-in-one restoration performance while remaining highly competitive on task-aligned restoration.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-01-15T08:47:10Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Hu Gao</name>
+    </author>
+    <author>
+      <name>Xiaoning Lei</name>
+    </author>
+    <author>
+      <name>Xichen Xu</name>
+    </author>
+    <author>
+      <name>Xingjian Wang</name>
+    </author>
+    <author>
+      <name>Lizhuang Ma</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2504.17732v3</id>
+    <title>DPMambaIR: All-in-One Image Restoration via Degradation-Aware Prompt State Space Model</title>
+    <updated>2026-02-05T09:06:01Z</updated>
+    <link href="https://arxiv.org/abs/2504.17732v3" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2504.17732v3" rel="related" type="application/pdf" title="pdf"/>
+    <summary>All-in-One image restoration aims to address multiple image degradation problems using a single model, offering a more practical and versatile solution compared to designing dedicated models for each degradation type. Existing approaches typically rely on Degradation-specific models or coarse-grained degradation prompts to guide image restoration. However, they lack fine-grained modeling of degradation information and face limitations in balancing multi-task conflicts. To overcome these limitations, we propose DPMambaIR, a novel All-in-One image restoration framework that introduces a fine-grained degradation extractor and a Degradation-Aware Prompt State Space Model (DP-SSM). The DP-SSM leverages the fine-grained degradation features captured by the extractor as dynamic prompts, which are then incorporated into the state space modeling process. This enhances the model's adaptability to diverse degradation types, while a complementary High-Frequency Enhancement Block (HEB) recovers local high-frequency details. Extensive experiments on a mixed dataset containing seven degradation types show that DPMambaIR achieves the best performance, with 27.69dB and 0.893 in PSNR and SSIM, respectively. These results highlight the potential and superiority of DPMambaIR as a unified solution for All-in-One image restoration.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-04-24T16:46:32Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Zhanwen Liu</name>
+    </author>
+    <author>
+      <name>Sai Zhou</name>
+    </author>
+    <author>
+      <name>Yuchao Dai</name>
+    </author>
+    <author>
+      <name>Yang Wang</name>
+    </author>
+    <author>
+      <name>Yisheng An</name>
+    </author>
+    <author>
+      <name>Xiangmo Zhao</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2310.10123v5</id>
+    <title>AutoDIR: Automatic All-in-One Image Restoration with Latent Diffusion</title>
+    <updated>2024-05-28T09:10:39Z</updated>
+    <link href="https://arxiv.org/abs/2310.10123v5" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2310.10123v5" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We present AutoDIR, an innovative all-in-one image restoration system incorporating latent diffusion. AutoDIR excels in its ability to automatically identify and restore images suffering from a range of unknown degradations. AutoDIR offers intuitive open-vocabulary image editing, empowering users to customize and enhance images according to their preferences. Specifically, AutoDIR consists of two key stages: a Blind Image Quality Assessment (BIQA) stage based on a semantic-agnostic vision-language model which automatically detects unknown image degradations for input images, an All-in-One Image Restoration (AIR) stage utilizes structural-corrected latent diffusion which handles multiple types of image degradations. Extensive experimental evaluation demonstrates that AutoDIR outperforms state-of-the-art approaches for a wider range of image restoration tasks. The design of AutoDIR also enables flexible user control (via text prompt) and generalization to new tasks as a foundation model of image restoration. Project is available at: \url{https://jiangyitong.github.io/AutoDIR_webpage/}.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-10-16T07:00:32Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Yitong Jiang</name>
+    </author>
+    <author>
+      <name>Zhaoyang Zhang</name>
+    </author>
+    <author>
+      <name>Tianfan Xue</name>
+    </author>
+    <author>
+      <name>Jinwei Gu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2505.12630v1</id>
+    <title>Degradation-Aware Feature Perturbation for All-in-One Image Restoration</title>
+    <updated>2025-05-19T02:37:11Z</updated>
+    <link href="https://arxiv.org/abs/2505.12630v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2505.12630v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>All-in-one image restoration aims to recover clear images from various degradation types and levels with a unified model. Nonetheless, the significant variations among degradation types present challenges for training a universal model, often resulting in task interference, where the gradient update directions of different tasks may diverge due to shared parameters. To address this issue, motivated by the routing strategy, we propose DFPIR, a novel all-in-one image restorer that introduces Degradation-aware Feature Perturbations(DFP) to adjust the feature space to align with the unified parameter space. In this paper, the feature perturbations primarily include channel-wise perturbations and attention-wise perturbations. Specifically, channel-wise perturbations are implemented by shuffling the channels in high-dimensional space guided by degradation types, while attention-wise perturbations are achieved through selective masking in the attention space. To achieve these goals, we propose a Degradation-Guided Perturbation Block (DGPB) to implement these two functions, positioned between the encoding and decoding stages of the encoder-decoder architecture. Extensive experimental results demonstrate that DFPIR achieves state-of-the-art performance on several all-in-one image restoration tasks including image denoising, image dehazing, image deraining, motion deblurring, and low-light image enhancement. Our codes are available at https://github.com/TxpHome/DFPIR.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-05-19T02:37:11Z</published>
+    <arxiv:comment>Accepted to CVPR 2025. 8 pages, 7 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Xiangpeng Tian</name>
+    </author>
+    <author>
+      <name>Xiangyu Liao</name>
+    </author>
+    <author>
+      <name>Xiao Liu</name>
+    </author>
+    <author>
+      <name>Meng Li</name>
+    </author>
+    <author>
+      <name>Chao Ren</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2408.08091v4</id>
+    <title>HAIR: Hypernetworks-based All-in-One Image Restoration</title>
+    <updated>2024-11-18T09:40:37Z</updated>
+    <link href="https://arxiv.org/abs/2408.08091v4" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2408.08091v4" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Image restoration aims to recover a high-quality clean image from its degraded version. Recent progress in image restoration has demonstrated the effectiveness of All-in-One image restoration models in addressing various unknown degradations simultaneously. However, these existing methods typically utilize the same parameters to tackle images with different types of degradation, forcing the model to balance the performance between different tasks and limiting its performance on each task. To alleviate this issue, we propose HAIR, a Hypernetworks-based All-in-One Image Restoration plug-and-play method that generates parameters based on the input image and thus makes the model to adapt to specific degradation dynamically. Specifically, HAIR consists of two main components, i.e., Classifier and Hyper Selecting Net (HSN). The Classifier is a simple image classification network used to generate a Global Information Vector (GIV) that contains the degradation information of the input image, and the HSN is a simple fully-connected neural network that receives the GIV and outputs parameters for the corresponding modules. Extensive experiments demonstrate that HAIR can significantly improve the performance of existing image restoration models in a plug-and-play manner, both in single-task and All-in-One settings. Notably, our proposed model Res-HAIR, which integrates HAIR into the well-known Restormer, can obtain superior or comparable performance compared with current state-of-the-art methods. Moreover, we theoretically demonstrate that to achieve a given small enough error, our proposed HAIR requires fewer parameters in contrast to mainstream embedding-based All-in-One methods. The code is available at https://github.com/toummHus/HAIR.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-08-15T11:34:33Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Jin Cao</name>
+    </author>
+    <author>
+      <name>Yi Cao</name>
+    </author>
+    <author>
+      <name>Li Pang</name>
+    </author>
+    <author>
+      <name>Deyu Meng</name>
+    </author>
+    <author>
+      <name>Xiangyong Cao</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2502.19068v2</id>
+    <title>Dynamic Degradation Decomposition Network for All-in-One Image Restoration</title>
+    <updated>2025-03-08T14:50:19Z</updated>
+    <link href="https://arxiv.org/abs/2502.19068v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2502.19068v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Currently, restoring clean images from a variety of degradation types using a single model is still a challenging task. Existing all-in-one image restoration approaches struggle with addressing complex and ambiguously defined degradation types. In this paper, we introduce a dynamic degradation decomposition network for all-in-one image restoration, named D$^3$Net. D$^3$Net achieves degradation-adaptive image restoration with guided prompt through cross-domain interaction and dynamic degradation decomposition. Concretely, in D$^3$Net, the proposed Cross-Domain Degradation Analyzer (CDDA) engages in deep interaction between frequency domain degradation characteristics and spatial domain image features to identify and model variations of different degradation types on the image manifold, generating degradation correction prompt and strategy prompt, which guide the following decomposition process. Furthermore, the prompt-based Dynamic Decomposition Mechanism (DDM) for progressive degradation decomposition, that encourages the network to adaptively select restoration strategies utilizing the two-level prompt generated by CDDA. Thanks to the synergistic cooperation between CDDA and DDM, D$^3$Net achieves superior flexibility and scalability in handling unknown degradation, while effectively reducing unnecessary computational overhead. Extensive experiments on multiple image restoration tasks demonstrate that D$^3$Net significantly outperforms the state-of-the-art approaches, especially improving PSNR by 5.47dB and 3.30dB on the SOTS-Outdoor and GoPro datasets, respectively.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-02-26T11:49:58Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Huiqiang Wang</name>
+    </author>
+    <author>
+      <name>Mingchen Song</name>
+    </author>
+    <author>
+      <name>Guoqiang Zhong</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2606.22801v1</id>
+    <title>Learning Adaptive Dynamical Features via Multi-$τ$ Liquid-Mamba for All-in-one Image Restoration</title>
+    <updated>2026-06-22T03:20:18Z</updated>
+    <link href="https://arxiv.org/abs/2606.22801v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2606.22801v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Image restoration aims to recover high-quality images from degraded observations. Recent Mamba-based image restoration models have demonstrated strong potential in modeling long-range dependencies with linear complexity. However, most existing designs still rely on a single state-evolution timescale, which limits their adaptability to spatially heterogeneous and task-dependent degradation patterns in all-in-one image restoration. In this paper, we propose Multi-$τ$ Liquid-Mamba, an adaptive state space module that introduces input-conditioned multi-timescale liquid discretization into selective state space modeling. Instead of changing the overall selective scan pipeline, the proposed module modulates the effective discretization steps of multiple dynamical branches and adaptively fuses their responses according to degradation-aware gating weights. This design allows the model to capture both fast-varying local details and slowly evolving global structures while preserving the linear scaling property of Mamba with respect to sequence length. Importantly, Multi-$τ$ Liquid-Mamba modulates the effective transition dynamics while preserving the original selective parameterization and hardware-efficient selective scan mechanism, making it a plug-and-play module that can be seamlessly integrated into existing Mamba-based architectures. Built upon this framework, we develop a Multi-$τ$ Liquid-Mamba Image Restoration Network (MLMIR) for all-in-one image restoration. Extensive experiments on a wide range of restoration benchmarks demonstrate that MLMIR consistently achieves state-of-the-art performance in all-in-one image restoration while remaining highly competitive in task-aligned restoration settings.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-06-22T03:20:18Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Hu Gao</name>
+    </author>
+    <author>
+      <name>Changshuo Wang</name>
+    </author>
+    <author>
+      <name>Yulong Chen</name>
+    </author>
+    <author>
+      <name>Lizhuang Ma</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2607.15097v2</id>
+    <title>QuReC: All-in-One Image Restoration with Query-Specific Guidance and Local-Global Response Calibration</title>
+    <updated>2026-07-18T17:48:09Z</updated>
+    <link href="https://arxiv.org/abs/2607.15097v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2607.15097v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>All-in-one image restoration aims to recover clean images degraded by multiple corruption types using a single unified model. Existing methods typically rely on image-level prompts or shared guidance to handle diverse degradations. However, such a paradigm becomes inadequate when degradations are spatially heterogeneous or even coexist in mixed forms within a single image. Yet spatially adaptive guidance alone is not sufficient, since accurate restoration also requires each spatial query to reliably aggregate complementary information from local neighborhoods and global contexts. To this end, we propose QuReC, a unified framework for all-in-one image restoration. QuReC consists of a Degradation-Guided Query Reconstruction Module (DQRM) and a Local-Global Response Calibration Module (LGRCM). Specifically, DQRM matches each spatial query against a degradation prototype space to reconstruct a query-specific degradation-aware representation, thereby providing fine-grained spatially adaptive restoration guidance. To further stabilize this query-wise matching process, we introduce a weakly supervised prototype matching learning strategy to improve optimization stability and degradation semantic consistency. Meanwhile, LGRCM performs local-global dual-branch aggregation and calibrates the aggregated responses with learnable priors, improving the reliability of feature aggregation and the coordination between local detail modeling and global context modeling. Extensive experiments demonstrate that QuReC achieves superior performance on multiple all-in-one image restoration benchmarks. The code is released at https://github.com/zhoushen1/QuReC.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-07-16T15:10:00Z</published>
+    <arxiv:comment>Accepted by ACM MM 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Shen Zhou</name>
+    </author>
+    <author>
+      <name>Jinghui Zhang</name>
+    </author>
+    <author>
+      <name>Wenbo Huang</name>
+    </author>
+    <author>
+      <name>Xuwei Qian</name>
+    </author>
+    <author>
+      <name>Zhen Wu</name>
+    </author>
+    <author>
+      <name>Guangwen Peng</name>
+    </author>
+    <author>
+      <name>Zhiyuan Li</name>
+    </author>
+    <author>
+      <name>Ding Ding</name>
+    </author>
+    <author>
+      <name>Dian Shen</name>
+    </author>
+    <author>
+      <name>Fang Dong</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2401.13221v1</id>
+    <title>Unified-Width Adaptive Dynamic Network for All-In-One Image Restoration</title>
+    <updated>2024-01-24T04:25:12Z</updated>
+    <link href="https://arxiv.org/abs/2401.13221v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2401.13221v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>In contrast to traditional image restoration methods, all-in-one image restoration techniques are gaining increased attention for their ability to restore images affected by diverse and unknown corruption types and levels. However, contemporary all-in-one image restoration methods omit task-wise difficulties and employ the same networks to reconstruct images afflicted by diverse degradations. This practice leads to an underestimation of the task correlations and suboptimal allocation of computational resources. To elucidate task-wise complexities, we introduce a novel concept positing that intricate image degradation can be represented in terms of elementary degradation. Building upon this foundation, we propose an innovative approach, termed the Unified-Width Adaptive Dynamic Network (U-WADN), consisting of two pivotal components: a Width Adaptive Backbone (WAB) and a Width Selector (WS). The WAB incorporates several nested sub-networks with varying widths, which facilitates the selection of the most apt computations tailored to each task, thereby striking a balance between accuracy and computational efficiency during runtime. For different inputs, the WS automatically selects the most appropriate sub-network width, taking into account both task-specific and sample-specific complexities. Extensive experiments across a variety of image restoration tasks demonstrate that the proposed U-WADN achieves better performance while simultaneously reducing up to 32.3\% of FLOPs and providing approximately 15.7\% real-time acceleration. The code has been made available at \url{https://github.com/xuyimin0926/U-WADN}.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-01-24T04:25:12Z</published>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Yimin Xu</name>
+    </author>
+    <author>
+      <name>Nanxi Gao</name>
+    </author>
+    <author>
+      <name>Zhongyun Shan</name>
+    </author>
+    <author>
+      <name>Fei Chao</name>
+    </author>
+    <author>
+      <name>Rongrong Ji</name>
+    </author>
+  </entry>
+</feed>

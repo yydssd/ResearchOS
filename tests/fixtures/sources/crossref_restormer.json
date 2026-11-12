@@ -1,0 +1,411 @@
+{
+ "status": "ok",
+ "message-type": "work-list",
+ "message-version": "1.0.0",
+ "message": {
+  "facets": {},
+  "total-results": 5318993,
+  "items": [
+   {
+    "DOI": "10.1109/cvpr52688.2022.00564",
+    "title": [
+     "Restormer: Efficient Transformer for High-Resolution Image Restoration"
+    ],
+    "author": [
+     {
+      "given": "Syed Waqas",
+      "family": "Zamir",
+      "sequence": "first",
+      "affiliation": [
+       {
+        "name": "Inception Institute of AI"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Aditya",
+      "family": "Arora",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Inception Institute of AI"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Salman",
+      "family": "Khan",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Inception Institute of AI"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Munawar",
+      "family": "Hayat",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Mohamed bin Zayed University of AI"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Fahad Shahbaz",
+      "family": "Khan",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Mohamed bin Zayed University of AI"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Ming-Hsuan",
+      "family": "Yang",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "University of California,Merced"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     }
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2022,
+       6
+      ]
+     ]
+    },
+    "container-title": [
+     "2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)"
+    ],
+    "type": "proceedings-article",
+    "URL": "https://doi.org/10.1109/cvpr52688.2022.00564"
+   },
+   {
+    "DOI": "10.37547/ibast/volume06issue08-02",
+    "title": [
+     "Lightweight Transformer-Fourier Fusion Framework for Efficient Image Super-Resolution"
+    ],
+    "author": [
+     {
+      "given": "Dr. Chinedu",
+      "family": "Okafor",
+      "sequence": "first",
+      "affiliation": [
+       {
+        "name": "Department of Artificial Intelligence Engineering, Lagos Institute of Digital Innovation, Nigeria"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     }
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2026,
+       8,
+       9
+      ]
+     ]
+    },
+    "container-title": [
+     "International Bulletin of Applied Sciences and Technology"
+    ],
+    "type": "journal-article",
+    "URL": "https://doi.org/10.37547/ibast/volume06issue08-02",
+    "abstract": "<jats:p>Image super-resolution (ISR) has emerged as a critical computer vision task aimed at reconstructing high-resolution visual information from low-resolution inputs. Although deep learning-based approaches have significantly improved reconstruction quality, many existing architectures suffer from high computational complexity, excessive parameter requirements, and limited efficiency in real-time deployment scenarios. This research presents a Lightweight Transformer-Fourier Fusion Framework for Efficient Image Super-Resolution, designed to integrate the long-range dependency modeling capability of transformers with the frequency-domain representation advantages of Fourier-based feature processing. The proposed framework is theoretically positioned around efficient feature extraction, adaptive attention learning, and frequency-aware reconstruction. Transformer-based modules enhance spatial relationship modeling, while Fourier convolution mechanisms improve the preservation of high-frequency image details with reduced computational overhead. The methodology combines lightweight residual feature refinement, transformer-driven contextual enhancement, and frequency-domain fusion to achieve an optimized balance between reconstruction accuracy and computational efficiency. The study analyzes the limitations of conventional convolutional, generative, and attention-based super-resolution approaches and establishes the importance of hybrid architectures for next-generation ISR systems. The proposed framework provides a scalable solution for applications requiring efficient image enhancement, including mobile imaging, medical visualization, remote sensing, and intelligent surveillance systems.</jats:p>"
+   },
+   {
+    "DOI": "10.1109/ocit56763.2022.00109",
+    "title": [
+     "Transformer Based Technique for High Resolution Image Restoration"
+    ],
+    "author": [
+     {
+      "given": "Debajyoty",
+      "family": "Banik",
+      "sequence": "first",
+      "affiliation": [
+       {
+        "name": "Kalinga Institute of Industrial Technology,Bhubaneshwar,Odisha,India"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Sangsaptak",
+      "family": "Pal",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Kalinga Institute of Industrial Technology,Bhubaneshwar,Odisha,India"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "M. Nazma B.",
+      "family": "Naskar",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Kalinga Institute of Industrial Technology,Bhubaneshwar,Odisha,India"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     },
+     {
+      "given": "Anjan",
+      "family": "Bandyopadhyay",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Kalinga Institute of Industrial Technology,Bhubaneshwar,Odisha,India"
+       }
+      ],
+      "role": [
+       {
+        "vocabulary": "crossref",
+        "role": "author"
+       }
+      ]
+     }
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2022,
+       12
+      ]
+     ]
+    },
+    "container-title": [
+     "2022 OITS International Conference on Information Technology (OCIT)"
+    ],
+    "type": "proceedings-article",
+    "URL": "https://doi.org/10.1109/ocit56763.2022.00109"
+   },
+   {
+    "DOI": "10.1109/iceic69189.2026.11386217",
+    "title": [
+     "Frequency Aware Restormer for Impulse Noise Image Restoration"
+    ],
+    "author": [
+     {
+      "given": "Chaeyeon",
+      "family": "Lim",
+      "sequence": "first",
+      "affiliation": [
+       {
+        "name": "Konkuk University Republic of Korea,Department of Metaverse Convergence,Seoul"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Changhoon",
+      "family": "Yim",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Konkuk University Republic of Korea,Department of Computer Science and Engineering,Seoul"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     }
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2026,
+       1,
+       18
+      ]
+     ]
+    },
+    "container-title": [
+     "2026 International Conference on Electronics, Information, and Communication (ICEIC)"
+    ],
+    "type": "proceedings-article",
+    "URL": "https://doi.org/10.1109/iceic69189.2026.11386217"
+   },
+   {
+    "DOI": "10.21203/rs.3.rs-4767541/v1",
+    "title": [
+     "HADT : Image Super-Resolution Restoration Using Hybrid Attention-Dense Connected Transformer Networks"
+    ],
+    "author": [
+     {
+      "given": "Ying",
+      "family": "Guo",
+      "sequence": "first",
+      "affiliation": [
+       {
+        "name": "Tsinghua University"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Chang",
+      "family": "Tian",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "North China University of Technology"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Jie",
+      "family": "Liu",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "North China University of Technology"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Chong",
+      "family": "Di",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "Qilu University of Technology"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     },
+     {
+      "given": "Keqing",
+      "family": "Ning",
+      "sequence": "additional",
+      "affiliation": [
+       {
+        "name": "North China University of Technology"
+       }
+      ],
+      "role": [
+       {
+        "role": "author",
+        "vocabulary": "crossref"
+       }
+      ]
+     }
+    ],
+    "issued": {
+     "date-parts": [
+      [
+       2024,
+       8,
+       20
+      ]
+     ]
+    },
+    "type": "posted-content",
+    "URL": "https://doi.org/10.21203/rs.3.rs-4767541/v1",
+    "abstract": "<title>Abstract</title>\n        <p>Image super-resolution (SR) plays a vital role in vision tasks, in which Transformer-based methods outperform conventional convolutional neural networks. Existing work usually uses residual linking to improve the performance, but this type of linking provides limited information transfer within the block. Also, in order to improve feature extraction, existing work usually restricts the self-attention computation to a single window. This means that transformer-based networks can only use feature information within a limited spatial range. To handle the challenge, this paper proposes a novel Hybrid Attention-Dense Connected Transformer Networks (HADT) to better utilise the potential feature information. HADT is constructed by stacking attentional transformer block (ATB), which contains Effective Dense Transformer Block (EDTB) and Hybrid Attention Block (HAB). EDTB combines dense connectivity and swin-transformer to enhance feature transfer and improve model representation, and meanwhile, HAB is used for cross-window information interaction and joint modelling of features for better visualisation. Based on the experiments, our method is effective on SR tasks with magnification factors of 2, 3, and 4. For example, using the Urban100 dataset in an experiment with an amplification factor of 4 our method has a PSNR value that is 0.15 dB higher than the previous method and reconstructs a more detailed texture.</p>"
+   }
+  ],
+  "items-per-page": 5,
+  "query": {
+   "start-index": 0,
+   "search-terms": null
+  }
+ }
+}

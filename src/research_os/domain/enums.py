@@ -17,6 +17,22 @@ class SourceType(StrEnum):
     WEB = "web"
 
 
+class SourceTier(StrEnum):
+    """Discovery metadata describing how authoritative a version looks (plan §8).
+
+    Deliberately NOT a global ranking: authority depends on the claim being
+    evaluated (proceedings prove publication status, a repository proves
+    implementation details). Use it to pick a canonical version, never to decide
+    whether a claim is true.
+    """
+
+    OFFICIAL_PUBLICATION = "OFFICIAL_PUBLICATION"
+    PREPRINT = "PREPRINT"
+    REPOSITORY = "REPOSITORY"
+    WEB = "WEB"
+    UNKNOWN = "UNKNOWN"
+
+
 class EvidenceType(StrEnum):
     TEXT = "text"
     QUANTITATIVE = "quantitative"
@@ -100,6 +116,7 @@ class EventType(StrEnum):
     TASK_STARTED = "TASK_STARTED"
     TASK_COMPLETED = "TASK_COMPLETED"
     TASK_FAILED = "TASK_FAILED"
+    SOURCE_DISCOVERED = "SOURCE_DISCOVERED"
     SOURCE_VERIFIED = "SOURCE_VERIFIED"
     EVIDENCE_EXTRACTED = "EVIDENCE_EXTRACTED"
     CLAIM_BUILT = "CLAIM_BUILT"

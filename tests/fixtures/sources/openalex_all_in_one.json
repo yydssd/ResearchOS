@@ -1,0 +1,2415 @@
+{
+ "meta": {
+  "notice": "No API key, so this request shares one free daily budget ($0.10) with everyone on your network's IP address. Get a free key with its own $1/day at https://openalex.org/settings/api and add api_key=YOUR_KEY to your requests. An AI agent can get one for its user in one call: POST https://api.openalex.org/api-keys with {\"email\": \"<your user's email>\"}; we email them a link, and the key works once they click it. Docs for agents: https://help.openalex.org/llms.txt",
+  "count": 750286,
+  "db_response_time_ms": 308,
+  "page": 1,
+  "per_page": 10,
+  "groups_count": null,
+  "x_query": {
+   "oql": "get works with (all-in-one image restoration) in the title, abstract, or full text",
+   "x_new_oql": "get works with (all-in-one image restoration) in the title, abstract, or full text",
+   "oqo": {
+    "get_rows": "works",
+    "filter_rows": [
+     {
+      "column_id": "fulltext.search",
+      "value": "all-in-one image restoration",
+      "operator": "has"
+     }
+    ]
+   },
+   "url": "/works?filter=fulltext.search:all-in-one image restoration&per_page=10",
+   "order": "best matches first",
+   "order_default": true
+  },
+  "cost_usd": 0.001
+ },
+ "results": [
+  {
+   "id": "https://openalex.org/W4312373367",
+   "doi": "https://doi.org/10.1109/cvpr52688.2022.01693",
+   "display_name": "All-In-One Image Restoration for Unknown Corruption",
+   "publication_year": 2022,
+   "authorships": [
+    {
+     "author_position": "first",
+     "author": {
+      "id": "https://openalex.org/A5034682935",
+      "display_name": "Boyun Li",
+      "orcid": "https://orcid.org/0000-0001-9781-8631",
+      "observed_orcids": [
+       "https://orcid.org/0000-0001-9781-8631"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I24185976",
+       "display_name": "Sichuan University",
+       "ror": "https://ror.org/011ashp19",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I24185976"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Boyun Li",
+     "raw_affiliation_strings": [
+      "Sichuan University.,College of Computer Science",
+      "College of Computer Science, Sichuan University"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "Sichuan University.,College of Computer Science",
+       "institution_ids": [
+        "https://openalex.org/I24185976"
+       ]
+      },
+      {
+       "raw_affiliation_string": "College of Computer Science, Sichuan University",
+       "institution_ids": [
+        "https://openalex.org/I24185976"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5100441084",
+      "display_name": "Xiao Liu",
+      "orcid": "https://orcid.org/0000-0002-7888-6898",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-7888-6898"
+      ]
+     },
+     "institutions": [],
+     "countries": [],
+     "is_corresponding": false,
+     "raw_author_name": "Xiao Liu",
+     "raw_affiliation_strings": [
+      "TAL Education, China"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "TAL Education, China",
+       "institution_ids": []
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5082233466",
+      "display_name": "Peng Hu",
+      "orcid": "https://orcid.org/0000-0003-3868-3997",
+      "observed_orcids": [
+       "https://orcid.org/0000-0003-3868-3997"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I24185976",
+       "display_name": "Sichuan University",
+       "ror": "https://ror.org/011ashp19",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I24185976"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Peng Hu",
+     "raw_affiliation_strings": [
+      "Sichuan University.,College of Computer Science",
+      "College of Computer Science, Sichuan University"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "Sichuan University.,College of Computer Science",
+       "institution_ids": [
+        "https://openalex.org/I24185976"
+       ]
+      },
+      {
+       "raw_affiliation_string": "College of Computer Science, Sichuan University",
+       "institution_ids": [
+        "https://openalex.org/I24185976"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5009659901",
+      "display_name": "Zhongqin Wu",
+      "orcid": null,
+      "observed_orcids": []
+     },
+     "institutions": [],
+     "countries": [],
+     "is_corresponding": false,
+     "raw_author_name": "Zhongqin Wu",
+     "raw_affiliation_strings": [
+      "TAL Education, China"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "TAL Education, China",
+       "institution_ids": []
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5073535763",
+      "display_name": "Jiancheng Lv",
+      "orcid": "https://orcid.org/0000-0001-6551-3884",
+      "observed_orcids": [
+       "https://orcid.org/0000-0001-6551-3884"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I24185976",
+       "display_name": "Sichuan University",
+       "ror": "https://ror.org/011ashp19",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I24185976"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Jiancheng Lv",
+     "raw_affiliation_strings": [
+      "Sichuan University.,College of Computer Science",
+      "College of Computer Science, Sichuan University"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "Sichuan University.,College of Computer Science",
+       "institution_ids": [
+        "https://openalex.org/I24185976"
+       ]
+      },
+      {
+       "raw_affiliation_string": "College of Computer Science, Sichuan University",
+       "institution_ids": [
+        "https://openalex.org/I24185976"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "last",
+     "author": {
+      "id": "https://openalex.org/A5022800038",
+      "display_name": "Xi Peng",
+      "orcid": "https://orcid.org/0000-0002-5727-2790",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-5727-2790"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I24185976",
+       "display_name": "Sichuan University",
+       "ror": "https://ror.org/011ashp19",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I24185976"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Xi Peng",
+     "raw_affiliation_strings": [
+      "Sichuan University.,College of Computer Science",
+      "College of Computer Science, Sichuan University"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "Sichuan University.,College of Computer Science",
+       "institution_ids": [
+        "https://openalex.org/I24185976"
+       ]
+      },
+      {
+       "raw_affiliation_string": "College of Computer Science, Sichuan University",
+       "institution_ids": [
+        "https://openalex.org/I24185976"
+       ]
+      }
+     ]
+    }
+   ],
+   "primary_location": {
+    "id": "doi:10.1109/cvpr52688.2022.01693",
+    "doi": "https://doi.org/10.1109/cvpr52688.2022.01693",
+    "is_oa": false,
+    "landing_page_url": "https://doi.org/10.1109/cvpr52688.2022.01693",
+    "pdf_url": null,
+    "source": {
+     "id": "https://openalex.org/S4210176548",
+     "display_name": "IEEE Computer Society Conference on Computer Vision and Pattern Recognition/Proceedings - IEEE Computer Society Conference on Computer Vision and Pattern Recognition/Proceedings",
+     "issn_l": "1063-6919",
+     "issn": [
+      "1063-6919",
+      "2332-564X",
+      "2575-7075"
+     ],
+     "is_oa": false,
+     "is_in_doaj": false,
+     "is_core": true,
+     "listed_in": [
+      "cwts-core",
+      "norway-1"
+     ],
+     "host_organization": "https://openalex.org/P4310319808",
+     "host_organization_name": "Institute of Electrical and Electronics Engineers",
+     "host_organization_lineage": [
+      "https://openalex.org/P4310319808"
+     ],
+     "host_organization_lineage_names": [
+      "Institute of Electrical and Electronics Engineers"
+     ],
+     "type": "conference"
+    },
+    "license": null,
+    "license_id": null,
+    "version": "publishedVersion",
+    "is_accepted": true,
+    "is_published": true,
+    "raw_source_name": "2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)",
+    "raw_type": "proceedings-article"
+   },
+   "type": "conference-paper"
+  },
+  {
+   "id": "https://openalex.org/W7133264670",
+   "doi": "https://doi.org/10.52202/075280-3121",
+   "display_name": "PromptIR: Prompting for All-in-One Image Restoration",
+   "publication_year": 2023,
+   "authorships": [
+    {
+     "author_position": "first",
+     "author": {
+      "id": "https://openalex.org/A5059841783",
+      "display_name": "Vaishnav Potlapalli",
+      "orcid": null,
+      "observed_orcids": []
+     },
+     "institutions": [],
+     "countries": [],
+     "is_corresponding": false,
+     "raw_author_name": "Vaishnav Potlapalli",
+     "raw_affiliation_strings": [],
+     "raw_orcid": null,
+     "affiliations": []
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5060899114",
+      "display_name": "Syed Waqas Zamir",
+      "orcid": "https://orcid.org/0000-0002-7198-0187",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-7198-0187"
+      ]
+     },
+     "institutions": [],
+     "countries": [],
+     "is_corresponding": false,
+     "raw_author_name": "Syed Waqas Zamir",
+     "raw_affiliation_strings": [],
+     "raw_orcid": null,
+     "affiliations": []
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5127798006",
+      "display_name": "Fahad Shahbaz Khan",
+      "orcid": null,
+      "observed_orcids": []
+     },
+     "institutions": [],
+     "countries": [],
+     "is_corresponding": false,
+     "raw_author_name": "Salman Khan",
+     "raw_affiliation_strings": [],
+     "raw_orcid": null,
+     "affiliations": []
+    },
+    {
+     "author_position": "last",
+     "author": {
+      "id": "https://openalex.org/A5100760570",
+      "display_name": "Fahad Shahbaz Khan",
+      "orcid": "https://orcid.org/0000-0002-4263-3143",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-4263-3143"
+      ]
+     },
+     "institutions": [],
+     "countries": [],
+     "is_corresponding": false,
+     "raw_author_name": "Fahad Shahbaz Khan",
+     "raw_affiliation_strings": [],
+     "raw_orcid": null,
+     "affiliations": []
+    }
+   ],
+   "primary_location": {
+    "id": "doi:10.52202/075280-3121",
+    "doi": "https://doi.org/10.52202/075280-3121",
+    "is_oa": false,
+    "landing_page_url": "https://doi.org/10.52202/075280-3121",
+    "pdf_url": null,
+    "source": {
+     "id": "https://openalex.org/S4363606243",
+     "display_name": "neural information processing systems",
+     "issn_l": "1049-5258",
+     "issn": [
+      "1049-5258"
+     ],
+     "is_oa": false,
+     "is_in_doaj": false,
+     "is_core": true,
+     "listed_in": [
+      "cwts-core",
+      "norway-2"
+     ],
+     "host_organization": null,
+     "host_organization_name": null,
+     "host_organization_lineage": [],
+     "host_organization_lineage_names": [],
+     "type": "conference"
+    },
+    "license": null,
+    "license_id": null,
+    "version": "publishedVersion",
+    "is_accepted": true,
+    "is_published": true,
+    "raw_source_name": "Advances in Neural Information Processing Systems 36",
+    "raw_type": "proceedings-article"
+   },
+   "type": "conference-paper"
+  },
+  {
+   "id": "https://openalex.org/W4404199109",
+   "doi": "https://doi.org/10.1007/978-3-031-73661-2_19",
+   "display_name": "AutoDIR: Automatic All-in-One Image Restoration with Latent Diffusion",
+   "publication_year": 2024,
+   "authorships": [
+    {
+     "author_position": "first",
+     "author": {
+      "id": "https://openalex.org/A5101093961",
+      "display_name": "Yitong Jiang",
+      "orcid": null,
+      "observed_orcids": []
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I177725633",
+       "display_name": "Chinese University of Hong Kong",
+       "ror": "https://ror.org/00t33hh48",
+       "country_code": "HK",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I177725633"
+       ]
+      },
+      {
+       "id": "https://openalex.org/I4391012619",
+       "display_name": "Shanghai Artificial Intelligence Laboratory",
+       "ror": "https://ror.org/03wkvpx79",
+       "country_code": "CN",
+       "type": "facility",
+       "lineage": [
+        "https://openalex.org/I4391012619"
+       ]
+      }
+     ],
+     "countries": [
+      "CN",
+      "HK"
+     ],
+     "is_corresponding": true,
+     "raw_author_name": "Yitong Jiang",
+     "raw_affiliation_strings": [
+      "Shanghai AI Laboratory, Shanghai, China",
+      "The Chinese University of Hong Kong, Sha Tin, Hong Kong"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "Shanghai AI Laboratory, Shanghai, China",
+       "institution_ids": [
+        "https://openalex.org/I4391012619"
+       ]
+      },
+      {
+       "raw_affiliation_string": "The Chinese University of Hong Kong, Sha Tin, Hong Kong",
+       "institution_ids": [
+        "https://openalex.org/I177725633"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5100751311",
+      "display_name": "Zhaoyang Zhang",
+      "orcid": "https://orcid.org/0000-0003-2346-6228",
+      "observed_orcids": [
+       "https://orcid.org/0000-0003-2346-6228",
+       "https://orcid.org/0000-0003-2287-2486",
+       "https://orcid.org/0009-0007-7888-911X",
+       "https://orcid.org/0000-0002-2429-0757"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I177725633",
+       "display_name": "Chinese University of Hong Kong",
+       "ror": "https://ror.org/00t33hh48",
+       "country_code": "HK",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I177725633"
+       ]
+      }
+     ],
+     "countries": [
+      "HK"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Zhaoyang Zhang",
+     "raw_affiliation_strings": [
+      "The Chinese University of Hong Kong, Sha Tin, Hong Kong"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "The Chinese University of Hong Kong, Sha Tin, Hong Kong",
+       "institution_ids": [
+        "https://openalex.org/I177725633"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5100552155",
+      "display_name": "Tianfan Xue",
+      "orcid": "https://orcid.org/0000-0001-5031-6618",
+      "observed_orcids": [
+       "https://orcid.org/0000-0001-5031-6618"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I177725633",
+       "display_name": "Chinese University of Hong Kong",
+       "ror": "https://ror.org/00t33hh48",
+       "country_code": "HK",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I177725633"
+       ]
+      }
+     ],
+     "countries": [
+      "HK"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Tianfan Xue",
+     "raw_affiliation_strings": [
+      "The Chinese University of Hong Kong, Sha Tin, Hong Kong"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "The Chinese University of Hong Kong, Sha Tin, Hong Kong",
+       "institution_ids": [
+        "https://openalex.org/I177725633"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "last",
+     "author": {
+      "id": "https://openalex.org/A5100370029",
+      "display_name": "Jinwei Gu",
+      "orcid": "https://orcid.org/0000-0001-8705-8237",
+      "observed_orcids": [
+       "https://orcid.org/0000-0001-8705-8237"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I177725633",
+       "display_name": "Chinese University of Hong Kong",
+       "ror": "https://ror.org/00t33hh48",
+       "country_code": "HK",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I177725633"
+       ]
+      }
+     ],
+     "countries": [
+      "HK"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Jinwei Gu",
+     "raw_affiliation_strings": [
+      "The Chinese University of Hong Kong, Sha Tin, Hong Kong"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "The Chinese University of Hong Kong, Sha Tin, Hong Kong",
+       "institution_ids": [
+        "https://openalex.org/I177725633"
+       ]
+      }
+     ]
+    }
+   ],
+   "primary_location": {
+    "id": "doi:10.1007/978-3-031-73661-2_19",
+    "doi": "https://doi.org/10.1007/978-3-031-73661-2_19",
+    "is_oa": false,
+    "landing_page_url": "https://doi.org/10.1007/978-3-031-73661-2_19",
+    "pdf_url": null,
+    "source": {
+     "id": "https://openalex.org/S106296714",
+     "display_name": "Lecture notes in computer science",
+     "issn_l": "0302-9743",
+     "issn": [
+      "0302-9743",
+      "1611-3349"
+     ],
+     "is_oa": false,
+     "is_in_doaj": false,
+     "is_core": true,
+     "listed_in": [
+      "cwts-core",
+      "jufo-1",
+      "ki-jl-1",
+      "norway-1",
+      "vabb-shw"
+     ],
+     "host_organization": "https://openalex.org/P4310319900",
+     "host_organization_name": "Springer Science+Business Media",
+     "host_organization_lineage": [
+      "https://openalex.org/P4310319900",
+      "https://openalex.org/P4310319965"
+     ],
+     "host_organization_lineage_names": [
+      "Springer Science+Business Media",
+      "Springer Nature"
+     ],
+     "type": "book series"
+    },
+    "license": null,
+    "license_id": null,
+    "version": "publishedVersion",
+    "is_accepted": true,
+    "is_published": true,
+    "raw_source_name": "Lecture Notes in Computer Science",
+    "raw_type": "book-chapter"
+   },
+   "type": "conference-paper"
+  },
+  {
+   "id": "https://openalex.org/W4413114136",
+   "doi": "https://doi.org/10.1109/tpami.2025.3598132",
+   "display_name": "A Survey on All-in-One Image Restoration: Taxonomy, Evaluation and Future Trends",
+   "publication_year": 2025,
+   "authorships": [
+    {
+     "author_position": "first",
+     "author": {
+      "id": "https://openalex.org/A5087165831",
+      "display_name": "Junjun Jiang",
+      "orcid": "https://orcid.org/0000-0002-5694-505X",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-5694-505X"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I204983213",
+       "display_name": "Harbin Institute of Technology",
+       "ror": "https://ror.org/01yqg2h08",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Junjun Jiang",
+     "raw_affiliation_strings": [
+      "School of Computer Science and Technology, Harbin Institute of Technology, Harbin, China"
+     ],
+     "raw_orcid": "https://orcid.org/0000-0002-5694-505X",
+     "affiliations": [
+      {
+       "raw_affiliation_string": "School of Computer Science and Technology, Harbin Institute of Technology, Harbin, China",
+       "institution_ids": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": null,
+      "display_name": "Zengyuan Zuo",
+      "orcid": "https://orcid.org/0009-0009-5334-429X",
+      "observed_orcids": [
+       "https://orcid.org/0009-0009-5334-429X"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I204983213",
+       "display_name": "Harbin Institute of Technology",
+       "ror": "https://ror.org/01yqg2h08",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Zengyuan Zuo",
+     "raw_affiliation_strings": [
+      "School of Computer Science and Technology, Harbin Institute of Technology, Harbin, China"
+     ],
+     "raw_orcid": "https://orcid.org/0009-0009-5334-429X",
+     "affiliations": [
+      {
+       "raw_affiliation_string": "School of Computer Science and Technology, Harbin Institute of Technology, Harbin, China",
+       "institution_ids": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5119271868",
+      "display_name": "Gang Wu",
+      "orcid": "https://orcid.org/0009-0007-5003-3117",
+      "observed_orcids": [
+       "https://orcid.org/0009-0007-5003-3117"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I204983213",
+       "display_name": "Harbin Institute of Technology",
+       "ror": "https://ror.org/01yqg2h08",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Gang Wu",
+     "raw_affiliation_strings": [
+      "School of Computer Science and Technology, Harbin Institute of Technology, Harbin, China"
+     ],
+     "raw_orcid": "https://orcid.org/0009-0007-5003-3117",
+     "affiliations": [
+      {
+       "raw_affiliation_string": "School of Computer Science and Technology, Harbin Institute of Technology, Harbin, China",
+       "institution_ids": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5103140908",
+      "display_name": "Kui Jiang",
+      "orcid": "https://orcid.org/0000-0002-4055-7503",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-4055-7503"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I204983213",
+       "display_name": "Harbin Institute of Technology",
+       "ror": "https://ror.org/01yqg2h08",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Kui Jiang",
+     "raw_affiliation_strings": [
+      "School of Computer Science and Technology, Harbin Institute of Technology, Harbin, China"
+     ],
+     "raw_orcid": "https://orcid.org/0000-0002-4055-7503",
+     "affiliations": [
+      {
+       "raw_affiliation_string": "School of Computer Science and Technology, Harbin Institute of Technology, Harbin, China",
+       "institution_ids": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "last",
+     "author": {
+      "id": "https://openalex.org/A5100654390",
+      "display_name": "Xianming Liu",
+      "orcid": "https://orcid.org/0000-0002-8857-1785",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-8857-1785"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I204983213",
+       "display_name": "Harbin Institute of Technology",
+       "ror": "https://ror.org/01yqg2h08",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Xianming Liu",
+     "raw_affiliation_strings": [
+      "School of Computer Science and Technology, Harbin Institute of Technology, Harbin, China"
+     ],
+     "raw_orcid": "https://orcid.org/0000-0002-8857-1785",
+     "affiliations": [
+      {
+       "raw_affiliation_string": "School of Computer Science and Technology, Harbin Institute of Technology, Harbin, China",
+       "institution_ids": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ]
+    }
+   ],
+   "primary_location": {
+    "id": "doi:10.1109/tpami.2025.3598132",
+    "doi": "https://doi.org/10.1109/tpami.2025.3598132",
+    "is_oa": false,
+    "landing_page_url": "https://doi.org/10.1109/tpami.2025.3598132",
+    "pdf_url": null,
+    "source": {
+     "id": "https://openalex.org/S199944782",
+     "display_name": "IEEE Transactions on Pattern Analysis and Machine Intelligence",
+     "issn_l": "0162-8828",
+     "issn": [
+      "0162-8828",
+      "1939-3539",
+      "2160-9292"
+     ],
+     "is_oa": false,
+     "is_in_doaj": false,
+     "is_core": true,
+     "listed_in": [
+      "ccf-a",
+      "cwts-core",
+      "dongbi-a",
+      "doyens",
+      "jufo-3",
+      "medline",
+      "norway-2",
+      "poland-200",
+      "russia-white-list-1"
+     ],
+     "host_organization": "https://openalex.org/P4310320439",
+     "host_organization_name": "IEEE Computer Society",
+     "host_organization_lineage": [
+      "https://openalex.org/P4310320439",
+      "https://openalex.org/P4310319808"
+     ],
+     "host_organization_lineage_names": [
+      "IEEE Computer Society",
+      "Institute of Electrical and Electronics Engineers"
+     ],
+     "type": "journal"
+    },
+    "license": null,
+    "license_id": null,
+    "version": "publishedVersion",
+    "is_accepted": true,
+    "is_published": true,
+    "raw_source_name": "IEEE Transactions on Pattern Analysis and Machine Intelligence",
+    "raw_type": "journal-article"
+   },
+   "type": "article"
+  },
+  {
+   "id": "https://openalex.org/W4402508171",
+   "doi": "https://doi.org/10.1109/tip.2024.3456583",
+   "display_name": "Neural Degradation Representation Learning for All-in-One Image Restoration",
+   "publication_year": 2024,
+   "authorships": [
+    {
+     "author_position": "first",
+     "author": {
+      "id": "https://openalex.org/A5002617843",
+      "display_name": "Mingde Yao",
+      "orcid": "https://orcid.org/0000-0001-5994-6288",
+      "observed_orcids": [
+       "https://orcid.org/0000-0001-5994-6288"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I126520041",
+       "display_name": "University of Science and Technology of China",
+       "ror": "https://ror.org/04c4dkn09",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I126520041",
+        "https://openalex.org/I19820366"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Mingde Yao",
+     "raw_affiliation_strings": [
+      "MoE Key Laboratory of Brain-Inspired Intelligent Perception and Cognition, University of Science and Technology of China, Hefei, China"
+     ],
+     "raw_orcid": "https://orcid.org/0000-0001-5994-6288",
+     "affiliations": [
+      {
+       "raw_affiliation_string": "MoE Key Laboratory of Brain-Inspired Intelligent Perception and Cognition, University of Science and Technology of China, Hefei, China",
+       "institution_ids": [
+        "https://openalex.org/I126520041"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5017414351",
+      "display_name": "Ruikang Xu",
+      "orcid": "https://orcid.org/0000-0001-6662-3671",
+      "observed_orcids": [
+       "https://orcid.org/0000-0001-6662-3671",
+       "https://orcid.org/0009-0004-2014-4885"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I126520041",
+       "display_name": "University of Science and Technology of China",
+       "ror": "https://ror.org/04c4dkn09",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I126520041",
+        "https://openalex.org/I19820366"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Ruikang Xu",
+     "raw_affiliation_strings": [
+      "MoE Key Laboratory of Brain-Inspired Intelligent Perception and Cognition, University of Science and Technology of China, Hefei, China"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "MoE Key Laboratory of Brain-Inspired Intelligent Perception and Cognition, University of Science and Technology of China, Hefei, China",
+       "institution_ids": [
+        "https://openalex.org/I126520041"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5072679873",
+      "display_name": "Yuanshen Guan",
+      "orcid": "https://orcid.org/0000-0003-3468-1417",
+      "observed_orcids": [
+       "https://orcid.org/0000-0003-3468-1417"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I126520041",
+       "display_name": "University of Science and Technology of China",
+       "ror": "https://ror.org/04c4dkn09",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I126520041",
+        "https://openalex.org/I19820366"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Yuanshen Guan",
+     "raw_affiliation_strings": [
+      "MoE Key Laboratory of Brain-Inspired Intelligent Perception and Cognition, University of Science and Technology of China, Hefei, China"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "MoE Key Laboratory of Brain-Inspired Intelligent Perception and Cognition, University of Science and Technology of China, Hefei, China",
+       "institution_ids": [
+        "https://openalex.org/I126520041"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5033737940",
+      "display_name": "Jie Huang",
+      "orcid": "https://orcid.org/0000-0002-3518-3404",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-3518-3404",
+       "https://orcid.org/0009-0005-0807-3954"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I126520041",
+       "display_name": "University of Science and Technology of China",
+       "ror": "https://ror.org/04c4dkn09",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I126520041",
+        "https://openalex.org/I19820366"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Jie Huang",
+     "raw_affiliation_strings": [
+      "MoE Key Laboratory of Brain-Inspired Intelligent Perception and Cognition, University of Science and Technology of China, Hefei, China"
+     ],
+     "raw_orcid": "https://orcid.org/0000-0002-3518-3404",
+     "affiliations": [
+      {
+       "raw_affiliation_string": "MoE Key Laboratory of Brain-Inspired Intelligent Perception and Cognition, University of Science and Technology of China, Hefei, China",
+       "institution_ids": [
+        "https://openalex.org/I126520041"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "last",
+     "author": {
+      "id": "https://openalex.org/A5008612863",
+      "display_name": "Zhiwei Xiong",
+      "orcid": "https://orcid.org/0000-0002-9787-7460",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-9787-7460"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I126520041",
+       "display_name": "University of Science and Technology of China",
+       "ror": "https://ror.org/04c4dkn09",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I126520041",
+        "https://openalex.org/I19820366"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Zhiwei Xiong",
+     "raw_affiliation_strings": [
+      "MoE Key Laboratory of Brain-Inspired Intelligent Perception and Cognition, University of Science and Technology of China, Hefei, China"
+     ],
+     "raw_orcid": "https://orcid.org/0000-0002-9787-7460",
+     "affiliations": [
+      {
+       "raw_affiliation_string": "MoE Key Laboratory of Brain-Inspired Intelligent Perception and Cognition, University of Science and Technology of China, Hefei, China",
+       "institution_ids": [
+        "https://openalex.org/I126520041"
+       ]
+      }
+     ]
+    }
+   ],
+   "primary_location": {
+    "id": "doi:10.1109/tip.2024.3456583",
+    "doi": "https://doi.org/10.1109/tip.2024.3456583",
+    "is_oa": false,
+    "landing_page_url": "https://doi.org/10.1109/tip.2024.3456583",
+    "pdf_url": null,
+    "source": {
+     "id": "https://openalex.org/S4210173141",
+     "display_name": "IEEE Transactions on Image Processing",
+     "issn_l": "1057-7149",
+     "issn": [
+      "1057-7149",
+      "1941-0042"
+     ],
+     "is_oa": false,
+     "is_in_doaj": false,
+     "is_core": true,
+     "listed_in": [
+      "anvur-scientific",
+      "ccf-a",
+      "cwts-core",
+      "dongbi-a",
+      "doyens",
+      "jufo-3",
+      "ki-jl-2",
+      "medline",
+      "norway-2",
+      "poland-200",
+      "russia-white-list-1",
+      "vabb-shw"
+     ],
+     "host_organization": "https://openalex.org/P4310319808",
+     "host_organization_name": "Institute of Electrical and Electronics Engineers",
+     "host_organization_lineage": [
+      "https://openalex.org/P4310319808"
+     ],
+     "host_organization_lineage_names": [
+      "Institute of Electrical and Electronics Engineers"
+     ],
+     "type": "journal"
+    },
+    "license": null,
+    "license_id": null,
+    "version": "publishedVersion",
+    "is_accepted": true,
+    "is_published": true,
+    "raw_source_name": "IEEE Transactions on Image Processing",
+    "raw_type": "journal-article"
+   },
+   "type": "article"
+  },
+  {
+   "id": "https://openalex.org/W4402703536",
+   "doi": "https://doi.org/10.48550/arxiv.2408.08091",
+   "display_name": "HAIR: Hypernetworks-based All-in-One Image Restoration",
+   "publication_year": 2024,
+   "authorships": [
+    {
+     "author_position": "first",
+     "author": {
+      "id": "https://openalex.org/A5101837796",
+      "display_name": "Jin Xin Cao",
+      "orcid": "https://orcid.org/0000-0001-5768-8190",
+      "observed_orcids": [
+       "https://orcid.org/0000-0001-5768-8190"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I87445476",
+       "display_name": "Xi'an Jiaotong University",
+       "ror": "https://ror.org/017zhmm22",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I87445476"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Cao, Jin",
+     "raw_affiliation_strings": [
+      "Xi'an Jiaotong University ,"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "Xi'an Jiaotong University ,",
+       "institution_ids": [
+        "https://openalex.org/I87445476"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5101409126",
+      "display_name": "Yi Cao",
+      "orcid": "https://orcid.org/0000-0002-9542-1646",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-9542-1646"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I4210139958",
+       "display_name": "Beijing Computational Science Research Center",
+       "ror": "https://ror.org/04tavf782",
+       "country_code": "CN",
+       "type": "facility",
+       "lineage": [
+        "https://openalex.org/I4210139958"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Cao, Yi",
+     "raw_affiliation_strings": [
+      "Beijing Computational Science Research Center"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "Beijing Computational Science Research Center",
+       "institution_ids": [
+        "https://openalex.org/I4210139958"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": null,
+      "display_name": "Pang, Li",
+      "orcid": null,
+      "observed_orcids": []
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I87445476",
+       "display_name": "Xi'an Jiaotong University",
+       "ror": "https://ror.org/017zhmm22",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I87445476"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Pang, Li",
+     "raw_affiliation_strings": [
+      "Xi'an Jiaotong University ,"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "Xi'an Jiaotong University ,",
+       "institution_ids": [
+        "https://openalex.org/I87445476"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5091017287",
+      "display_name": "Deyu Meng",
+      "orcid": "https://orcid.org/0000-0002-1294-8283",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-1294-8283",
+       "https://orcid.org/0009-0002-0659-827X"
+      ]
+     },
+     "institutions": [],
+     "countries": [],
+     "is_corresponding": false,
+     "raw_author_name": "Meng, Deyu",
+     "raw_affiliation_strings": [],
+     "raw_orcid": null,
+     "affiliations": []
+    },
+    {
+     "author_position": "last",
+     "author": {
+      "id": "https://openalex.org/A5028103486",
+      "display_name": "Xiangyong Cao",
+      "orcid": "https://orcid.org/0000-0001-7912-3457",
+      "observed_orcids": [
+       "https://orcid.org/0000-0001-7912-3457",
+       "https://orcid.org/0000-0003-1301-9758"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I87445476",
+       "display_name": "Xi'an Jiaotong University",
+       "ror": "https://ror.org/017zhmm22",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I87445476"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Cao, Xiangyong",
+     "raw_affiliation_strings": [
+      "Xi'an Jiaotong University ,"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "Xi'an Jiaotong University ,",
+       "institution_ids": [
+        "https://openalex.org/I87445476"
+       ]
+      }
+     ]
+    }
+   ],
+   "primary_location": {
+    "id": "pmh:oai:arXiv.org:2408.08091",
+    "doi": null,
+    "is_oa": true,
+    "landing_page_url": "http://arxiv.org/abs/2408.08091",
+    "pdf_url": "https://arxiv.org/pdf/2408.08091",
+    "source": {
+     "id": "https://openalex.org/S4306400194",
+     "display_name": "arXiv (Cornell University)",
+     "issn_l": "2331-8422",
+     "issn": [
+      "2331-8422"
+     ],
+     "is_oa": true,
+     "is_in_doaj": false,
+     "is_core": false,
+     "listed_in": [],
+     "host_organization": "https://openalex.org/I205783295",
+     "host_organization_name": "Cornell University",
+     "host_organization_lineage": [
+      "https://openalex.org/I205783295"
+     ],
+     "host_organization_lineage_names": [],
+     "type": "repository"
+    },
+    "license": null,
+    "license_id": null,
+    "version": "submittedVersion",
+    "is_accepted": false,
+    "is_published": false,
+    "raw_source_name": null,
+    "raw_type": "text"
+   },
+   "type": "preprint"
+  },
+  {
+   "id": "https://openalex.org/W4410294577",
+   "doi": "https://doi.org/10.1109/tip.2025.3567205",
+   "display_name": "Learning Dynamic Prompts for All-in-One Image Restoration",
+   "publication_year": 2025,
+   "authorships": [
+    {
+     "author_position": "first",
+     "author": {
+      "id": "https://openalex.org/A5119271868",
+      "display_name": "Gang Wu",
+      "orcid": "https://orcid.org/0009-0007-5003-3117",
+      "observed_orcids": [
+       "https://orcid.org/0009-0007-5003-3117"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I204983213",
+       "display_name": "Harbin Institute of Technology",
+       "ror": "https://ror.org/01yqg2h08",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Gang Wu",
+     "raw_affiliation_strings": [
+      "School of Computer Science and Technology, Harbin Institute of Technology, Harbin, China"
+     ],
+     "raw_orcid": "https://orcid.org/0009-0007-5003-3117",
+     "affiliations": [
+      {
+       "raw_affiliation_string": "School of Computer Science and Technology, Harbin Institute of Technology, Harbin, China",
+       "institution_ids": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5087165831",
+      "display_name": "Junjun Jiang",
+      "orcid": "https://orcid.org/0000-0002-5694-505X",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-5694-505X"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I204983213",
+       "display_name": "Harbin Institute of Technology",
+       "ror": "https://ror.org/01yqg2h08",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Junjun Jiang",
+     "raw_affiliation_strings": [
+      "School of Computer Science and Technology, Harbin Institute of Technology, Harbin, China"
+     ],
+     "raw_orcid": "https://orcid.org/0000-0002-5694-505X",
+     "affiliations": [
+      {
+       "raw_affiliation_string": "School of Computer Science and Technology, Harbin Institute of Technology, Harbin, China",
+       "institution_ids": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5103140908",
+      "display_name": "Kui Jiang",
+      "orcid": "https://orcid.org/0000-0002-4055-7503",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-4055-7503"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I204983213",
+       "display_name": "Harbin Institute of Technology",
+       "ror": "https://ror.org/01yqg2h08",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Kui Jiang",
+     "raw_affiliation_strings": [
+      "School of Computer Science and Technology, Harbin Institute of Technology, Harbin, China"
+     ],
+     "raw_orcid": "https://orcid.org/0000-0002-4055-7503",
+     "affiliations": [
+      {
+       "raw_affiliation_string": "School of Computer Science and Technology, Harbin Institute of Technology, Harbin, China",
+       "institution_ids": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5100654390",
+      "display_name": "Xianming Liu",
+      "orcid": "https://orcid.org/0000-0002-8857-1785",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-8857-1785"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I204983213",
+       "display_name": "Harbin Institute of Technology",
+       "ror": "https://ror.org/01yqg2h08",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Xianming Liu",
+     "raw_affiliation_strings": [
+      "School of Computer Science and Technology, Harbin Institute of Technology, Harbin, China"
+     ],
+     "raw_orcid": "https://orcid.org/0000-0002-8857-1785",
+     "affiliations": [
+      {
+       "raw_affiliation_string": "School of Computer Science and Technology, Harbin Institute of Technology, Harbin, China",
+       "institution_ids": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "last",
+     "author": {
+      "id": "https://openalex.org/A5038612499",
+      "display_name": "Liqiang Nie",
+      "orcid": "https://orcid.org/0000-0003-1476-0273",
+      "observed_orcids": [
+       "https://orcid.org/0000-0003-1476-0273"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I204983213",
+       "display_name": "Harbin Institute of Technology",
+       "ror": "https://ror.org/01yqg2h08",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Liqiang Nie",
+     "raw_affiliation_strings": [
+      "School of Computer Science and Technology, Harbin Institute of Technology (Shenzhen), Harbin, China",
+      "School of Computer Science and Technology, Harbin Institute of Technology (Shenzhen), Shenzhen, China"
+     ],
+     "raw_orcid": "https://orcid.org/0000-0003-1476-0273",
+     "affiliations": [
+      {
+       "raw_affiliation_string": "School of Computer Science and Technology, Harbin Institute of Technology (Shenzhen), Harbin, China",
+       "institution_ids": [
+        "https://openalex.org/I204983213"
+       ]
+      },
+      {
+       "raw_affiliation_string": "School of Computer Science and Technology, Harbin Institute of Technology (Shenzhen), Shenzhen, China",
+       "institution_ids": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ]
+    }
+   ],
+   "primary_location": {
+    "id": "doi:10.1109/tip.2025.3567205",
+    "doi": "https://doi.org/10.1109/tip.2025.3567205",
+    "is_oa": false,
+    "landing_page_url": "https://doi.org/10.1109/tip.2025.3567205",
+    "pdf_url": null,
+    "source": {
+     "id": "https://openalex.org/S4210173141",
+     "display_name": "IEEE Transactions on Image Processing",
+     "issn_l": "1057-7149",
+     "issn": [
+      "1057-7149",
+      "1941-0042"
+     ],
+     "is_oa": false,
+     "is_in_doaj": false,
+     "is_core": true,
+     "listed_in": [
+      "anvur-scientific",
+      "ccf-a",
+      "cwts-core",
+      "dongbi-a",
+      "doyens",
+      "jufo-3",
+      "ki-jl-2",
+      "medline",
+      "norway-2",
+      "poland-200",
+      "russia-white-list-1",
+      "vabb-shw"
+     ],
+     "host_organization": "https://openalex.org/P4310319808",
+     "host_organization_name": "Institute of Electrical and Electronics Engineers",
+     "host_organization_lineage": [
+      "https://openalex.org/P4310319808"
+     ],
+     "host_organization_lineage_names": [
+      "Institute of Electrical and Electronics Engineers"
+     ],
+     "type": "journal"
+    },
+    "license": null,
+    "license_id": null,
+    "version": "publishedVersion",
+    "is_accepted": true,
+    "is_published": true,
+    "raw_source_name": "IEEE Transactions on Image Processing",
+    "raw_type": "journal-article"
+   },
+   "type": "article"
+  },
+  {
+   "id": "https://openalex.org/W4413146948",
+   "doi": "https://doi.org/10.1109/cvpr52734.2025.02623",
+   "display_name": "Degradation-Aware Feature Perturbation for All-in-One Image Restoration",
+   "publication_year": 2025,
+   "authorships": [
+    {
+     "author_position": "first",
+     "author": {
+      "id": "https://openalex.org/A5111335909",
+      "display_name": "Xiangpeng Tian",
+      "orcid": "https://orcid.org/0009-0003-0342-9443",
+      "observed_orcids": [
+       "https://orcid.org/0009-0003-0342-9443"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I24185976",
+       "display_name": "Sichuan University",
+       "ror": "https://ror.org/011ashp19",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I24185976"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Xiangpeng Tian",
+     "raw_affiliation_strings": [
+      "College of Electronics and Information Engineering, Sichuan University,China"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "College of Electronics and Information Engineering, Sichuan University,China",
+       "institution_ids": [
+        "https://openalex.org/I24185976"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5111297930",
+      "display_name": "Xiangyu Liao",
+      "orcid": "https://orcid.org/0009-0002-0783-1862",
+      "observed_orcids": [
+       "https://orcid.org/0009-0002-0783-1862",
+       "https://orcid.org/0000-0002-0061-1317"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I24185976",
+       "display_name": "Sichuan University",
+       "ror": "https://ror.org/011ashp19",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I24185976"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Xiangyu Liao",
+     "raw_affiliation_strings": [
+      "College of Electronics and Information Engineering, Sichuan University,China"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "College of Electronics and Information Engineering, Sichuan University,China",
+       "institution_ids": [
+        "https://openalex.org/I24185976"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5102727787",
+      "display_name": "Xiao Liu",
+      "orcid": "https://orcid.org/0009-0006-7399-3754",
+      "observed_orcids": [
+       "https://orcid.org/0009-0006-7399-3754"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I24185976",
+       "display_name": "Sichuan University",
+       "ror": "https://ror.org/011ashp19",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I24185976"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Xiao Liu",
+     "raw_affiliation_strings": [
+      "College of Electronics and Information Engineering, Sichuan University,China"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "College of Electronics and Information Engineering, Sichuan University,China",
+       "institution_ids": [
+        "https://openalex.org/I24185976"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5104274620",
+      "display_name": "Meng Li",
+      "orcid": "https://orcid.org/0009-0008-8553-0284",
+      "observed_orcids": [
+       "https://orcid.org/0009-0008-8553-0284"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I24185976",
+       "display_name": "Sichuan University",
+       "ror": "https://ror.org/011ashp19",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I24185976"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Meng Li",
+     "raw_affiliation_strings": [
+      "College of Electronics and Information Engineering, Sichuan University,China"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "College of Electronics and Information Engineering, Sichuan University,China",
+       "institution_ids": [
+        "https://openalex.org/I24185976"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "last",
+     "author": {
+      "id": "https://openalex.org/A5028800313",
+      "display_name": "Chao Ren",
+      "orcid": "https://orcid.org/0000-0002-5347-2728",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-5347-2728"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I24185976",
+       "display_name": "Sichuan University",
+       "ror": "https://ror.org/011ashp19",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I24185976"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Chao Ren",
+     "raw_affiliation_strings": [
+      "College of Electronics and Information Engineering, Sichuan University,China"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "College of Electronics and Information Engineering, Sichuan University,China",
+       "institution_ids": [
+        "https://openalex.org/I24185976"
+       ]
+      }
+     ]
+    }
+   ],
+   "primary_location": {
+    "id": "doi:10.1109/cvpr52734.2025.02623",
+    "doi": "https://doi.org/10.1109/cvpr52734.2025.02623",
+    "is_oa": false,
+    "landing_page_url": "https://doi.org/10.1109/cvpr52734.2025.02623",
+    "pdf_url": null,
+    "source": {
+     "id": "https://openalex.org/S4210176548",
+     "display_name": "IEEE Computer Society Conference on Computer Vision and Pattern Recognition/Proceedings - IEEE Computer Society Conference on Computer Vision and Pattern Recognition/Proceedings",
+     "issn_l": "1063-6919",
+     "issn": [
+      "1063-6919",
+      "2332-564X",
+      "2575-7075"
+     ],
+     "is_oa": false,
+     "is_in_doaj": false,
+     "is_core": true,
+     "listed_in": [
+      "cwts-core",
+      "norway-1"
+     ],
+     "host_organization": "https://openalex.org/P4310319808",
+     "host_organization_name": "Institute of Electrical and Electronics Engineers",
+     "host_organization_lineage": [
+      "https://openalex.org/P4310319808"
+     ],
+     "host_organization_lineage_names": [
+      "Institute of Electrical and Electronics Engineers"
+     ],
+     "type": "conference"
+    },
+    "license": null,
+    "license_id": null,
+    "version": "publishedVersion",
+    "is_accepted": true,
+    "is_published": true,
+    "raw_source_name": "2025 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)",
+    "raw_type": "proceedings-article"
+   },
+   "type": "conference-paper"
+  },
+  {
+   "id": "https://openalex.org/W4409366360",
+   "doi": "https://doi.org/10.1609/aaai.v39i8.32905",
+   "display_name": "Debiased All-in-one Image Restoration with Task Uncertainty Regularization",
+   "publication_year": 2025,
+   "authorships": [
+    {
+     "author_position": "first",
+     "author": {
+      "id": "https://openalex.org/A5119271868",
+      "display_name": "Gang Wu",
+      "orcid": "https://orcid.org/0009-0007-5003-3117",
+      "observed_orcids": [
+       "https://orcid.org/0009-0007-5003-3117"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I204983213",
+       "display_name": "Harbin Institute of Technology",
+       "ror": "https://ror.org/01yqg2h08",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Gang Wu",
+     "raw_affiliation_strings": [
+      "Harbin Institute of Technology"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "Harbin Institute of Technology",
+       "institution_ids": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5087165831",
+      "display_name": "Junjun Jiang",
+      "orcid": "https://orcid.org/0000-0002-5694-505X",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-5694-505X"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I204983213",
+       "display_name": "Harbin Institute of Technology",
+       "ror": "https://ror.org/01yqg2h08",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Junjun Jiang",
+     "raw_affiliation_strings": [
+      "Harbin Institute of Technology"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "Harbin Institute of Technology",
+       "institution_ids": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5100713695",
+      "display_name": "Yijun Wang",
+      "orcid": "https://orcid.org/0000-0002-8161-2150",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-8161-2150"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I204983213",
+       "display_name": "Harbin Institute of Technology",
+       "ror": "https://ror.org/01yqg2h08",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Yijun Wang",
+     "raw_affiliation_strings": [
+      "Harbin Institute of Technology"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "Harbin Institute of Technology",
+       "institution_ids": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5103140908",
+      "display_name": "Kui Jiang",
+      "orcid": "https://orcid.org/0000-0002-4055-7503",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-4055-7503"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I204983213",
+       "display_name": "Harbin Institute of Technology",
+       "ror": "https://ror.org/01yqg2h08",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Kui Jiang",
+     "raw_affiliation_strings": [
+      "Harbin Institute of Technology"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "Harbin Institute of Technology",
+       "institution_ids": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "last",
+     "author": {
+      "id": "https://openalex.org/A5100654390",
+      "display_name": "Xianming Liu",
+      "orcid": "https://orcid.org/0000-0002-8857-1785",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-8857-1785"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I204983213",
+       "display_name": "Harbin Institute of Technology",
+       "ror": "https://ror.org/01yqg2h08",
+       "country_code": "CN",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ],
+     "countries": [
+      "CN"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Xianming Liu",
+     "raw_affiliation_strings": [
+      "Harbin Institute of Technology"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "Harbin Institute of Technology",
+       "institution_ids": [
+        "https://openalex.org/I204983213"
+       ]
+      }
+     ]
+    }
+   ],
+   "primary_location": {
+    "id": "doi:10.1609/aaai.v39i8.32905",
+    "doi": "https://doi.org/10.1609/aaai.v39i8.32905",
+    "is_oa": true,
+    "landing_page_url": "https://doi.org/10.1609/aaai.v39i8.32905",
+    "pdf_url": "https://ojs.aaai.org/index.php/AAAI/article/download/32905/35060",
+    "source": {
+     "id": "https://openalex.org/S4210191458",
+     "display_name": "Proceedings of the AAAI Conference on Artificial Intelligence",
+     "issn_l": "2159-5399",
+     "issn": [
+      "2159-5399",
+      "2374-3468"
+     ],
+     "is_oa": true,
+     "is_in_doaj": false,
+     "is_core": false,
+     "listed_in": [
+      "jufo-2",
+      "norway-1"
+     ],
+     "host_organization": "https://openalex.org/P4310320058",
+     "host_organization_name": "Association for the Advancement of Artificial Intelligence",
+     "host_organization_lineage": [
+      "https://openalex.org/P4310320058"
+     ],
+     "host_organization_lineage_names": [
+      "Association for the Advancement of Artificial Intelligence"
+     ],
+     "type": "conference"
+    },
+    "license": null,
+    "license_id": null,
+    "version": "publishedVersion",
+    "is_accepted": true,
+    "is_published": true,
+    "raw_source_name": "Proceedings of the AAAI Conference on Artificial Intelligence",
+    "raw_type": "journal-article"
+   },
+   "type": "conference-paper"
+  },
+  {
+   "id": "https://openalex.org/W4404990961",
+   "doi": "https://doi.org/10.1016/j.cviu.2026.104795",
+   "display_name": "Adaptive Blind All-in-One Image Restoration",
+   "publication_year": 2026,
+   "authorships": [
+    {
+     "author_position": "first",
+     "author": {
+      "id": "https://openalex.org/A5104621348",
+      "display_name": "David Serrano-Lozano",
+      "orcid": "https://orcid.org/0009-0009-1224-8453",
+      "observed_orcids": [
+       "https://orcid.org/0009-0009-1224-8453"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I123044942",
+       "display_name": "Universitat Autònoma de Barcelona",
+       "ror": "https://ror.org/052g8jq94",
+       "country_code": "ES",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I123044942"
+       ]
+      },
+      {
+       "id": "https://openalex.org/I4387153096",
+       "display_name": "Computer Vision Center",
+       "ror": "https://ror.org/00s0nnj93",
+       "country_code": "ES",
+       "type": "other",
+       "lineage": [
+        "https://openalex.org/I4387153040",
+        "https://openalex.org/I4387153096"
+       ]
+      }
+     ],
+     "countries": [
+      "ES"
+     ],
+     "is_corresponding": true,
+     "raw_author_name": "David Serrano-Lozano",
+     "raw_affiliation_strings": [
+      "Computer Vision Center, Spain",
+      "Universitat Autǹoma de Barcelona, Spain"
+     ],
+     "raw_orcid": "https://orcid.org/0009-0009-1224-8453",
+     "affiliations": [
+      {
+       "raw_affiliation_string": "Computer Vision Center, Spain",
+       "institution_ids": [
+        "https://openalex.org/I4387153096"
+       ]
+      },
+      {
+       "raw_affiliation_string": "Universitat Autǹoma de Barcelona, Spain",
+       "institution_ids": [
+        "https://openalex.org/I123044942"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5079201773",
+      "display_name": "Luis Herranz",
+      "orcid": "https://orcid.org/0000-0002-7022-3395",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-7022-3395"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I88060688",
+       "display_name": "Universidad Politécnica de Madrid",
+       "ror": "https://ror.org/03n6nwv02",
+       "country_code": "ES",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I88060688"
+       ]
+      }
+     ],
+     "countries": [
+      "ES"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Luis Herranz",
+     "raw_affiliation_strings": [
+      "Universidad Politécnica de Madrid, Spain"
+     ],
+     "raw_orcid": "https://orcid.org/0000-0002-7022-3395",
+     "affiliations": [
+      {
+       "raw_affiliation_string": "Universidad Politécnica de Madrid, Spain",
+       "institution_ids": [
+        "https://openalex.org/I88060688"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "middle",
+     "author": {
+      "id": "https://openalex.org/A5027024442",
+      "display_name": "Shaolin Su",
+      "orcid": "https://orcid.org/0000-0002-0600-5545",
+      "observed_orcids": [
+       "https://orcid.org/0000-0002-0600-5545"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I4387153096",
+       "display_name": "Computer Vision Center",
+       "ror": "https://ror.org/00s0nnj93",
+       "country_code": "ES",
+       "type": "other",
+       "lineage": [
+        "https://openalex.org/I4387153040",
+        "https://openalex.org/I4387153096"
+       ]
+      }
+     ],
+     "countries": [
+      "ES"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Shaolin Su",
+     "raw_affiliation_strings": [
+      "Computer Vision Center, Spain"
+     ],
+     "raw_orcid": null,
+     "affiliations": [
+      {
+       "raw_affiliation_string": "Computer Vision Center, Spain",
+       "institution_ids": [
+        "https://openalex.org/I4387153096"
+       ]
+      }
+     ]
+    },
+    {
+     "author_position": "last",
+     "author": {
+      "id": "https://openalex.org/A5090215237",
+      "display_name": "Javier Vázquez-Corral",
+      "orcid": "https://orcid.org/0000-0003-0414-7096",
+      "observed_orcids": [
+       "https://orcid.org/0000-0003-0414-7096"
+      ]
+     },
+     "institutions": [
+      {
+       "id": "https://openalex.org/I123044942",
+       "display_name": "Universitat Autònoma de Barcelona",
+       "ror": "https://ror.org/052g8jq94",
+       "country_code": "ES",
+       "type": "education",
+       "lineage": [
+        "https://openalex.org/I123044942"
+       ]
+      },
+      {
+       "id": "https://openalex.org/I4387153096",
+       "display_name": "Computer Vision Center",
+       "ror": "https://ror.org/00s0nnj93",
+       "country_code": "ES",
+       "type": "other",
+       "lineage": [
+        "https://openalex.org/I4387153040",
+        "https://openalex.org/I4387153096"
+       ]
+      }
+     ],
+     "countries": [
+      "ES"
+     ],
+     "is_corresponding": false,
+     "raw_author_name": "Javier Vazquez-Corral",
+     "raw_affiliation_strings": [
+      "Computer Vision Center, Spain",
+      "Universitat Autǹoma de Barcelona, Spain"
+     ],
+     "raw_orcid": "https://orcid.org/0000-0003-0414-7096",
+     "affiliations": [
+      {
+       "raw_affiliation_string": "Computer Vision Center, Spain",
+       "institution_ids": [
+        "https://openalex.org/I4387153096"
+       ]
+      },
+      {
+       "raw_affiliation_string": "Universitat Autǹoma de Barcelona, Spain",
+       "institution_ids": [
+        "https://openalex.org/I123044942"
+       ]
+      }
+     ]
+    }
+   ],
+   "primary_location": {
+    "id": "doi:10.1016/j.cviu.2026.104795",
+    "doi": "https://doi.org/10.1016/j.cviu.2026.104795",
+    "is_oa": true,
+    "landing_page_url": "https://doi.org/10.1016/j.cviu.2026.104795",
+    "pdf_url": "https://www.sciencedirect.com/science/article/pii/S1077314226001621/pdf",
+    "source": {
+     "id": "https://openalex.org/S185008460",
+     "display_name": "Computer Vision and Image Understanding",
+     "issn_l": "1077-3142",
+     "issn": [
+      "1077-3142",
+      "1090-235X"
+     ],
+     "is_oa": false,
+     "is_in_doaj": false,
+     "is_core": true,
+     "listed_in": [
+      "ccf-b",
+      "cwts-core",
+      "dongbi-b",
+      "jufo-2",
+      "norway-2",
+      "poland-100",
+      "russia-white-list-1"
+     ],
+     "host_organization": "https://openalex.org/P4310320990",
+     "host_organization_name": "Elsevier BV",
+     "host_organization_lineage": [
+      "https://openalex.org/P4310320990"
+     ],
+     "host_organization_lineage_names": [
+      "Elsevier BV"
+     ],
+     "type": "journal"
+    },
+    "license": "cc-by",
+    "license_id": "https://openalex.org/licenses/cc-by",
+    "version": "publishedVersion",
+    "is_accepted": true,
+    "is_published": true,
+    "raw_source_name": "Computer Vision and Image Understanding",
+    "raw_type": "journal-article"
+   },
+   "type": "article"
+  }
+ ],
+ "group_by": []
+}

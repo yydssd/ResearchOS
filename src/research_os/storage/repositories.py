@@ -21,6 +21,7 @@ from research_os.domain.enums import (
     EventType,
     FailureType,
     RunStatus,
+    SourceTier,
     SourceType,
     TaskStatus,
     TaskType,
@@ -35,6 +36,7 @@ from research_os.domain.models import (
     ResearchRun,
     ResearchTask,
     ResearchWork,
+    SourceCandidate,
     SourceVersion,
 )
 from research_os.storage import tables as t
@@ -67,6 +69,16 @@ class SourceVersionRepository(Protocol):
     def list_by_run(self, run_id: str) -> list[SourceVersion]: ...
 
     def list_all(self) -> list[SourceVersion]: ...
+
+
+class SourceCandidateRepository(Protocol):
+    def create_many(self, candidates: list[SourceCandidate], run_id: str | None = None) -> list[SourceCandidate]: ...
+
+    def list_by_run(self, run_id: str) -> list[SourceCandidate]: ...
+
+    def list_all(self) -> list[SourceCandidate]: ...
+
+    def attach_resolution(self, candidate_id: str, work_id: str, source_version_id: str) -> None: ...
 
 
 class EvidenceRepository(Protocol):
@@ -184,6 +196,7 @@ class SqlSourceVersionRepository:
                 verified=sv.verified,
                 verification_notes=sv.verification_notes,
                 local_path=sv.local_path,
+                source_tier=sv.source_tier.value if sv.source_tier else None,
             )
         )
         return sv
@@ -204,6 +217,7 @@ class SqlSourceVersionRepository:
             verified=row.verified,
             verification_notes=row.verification_notes or [],
             local_path=row.local_path,
+            source_tier=SourceTier(row.source_tier) if row.source_tier else None,
         )
 
     def get(self, source_version_id: str) -> SourceVersion | None:
@@ -223,7 +237,81 @@ class SqlSourceVersionRepository:
         return [self._to_domain(r) for r in rows]
 
 
+class SqlSourceCandidateRepository:
+    """Persists discovery candidates separately from evidence (plan §14).
+
+    A candidate carries unverified text (title/abstract) for triage only; keeping
+    it in its own table is what structurally prevents snippets from becoming
+    evidence by accident.
+    """
+
+    def __init__(self, session: Session) -> None:
+        self._s = session
+
+    def create_many(self, candidates: list[SourceCandidate], run_id: str | None = None) -> list[SourceCandidate]:
+        for c in candidates:
+            self._s.add(
+                t.SourceCandidateRow(
+                    id=c.id,
+                    run_id=run_id,
+                    provider=c.provider,
+                    provider_rank=c.provider_rank,
+                    title=c.title,
+                    authors=c.authors,
+                    year=c.year,
+                    venue=c.venue,
+                    doi=c.doi,
+                    arxiv_id=c.arxiv_id,
+                    arxiv_version=c.arxiv_version,
+                    url=c.url,
+                    abstract=c.abstract,
+                    source_type=c.source_type.value,
+                    raw=c.raw,
+                    resolved_work_id=c.resolved_work_id,
+                    resolved_source_version_id=c.resolved_source_version_id,
+                )
+            )
+        return candidates
+
+    def _to_domain(self, row: t.SourceCandidateRow) -> SourceCandidate:
+        return SourceCandidate(
+            id=row.id,
+            provider=row.provider,
+            provider_rank=row.provider_rank,
+            title=row.title,
+            authors=row.authors or [],
+            year=row.year,
+            venue=row.venue,
+            doi=row.doi,
+            arxiv_id=row.arxiv_id,
+            arxiv_version=row.arxiv_version,
+            url=row.url,
+            abstract=row.abstract,
+            source_type=SourceType(row.source_type),
+            raw=row.raw or {},
+            resolved_work_id=row.resolved_work_id,
+            resolved_source_version_id=row.resolved_source_version_id,
+        )
+
+    def list_by_run(self, run_id: str) -> list[SourceCandidate]:
+        rows = self._s.scalars(select(t.SourceCandidateRow).where(t.SourceCandidateRow.run_id == run_id)).all()
+        return [self._to_domain(r) for r in rows]
+
+    def list_all(self) -> list[SourceCandidate]:
+        rows = self._s.scalars(select(t.SourceCandidateRow)).all()
+        return [self._to_domain(r) for r in rows]
+
+    def attach_resolution(self, candidate_id: str, work_id: str, source_version_id: str) -> None:
+        """Record which work/version a candidate was resolved into (audit trail)."""
+        row = self._s.get(t.SourceCandidateRow, candidate_id)
+        if row is None:
+            raise KeyError(f"candidate {candidate_id} not found")
+        row.resolved_work_id = work_id
+        row.resolved_source_version_id = source_version_id
+
+
 class SqlEvidenceRepository:
+
     def __init__(self, session: Session) -> None:
         self._s = session
 

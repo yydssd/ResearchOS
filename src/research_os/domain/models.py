@@ -23,6 +23,7 @@ from research_os.domain.enums import (
     EventType,
     FailureType,
     RunStatus,
+    SourceTier,
     SourceType,
     TaskStatus,
     TaskType,
@@ -76,6 +77,36 @@ class SourceVersion(BaseModel):
     verified: bool = False
     verification_notes: list[str] = []
     local_path: str | None = None
+    # Discovery metadata only (plan §8) — never a truth judgment.
+    source_tier: SourceTier | None = None
+
+
+class SourceCandidate(BaseModel):
+    """A search result believed to reference a work (plan §14).
+
+    Candidates are a third kind of object, distinct from both sources and
+    evidence: they may contain text (titles, abstracts) that was never verified
+    against a real document. Such text must NEVER be promoted into `Evidence`.
+    """
+
+    id: str = Field(default_factory=lambda: new_id("cand"))
+    provider: str
+    provider_rank: int = 0
+    title: str
+    authors: list[str] = []
+    year: int | None = None
+    venue: str | None = None
+    doi: str | None = None
+    arxiv_id: str | None = None
+    arxiv_version: str | None = None
+    url: str | None = None
+    # discovery-only text (triage / deep-read hints); never becomes Evidence
+    abstract: str | None = None
+    source_type: SourceType = SourceType.WEB
+    raw: dict = Field(default_factory=dict)
+    # filled in after work resolution
+    resolved_work_id: str | None = None
+    resolved_source_version_id: str | None = None
 
 
 class Evidence(BaseModel):

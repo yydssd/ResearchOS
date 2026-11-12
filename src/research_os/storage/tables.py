@@ -46,6 +46,30 @@ class SourceVersionRow(Base):
     verified: Mapped[bool] = mapped_column(Boolean, default=False)
     verification_notes: Mapped[list] = mapped_column(JSON, default=list)
     local_path: Mapped[str | None] = mapped_column(Text, nullable=True)
+    source_tier: Mapped[str | None] = mapped_column(String(32), nullable=True)
+
+
+class SourceCandidateRow(Base):
+    """Discovery candidates (plan §14). Kept apart from evidence on purpose."""
+
+    __tablename__ = "source_candidates"
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    run_id: Mapped[str | None] = mapped_column(String(64), ForeignKey("runs.id"), nullable=True, index=True)
+    provider: Mapped[str] = mapped_column(String(32))
+    provider_rank: Mapped[int] = mapped_column(Integer, default=0)
+    title: Mapped[str] = mapped_column(Text)
+    authors: Mapped[list] = mapped_column(JSON, default=list)
+    year: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    venue: Mapped[str | None] = mapped_column(Text, nullable=True)
+    doi: Mapped[str | None] = mapped_column(String(255), nullable=True, index=True)
+    arxiv_id: Mapped[str | None] = mapped_column(String(255), nullable=True, index=True)
+    arxiv_version: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    abstract: Mapped[str | None] = mapped_column(Text, nullable=True)
+    source_type: Mapped[str] = mapped_column(String(32), default="web")
+    raw: Mapped[dict] = mapped_column(JSON, default=dict)
+    resolved_work_id: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
+    resolved_source_version_id: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
 
 
 class EvidenceRow(Base):

@@ -48,6 +48,32 @@ def init_db(url: str | None = None) -> None:
     from research_os.storage import tables  # noqa: F401  (registers models on Base)
 
     Base.metadata.create_all(bind=engine)
+    _apply_sqlite_migrations(engine)
+
+
+# Columns added after the first release. `create_all` only creates missing
+# tables, it never ALTERs an existing one, so pre-P2 databases would otherwise
+# be missing these columns. Keep this list tiny; introduce Alembic only when a
+# migration needs to rewrite data (plan §35: no infrastructure without a
+# measurable need).
+_ADDED_COLUMNS: dict[str, dict[str, str]] = {
+    "source_versions": {"source_tier": "VARCHAR(32)"},
+}
+
+
+def _apply_sqlite_migrations(engine) -> None:
+    """Idempotently add post-release columns on SQLite databases."""
+    if engine.dialect.name != "sqlite":
+        return
+    with engine.begin() as conn:
+        for table, columns in _ADDED_COLUMNS.items():
+            rows = conn.exec_driver_sql(f"PRAGMA table_info({table})").fetchall()
+            if not rows:
+                continue  # table does not exist yet; create_all just made it
+            existing = {row[1] for row in rows}
+            for name, ddl in columns.items():
+                if name not in existing:
+                    conn.exec_driver_sql(f"ALTER TABLE {table} ADD COLUMN {name} {ddl}")
 
 
 def session_factory() -> sessionmaker[Session]:
