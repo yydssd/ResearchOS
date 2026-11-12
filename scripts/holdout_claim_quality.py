@@ -40,15 +40,30 @@ HEADERS = {"User-Agent": "ResearchOS/0.1 (hold-out evaluation)"}
 CACHE = Path(".holdout_cache")
 
 
+EXTRA_QUERIES = (
+    "all-in-one image restoration",
+    "image deraining deblurring denoising unified model",
+    "blind image super-resolution degradation model",
+)
+
+
 def collect_ids(query: str, wanted: int) -> list[str]:
-    candidates = ArxivProvider().search(query, limit=wanted * 2)
+    """Query arXiv (then a few fallbacks) until `wanted` unique ids are found."""
     ids: list[str] = []
-    for candidate in candidates:
-        if candidate.arxiv_id and candidate.arxiv_id not in ids:
-            ids.append(candidate.arxiv_id)
+    for text in (query, *EXTRA_QUERIES):
         if len(ids) >= wanted:
             break
-    return ids
+        try:
+            candidates = ArxivProvider().search(text, limit=wanted * 2)
+        except Exception as exc:  # noqa: BLE001 - evaluation harness
+            print(f"  discovery failed for {text!r}: {exc}")
+            continue
+        for candidate in candidates:
+            if candidate.arxiv_id and candidate.arxiv_id not in ids:
+                ids.append(candidate.arxiv_id)
+            if len(ids) >= wanted:
+                break
+    return ids[:wanted]
 
 
 def fetch(arxiv_id: str) -> Path | None:
@@ -93,6 +108,7 @@ def main() -> None:
     totals = Counter()
     all_claims: list[tuple[str, object]] = []
     identities: list[ClaimIdentity] = []
+    grounded: dict[str, bool] = {}
     per_doc: list[tuple[str, int, int, int, int, int]] = []
 
     for index, arxiv_id in enumerate(ids, start=1):
@@ -105,6 +121,14 @@ def main() -> None:
             evidence = HeuristicEvidenceExtractor().extract(chunks)
             quantitative = HeuristicQuantitativeExtractor().extract(evidence)
             claims, relations = builder.build(evidence, quantitative=quantitative, chunks=chunks)
+            supports: dict[str, set[str]] = defaultdict(set)
+            for relation in relations:
+                supports[relation.claim_id].add(relation.evidence_id)
+            quant_by_evidence: dict[str, int] = defaultdict(int)
+            for row in quantitative:
+                quant_by_evidence[row.evidence_id] += 1
+            for claim in claims:
+                grounded[claim.id] = any(quant_by_evidence[eid] for eid in supports.get(claim.id, set()))
         except Exception as exc:  # noqa: BLE001 - evaluation harness
             print(f"  pipeline failed {arxiv_id}: {type(exc).__name__}: {exc}")
             totals["docs_failed"] += 1
@@ -131,7 +155,8 @@ def main() -> None:
         print("no document could be processed")
         return
 
-    # identity coverage: computed the same way the merge gate decides
+    # identity coverage: rebuilt from the persisted key, then judged by the same
+    # gate the builder uses. Counting raw keys would be meaningless here.
     for _, claim in all_claims:
         if claim.identity_key and claim.status.value == "SUPPORTED":
             parts = claim.identity_key.split("|")
@@ -148,42 +173,86 @@ def main() -> None:
                     )
                 )
 
-    grounded = Counter()
+    supported_total = sum(1 for _, claim in all_claims if claim.status.value == "SUPPORTED")
+    mergeable_ids = [i for i in identities if mergeable(i)]
+
+    subject_kind = Counter()
+    for identity in identities:
+        if identity.subject is None:
+            subject_kind["none"] += 1
+        elif identity.subject.startswith("self@"):
+            subject_kind["self"] += 1
+        else:
+            subject_kind["named method"] += 1
+
+    grounding = Counter()
+    for _, claim in all_claims:
+        if claim.status.value != "SUPPORTED":
+            continue
+        if grounded.get(claim.id):
+            grounding["structured"] += 1
+        elif "quantitative_unstructured" in (claim.conditions or []):
+            grounding["unstructured"] += 1
+        else:
+            grounding["no value in the sentence"] += 1
+
     flags = Counter()
     for _, claim in all_claims:
-        conditions = claim.conditions or []
-        if "quantitative_unstructured" in conditions:
-            grounded["unstructured"] += 1
-        else:
-            grounded["structured_or_none"] += 1
-        for flag in conditions:
+        for flag in claim.conditions or []:
             if flag in {
                 "quantitative_unstructured",
                 "scope_undetermined",
                 "comparative_unsubstantiated",
+                "subject_inferred",
             }:
                 flags[flag] += 1
 
-    # cross-document merge audit: one key must not collect distant sources
+    # cross-document audit, restricted to identities the gate would actually merge
     by_key: dict[str, set[str]] = defaultdict(set)
     for doc, claim in all_claims:
-        if claim.status.value == "SUPPORTED" and claim.identity_key:
-            by_key[claim.identity_key].add(doc)
+        if claim.status.value != "SUPPORTED" or not claim.identity_key:
+            continue
+        parts = claim.identity_key.split("|")
+        if len(parts) >= 7:
+            identity = ClaimIdentity(
+                subject=parts[0] or None,
+                task=parts[1] or None,
+                dataset=frozenset(filter(None, parts[2].split(","))),
+                metric=frozenset(filter(None, parts[3].split(","))),
+                direction=parts[4] or None,
+                conditions=tuple(filter(None, parts[5].split(";"))),
+                value_bucket=tuple(filter(None, parts[6].split(";"))),
+            )
+            if mergeable(identity):
+                by_key[claim.identity_key].add(doc)
     cross_doc = {key: docs for key, docs in by_key.items() if len(docs) > 1}
 
     print("\n=== totals ===")
     for name in ("docs", "docs_failed", "chunks", "evidence", "quantitative", "claims",
                  "supported", "unsupported", "relations", "delta_rows"):
         print(f"  {name:<16}{totals[name]}")
-    print(f"\n  identity fully determined (merge gate would apply): "
-          f"{sum(1 for i in identities if mergeable(i))}/{len(identities)}")
-    print(f"  claims with a task inherited from a heading: {sum(1 for i in identities if i.task)}")
-    print(f"  claims with a dataset: {sum(1 for i in identities if i.dataset)}")
-    print(f"  claims with a metric: {sum(1 for i in identities if i.metric)}")
-    print(f"  grounded: {dict(grounded)}")
-    print(f"  quality flags: {dict(flags)}")
-    print(f"\n  cross-document merge keys: {len(cross_doc)} (each should be a genuine duplicate)")
-    for key, docs in list(cross_doc.items())[:5]:
+
+    print("\n=== claim identity (supported claims only) ===")
+    print(f"  claims                           {supported_total}")
+    print(f"  subject: {dict(subject_kind)}")
+    print(f"  task inherited from a heading    {sum(1 for i in identities if i.task)}/{len(identities)}")
+    print(f"  dataset extracted                {sum(1 for i in identities if i.dataset)}/{len(identities)}")
+    print(f"  metric extracted                 {sum(1 for i in identities if i.metric)}/{len(identities)}")
+    print(f"  merge gate satisfied             {len(mergeable_ids)}/{len(identities)} "
+          f"({len(mergeable_ids) / max(1, len(identities)):.0%})")
+
+    print("\n=== grounding (supported claims) ===")
+    for name, count in grounding.most_common():
+        print(f"  {name:<32}{count}")
+
+    print("\n=== quality flags ===")
+    for name, count in flags.most_common():
+        print(f"  {name:<32}{count}")
+
+    print("\n=== cross-document merge audit (gate-qualified identities) ===")
+    print(f"  distinct mergeable keys          {len(by_key)}")
+    print(f"  keys spanning >1 document        {len(cross_doc)}")
+    for key, docs in list(cross_doc.items())[:8]:
         print(f"    {key}  <- {sorted(docs)}")
 
     print("\n=== per document ===")

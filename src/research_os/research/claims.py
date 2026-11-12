@@ -14,7 +14,7 @@ Two rules learned the hard way on real papers (see P4 spec §2):
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from research_os.domain.enums import ClaimStatus, ConfidenceLabel
 from research_os.domain.models import QuantitativeEvidence
@@ -31,7 +31,8 @@ PREDICATE = re.compile(
 )
 SELF_REFERENCE = re.compile(
     r"\b(?:our\s+(?:method|approach|model|framework|network|system|proposed)|"
-    r"we\s+propose|this\s+paper\s+proposes|the\s+(?:proposed\s+)?(?:method|model|approach|network))\b",
+    r"we\s+propose|this\s+paper\s+proposes|proposed\s+(?:method|model|approach|network)|"
+    r"the\s+(?:proposed\s+)?(?:method|model|approach|network))\b",
     re.IGNORECASE,
 )
 # Capitalised words that are never a method name (sentence openers, meta nouns).
@@ -69,13 +70,30 @@ class ClaimIdentity:
     direction: str | None
     conditions: tuple[str, ...]
     value_bucket: tuple[str, ...]
+    # Provenance, not identity: `self` was inferred from an explicit
+    # self-reference ("our method") or defaulted from the surrounding scope.
+    # Downstream needs the difference; the merge key must not see it.
+    subject_inferred: bool = field(default=False, compare=False)
 
     def key(self) -> str:
+        """Stable, parseable identity string: missing fields render as empty.
+
+        `str(None)` would put the literal "None" in the key, which is
+        indistinguishable from a method actually named "None" and forces every
+        reader to special-case it.
+        """
         dataset = ",".join(sorted(d.lower() for d in self.dataset))
         metric = ",".join(sorted(m.lower() for m in self.metric))
-        return (
-            f"{self.subject}|{self.task}|{dataset}|{metric}|{self.direction}"
-            f"|{';'.join(self.conditions)}|{';'.join(self.value_bucket)}"
+        return "|".join(
+            [
+                self.subject or "",
+                self.task or "",
+                dataset,
+                metric,
+                self.direction or "",
+                ";".join(self.conditions),
+                ";".join(self.value_bucket),
+            ]
         )
 
     def label(self) -> str:
@@ -89,27 +107,38 @@ class ClaimIdentity:
         return " · ".join(part for part in parts if part)
 
 
-def _subject(text: str) -> str | None:
-    """Subject of the claim: a named method, or the sentinel `self`."""
+def _subject(text: str) -> tuple[str | None, bool]:
+    """Subject of the claim: a named method, or the sentinel `self`.
+
+    Returns `(subject, inferred)` so callers can tell "our method" from a subject
+    defaulted out of the surrounding scope.
+
+    Two filters earn their keep on real full text: a capitalised word at the very
+    start of the sentence is grammar, not a proper noun ("Motivated experiments show
+    ..."), and a name may appear anywhere in the clause, not only at its start
+    ("The results show that Restormer improves ...").
+    """
     match = PREDICATE.search(text)
     prefix = text[: match.start()] if match else text
     if SELF_REFERENCE.search(prefix):
-        return "self"
+        return "self", False
     dataset_words = {d.lower() for d in DATASETS}
     metric_words = {m.lower() for m in METRICS}
-    for token in re.findall(r"[A-Za-z][A-Za-z0-9\-]*", prefix):
+    sentence_start = len(prefix) - len(prefix.lstrip())
+    for token_match in re.finditer(r"[A-Za-z][A-Za-z0-9\-]*", prefix):
+        token = token_match.group(0)
         low = token.lower()
         if low in COMMON_CAPS or low in dataset_words or low in metric_words:
             continue
-        looks_named = (
-            any(char.isupper() for char in token[1:])  # SwinIR, NAFNet
-            or (token.isupper() and len(token) >= 2)  # BSRGAN, CNN
-            or any(char.isdigit() for char in token)  # Rain100H
-            or (token[0].isupper() and len(token) >= 6)  # Restormer
-        )
+        has_inner_caps = any(char.isupper() for char in token[1:])
+        is_acronym = token.isupper() and len(token) >= 2
+        has_digit = any(char.isdigit() for char in token)
+        if token_match.start() == sentence_start and not (has_inner_caps or is_acronym or has_digit):
+            continue  # sentence-initial capitalisation proves nothing
+        looks_named = has_inner_caps or is_acronym or has_digit or (token[0].isupper() and len(token) >= 6)
         if looks_named:
-            return low
-    return None
+            return low, False
+    return None, False
 
 
 def _conditions(text: str) -> tuple[str, ...]:
@@ -146,10 +175,11 @@ def extract_identity(
     if scope is not None:
         datasets = datasets or set(scope.datasets)
         task = scope.task
-    subject = _subject(text)
+    subject, inferred = _subject(text)
     if subject is None and (task or datasets or metrics) and not THIRD_PARTY.search(text):
         # In the paper's own evaluation prose the implicit subject is its method.
         subject = "self"
+        inferred = True
     if subject == "self":
         subject = f"self@{source_version_id}"
     direction = (
@@ -165,6 +195,7 @@ def extract_identity(
         direction=direction,
         conditions=_conditions(text),
         value_bucket=_buckets(quantitative),
+        subject_inferred=inferred,
     )
 
 

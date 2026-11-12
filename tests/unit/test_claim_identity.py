@@ -115,3 +115,77 @@ def test_label_is_human_readable():
 
     assert "Rain100H" in identity.label()
     assert "PSNR" in identity.label()
+
+
+def test_key_uses_empty_fields_not_the_string_none():
+    """`str(None)` in a key makes it unparseable: '' and 'None' would collide and
+    every reader has to special-case the literal string."""
+    identity = ClaimIdentity(
+        subject=None, task=None, dataset=frozenset(), metric=frozenset(),
+        direction=None, conditions=(), value_bucket=(),
+    )
+
+    assert identity.key() == "||||||"
+    assert "None" not in identity.key()
+
+
+def test_key_round_trips_through_split():
+    identity = _identity("On Rain100H, Restormer improves PSNR by 0.42 dB.")
+    parts = identity.key().split("|")
+
+    assert len(parts) == 7
+    assert parts[0] == "restormer"
+    assert parts[2] == "rain100h"
+    assert parts[3] == "psnr"
+
+
+def test_sentence_initial_word_is_not_a_method_name():
+    """Capitalisation at the start of a sentence is grammar, not a proper noun.
+
+    On real full text this rule is what keeps 'Motivated', 'Extensive' and
+    'Recently' out of the subject slot; without it they doubled as method names.
+    """
+    for opener in ("Motivated", "Extensive", "Recently"):
+        identity = _identity(
+            f"{opener} experiments on the benchmark show that the model improves PSNR by 0.4 dB."
+        )
+        assert identity.subject != opener.lower(), opener
+
+
+def test_proposed_method_is_the_papers_own_method():
+    identity = _identity("Proposed method significantly outperforms the SOTA methods on SIDD.")
+
+    assert identity.subject == "self@sv_1"
+
+
+def test_method_name_inside_a_sentence_is_still_found():
+    identity = _identity("The results show that Restormer improves PSNR by 0.42 dB on Rain100H.")
+
+    assert identity.subject == "restormer"
+
+
+def test_implicit_self_is_marked_as_inferred():
+    """A sentence with no self-reference still gets `self` when the scope is
+    known ("the reported gains reach 0.4 dB"). That default is useful but weak:
+    on the hold-out 10 of 12 sampled `self` claims were mechanism prose or
+    figure captions, so downstream must be able to tell the two apart."""
+    identity = _identity("The reported gains on SIDD reach 0.4 dB in our study.")
+
+    assert identity.subject == "self@sv_1"
+    assert identity.subject_inferred is True
+
+
+def test_explicit_self_reference_is_not_marked_as_inferred():
+    identity = _identity("Our method improves PSNR by 0.42 dB on Rain100H.")
+
+    assert identity.subject == "self@sv_1"
+    assert identity.subject_inferred is False
+
+
+def test_inferred_subject_does_not_change_the_key():
+    """The flag is provenance, not identity: same scope must still merge."""
+    implicit = _identity("The reported gains on SIDD reach 0.4 dB in this study.")
+    explicit = _identity("Our model gains 0.4 dB on SIDD in this study.")
+
+    assert implicit.subject_inferred is True
+    assert implicit.key() == explicit.key()

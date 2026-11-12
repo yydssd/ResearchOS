@@ -88,3 +88,13 @@ def test_close_values_are_not_bucketed_together():
     claims, _ = _build(["paper_a.md", "paper_d.md"])
 
     assert len(claims) == 2
+
+
+def test_inferred_subject_is_reported_as_a_quality_flag():
+    """`self` reaches the claim's conditions as `subject_inferred` when it was
+    defaulted rather than stated, so P5 can tell "we claim" from "we assume"."""
+    claims, _ = _build(["paper_implicit_self.md"])
+
+    flagged = [c for c in claims if "subject_inferred" in c.conditions]
+    assert flagged, "expected at least one claim with an inferred subject"
+    assert all(c.identity_key.split("|")[0].startswith("self@") for c in flagged)

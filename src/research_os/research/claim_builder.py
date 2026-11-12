@@ -94,6 +94,10 @@ class HeuristicClaimBuilder:
             status, confidence, flags = classify_claim(
                 group["text"], identity, supporting, quant_by_evidence
             )
+            if identity.subject_inferred:
+                # Provenance of the subject slot; kept beside the other quality
+                # flags so a reader can weigh a claim that speaks for the paper.
+                flags = [*flags, "subject_inferred"]
             claim = Claim(
                 text=group["text"],
                 claim_type=(
