@@ -75,22 +75,38 @@ def load_document(path: str | Path, source_type: str = "auto") -> list[PageText]
     st = source_type.lower()
     if st == "pdf" or (st == "auto" and p.suffix.lower() == ".pdf"):
         return load_pdf(p)
+    if st == "html" or (st == "auto" and p.suffix.lower() in {".html", ".htm"}):
+        # Imported lazily: html.py imports PageText/DocumentLoadError from this
+        # module, so a top-level import here would be circular.
+        from research_os.documents.html import load_html
+
+        return load_html(p)
     if st in ("markdown", "md", "readme") or (st == "auto" and p.suffix.lower() in {".md", ".markdown", ".txt"}):
         return load_markdown(p)
     raise DocumentLoadError(FailureType.SOURCE_UNAVAILABLE, f"unsupported document type: {p.suffix}")
 
 
 def source_type_for(path: str | Path, declared: str = "auto") -> SourceType:
-    """Resolve the SourceType from an explicit declaration or the file suffix."""
+    """Resolve the SourceType from an explicit declaration or the file name.
+
+    A README is tagged as such (not as generic Markdown) so that downstream code
+    can use a different source-authority tier for repository documentation
+    (plan §8: a repository is authoritative for implementation details).
+    """
     if declared not in ("auto", ""):
         try:
             return SourceType(declared)
         except ValueError:
             pass
-    suffix = Path(path).suffix.lower()
+    p = Path(path)
+    suffix = p.suffix.lower()
     if suffix == ".pdf":
         return SourceType.PDF
+    if suffix in {".html", ".htm"}:
+        return SourceType.HTML
     if suffix in {".md", ".markdown", ".txt"}:
+        if p.stem.lower().startswith("readme"):
+            return SourceType.README
         return SourceType.MARKDOWN
     return SourceType.WEB
 

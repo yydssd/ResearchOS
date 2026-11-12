@@ -72,6 +72,45 @@ class SourceCandidateRow(Base):
     resolved_source_version_id: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
 
 
+class ChunkRow(Base):
+    """Persisted document chunk (plan §15).
+
+    Chunks are stored rather than kept in memory because `Evidence.chunk_id`
+    must stay resolvable long after the run finished — otherwise the citation
+    chain ends in a dangling identifier.
+    """
+
+    __tablename__ = "chunks"
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    source_version_id: Mapped[str] = mapped_column(String(64), ForeignKey("source_versions.id"), index=True)
+    page_index: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    page_label: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    section: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    chunk_index: Mapped[int] = mapped_column(Integer)
+    text: Mapped[str] = mapped_column(Text)
+    content_hash: Mapped[str] = mapped_column(String(64), default="")
+
+
+class QuantitativeEvidenceRow(Base):
+    """Structured numbers extracted from one evidence object (plan §15).
+
+    Kept apart from free-text evidence so comparisons can be grouped by
+    dataset/metric instead of comparing incomparable PSNR numbers.
+    """
+
+    __tablename__ = "quantitative_evidence"
+    id: Mapped[str] = mapped_column(String(80), primary_key=True)
+    evidence_id: Mapped[str] = mapped_column(String(64), ForeignKey("evidence.id"), index=True)
+    seq: Mapped[int] = mapped_column(Integer, default=0)
+    dataset: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    metric: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    method: Mapped[str | None] = mapped_column(Text, nullable=True)
+    value: Mapped[float | None] = mapped_column(Float, nullable=True)
+    comparator: Mapped[str | None] = mapped_column(Text, nullable=True)
+    comparator_value: Mapped[float | None] = mapped_column(Float, nullable=True)
+    protocol: Mapped[str | None] = mapped_column(String(64), nullable=True)
+
+
 class EvidenceRow(Base):
     __tablename__ = "evidence"
     id: Mapped[str] = mapped_column(String(64), primary_key=True)

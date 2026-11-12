@@ -1,9 +1,13 @@
-"""Evidence extraction.
+"""Evidence extraction with exact source offsets (plan §2.2, §15).
 
-Week 1 ships a deterministic heuristic extractor (invariant 2.5: prefer
-deterministic code); the LLM-backed semantic extractor plugs in through the
-same interface later. Evidence always carries an identifiable source location
+Week 1 shipped a deterministic heuristic extractor (invariant 2.5: prefer
+deterministic code); the LLM-backed semantic extractor plugs in through the same
+interface later. Evidence always carries an identifiable source location
 (invariant 2.1 / plan §7.4).
+
+Offset correctness is part of that contract: sentences are located by interval
+in the *original* chunk text, never by searching a rewritten copy, because a
+citation is only checkable if `chunk.text[start:end]` is the quoted sentence.
 """
 
 from __future__ import annotations
@@ -23,13 +27,43 @@ _BOILERPLATE = re.compile(
 )
 _MIN_EVIDENCE_CHARS = 60
 
+# A sentence ends at . ! or ? followed by whitespace. Decimals ("39.18") are safe
+# because the dot there is not followed by whitespace.
+_BOUNDARY = re.compile(r"(?<=[.!?])\s+")
+
+
+def sentence_spans(text: str) -> list[tuple[int, int, str]]:
+    """Sentence intervals (start, end, sentence) over the unmodified text."""
+    spans: list[tuple[int, int, str]] = []
+
+    def _push(raw: str, offset: int) -> None:
+        stripped = raw.strip()
+        if not stripped:
+            return
+        lead = len(raw) - len(raw.lstrip())
+        start = offset + lead
+        spans.append((start, start + len(stripped), stripped))
+
+    start = 0
+    for match in _BOUNDARY.finditer(text):
+        _push(text[start : match.start()], start)
+        start = match.end()
+    _push(text[start:], start)
+    return spans
+
 
 def _split_sentences(text: str) -> list[str]:
-    """Split on sentence boundaries while protecting decimal points
-    (e.g. '39.18 dB' must not be cut at the dot)."""
-    protected = re.sub(r"(\d)\.(\d)", r"\1<DOT>\2", text)
-    parts = re.split(r"(?<=[.!?])\s+", protected)
-    return [p.replace("<DOT>", ".").strip() for p in parts if p.strip()]
+    """Sentence strings only (kept for callers that do not need offsets)."""
+    return [sentence for _, _, sentence in sentence_spans(text)]
+
+
+def has_location(evidence: Evidence) -> bool:
+    """True when the evidence can be located again inside its source (plan §2.2).
+
+    A chunk id is sufficient because chunks carry page/section themselves; a bare
+    section or page label also counts for sources loaded without chunking.
+    """
+    return bool(evidence.chunk_id or evidence.section or evidence.page_label)
 
 
 class EvidenceExtractor(Protocol):
@@ -43,8 +77,7 @@ class HeuristicEvidenceExtractor:
         evidence: list[Evidence] = []
         seen: set[str] = set()
         for chunk in chunks:
-            text = chunk.text
-            for sentence in _split_sentences(text.replace("\n", " ")):
+            for start, end, sentence in sentence_spans(chunk.text):
                 if len(sentence) < _MIN_EVIDENCE_CHARS:
                     continue
                 if _BOILERPLATE.match(sentence):
@@ -53,7 +86,6 @@ class HeuristicEvidenceExtractor:
                 if digest in seen:
                     continue
                 seen.add(digest)
-                pos = chunk.text.find(sentence)
                 evidence.append(
                     Evidence(
                         id=new_id("e"),
@@ -64,8 +96,8 @@ class HeuristicEvidenceExtractor:
                         page_index=chunk.page_index,
                         page_label=chunk.page_label,
                         chunk_id=chunk.id,
-                        char_start=pos if pos >= 0 else None,
-                        char_end=pos + len(sentence) if pos >= 0 else None,
+                        char_start=start,
+                        char_end=end,
                         content_hash=digest,
                     )
                 )

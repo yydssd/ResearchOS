@@ -136,9 +136,15 @@ class Evidence(BaseModel):
 
 class QuantitativeEvidence(BaseModel):
     """Structured experimental evidence, kept separate to avoid invalid
-    cross-paper comparisons (plan §15)."""
+    cross-paper comparisons (plan §15).
 
+    `seq` exists because one sentence often reports several metrics
+    ("PSNR by 0.42 dB and SSIM by 0.013"); it makes (evidence_id, seq) unique.
+    """
+
+    id: str = Field(default_factory=lambda: new_id("qev"))
     evidence_id: str
+    seq: int = 0
     dataset: str | None = None
     metric: str | None = None
     method: str | None = None

@@ -30,7 +30,9 @@ from research_os.domain.models import (
     Claim,
     ClaimEvidenceRelation,
     ContradictionAssessment,
+    DocumentChunk,
     Evidence,
+    QuantitativeEvidence,
     ResearchEvent,
     ResearchQuestion,
     ResearchRun,
@@ -89,6 +91,22 @@ class EvidenceRepository(Protocol):
     def list_by_source(self, source_version_id: str) -> list[Evidence]: ...
 
     def list_all(self) -> list[Evidence]: ...
+
+
+class ChunkRepository(Protocol):
+    def create_many(self, chunks: list[DocumentChunk]) -> list[DocumentChunk]: ...
+
+    def get(self, chunk_id: str) -> DocumentChunk | None: ...
+
+    def list_by_source(self, source_version_id: str) -> list[DocumentChunk]: ...
+
+
+class QuantitativeEvidenceRepository(Protocol):
+    def create_many(self, facts: list[QuantitativeEvidence]) -> list[QuantitativeEvidence]: ...
+
+    def list_by_evidence(self, evidence_id: str) -> list[QuantitativeEvidence]: ...
+
+    def list_all(self) -> list[QuantitativeEvidence]: ...
 
 
 class ClaimRepository(Protocol):
@@ -308,6 +326,100 @@ class SqlSourceCandidateRepository:
             raise KeyError(f"candidate {candidate_id} not found")
         row.resolved_work_id = work_id
         row.resolved_source_version_id = source_version_id
+
+
+class SqlChunkRepository:
+    """Persists provenance-bearing document chunks (plan §15)."""
+
+    def __init__(self, session: Session) -> None:
+        self._s = session
+
+    def create_many(self, chunks: list[DocumentChunk]) -> list[DocumentChunk]:
+        for chunk in chunks:
+            self._s.add(
+                t.ChunkRow(
+                    id=chunk.id,
+                    source_version_id=chunk.source_version_id,
+                    page_index=chunk.page_index,
+                    page_label=chunk.page_label,
+                    section=chunk.section,
+                    chunk_index=chunk.chunk_index,
+                    text=chunk.text,
+                    content_hash=chunk.content_hash,
+                )
+            )
+        return chunks
+
+    def _to_domain(self, row: t.ChunkRow) -> DocumentChunk:
+        return DocumentChunk(
+            id=row.id,
+            source_version_id=row.source_version_id,
+            page_index=row.page_index,
+            page_label=row.page_label,
+            section=row.section,
+            chunk_index=row.chunk_index,
+            text=row.text,
+            content_hash=row.content_hash,
+        )
+
+    def get(self, chunk_id: str) -> DocumentChunk | None:
+        row = self._s.get(t.ChunkRow, chunk_id)
+        return self._to_domain(row) if row else None
+
+    def list_by_source(self, source_version_id: str) -> list[DocumentChunk]:
+        rows = self._s.scalars(select(t.ChunkRow).where(t.ChunkRow.source_version_id == source_version_id)).all()
+        return [self._to_domain(r) for r in rows]
+
+
+class SqlQuantitativeEvidenceRepository:
+    """Persists structured numbers, one row per (evidence, metric) pair."""
+
+    def __init__(self, session: Session) -> None:
+        self._s = session
+
+    def create_many(self, facts: list[QuantitativeEvidence]) -> list[QuantitativeEvidence]:
+        for fact in facts:
+            self._s.add(
+                t.QuantitativeEvidenceRow(
+                    id=f"{fact.evidence_id}#{fact.seq}",
+                    evidence_id=fact.evidence_id,
+                    seq=fact.seq,
+                    dataset=fact.dataset,
+                    metric=fact.metric,
+                    method=fact.method,
+                    value=fact.value,
+                    comparator=fact.comparator,
+                    comparator_value=fact.comparator_value,
+                    protocol=fact.protocol,
+                )
+            )
+        return facts
+
+    def _to_domain(self, row: t.QuantitativeEvidenceRow) -> QuantitativeEvidence:
+        return QuantitativeEvidence(
+            id=row.id,
+            evidence_id=row.evidence_id,
+            seq=row.seq,
+            dataset=row.dataset,
+            metric=row.metric,
+            method=row.method,
+            value=row.value,
+            comparator=row.comparator,
+            comparator_value=row.comparator_value,
+            protocol=row.protocol,
+        )
+
+    def list_by_evidence(self, evidence_id: str) -> list[QuantitativeEvidence]:
+        rows = self._s.scalars(
+            select(t.QuantitativeEvidenceRow)
+            .where(t.QuantitativeEvidenceRow.evidence_id == evidence_id)
+            .order_by(t.QuantitativeEvidenceRow.seq)
+        ).all()
+        return [self._to_domain(r) for r in rows]
+
+    def list_all(self) -> list[QuantitativeEvidence]:
+        rows = self._s.scalars(select(t.QuantitativeEvidenceRow)).all()
+        return [self._to_domain(r) for r in rows]
 
 
 class SqlEvidenceRepository:
