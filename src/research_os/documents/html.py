@@ -33,6 +33,20 @@ _ECHO_TIMES_LONG = re.compile(r"(\d+(?:\.\d+)?)×(\d+(?:\.\d+)?)\1\\(?:times)\s*
 _ECHO_TIMES_SHORT = re.compile(r"(\d+(?:\.\d+)?×\d+(?:\.\d+)?)\\(?:times)")
 _ECHO_PERCENT = re.compile(r"(\d+(?:\.\d+)?)\%(\d+(?:\.\d+)?)\\%")
 
+# A bibliography entry is somebody else's title, not this paper's assertion. On
+# 20 real ar5iv papers the reference list supplied 28% of all evidence rows and
+# 28 entries became claims ("[13] Hadsell, R., ..."). Headings arrive with and
+# without numbering, so the prefix is optional rather than required.
+_BIBLIOGRAPHY = re.compile(
+    r"^(?:(?:[ivxlc]+|\d+|[a-z])\.?\s*)?" r"(?:references|bibliography)\b",
+    re.IGNORECASE,
+)
+
+
+def _is_bibliography(section: str | None) -> bool:
+    """True when a section heading names the reference list."""
+    return bool(section and _BIBLIOGRAPHY.match(section.strip()))
+
 
 def _collapse(text: str) -> str:
     """Normalize one block: undo ar5iv's LaTeX echo, then collapse whitespace."""
@@ -103,7 +117,7 @@ class _SectionParser(HTMLParser):
     def _flush(self) -> None:
         text = _collapse("".join(self._buffer))
         self._buffer = []
-        if text:
+        if text and not _is_bibliography(self._section):
             self.blocks.append((self._section, text, self._content_depth > 0))
 
 

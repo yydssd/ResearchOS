@@ -94,3 +94,60 @@ def test_deduplication_keeps_offsets_consistent(tmp_path):
 
     assert evidence
     assert all(chunk.text[e.char_start : e.char_end] == e.text for chunk in chunks for e in evidence)
+
+
+def test_reference_list_is_not_evidence(tmp_path):
+    """On 20 real ar5iv papers the bibliography supplied 28% of every evidence
+    row, and 28 bibliographic entries became claims ("[13] Hadsell, R., ...").
+    A reference entry is somebody else's title, not this paper's assertion."""
+    page = (
+        "<html><body><main>"
+        "<h2>4. Results</h2><p>Our model restores Rain100H better than the baseline.</p>"
+        "<h2>References</h2>"
+        "<p>[13] Hadsell, R., Chopra, S., LeCun, Y.: Dimensionality reduction by learning "
+        "an invariant mapping.</p>"
+        "<p>[63] Wang, Z., Bovik, A.C.: Image quality assessment: from error visibility "
+        "to structural similarity.</p>"
+        "</main></body></html>"
+    )
+    path = tmp_path / "bib.html"
+    path.write_text(page, encoding="utf-8")
+
+    body = " ".join(p.text for p in load_html(path))
+
+    assert "restores Rain100H better" in body
+    assert "Dimensionality reduction" not in body
+    assert "structural similarity" not in body
+
+
+def test_numbered_bibliography_heading_is_recognised_too(tmp_path):
+    """ar5iv emits "References" and "Bibliography" with and without numbering."""
+    for heading in ("Bibliography", "VII. References", "7 References"):
+        page = (
+            f"<html><body><main><h2>Results</h2><p>It is 0.4 dB better on SIDD.</p>"
+            f"<h2>{heading}</h2><p>[1] Someone, A.: An unrelated paper title.</p>"
+            f"</main></body></html>"
+        )
+        path = tmp_path / f"bib_{heading.replace(' ', '_').replace('.', '')}.html"
+        path.write_text(page, encoding="utf-8")
+
+        body = " ".join(p.text for p in load_html(path))
+
+        assert "0.4 dB better" in body
+        assert "unrelated paper title" not in body, heading
+
+
+def test_appendix_survives_the_bibliography_filter(tmp_path):
+    """Appendices hold real experiments; only the bibliography is dropped."""
+    page = (
+        "<html><body><main><h2>References</h2><p>[1] Someone, A.: An unrelated title.</p>"
+        "<h2>A. Appendix</h2><p>We additionally ablate the patch size on SIDD.</p>"
+        "</main></body></html>"
+    )
+    path = tmp_path / "appendix.html"
+    path.write_text(page, encoding="utf-8")
+
+    body = " ".join(p.text for p in load_html(path))
+
+    assert "ablate the patch size" in body
+    assert "unrelated title" not in body

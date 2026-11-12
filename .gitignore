@@ -20,3 +20,6 @@ reports/
 
 # Local env
 .env
+
+# Hold-out harness: cached ar5iv pages are re-downloadable, ids are not
+.holdout_cache/
