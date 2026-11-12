@@ -1,6 +1,6 @@
 # P2 源发现与核验 Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** 让 ResearchOS 能把一个研究问题变成一批已核验的 canonical work + 版本（计划 §14 Phase 2）。
 
@@ -39,7 +39,7 @@
 
 **Files:** Create `src/research_os/sources/__init__.py`, `src/research_os/sources/normalize.py`; Test `tests/unit/test_normalize.py`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 ```python
 """Deterministic normalization rules (plan §14)."""
@@ -92,12 +92,12 @@ def test_author_normalization_handles_both_orders():
     assert author_overlap(["A B"], ["C D"]) == 0.0
 ```
 
-- [ ] **Step 2: 运行确认失败**
+- [x] **Step 2: 运行确认失败**
 
 Run: `"D:/Anaconda/envs/reOS/python.exe" -m pytest tests/unit/test_normalize.py -q`
 Expected: FAIL — `ModuleNotFoundError: research_os.sources`
 
-- [ ] **Step 3: 实现 `normalize.py`**
+- [x] **Step 3: 实现 `normalize.py`**
 
 ```python
 """Deterministic identifier/title/author normalization (plan §14).
@@ -223,12 +223,12 @@ def author_overlap(a: list[str], b: list[str]) -> float:
     return len(ka & kb) / min(len(ka), len(kb))
 ```
 
-- [ ] **Step 4: 跑测试通过**
+- [x] **Step 4: 跑测试通过**
 
 Run: `"D:/Anaconda/envs/reOS/python.exe" -m pytest tests/unit/test_normalize.py -q`
 Expected: 26 passed
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/research_os/sources tests/unit/test_normalize.py
@@ -241,7 +241,7 @@ git commit -m "feat(sources): deterministic DOI/arXiv/title/author normalization
 
 **Files:** Create `src/research_os/sources/query.py`; Test `tests/unit/test_query.py`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 ```python
 from research_os.sources.query import build_queries, extract_keyterms
@@ -262,9 +262,9 @@ def test_build_queries_is_bounded_and_deterministic():
 
 > 实现约定：keyterm 保留连字符（`all-in-one`），因此断言写成显式字符串；测试以 Step 3 实现为准再固化。
 
-- [ ] **Step 2: 运行确认失败** — Run: `... -m pytest tests/unit/test_query.py -q`，Expected: FAIL（module not found）
+- [x] **Step 2: 运行确认失败** — Run: `... -m pytest tests/unit/test_query.py -q`，Expected: FAIL（module not found）
 
-- [ ] **Step 3: 实现**
+- [x] **Step 3: 实现**
 
 ```python
 """Deterministic query generation for source discovery (plan §14).
@@ -311,7 +311,7 @@ def build_queries(question: str, max_queries: int = 2) -> list[str]:
     return queries[:max_queries]
 ```
 
-- [ ] **Step 4: 按实现固化断言并跑通**
+- [x] **Step 4: 按实现固化断言并跑通**
 
 ```python
 def test_build_queries_is_bounded_and_deterministic():
@@ -323,7 +323,7 @@ def test_build_queries_is_bounded_and_deterministic():
     assert build_queries("a survey of image restoration") == ["survey image restoration"]
 ```
 
-- [ ] **Step 5: Commit** — `git commit -m "feat(sources): deterministic query generation"`
+- [x] **Step 5: Commit** — `git commit -m "feat(sources): deterministic query generation"`
 
 ---
 
@@ -331,7 +331,7 @@ def test_build_queries_is_bounded_and_deterministic():
 
 **Files:** Modify `domain/enums.py`, `domain/models.py`, `storage/tables.py`, `storage/database.py`, `storage/repositories.py`; Test `tests/unit/test_source_candidate_store.py`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 ```python
 from research_os.domain.enums import SourceTier, SourceType
@@ -371,9 +371,9 @@ def test_sqlite_migration_adds_source_tier_column(tmp_path):
 
 > 需要在 conftest 里加 `_session()` 辅助：`session_factory()()`（与既有单测风格一致）。
 
-- [ ] **Step 2: 运行确认失败** — Expected: ImportError
+- [x] **Step 2: 运行确认失败** — Expected: ImportError
 
-- [ ] **Step 3: 实现**
+- [x] **Step 3: 实现**
 
 1. `enums.py`：加 `SourceTier`（5 值）与 `EventType.SOURCE_DISCOVERED = "SOURCE_DISCOVERED"`。
 2. `models.py`：`SourceVersion` 加 `source_tier: SourceTier | None = None`；新增 `SourceCandidate`（字段见 spec §4.1，`abstract` 注释"discovery-only; never becomes evidence"）。
@@ -381,9 +381,9 @@ def test_sqlite_migration_adds_source_tier_column(tmp_path):
 4. `database.py`：`init_db` 末尾调用 `_apply_sqlite_migrations(engine)`；该函数用 `PRAGMA table_info` 判断并 `ALTER TABLE ... ADD COLUMN`，注释说明"create_all 不会给既有表加列"。
 5. `repositories.py`：`SourceCandidateRepository` 协议 + `SqlSourceCandidateRepository`（`create_many(cands, run_id)`、`list_by_run`、`list_all`、`attach_resolution(candidate_id, work_id, source_version_id)`）。
 
-- [ ] **Step 4: 跑通** — `pytest tests/unit/test_source_candidate_store.py -q` → 3 passed
-- [ ] **Step 5: 全量回归** — `pytest -q` → 26 passed（23 旧 + 3 新）
-- [ ] **Step 6: Commit** — `git commit -m "feat(storage): source candidate table + source_tier migration"`
+- [x] **Step 4: 跑通** — `pytest tests/unit/test_source_candidate_store.py -q` → 3 passed
+- [x] **Step 5: 全量回归** — `pytest -q` → 26 passed（23 旧 + 3 新）
+- [x] **Step 6: Commit** — `git commit -m "feat(storage): source candidate table + source_tier migration"`
 
 ---
 
@@ -391,7 +391,7 @@ def test_sqlite_migration_adds_source_tier_column(tmp_path):
 
 **Files:** Create `src/research_os/sources/providers.py`; Test `tests/unit/test_providers.py`
 
-- [ ] **Step 1: 写失败测试**（使用已录制报文 + `httpx.MockTransport`）
+- [x] **Step 1: 写失败测试**（使用已录制报文 + `httpx.MockTransport`）
 
 ```python
 import json
@@ -457,9 +457,9 @@ def test_fixture_provider_reads_local_candidates(tmp_path):
     assert len(cands) == 1 and cands[0].provider == "fixture"
 ```
 
-- [ ] **Step 2: 运行确认失败** — Expected: ImportError
+- [x] **Step 2: 运行确认失败** — Expected: ImportError
 
-- [ ] **Step 3: 实现**
+- [x] **Step 3: 实现**
 
 结构（完整实现）：
 
@@ -479,8 +479,8 @@ def test_fixture_provider_reads_local_candidates(tmp_path):
 - `FixtureProvider(dir)`：读目录下 `*.json`（list of dict），按 `limit` 切片，`provider_rank` 重编。
 - `build_providers(names, client=None)`：名字 → 实例；未知名字抛 `ValueError`。
 
-- [ ] **Step 4: 跑通** — 6 passed
-- [ ] **Step 5: Commit** — `git commit -m "feat(sources): arxiv/crossref/openalex/fixture search providers"`
+- [x] **Step 4: 跑通** — 6 passed
+- [x] **Step 5: Commit** — `git commit -m "feat(sources): arxiv/crossref/openalex/fixture search providers"`
 
 ---
 
@@ -488,7 +488,7 @@ def test_fixture_provider_reads_local_candidates(tmp_path):
 
 **Files:** Create `src/research_os/sources/verification.py`, `src/research_os/sources/resolver.py`; Test `tests/unit/test_resolver.py`, `tests/unit/test_verification.py`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 ```python
 from research_os.domain.enums import SourceTier, SourceType
@@ -561,9 +561,9 @@ def test_verify_requires_identifier_title_and_authors():
     assert verified is False and "no authors" in notes
 ```
 
-- [ ] **Step 2: 运行确认失败**
+- [x] **Step 2: 运行确认失败**
 
-- [ ] **Step 3: 实现**
+- [x] **Step 3: 实现**
 
 `verification.py`：
 
@@ -620,8 +620,8 @@ def resolve_candidates(candidates) -> list[WorkResolution]:
 
 `_matches` 与合并、canonical 逻辑按 spec §8 实现；`provider` 来源写进 `verification_notes` 便于审计。
 
-- [ ] **Step 4: 跑通** — 7 passed
-- [ ] **Step 5: Commit** — `git commit -m "feat(sources): work clustering, version merge, verification"`
+- [x] **Step 4: 跑通** — 7 passed
+- [x] **Step 5: Commit** — `git commit -m "feat(sources): work clustering, version merge, verification"`
 
 ---
 
@@ -629,7 +629,7 @@ def resolve_candidates(candidates) -> list[WorkResolution]:
 
 **Files:** Create `src/research_os/sources/discovery.py`; Modify `orchestration/supervisor.py`; Test `tests/integration/test_source_discovery.py`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 ```python
 """Offline end-to-end: recorded provider payloads -> works -> verified versions."""
@@ -678,9 +678,9 @@ def test_discovery_produces_merged_verified_works_without_evidence(db):
         assert sup.get_run(run.id).budget.search_calls >= 3
 ```
 
-- [ ] **Step 2: 运行确认失败**
+- [x] **Step 2: 运行确认失败**
 
-- [ ] **Step 3: 实现**
+- [x] **Step 3: 实现**
 
 `discovery.py`：`collect_candidates(providers, queries, limit, before_search=None, on_error=None)` → `(candidates, errors)`；每次搜索前调用 `before_search(provider_name) -> bool`（返回 False 即停止）。
 
@@ -695,9 +695,9 @@ def test_discovery_produces_merged_verified_works_without_evidence(db):
 7. `budget.sources_discovered += len(candidates)`；`complete_task`
 8. 返回 `{"run_id", "queries", "candidates", "works", "verified", "unverified", "resolutions", "errors"}`
 
-- [ ] **Step 4: 跑通** — `pytest tests/integration/test_source_discovery.py -q` → 1 passed
-- [ ] **Step 5: 全量回归** — `pytest -q` → 全绿
-- [ ] **Step 6: Commit** — `git commit -m "feat(orchestration): supervisor-driven source discovery"`
+- [x] **Step 4: 跑通** — `pytest tests/integration/test_source_discovery.py -q` → 1 passed
+- [x] **Step 5: 全量回归** — `pytest -q` → 全绿
+- [x] **Step 6: Commit** — `git commit -m "feat(orchestration): supervisor-driven source discovery"`
 
 ---
 
@@ -705,7 +705,7 @@ def test_discovery_produces_merged_verified_works_without_evidence(db):
 
 **Files:** Modify `cli.py`, `main.py`; Test `tests/unit/test_cli_sources.py`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 ```python
 from research_os.cli import main
@@ -718,8 +718,8 @@ def test_sources_command_lists_works_and_versions(tmp_path, capsys, db):
     assert "verified" in out
 ```
 
-- [ ] **Step 2-4:** `discover`（`--question --limit --fixture DIR`）与 `sources RUN_ID`；`GET /research/{run_id}/sources` 返回 `{"works": [...], "versions": [...]}`。跑通测试。
-- [ ] **Step 5: Commit** — `git commit -m "feat(cli,api): discover and sources inspection"`
+- [x] **Step 2-4:** `discover`（`--question --limit --fixture DIR`）与 `sources RUN_ID`；`GET /research/{run_id}/sources` 返回 `{"works": [...], "versions": [...]}`。跑通测试。
+- [x] **Step 5: Commit** — `git commit -m "feat(cli,api): discover and sources inspection"`
 
 ---
 
@@ -727,7 +727,7 @@ def test_sources_command_lists_works_and_versions(tmp_path, capsys, db):
 
 **Files:** Create `tests/integration/test_live_providers.py`; Modify `README.md`, `architect.md`, `human_decision.md`
 
-- [ ] **Step 1: 冒烟测试（默认 skip）**
+- [x] **Step 1: 冒烟测试（默认 skip）**
 
 ```python
 import os, pytest
@@ -740,7 +740,7 @@ def test_live_arxiv_and_openalex_are_parseable():
     assert len(OpenAlexProvider().search("all-in-one image restoration", limit=3)) == 3
 ```
 
-- [ ] **Step 2: 真实批量闸门测试**
+- [x] **Step 2: 真实批量闸门测试**
 
 ```python
 pytestmark = pytest.mark.skipif(..., )
@@ -753,9 +753,9 @@ def test_live_discovery_meets_phase2_acceptance(db):
         assert res["works"] >= 5
 ```
 
-- [ ] **Step 3: 跑** — `RESEARCHOS_NETWORK_TESTS=1 pytest tests/integration/test_live_providers.py -q` → 2 passed
-- [ ] **Step 4: 更新三份文档**（README 状态/命令、architect 阶段表 + ADR-009/010 + 维护记录、human_decision 追加 HD-007）
-- [ ] **Step 5: Commit + 打 tag**（`git tag w2-p2`）
+- [x] **Step 3: 跑** — `RESEARCHOS_NETWORK_TESTS=1 pytest tests/integration/test_live_providers.py -q` → 2 passed
+- [x] **Step 4: 更新三份文档**（README 状态/命令、architect 阶段表 + ADR-009/010 + 维护记录、human_decision 追加 HD-007）
+- [x] **Step 5: Commit + 打 tag**（`git tag w2-p2`）
 
 ---
 
