@@ -94,6 +94,39 @@ def parse_arxiv_atom(xml_text: str) -> list[SourceCandidate]:
     return candidates
 
 
+# arXiv ANDs every term, so a long question (which contains mid-sentence
+# modifiers like "help" or "ordinary feature") collapses to zero results.
+# English research questions put the discriminative modifiers first and the
+# domain noun phrase last, so keeping the head and tail terms preserves both
+# while dropping the words that only exist in the question, not in titles.
+ARXIV_HEAD_TERMS = 2
+ARXIV_TAIL_TERMS = 3
+
+
+def _select_arxiv_terms(tokens: list[str]) -> list[str]:
+    limit = ARXIV_HEAD_TERMS + ARXIV_TAIL_TERMS
+    if len(tokens) <= limit:
+        return tokens
+    return tokens[:ARXIV_HEAD_TERMS] + tokens[-ARXIV_TAIL_TERMS:]
+
+
+def build_arxiv_query(query: str) -> str:
+    """Turn a keyword query into an arXiv ``search_query`` expression.
+
+    A quoted string on arXiv is an *exact phrase* search, so wrapping a whole
+    question in quotes silently returns nothing. Terms are AND-ed instead, and
+    the term list is trimmed head+tail (see constants above) so that AND-ing
+    does not zero out the result set. Hyphenated terms stay quoted because
+    arXiv's parser treats "-" as an operator.
+    """
+    tokens = [token for token in query.split() if token]
+    if not tokens:
+        return 'all:""'
+    selected = _select_arxiv_terms(tokens)
+    parts = [f'all:"{token}"' if "-" in token else f"all:{token}" for token in selected]
+    return " AND ".join(parts)
+
+
 class ArxivProvider:
     name = "arxiv"
     _BASE_URL = "https://export.arxiv.org/api/query"
@@ -104,7 +137,7 @@ class ArxivProvider:
 
     def search(self, query: str, limit: int) -> list[SourceCandidate]:
         params = {
-            "search_query": f'all:"{query}"',
+            "search_query": build_arxiv_query(query),
             "start": 0,
             "max_results": limit,
             "sortBy": "relevance",

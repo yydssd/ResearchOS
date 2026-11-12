@@ -76,6 +76,7 @@ Supervisor 独占预算（`search_calls` / `sources_discovered`）与事件；pr
 | ADR-010 | 测试默认离线：录制真实报文 + `httpx.MockTransport` 回放；真实网络测试由 `RESEARCHOS_NETWORK_TESTS=1` 开启 | ACTIVE |
 | ADR-011 | SQLite 用幂等加列迁移（`PRAGMA table_info` + `ALTER TABLE`），暂不引入 Alembic | ACTIVE |
 | ADR-012 | 标题相似但作者冲突时**不合并**，标 `SOURCE_IDENTITY_AMBIGUOUS`（宁可多一个 work，不制造错误身份） | ACTIVE |
+| ADR-013 | arXiv 查询不用整句短语（会零召回），改为逐词 AND，并取头部 2 + 尾部 3 词元（句中修饰词如 "help/ordinary" 会把交集打到 0）；实测三种问题 33/48/168 条且首条相关 | ACTIVE |
 
 ## 阶段状态
 
@@ -118,3 +119,4 @@ CLI（主接口）：`research-os run/status/claims/report/inspect-claim` · **`
 | 2026-10-18 | W1 完成：P0+P1 DONE（23 tests / uvicorn 200 / 垂直切片 6 主张）；新增 ADR-008；环境改用 conda reOS（HD-005） |
 | 2026-10-18 | 补全公共接口 docstring（cli/main/chunks/tasks/loader）；确立代码注释维护规则（HD-006） |
 | 2026-11-12 | W2/P2 完成：新增 `sources/` 包（normalize/query/providers/resolver/verification/discovery）、`SourceCandidate` 对象与表、`source_tier` 幂等迁移、supervisor 发现编排、CLI `discover/sources`、API `/sources`；测试 23→80；ADR-009~012 |
+| 2026-11-12 | 小测发现并修复 arXiv 零召回缺陷（整句短语搜索 → 逐词 AND + 头2尾3 词元，ADR-013）；测试 80→83；真实小规模复测 15 候选/12 works/2 合并 |

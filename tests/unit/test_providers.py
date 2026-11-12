@@ -19,6 +19,7 @@ from research_os.sources.providers import (
     FixtureProvider,
     OpenAlexProvider,
     ProviderError,
+    build_arxiv_query,
     build_providers,
     parse_arxiv_atom,
     parse_crossref_payload,
@@ -56,6 +57,43 @@ def test_arxiv_provider_uses_injected_client():
     xml = (FIX / "arxiv_all_in_one.xml").read_text(encoding="utf-8")
     cands = ArxivProvider(client=_client(xml)).search("all-in-one image restoration", limit=10)
     assert len(cands) == 10
+
+
+def test_arxiv_query_conjoins_terms_instead_of_phrase_search():
+    """A quoted query is an exact-phrase search on arXiv, so long questions
+    return zero results. Terms must be AND-ed instead."""
+    assert build_arxiv_query("all-in-one image restoration") == (
+        'all:"all-in-one" AND all:image AND all:restoration'
+    )
+    assert build_arxiv_query("") == 'all:""'
+
+
+def test_arxiv_query_trims_head_and_tail_terms():
+    """Long questions contain mid-sentence modifiers ("help", "ordinary") that
+    AND-ed with everything else produce zero hits; head+tail keeps the
+    discriminative head and the domain noun phrase at the tail."""
+    q = build_arxiv_query("spatial degradation conditioning ordinary feature all-in-one image restoration")
+
+    assert q == (
+        'all:spatial AND all:degradation AND all:"all-in-one" AND all:image AND all:restoration'
+    )
+    assert "ordinary" not in q
+
+
+def test_arxiv_provider_sends_conjoined_query():
+    xml = (FIX / "arxiv_all_in_one.xml").read_text(encoding="utf-8")
+    seen: dict[str, str] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["search_query"] = request.url.params["search_query"]
+        return httpx.Response(200, text=xml)
+
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    ArxivProvider(client=client).search("degradation representation help all-in-one image restoration", limit=3)
+
+    assert " AND " in seen["search_query"]
+    assert "help" not in seen["search_query"]
+    assert seen["search_query"].endswith('all:"all-in-one" AND all:image AND all:restoration')
 
 
 def test_crossref_fixture_parses_venue_authors_and_year():

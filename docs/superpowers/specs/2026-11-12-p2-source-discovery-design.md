@@ -109,7 +109,7 @@ class SearchProvider(Protocol):
 
 | 实现 | 端点 | 关键解析 |
 |---|---|---|
-| `ArxivProvider` | `export.arxiv.org/api/query` | Atom XML：`id`（含版本）→ arxiv_id/version，`title` 折叠空白，`arxiv:doi`，`published` → year |
+| `ArxivProvider` | `export.arxiv.org/api/query` | `search_query` 用 `all:` 逐词 AND（**不用整句引号短语**），超长时取头部 2 + 尾部 3 词元；Atom XML：`id`（含版本）→ arxiv_id/version，`title` 折叠空白，`arxiv:doi`，`published` → year |
 | `CrossrefProvider` | `api.crossref.org/works` | `query.bibliographic`；`DOI` / `title[0]` / `author[].given,family` / `issued.date-parts[0][0]` / `container-title[0]` |
 | `OpenAlexProvider` | `api.openalex.org/works` | `display_name` / `doi` / `publication_year` / `authorships[].author.display_name` / `primary_location.source.display_name` |
 | `FixtureProvider` | 本地 JSON | 读取已录制的候选列表，用于离线端到端与演示 |
