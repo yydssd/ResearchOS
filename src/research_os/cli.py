@@ -116,10 +116,14 @@ def _cmd_status(args: argparse.Namespace) -> int:
 
 
 def _cmd_claims(args: argparse.Namespace) -> int:
-    """List claims with status and confidence."""
+    """List the claims of one run with status and confidence.
+
+    Scoped to ``run_id`` on purpose: a global listing would mix one run's
+    conclusions into another run's audit trail (plan §28).
+    """
     init_db()
     with session_scope() as session:
-        claims = SqlClaimRepository(session).list_all()
+        claims = SqlClaimRepository(session).list_by_run(args.run_id)
         if not claims:
             print("no claims", file=sys.stderr)
             return 1
