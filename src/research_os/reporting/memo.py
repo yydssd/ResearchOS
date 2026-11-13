@@ -11,11 +11,19 @@ from dataclasses import dataclass, field
 
 from sqlalchemy.orm import Session
 
-from research_os.domain.enums import ClaimStatus, EvidenceRelation
-from research_os.domain.models import Claim, Evidence, QuantitativeEvidence, SourceVersion
+from research_os.domain.enums import ClaimStatus, ContradictionType, EventType, EvidenceRelation
+from research_os.domain.models import (
+    Claim,
+    ContradictionAssessment,
+    Evidence,
+    QuantitativeEvidence,
+    SourceVersion,
+)
 from research_os.storage.repositories import (
     SqlClaimEvidenceRelationRepository,
     SqlClaimRepository,
+    SqlContradictionRepository,
+    SqlEventRepository,
     SqlEvidenceRepository,
     SqlQuestionRepository,
     SqlQuantitativeEvidenceRepository,
@@ -34,6 +42,19 @@ class RunGraph:
     supports: dict[str, list[Evidence]] = field(default_factory=dict)
     counterevidence: dict[str, list[Evidence]] = field(default_factory=dict)
     quantitative: dict[str, list[QuantitativeEvidence]] = field(default_factory=dict)
+    assessments: list[ContradictionAssessment] = field(default_factory=list)
+    assessment_stats: dict = field(default_factory=dict)
+
+
+def _assessment_stats(session: Session, run_id: str) -> dict:
+    """Counts from the last assessment event, so the memo can separate
+    "nothing to compare" from "compared and found nothing"."""
+    events = [
+        event
+        for event in SqlEventRepository(session).list_by_run(run_id)
+        if event.event_type == EventType.CONTRADICTION_ASSESSED
+    ]
+    return dict(events[-1].payload) if events else {}
 
 
 def collect_run_graph(session: Session, run_id: str) -> RunGraph | None:
@@ -52,6 +73,7 @@ def collect_run_graph(session: Session, run_id: str) -> RunGraph | None:
     relations = SqlClaimEvidenceRelationRepository(session).list_all()
     relations = [r for r in relations if r.evidence_id in ev_ids]
     claims = SqlClaimRepository(session).list_by_run(run_id)
+    assessments = SqlContradictionRepository(session).list_by_run(run_id)
     by_id = {e.id: e for e in evidence}
 
     supports: dict[str, list[Evidence]] = {}
@@ -79,6 +101,8 @@ def collect_run_graph(session: Session, run_id: str) -> RunGraph | None:
         supports=supports,
         counterevidence=counter,
         quantitative=quantitative,
+        assessments=assessments,
+        assessment_stats=_assessment_stats(session, run_id),
     )
 
 
@@ -230,6 +254,96 @@ def _render_kept_separate(claims) -> list[str]:
     return lines
 
 
+_ORDER = (
+    ContradictionType.TRUE_CONTRADICTION,
+    ContradictionType.EXPERIMENTAL_INCOMPATIBILITY,
+    ContradictionType.SCOPE_DIFFERENCE,
+    ContradictionType.COMPLEMENTARY,
+    ContradictionType.INSUFFICIENT_EVIDENCE,
+)
+_HEADINGS = {
+    ContradictionType.TRUE_CONTRADICTION: "True contradictions",
+    ContradictionType.EXPERIMENTAL_INCOMPATIBILITY: "Experimental incompatibilities",
+    ContradictionType.SCOPE_DIFFERENCE: "Scope differences",
+    ContradictionType.COMPLEMENTARY: "Complementary findings",
+    ContradictionType.INSUFFICIENT_EVIDENCE: "Insufficient evidence",
+}
+
+
+def _claim_location(graph: RunGraph, claim_id: str) -> str:
+    """claim -> relation -> evidence -> chunk location. Missing is a defect."""
+    claim = next((c for c in graph.claims if c.id == claim_id), None)
+    supports = graph.supports.get(claim_id, [])
+    if claim is None:
+        return "unknown claim"
+    if not supports:
+        return "no locatable evidence"
+    ev = supports[0]
+    section = ev.section or "no section"
+    return f"{ev.source_version_id} · {section} · chars {ev.char_start}-{ev.char_end}"
+
+
+def _stats_lines(graph: RunGraph) -> list[str]:
+    """Coverage and skip breakdown, printed even when no pair was found.
+
+    Without it an empty section would read as "no contradiction exists" when it
+    may only mean "nothing was comparable".
+    """
+    stats = graph.assessment_stats
+    if not stats:
+        return []
+    lines = [
+        f"Assessed {stats.get('evaluated', 0)} of {stats.get('total_before_cap', 0)} "
+        f"candidate pairs (coverage {float(stats.get('coverage', 0.0)):.0%})."
+    ]
+    reasons = (
+        ("skipped_missing_dataset", "without a dataset"),
+        ("skipped_missing_metric", "without a metric"),
+        ("skipped_self_prefilter", "across documents"),
+        ("skipped_same_value", "with an identical value"),
+        ("skipped_cap", "over the pair cap"),
+    )
+    skipped = [f"{stats[key]} {label}" for key, label in reasons if stats.get(key)]
+    if skipped:
+        lines.append("Skipped: " + ", ".join(skipped) + ".")
+    lines.append("")
+    return lines
+
+
+def _render_contradictions(graph: RunGraph) -> list[str]:
+    lines = ["# Contradictions and Open Questions", ""]
+    lines.extend(_stats_lines(graph))
+    if not graph.assessments:
+        lines.extend(["No comparable claim pair in this run.", ""])
+        return lines
+
+    by_type: dict[ContradictionType, list] = {}
+    for item in graph.assessments:
+        by_type.setdefault(item.relationship, []).append(item)
+
+    for relation in _ORDER:
+        items = by_type.get(relation, [])
+        lines.append(f"## {_HEADINGS[relation]} ({len(items)})")
+        lines.append("")
+        if not items:
+            continue
+        if relation is ContradictionType.COMPLEMENTARY:
+            subjects = sorted({i.explanation for i in items})
+            lines.append(f"- {len(items)} pair(s) agree across different scopes.")
+            for explanation in subjects[:5]:
+                lines.append(f"  - {explanation}")
+            lines.append("")
+            continue
+        for item in items[:20]:
+            lines.append(f"- {item.explanation}")
+            lines.append(f"  - A: `{item.claim_a_id}` — {_claim_location(graph, item.claim_a_id)}")
+            lines.append(f"  - B: `{item.claim_b_id}` — {_claim_location(graph, item.claim_b_id)}")
+        if len(items) > 20:
+            lines.append(f"- … {len(items) - 20} more")
+        lines.append("")
+    return lines
+
+
 def render_memo(graph: RunGraph) -> str:
     lines: list[str] = []
     lines.append("# Research Question")
@@ -285,10 +399,7 @@ def render_memo(graph: RunGraph) -> str:
         lines.append("")
     lines.extend(_render_kept_separate(graph.claims))
     lines.extend(_render_quantitative_section(graph))
-    lines.append("# Contradictions and Open Questions")
-    lines.append("")
-    lines.append("- No pairwise contradiction assessment was run in the Week-1 slice (Phase 5).")
-    lines.append("")
+    lines.extend(_render_contradictions(graph))
     lines.append("# Uncertainty")
     lines.append("")
     unsupported_texts = [c.text for c in unsupported]
@@ -368,5 +479,21 @@ def inspect_claim(session: Session, run_id: str, claim_id: str) -> dict | None:
         "conditions": claim.conditions,
         "identity_key": claim.identity_key,
         "grounding": _grounding_of(claim, graph),
+        "contradictions": [
+            {
+                "claim_id": other_id,
+                "relationship": item.relationship.value,
+                "explanation": item.explanation,
+                "confidence": item.confidence_label.value,
+            }
+            for item in graph.assessments
+            for other_id in (
+                [item.claim_b_id]
+                if item.claim_a_id == claim_id
+                else [item.claim_a_id]
+                if item.claim_b_id == claim_id
+                else []
+            )
+        ],
         "chain": chain,
     }
