@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from research_os.domain.enums import (
@@ -590,6 +590,49 @@ class SqlContradictionRepository:
     def list_all(self) -> list[ContradictionAssessment]:
         rows = self._s.scalars(select(t.ContradictionAssessmentRow)).all()
         return [self._to_domain(r) for r in rows]
+
+    def list_by_run(self, run_id: str) -> list[ContradictionAssessment]:
+        """Run-scoped read (ADR-019): a trace output must never leak across runs."""
+        rows = (
+            self._s.execute(
+                select(t.ContradictionAssessmentRow)
+                .join(t.ClaimRow, t.ClaimRow.id == t.ContradictionAssessmentRow.claim_a_id)
+                .where(t.ClaimRow.run_id == run_id)
+                .order_by(
+                    t.ContradictionAssessmentRow.claim_a_id,
+                    t.ContradictionAssessmentRow.claim_b_id,
+                )
+            )
+            .scalars()
+            .all()
+        )
+        return [self._to_domain(row) for row in rows]
+
+    def replace_for_run(self, run_id: str, items: list[ContradictionAssessment]) -> int:
+        """Delete this run's assessments, then write the new ones.
+
+        Rerunning a run must produce the same rows, not a second copy; the unique
+        index alone would raise instead of converging. A pair whose claims belong
+        to different runs is rejected rather than stored: it would make the audit
+        chain ambiguous.
+        """
+        claim_rows = {
+            row.id: row.run_id
+            for row in self._s.execute(select(t.ClaimRow.id, t.ClaimRow.run_id)).all()
+        }
+        for item in items:
+            if claim_rows.get(item.claim_a_id) != run_id or claim_rows.get(item.claim_b_id) != run_id:
+                raise ValueError(f"cross_run_pair: {item.claim_a_id} / {item.claim_b_id}")
+
+        claim_ids = select(t.ClaimRow.id).where(t.ClaimRow.run_id == run_id)
+        deleted = self._s.execute(
+            delete(t.ContradictionAssessmentRow).where(
+                t.ContradictionAssessmentRow.claim_a_id.in_(claim_ids)
+            )
+        ).rowcount or 0
+        for item in items:
+            self.create(item)
+        return deleted
 
 
 class SqlRunRepository:

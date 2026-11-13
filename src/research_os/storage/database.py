@@ -62,6 +62,14 @@ _ADDED_COLUMNS: dict[str, dict[str, str]] = {
     "claims": {"identity_key": "VARCHAR(256)"},
 }
 
+# Indexes added after the first release, for the same reason as the columns:
+# create_all never touches an existing table, so pre-P5 databases would accept
+# the same claim pair twice.
+_ADDED_INDEXES: tuple[str, ...] = (
+    "CREATE UNIQUE INDEX IF NOT EXISTS uq_contradiction_pair "
+    "ON contradiction_assessments (claim_a_id, claim_b_id)",
+)
+
 
 def _apply_sqlite_migrations(engine) -> None:
     """Idempotently add post-release columns on SQLite databases."""
@@ -76,6 +84,10 @@ def _apply_sqlite_migrations(engine) -> None:
             for name, ddl in columns.items():
                 if name not in existing:
                     conn.exec_driver_sql(f"ALTER TABLE {table} ADD COLUMN {name} {ddl}")
+
+        # Runs after create_all, so the table exists on both fresh and old databases.
+        for statement in _ADDED_INDEXES:
+            conn.exec_driver_sql(statement)
 
 
 def session_factory() -> sessionmaker[Session]:
