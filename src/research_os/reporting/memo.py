@@ -280,7 +280,10 @@ def _claim_location(graph: RunGraph, claim_id: str) -> str:
         return "no locatable evidence"
     ev = supports[0]
     section = ev.section or "no section"
-    return f"{ev.source_version_id} · {section} · chars {ev.char_start}-{ev.char_end}"
+    location = f"{ev.source_version_id} · {section}"
+    if ev.char_start is not None and ev.char_end is not None:
+        location += f" · chars {ev.char_start}-{ev.char_end}"
+    return location
 
 
 def _stats_lines(graph: RunGraph) -> list[str]:
