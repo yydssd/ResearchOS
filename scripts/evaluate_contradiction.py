@@ -20,6 +20,16 @@ from research_os.research.contradiction import assess_pair, pair_candidates
 
 TYPES = [t.value for t in ContradictionType]
 COLUMNS = TYPES + ["SKIPPED"]
+# Six-character prefixes are ambiguous (`TRUE_C` next to `EXPERI`), so the header
+# gets an explicit alias instead of a slice.
+ALIASES = {
+    "TRUE_CONTRADICTION": "TRUE_CON",
+    "EXPERIMENTAL_INCOMPATIBILITY": "EXPERIM",
+    "SCOPE_DIFFERENCE": "SCOPE",
+    "COMPLEMENTARY": "COMPLEM",
+    "INSUFFICIENT_EVIDENCE": "INSUFF",
+    "SKIPPED": "SKIPPED",
+}
 FIXTURE = Path("tests/fixtures/contradiction/pairs.json")
 
 
@@ -117,11 +127,12 @@ def main() -> None:
           f"recall={report['TRUE_CONTRADICTION']['recall']:.1%}")
 
     print("\nconfusion (rows = expected, cols = actual)")
-    header = "".join(f"{c[:6]:>8}" for c in COLUMNS)
-    print(f"{'':<26}{header}")
+    width = max(len(name) for name in TYPES) + 2
+    header = "".join(f"{ALIASES[c]:>8}" for c in COLUMNS)
+    print(f"{'':<{width}}{header}")
     for expected, row in report["confusion"].items():
         cells = "".join(f"{row[c]:>8}" for c in COLUMNS)
-        print(f"{expected:<26}{cells}")
+        print(f"{expected:<{width}}{cells}")
 
     print(
         "\nNote: fixture labels were derived from the same rules the cascade implements.\n"
