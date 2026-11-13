@@ -98,3 +98,17 @@ def test_inferred_subject_is_reported_as_a_quality_flag():
     flagged = [c for c in claims if "subject_inferred" in c.conditions]
     assert flagged, "expected at least one claim with an inferred subject"
     assert all(c.identity_key.split("|")[0].startswith("self@") for c in flagged)
+
+
+def test_condition_provenance_reaches_the_claim():
+    """The cascade has to tell a confirmed setup from an assumed one, but
+    provenance cannot ride in the identity key (it says where a value came from,
+    not what it is). So it travels with the other quality flags, exactly as
+    `subject_inferred` does."""
+    claims, _ = _build(["paper_conditions.md"])
+
+    tagged = [c for c in claims if any(p.startswith("conditions_from=") for p in c.conditions)]
+    assert tagged, "expected the inherited condition to be tagged on the claim"
+    assert "conditions_from=section-first-mention" in tagged[0].conditions
+    # The tag is provenance, not a condition: the merge key must stay clean.
+    assert "conditions_from" not in (tagged[0].identity_key or "")

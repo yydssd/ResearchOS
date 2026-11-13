@@ -129,7 +129,7 @@ Claim × Claim（同 task、subject 可比）
 | D10 | P5 **不修改** claim 的 `status` / `confidence_label` | P4 状态语义刚钉死（ADR-022） |
 | D11 | 统计必须报**截断前总量、已评估量、覆盖率**，跳过按原因分解 | 否则「没发现矛盾」会被误读为「不存在矛盾」 |
 | D12 | 落库补**唯一约束与跨 run 校验**，重复运行幂等 | 现有表无唯一约束；跨 run 配对会污染审计链（ADR-019） |
-| D13 | 结论依赖**继承条件**时 confidence 降一级（`MEDIUM`→`LOW`），`explanation` 注明 provenance | 继承条件弱于句子明写；不能与显式条件同等对待 |
+| D13 | **条件相等分两级**：`sentence`/`heading` 级的相等可支持 `TRUE_CONTRADICTION`；`section-first-mention` 级的相等**不可**，降为 `INSUFFICIENT_EVIDENCE`。继承条件不相等仍然有效 | 继承只证明「本节有人这么说过」，不证明该主张用的是这个设置；弱 provenance 下断言相同即「用沉默当证据」，与 D6 同一错误的反面 |
 | D14 | P5 的产出定位为**可比性判定**，不是"矛盾发现器"；真实语料上真矛盾为 0 属预期 | 语料只有 1.7% 负向主张（§2.5），把"找不到矛盾"当成失败会诱导放松门槛 |
 
 ## 4. 前置修正（P4 amendment，先行落地）
@@ -203,7 +203,8 @@ Claim × Claim（同 task、subject 可比）
 | 4 | metric 集合无交集 | `EXPERIMENTAL_INCOMPATIBILITY` | MEDIUM |
 | 5 | 任一方 conditions 为空 | `INSUFFICIENT_EVIDENCE`（无法证实设置一致） | LOW |
 | 6 | 任一方 direction 为 `None` | `INSUFFICIENT_EVIDENCE` | LOW |
-| 7 | direction 对立（`UP`↔`LEVEL`、`UP`↔`DOWN`、`DOWN`↔`LEVEL`） | `TRUE_CONTRADICTION` | DISPUTED（任一侧条件为继承时 LOW） |
+| 7 | direction 对立，但**任一方 `conditions_from` 为 `section-first-mention`** | `INSUFFICIENT_EVIDENCE`（继承≠证实相同） | LOW |
+| 7b | direction 对立，双方 conditions 均为 `sentence` 或 `heading` 级 | `TRUE_CONTRADICTION` | DISPUTED |
 | 8 | direction 相同，双方都有数值且不同 | `EXPERIMENTAL_INCOMPATIBILITY` | MEDIUM |
 | 9 | direction 相同，一方无数值 | `INSUFFICIENT_EVIDENCE` | LOW |
 | 10 | direction 相同，数值也相同 | **跳过**（P4 应已合并；命中即缺陷，记事件） | — |
@@ -308,11 +309,27 @@ Assessed 1063 of 1063 candidate pairs (100%). Skipped: 0 missing dataset,
 
 5. 「提升 PSNR」vs「报告 PSNR 为 30 dB」→ **不得**为 `TRUE_CONTRADICTION`（前者 `UP`，后者 `None`
    → `INSUFFICIENT_EVIDENCE`）。
-5b. 条件来自继承时，结论的 confidence 比显式条件低一级，且 `explanation` 必须写出
-   provenance（如 `conditions inherited from section: backbone=transformer`）。
+5b. **条件相等还分「证实」与「假设」两级**，`conditions_from` 决定是哪一级：
+
+   | provenance | 该级条件相等能证明什么 |
+   |---|---|
+   | `sentence` | 句子自带条件，两条主张的设置有直接证据 |
+   | `heading` | 节标题点名了设置，整节适用，有直接证据 |
+   | `section-first-mention` | 只是「本节首个提到条件的句子这么说」，**不能**推出该主张用的是这个设置 |
+
+   `section-first-mention` 是「不确定就断言相同」，与「缺失条件不能当作条件相同」是同一错误的两个方向。
+   故：任一方为 `section-first-mention` 时，条件相等**不足以**支持 `TRUE_CONTRADICTION`，
+   降为 `INSUFFICIENT_EVIDENCE`（cascade 第 7 行）。
+
+   注意错误的不对称性：继承条件**不相等**仍然有效（两条主张确实来自不同设置），
+   只有「相等」在弱 provenance 下不可信。所以继承只用于**否证相同**，不用于**证明相同**。
+
+   `explanation` 必须写出 provenance，如 `conditions match, but inherited from the section's
+   first mention - setup not confirmed`。
 6. §17 范例（spatial conditioning，Rain100H/Transformer vs SIDD/CNN，方向对立）→ `SCOPE_DIFFERENCE`。
 7. 同 subject 同 dataset 同 metric、方向对立、**conditions 双方空** → `INSUFFICIENT_EVIDENCE`；
-   双方 conditions 显式相等 → `TRUE_CONTRADICTION` + `DISPUTED`。
+   双方 conditions 显式（`sentence`/`heading`）相等 → `TRUE_CONTRADICTION` + `DISPUTED`；
+   任一方 `section-first-mention` 相等 → `INSUFFICIENT_EVIDENCE`（见 5b）。
 8. `COMPLEMENTARY` 只在**范围不同且方向相同**时产出；同范围同方向不产出任何 assessment。
 9. 跨文档 `self@` 不产出 assessment；同文档 `self@` 与具名对适用同一门槛。
 
@@ -348,5 +365,8 @@ Assessed 1063 of 1063 candidate pairs (100%). Skipped: 0 missing dataset,
 6. `baseline` 作为条件只取 1 个对照名，多基线主张（`vs MPRNet and Restormer`）会被简化。
 7. 真矛盾召回在本阶段**无法用真实语料验证**，只能由构造夹具保证规则正确性。要让该类型在真实
    语料上出现，需要发现层引入"复现/再评估/基准研究"类论文（属 P2 策略），不是判定层能解决的。
-8. 块级继承的条件可能与该节内其他实验不符（同一节常并列多个设置）；`provenance` + 降一级
-   confidence 是缓解手段，不是消除手段。
+8. 块级继承的条件可能与该节内其他实验不符（同一节常并列多个设置）。实测留出集：块级覆盖率
+   69.1%，其中 `heading` 仅 5.1%，其余 64% 全靠 `section-first-mention`。用「跳过对比/消融句」
+   的线索收窄只能降到 62.9%，却会把 `Implementation Details` 这类正常设置段一起误跳，
+   因此**不在抽取层收窄**，而在判定层按 D13 区分「证实相等」与「假设相等」。
+   这一层的错误是不对称的：继承条件**不相等**仍可用于否证相同，只有**相等**不可信。
