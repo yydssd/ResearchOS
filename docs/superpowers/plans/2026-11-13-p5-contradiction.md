@@ -1478,6 +1478,14 @@ skip breakdown. Claims are not modified - P4 owns status and confidence."
 
 ---
 
+> **实施期修正（2026-11-13，已落地）。** 本任务 Step 1 的两处写法与实际代码不符，执行时以
+> `tests/integration/test_contradiction_run.py` 为准：① `run_vertical_slice` 的签名是
+> `(run_id, sources, reports_dir)`，不是 `(paper, question=...)`；② 示例语料 `# Results` 标题
+> 不含任务词，抽不出 `task`，配对数为 0——改用 `# Image denoising` 并把指标写进第二句。
+> 另：`skipped_same_value` 是本任务新增的计数（见 Step 4），原计划没有。
+
+---
+
 ### Task 8: Memo section and claim inspection
 
 **Files:**

@@ -356,7 +356,8 @@ Assessed 1063 of 1063 candidate pairs (100%). Skipped: 0 missing dataset,
 1. 真矛盾在真实语料上结构性不可达（§2.5）：语料中 98.3% 的主张都在报告提升，只有 2 条
    `LEVEL` + 16 条 `DOWN`，方向对立对为 0。这与 conditions 覆盖率无关，扩充与继承都不改变它。
    本阶段的可信度建立在「不轻易断言矛盾」，不是「能找出矛盾」。
-2. direction 修正后六成主张无方向（`None`），P4 合并门槛从 111 降到 71。
+2. direction 修正后六成主张无方向（`None`），P4 合并门槛从 111（10%）降到 **73（7%）**；
+   主张数从 1063 升到 1075（合并变少则主张变多）。这是刻意的代价，不是回退。
 3. 具名 subject 仍有误抽风险：`dB` 已修，但缩写、模型代号（`MIRNet` 与 `MIRNet-v2`）仍可能被当成
    同一或不同 subject。
 4. `reduce/increase` 的宾语极性靠词表，`reduces the gap`、`reduces artifacts while improving
@@ -370,3 +371,23 @@ Assessed 1063 of 1063 candidate pairs (100%). Skipped: 0 missing dataset,
    的线索收窄只能降到 62.9%，却会把 `Implementation Details` 这类正常设置段一起误跳，
    因此**不在抽取层收窄**，而在判定层按 D13 区分「证实相等」与「假设相等」。
    这一层的错误是不对称的：继承条件**不相等**仍可用于否证相同，只有**相等**不可信。
+
+---
+
+## 11. 实施偏差（2026-11-13）
+
+实现已全部落地，与本文的差异如下。没有静默偏差。
+
+| # | 位置 | 偏差 | 原因 |
+|---|---|---|---|
+| 1 | §2.2 / §4.2 覆盖率 | 实测块级 coverage **69.1%**（9591/13871），其中 `heading` 5.1%、`section-first-mention` 64.0%。本文原写「64.3%」 | 原数字按主张统计，本次按块统计；口径不同，量级一致 |
+| 2 | §3 D13 | 条件相等改为**两级**：`section-first-mention` 级的相等不再支持 `TRUE_CONTRADICTION`，降 `INSUFFICIENT_EVIDENCE` | 落地时发现盲继承会断言未经证实的「设置相同」，与 D6 是同一错误的反面。见 HD-014 |
+| 3 | §5 级联表 | 原第 7 行拆为第 7 行（弱 provenance → `INSUFFICIENT_EVIDENCE`）与第 7b 行（`sentence`/`heading` → `TRUE_CONTRADICTION`） | 同上 |
+| 4 | §5 级联第 9 行 | 「同向、一方无数值」原在实现中不可达（第 8 行的守卫失败后直接落到 `return None`），已补显式分支 | 计划代码漏了这条；测试 `test_same_direction_without_values_is_insufficient_evidence` 暴露 |
+| 5 | §6 统计口径 | 新增 `skipped_same_value` 计数。级联中只有「同向同值」会返回 `None`，P4 本应已合并该对，命中即缺陷 | D11 要求「跳过按原因分解」，原设计漏了这一类 |
+| 6 | §6 provenance 落库 | provenance 不新增数据库列，而是作为 `conditions_from=<tier>` 写进 `Claim.conditions`（与既有 `subject_inferred` 同一通道） | 复用已验证的 flag 通道，避免为一条 provenance 改表结构 |
+| 7 | §6 confidence | `TRUE_CONTRADICTION` 恒为 `DISPUTED`；本文原写「任一侧条件为继承时 LOW」 | 继承条件已不可能支持该类型（偏差 2），LOW 分支不可达 |
+| 8 | §9 验收 4 | fixture 集为 **26** 对（12 real / 14 constructed），不是 24 对 | 补 p25/p26 覆盖偏差 2 的两级，p21 保留为「显式条件相等」 |
+| 9 | §9 验收 4b | **第二轮盲标未做**。`ANNOTATION.md` 的 pass log 记为 not performed | 单会话完成，标注与实现同源。后果：夹具 100% 只能作回归锁，见 HD-015 |
+| 10 | §10 限制 2 | 合并门槛实测 **73/1075（7%）**，本文原写 71 | direction 四值化后重测；主张数由 1063 变 1075（合并变少则主张变多） |
+| 11 | §2.5 可达性 | 留出集实测：候选对 1049 → 判定 30（真矛盾 **0** / 实验不可比 2 / 范围不同 18 / 互补 5 / 证据不足 5）；25/30 条判定的条件来自 `section-first-mention`，**没有一对双方句子明写** | 与 §2.5 的「真矛盾为 0」预测一致；新增的事实是条件从不显式 |

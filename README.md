@@ -11,7 +11,8 @@
 - Week 2 ✅ P2 Source Discovery & Verification（候选 → 规范化 → 版本合并 → canonical work → 核验）
 - Week 2 ✅ P3 Evidence Quality（PDF/Markdown/README/HTML → 分块落库 → 精确偏移证据 → 定量证据）
 - Week 3 ✅ P4 Claim Synthesis（块级 scope 继承 → identity 键 → 按身份合并 → 支撑性标记）
-- 测试：`pytest` 147 passed（另有 2 个 opt-in 真实网络测试）
+- Week 3 ✅ P5 Contradiction（四值方向 → 四类条件与章节继承 → 候选配对 → 级联判定 → run 作用域落库）
+- 测试：`pytest` 239 passed（另有 2 个 opt-in 真实网络测试）
 - 权威计划：`ResearchOS-Implementation-Plan.md`（v1.1）
 - 架构快照：`architect.md` · 人类决策：`human_decision.md` · 设计与计划：`docs/superpowers/`
 
@@ -80,10 +81,14 @@ reports/           生成的 Markdown memo
 - `documents/html.py` — HTML 结构抽取（标准库 `html.parser`）+ ar5iv 公式回声净化
 - `research/evidence_extractor.py` — 句子切分与字符偏移
 - `research/quantitative.py` — 数值 / 单位 / 数据集启发式抽取（含无指标词的 delta）
-- `research/scope.py` — 块级 task / dataset 继承
-- `research/claims.py` — 主张 identity 与支撑性判定
+- `research/scope.py` — 块级 task / dataset / conditions 继承（带 provenance）
+- `research/conditions.py` — 四类实验条件抽取（backbone / degradation / baseline / training）
+- `research/claims.py` — 主张 identity、四值方向与支撑性判定
+- `research/contradiction.py` — 候选配对、级联判定、评估器协议
+- `research/claim_builder.py` — 证据 → 主张，并把 provenance 写进质量 flags
 - `sources/resolver.py` — 候选 → canonical work 的合并与消歧
 - `scripts/holdout_claim_quality.py` — 留出集评估（联网）
+- `scripts/evaluate_contradiction.py` — 夹具集分层评估（混淆矩阵、按子集准确率）
 
 ## 主张层（P4）
 
@@ -115,15 +120,20 @@ python -m research_os.cli inspect-claim RUN_ID CLAIM_ID    # 含 identity_key / 
 | --- | --- |
 | 文档 / 块 / 证据 | 20 / 13871 / 4814 |
 | 定量证据（其中 delta 行） | 170（47） |
-| 主张（SUPPORTED / UNSUPPORTED） | 1160（1063 / 97） |
-| subject 有值：named / self / 无 | 544 / 459 / 60 |
-| 其中 `subject_inferred` | 409 |
-| task 有值 | 1044 / 1063（98%） |
-| dataset 有值 | 183 / 1063（17%） |
-| metric 有值 | 152 / 1063（14%） |
-| **满足合并门槛** | **111 / 1063（10%）** |
-| grounding：structured / unstructured / 无值 | 137 / 17 / 909 |
+| 主张（SUPPORTED / UNSUPPORTED） | 1173（1075 / 98） |
+| subject 有值：named / self / 无 | 535 / 476 / 64 |
+| 其中 `subject_inferred` | 425 |
+| task 有值 | 1056 / 1075（98%） |
+| dataset 有值 | 195 / 1075（18%） |
+| metric 有值 | 153 / 1075（14%） |
+| **满足合并门槛** | **73 / 1075（7%）** |
+| grounding：structured / unstructured / 无值 | 137 / 18 / 920 |
 | 跨文档合并组数 | **0** |
+
+> **这组数字在 P5 前置修正后重测过。** 合并门槛从 111（10%）降到 73（7%），主张数从
+> 1160 升到 1173：`direction` 改成四值后，只报告数值的句子（`achieves 39.18 dB`）不再
+> 声明方向，而合并门槛要求 `direction` 有值，于是那些句子不再互相合并。这是刻意的代价——
+> 宁可少合并，也不要靠一个被污染的标签合并。
 
 这轮评估推翻了三处实现（都不是调参问题）：
 
@@ -135,11 +145,65 @@ python -m research_os.cli inspect-claim RUN_ID CLAIM_ID    # 含 identity_key / 
 3. **subject 精度**：`Motivated` / `Extensive` / `Proposed` 曾因句首大写被当成方法名。
 
 并且暴露一个尚未解决的事实：**瓶颈已经从 task 转移到 dataset**。论文在实验节用
-"Table 2"、"this dataset" 指代，不重复点名，所以 83% 的主张拿不到 dataset，合并门槛因此卡在 10%。
+"Table 2"、"this dataset" 指代，不重复点名，所以 82% 的主张拿不到 dataset，合并门槛因此卡在 7%。
 这是 P5 的输入条件，不是 P4 的 bug。
 
 
-## 已知限制（截至 P4）
+## 矛盾与可比性（P5）
+
+```powershell
+python -m research_os.cli memo RUN_ID                     # 含 # Contradictions and Open Questions 段
+python -m research_os.cli inspect-claim RUN_ID CLAIM_ID   # 含 contradictions（对端主张、关系、理由）
+```
+
+P5 只用落库的 `identity_key` 判断，**不再读原文**。五种关系，按顺序首个命中即定论：
+
+| 关系 | 含义 | 置信度 |
+| --- | --- | --- |
+| `TRUE_CONTRADICTION` | 同 subject、同 dataset、metric 有交集、条件被证实相同、方向对立 | `DISPUTED` |
+| `EXPERIMENTAL_INCOMPATIBILITY` | 同向但数值不同，或 metric 无交集 | `MEDIUM` |
+| `SCOPE_DIFFERENCE` | dataset 或条件不同，方向也不同 | `MEDIUM` |
+| `COMPLEMENTARY` | 范围不同但方向相同（不同基准上各自成立） | `MEDIUM` |
+| `INSUFFICIENT_EVIDENCE` | 缺条件、缺方向、或条件只是继承来的 | `LOW` |
+
+三条判定原则值得单独说：
+
+1. **`reports 39.18 dB` 不是方向。** `direction` 四值：`UP`（声称变好）、`DOWN`（声称变差）、
+   `LEVEL`（明确说没有改善）、`None`（只报数值）。旧的三值实现把 `achieves/reaches/reports`
+   归入 `LEVEL`，于是「提高 PSNR」和「报告 30 dB」被判成相反方向。
+2. **`reduces error` 与 `reduces PSNR` 方向相反。** 方向看宾语极性，不看动词。
+3. **条件相等分两级。** 句子明写（`sentence`）或节标题点名（`heading`）才算证实；
+   从「本节首个提到条件的句子」继承来的（`section-first-mention`）只能用来**否证**相同，
+   不能用来**证明**相同。留出集上 25/30 条判定都建立在这种继承条件上。
+
+### 留出集实测（同一批 20 篇）
+
+`docs/evaluation/2026-11-13-p5-contradiction.md` 有完整数字。
+
+| 指标 | 值 |
+| --- | --- |
+| 进入级联的候选对 | 1049 |
+| 产出判定 | 30 |
+| 真矛盾 / 实验不可比 / 范围不同 / 互补 / 证据不足 | **0** / 2 / 18 / 5 / 5 |
+| 因缺 dataset / 缺 metric 跳过 | 917 / 102 |
+| `self@` 预过滤丢弃 | 6601 |
+
+**真矛盾为 0 是预期结果，不是失败。** 留出集 1075 条支撑主张里 98.3% 都在报告提升，
+方向对立对结构性不存在。这个类型只在构造夹具上验证（`tests/fixtures/contradiction/`，
+26 对，12 对取自真实论文原句）。
+
+## 已知限制（截至 P5）
+
+- **真矛盾在真实语料上不可观测**：它是 P5 唯一不能靠真实论文验收的类型。夹具的标注又是
+  照规则推的，所以那个 100% 准确率只能证明"实现和规则一致"，不能证明"规则是对的"。
+  独立标注仍未做（`tests/fixtures/contradiction/ANNOTATION.md` 的 pass 2 缺）。
+- **条件大多是继承来的**：留出集里没有一对主张在两边都于句子里明写设置，
+  所以「设置相同」永远带着 provenance 标签，最多只能是 `heading` 级。
+- **18% 的主张有 dataset**，导致可比对的候选对里 87% 在判定前就被跳过。
+  补这块是 P4 抽取问题，不是放宽 P5 门槛的理由。
+- **P5 的天花板是 P4 的召回**：它只读 `identity_key`，不读原文，`identity_key` 抽错的字段
+  它会原样继承。
+
 
 - 发现层只保证**身份可核验**，不保证**主题相关**：查询由确定性关键词生成，相关性判断留给后续阶段。
 - 预印本与正式版按 DOI / arXiv id / 标题+作者合并；作者元数据缺失时不判为冲突（宁可合并）。
@@ -152,11 +216,11 @@ python -m research_os.cli inspect-claim RUN_ID CLAIM_ID    # 含 identity_key / 
 - 定量抽取是启发式：只覆盖 lexicon 内的数据集与指标（PSNR/SSIM/LPIPS/FID/MAE/MSE），
   单位只看数值紧邻 6 字符；表格、图注中的数值抽不到。
 - 78% 的数值句不写指标词，只能记成 `delta` + 单位；这类行无法与有指标词的行直接比较。
-- **dataset 是当前最大瓶颈**：83% 的主张拿不到 dataset（论文用"this dataset"/"Table 2"指代），
-  合并门槛满足率 10%。补这一块需要表格解析或代词消解，不属 P4。
-- 46% 的主张主语是 `self`，其中 89% 是推断（`subject_inferred`）；抽样 12 条里只有 2 条
+- **dataset 是当前最大瓶颈**：82% 的主张拿不到 dataset（论文用"this dataset"/"Table 2"指代），
+  合并门槛满足率 7%。补这一块需要表格解析或代词消解，不属 P4。
+- 44% 的主张主语是 `self`，其中 89% 是推断（`subject_inferred`）；抽样 12 条里只有 2 条
   真的是 `our method`，其余是机理描述和图注。flag 让下游能区分，但没减少误判本身。
-- 跨源合并在真实语料上**不触发**：20 篇里 111 个可合并键，跨文档命中 0 组。
+- 跨源合并在真实语料上**不触发**：20 篇里 73 个可合并键，跨文档命中 0 组。
   它的验收证据来自构造夹具（`tests/fixtures/claim_merge/`），不是真实论文。
 - 句子切分按 `[.!?]` + 空白，缩写（`et al.`）会造成过切，目前不影响偏移正确性（宁可切碎不可错位）。
 - 只处理文本层，未做 OCR；扫描版 PDF 无文本则无证据。

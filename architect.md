@@ -6,13 +6,14 @@
 
 ---
 
-## 当前状态（2026-11-12 · W3 / P4 完成）
+## 当前状态（2026-11-13 · W3 / P5 完成）
 
-- **阶段**：P0 ✅ · P1 ✅ · P2 ✅ · P3 ✅ · **P4 Claim Synthesis ✅**
-- **验收结果**：`pytest` 147 passed（+2 opt-in 真实网络）；主张带 `identity_key`（七维）、按身份合并、memo 显示 Scope/Conditions/Grounding 与 `# Claims Kept Separate`
+- **阶段**：P0 ✅ · P1 ✅ · P2 ✅ · P3 ✅ · P4 ✅ · **P5 Contradiction ✅**
+- **验收结果**：`pytest` 239 passed（+2 opt-in 真实网络）；主张带七维 `identity_key`，矛盾评估带 run 作用域、唯一约束与可定位证据
 - **格式覆盖**：PDF · Markdown · README · HTML（含 ar5iv 全文；公式回声已净化）
-- **实测口径**：单句 identity 完整率 0/215；引入块级继承后 fixture 6 条主张 = 4 SUPPORTED / 2 UNSUPPORTED
-- **下一步**：P5 Contradiction（两两矛盾评估，≥20 fixtures / ≥85%）；前置条件是本层产出的"同 scope 异方向/异值"主张
+- **实测口径**：留出集 20 篇 / 13871 块 / 4814 证据 / 1173 主张（1075 支撑）；P5 候选对 1049 → 判定 30（真矛盾 0，预期）；夹具 26 对全通过
+- **下一步**：P6 Research Memo（结构化 memo 收口），再 P7 Falsification
+- **P5 的诚实边界**：真矛盾在真实语料上不可观测；夹具标注与规则同源，100% 只能当回归锁
 
 ## 架构定位
 
@@ -101,6 +102,11 @@ Supervisor 独占预算（`search_calls` / `sources_discovered`）与事件；pr
 | ADR-023 | **参考文献章节整节剔除**（`References` / `Bibliography`，含罗马数字或阿拉伯数字编号变体）。20 篇留出集里 bibliography 贡献 1889/6703 条证据（28%），28 条还成了主张（`[13] Hadsell, R., …`）。参考文献条目是**别人的标题**，不是本文论断；附录不剔除（含真实实验） | ACTIVE |
 | ADR-024 | task 增加**文档级兜底**：章节标题不含任务名时，取文档自身的 task，**优先从摘要读**（后续章节可能研究第二个任务，不能反过来定义论文）。dataset 不做文档级兜底——那是猜不是 scope。20 篇实测：task 有值 11% → 98% | ACTIVE |
 | ADR-025 | 推断出的 `self` 主语标记 `subject_inferred`，但**不改变合并键**（flag 是 provenance 不是 identity）。留出集 459 条 self 中 409 条为推断，抽样 12 条仅 2 条真是 `our method`；默认保留（绑文档 id，不会跨文档合并），但下游需能区分"本文声称"与"本文假设" | ACTIVE |
+| ADR-026 | `direction` 改为四值，语义是**主张对质量的结论**而非数值移动：`UP`（声称变好）/`DOWN`（声称变差）/`LEVEL`（明确说没有改善）/`None`（只报数值）。`reduce`/`increase` 按**宾语极性**定性（`reduces error`→UP，`reduces PSNR`→DOWN）；否定式先判（`fails to improve`→LEVEL）。旧三值把 `achieves/reaches/reports` 归入 `LEVEL`，留出集 196 条 LEVEL **全部**是这种形式，导致「提高 PSNR」与「报告 30 dB」被判成相反方向。代价：合并门槛 111→73（direction 无值不再满足门槛） | ACTIVE |
+| ADR-027 | 实验条件扩为四类（`backbone`/`degradation`/`baseline`/`training`），每类**最多一个值**、**不设默认**、值小写归一；并允许**块级继承**（heading → 节内首个提及），继承必须记 provenance。单句覆盖 2.6% → 四类 13.4% → 加继承 69.1%（heading 仅 5.1%）。继承是"本节有人这么说过"，不是"这条主张用了它" | ACTIVE |
+| ADR-028 | 条件相等**分两级**（见 HD-014）：provenance 为 `sentence`/`heading` 时可支持 `TRUE_CONTRADICTION`；为 `section-first-mention` 时不可，降 `INSUFFICIENT_EVIDENCE`。错误是不对称的——继承条件**不相等**仍可否证相同，只有**相等**不可信。用"跳过对比句"的正则收窄只能从 69.1% 降到 62.9% 且会误跳正常设置段，故在判定层而非抽取层区分 | ACTIVE |
+| ADR-029 | 配对键为 **subject + task**，不要求 dataset 相同：计划 §17 的 scope 差异范例两条主张 dataset 不同，要求 dataset 相交会让该范例不可配对。`self@` 只允许同一文档内配对（两篇论文的"our method"是两个方法），且需双方都有 dataset 与 metric（预过滤 6177→16）。`MAX_PAIRS=50_000`，截断必须报截断前总量与覆盖率 | ACTIVE |
+| ADR-030 | 矛盾评估落库**按 run 作用域**（承接 ADR-019）：`(claim_a_id, claim_b_id)` 唯一索引、`list_by_run` 读取、`replace_for_run` 先删后写使重跑收敛；跨 run 主张对拒收（`cross_run_pair`）。行 id 是 `con_<a[:10]>_<b[:10]>`，截断会让两对不同的主张撞主键，所以唯一性必须声明在列上而不是靠主键 | ACTIVE |
 
 ## 阶段状态
 
@@ -111,7 +117,7 @@ Supervisor 独占预算（`search_calls` / `sources_discovered`）与事件；pr
 | P2 Source Discovery | W2 | 搜索抽象·规范化·版本合并·canonical work·核验 | 真实跑 26 候选/23 works；arXiv+会议版合并；verified 可分 | ✅ DONE |
 | P3 Evidence Quality | W2 | 多格式加载·分块落库·精确偏移·定量证据 | 分块带溯源；证据偏移逐字可验证；定量成表 | ✅ DONE |
 | P4 Claim Synthesis | W3 | 块级 scope·identity 键·按身份合并·支撑性标记 | Rain100H/SIDD 不合并；跨源同值合并；4 SUPPORTED/2 UNSUPPORTED | ✅ DONE |
-| P5 Contradiction | W3 | 两两矛盾评估 | ≥20 fixtures·≥85% | TO DO（当前） |
+| P5 Contradiction | W3 | 四值方向·四类条件与继承·候选配对·级联判定·run 作用域落库 | 26 fixtures 全通过（回归锁，非独立验证）；留出集 1049 候选对 → 30 判定，真矛盾 0（预期） | ✅ DONE |
 | P6 Research Memo | W3 | 结构化 Markdown memo | 主要发现带引用 | TO DO |
 | P7 Falsification | W4 | 反证搜索·负消融（证伪导向） | 对重要主张执行 | TO DO |
 | P8 Evaluation | W4 | Baseline A/B vs ResearchOS 基准 | 5 项指标+成本 | TO DO |
@@ -157,3 +163,7 @@ CLI（主接口）：`research-os run/status/claims/report/inspect-claim` · **`
 | 2026-11-12 | P3 收尾修两个真实缺陷：① `claims` 曾全库列主张（跨 run 污染），改为按 run 作用域（ADR-019）；② 真实 arXiv abs 页 19 条证据中 10 条是站点导航标签，加"完整句子"判据后降为 10 条（ADR-018）。真实复跑 38 块 / 10 证据 / 1 主张 / 偏移逐字成立；测试 101→106 |
 | 2026-11-12 | W3/P4 完成：`research/scope.py`（块级继承）、`research/claims.py`（identity 七维 / 合并门槛 / 状态 flag）、claim_builder 改为按身份分组、memo 增 Scope/Conditions/Grounding 与 `# Claims Kept Separate`、定量抽取补 `delta`（无指标词）、ar5iv 公式回声净化；测试 106→147；ADR-020~022 |
 | 2026-11-12 | P4 留出集（20 篇未见论文，清单 `docs/evaluation/holdout-ids-2026-11-12.txt`）跑通：20 文档 / 13871 块 / 4814 证据 / 1160 主张（1063 SUPPORTED）；合并门槛 111/1063（10%）；跨文档合并 **0** 组。暴露并修复三处实现缺陷：参考文献进证据（ADR-023）、task 继承率被 `key()` 的 `"None"` 字面量伪装成 100%（ADR-024）、`Motivated/Extensive/Proposed` 被当方法名 + 推断主语不可区分（ADR-025）；测试 147→163 |
+| 2026-11-13 | W3/P5 完成：`research/conditions.py`（四类条件）、`research/contradiction.py`（候选配对 + 级联 + 评估器协议）、`scope.py` 条件继承、`claims.py` 四值方向与单位词过滤、`storage` 唯一索引与 run 作用域、memo 矛盾段与 `inspect-claim` 对端、`scripts/evaluate_contradiction.py`；测试 163→239；ADR-026~030；HD-014 |
+| 2026-11-13 | P5 前置修正改写了 P4 的部分数字：留出集重测为 1173 主张（1075 支撑）、合并门槛 **73（7%）**、跨文档合并仍 0。合并率下降是四值方向的代价（只报数值的句子不再声明方向），不是回退 |
+| 2026-11-13 | P5 实测：候选对 1049 → 判定 30（真矛盾 0 / 实验不可比 2 / 范围不同 18 / 互补 5 / 证据不足 5），跳过 917 缺 dataset + 102 缺 metric，`self@` 预过滤丢弃 6601。30 条判定里 25 条的条件来自 `section-first-mention`，**没有一对是双方句子明写**——这是 HD-014 的直接依据 |
+| 2026-11-13 | P5 存储决策落地：`(claim_a_id, claim_b_id)` 唯一索引（不靠 `con_<a[:10]>_<b[:10]>` 主键，截断会撞）、`list_by_run` run 作用域、`replace_for_run` 先删后写使重跑收敛、跨 run 对拒收 |
