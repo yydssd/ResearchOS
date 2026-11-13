@@ -1054,13 +1054,23 @@ def assess_pair(a: Claim, b: Claim) -> ContradictionAssessment | None:
             ConfidenceLabel.MEDIUM,
         )
 
+    if not buckets_a or not buckets_b:
+        # Spec §5 row 9: one side reporting no value cannot corroborate a
+        # same-direction claim, so the pair is left unjudged rather than skipped.
+        missing_values = "A" if not buckets_a else "B"
+        return _assessment(
+            a, b, ContradictionType.INSUFFICIENT_EVIDENCE,
+            f"same direction, value not reported on side {missing_values}",
+            ConfidenceLabel.LOW,
+        )
+
     return None
 ```
 
 - [ ] **Step 4: Run it**
 
 Run: `python -m pytest tests/unit/test_contradiction_cascade.py -q`
-Expected: PASS (19 tests).
+Expected: PASS (18 tests).
 
 - [ ] **Step 5: Commit**
 
