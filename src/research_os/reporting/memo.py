@@ -302,7 +302,7 @@ def _stats_lines(graph: RunGraph) -> list[str]:
     reasons = (
         ("skipped_missing_dataset", "without a dataset"),
         ("skipped_missing_metric", "without a metric"),
-        ("skipped_self_prefilter", "across documents"),
+        ("skipped_self_prefilter", "self pairs without a dataset or metric"),
         ("skipped_same_value", "with an identical value"),
         ("skipped_cap", "over the pair cap"),
     )
