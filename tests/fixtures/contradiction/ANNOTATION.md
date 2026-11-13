@@ -20,8 +20,20 @@ so every entry that lands on row 7b is constructed on purpose.
 
 | date | pass | annotator | agreement with final |
 |---|---|---|---|
-| 2026-11-13 | 1 | agent | pending |
-| 2026-11-13 | 2 | agent (blind) | pending |
+| 2026-11-13 | 1 | agent (labels derived from the cascade table in spec §5) | 26/26 |
+| — | 2 | **not performed** | — |
+
+The second pass did not happen. The protocol asks for a blind relabel at least a
+day later, and the work was done in one session: pass 1 was produced while the
+rules were in view, so agreement between pass 1 and the fixture is not evidence
+that the labels are right. It is evidence that the fixture and the code agree.
+
+Consequence, stated plainly because the evaluation report depends on it:
+`docs/evaluation/2026-11-13-p5-contradiction.md` reports 100% fixture accuracy and
+that number must be read as a regression lock only. An independent annotator who
+labels the 26 pairs from the claim texts alone, without reading `spec §5` or
+`contradiction.py`, is the missing step; until then `TRUE_CONTRADICTION` precision
+and recall on this fixture measure self-consistency, not correctness.
 
 ## Disagreements
 

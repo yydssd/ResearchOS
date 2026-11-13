@@ -1,0 +1,203 @@
+# P5 contradiction analysis — measured results
+
+Date: 2026-11-13 · Commit at time of run: `1e0895e` · Branch `p5-contradiction`
+
+Numbers first, interpretation second. Every figure below is reproduced by the
+commands at the end of this file; none are estimated.
+
+---
+
+## 1. What P5 is, and what this report can and cannot show
+
+P5 answers one question: given two persisted claims, can we say they contradict,
+differ in scope, are experimentally incompatible, complement each other, or that
+the evidence is insufficient? It never reads the papers again — it judges from
+`identity_key`, which P4 produced.
+
+That design decision sets the ceiling for this report. `identity_key` is a
+heuristic extraction (subject, task, dataset, metric, direction, conditions,
+value bucket), so P5's ceiling is P4's recall. Everything below is measured
+against that ceiling, not against the papers.
+
+---
+
+## 2. Fixture set — 26 labelled pairs
+
+`tests/fixtures/contradiction/pairs.json`, 12 `real` (verbatim sentences from the
+hold-out corpus) and 14 `constructed`.
+
+| subset | n | judged | correct | skipped | accuracy |
+|---|---|---|---|---|---|
+| overall | 26 | 21 | 21 | 0 | 100.0% |
+| real | 12 | 8 | 8 | 0 | 100.0% |
+| constructed | 14 | 13 | 13 | 0 | 100.0% |
+
+`TRUE_CONTRADICTION` precision = 100.0% (5/5), recall = 100.0% (5/5).
+
+Confusion (rows = expected, columns = actual):
+
+| expected \ actual | TRUE_CON | SCOPE | EXPERIM | COMPLEM | INSUFF | SKIPPED |
+|---|---|---|---|---|---|---|
+| TRUE_CONTRADICTION | 5 | 0 | 0 | 0 | 0 | 0 |
+| SCOPE_DIFFERENCE | 0 | 5 | 0 | 0 | 0 | 0 |
+| EXPERIMENTAL_INCOMPATIBILITY | 0 | 0 | 3 | 0 | 0 | 0 |
+| COMPLEMENTARY | 0 | 0 | 0 | 3 | 0 | 0 |
+| INSUFFICIENT_EVIDENCE | 0 | 0 | 0 | 0 | 5 | 0 |
+
+Five fixtures expect no judgement (`null`) and all five produce none. Two of them
+(p17, p18) never become candidates at all — pairing refuses a cross-document
+`self@` and a different task — which is a different fact from the cascade
+declining, and the evaluator records them separately.
+
+### 2.1 This 100% is a regression lock, not evidence of quality
+
+The labels were derived from the same rules the cascade implements. Agreement
+therefore shows the rules still behave as written; it cannot show the rules are
+right. The `85%` target in the original plan is met trivially and should not be
+read as a quality result.
+
+What *was* independently verified: all 24 `real` sentence pairs appear verbatim
+in the arXiv HTML named in their `from` field (checked by substring search over
+`.holdout_cache/`, no edited or spliced sentences). The provenance of the labels
+themselves is not independent — see `tests/fixtures/contradiction/ANNOTATION.md`,
+where both passes carry the same annotator.
+
+---
+
+## 3. Hold-out corpus — 20 unseen papers
+
+### 3.1 Inputs
+
+| quantity | value |
+|---|---|
+| papers | 20 |
+| chunks | 13 871 |
+| evidence | 4 814 |
+| claims | 1 173 (1 075 supported) |
+| claims with a dataset | 195 / 1 075 (18%) |
+| claims with a metric | 153 / 1 075 (14%) |
+| merge gate satisfied | 73 / 1 075 (7%) |
+| cross-document merges | 0 |
+
+### 3.2 Pairing
+
+| quantity | value |
+|---|---|
+| pairs that passed pairing | 1 049 |
+| evaluated | 1 049 |
+| coverage of paired candidates | 100.0% |
+| dropped by the `self@` prefilter | 6 601 |
+| skipped: no dataset | 917 |
+| skipped: no metric | 102 |
+| skipped: identical value (P4 defect tripwire) | 0 |
+| dropped by `MAX_PAIRS` | 0 |
+
+**Coverage of 100% does not mean everything was compared.** It means every pair
+that became a candidate was judged. The 6 601 pairs the `self@` prefilter dropped
+are reported on their own line precisely so this cannot be misread; they are
+within-document pairs where at least one side lacks a dataset or a metric.
+
+### 3.3 Result distribution
+
+| relation | count |
+|---|---|
+| `TRUE_CONTRADICTION` | **0** |
+| `EXPERIMENTAL_INCOMPATIBILITY` | 2 |
+| `SCOPE_DIFFERENCE` | 18 |
+| `COMPLEMENTARY` | 5 |
+| `INSUFFICIENT_EVIDENCE` | 5 |
+| **total assessments** | **30** |
+
+Of 1 049 comparable pairs, 30 produced a judgement. 1 019 were skipped for a
+missing scope field. This is what a comparability filter looks like on a corpus
+of independent papers: the dominant output is "these two numbers are not
+comparable", not "these two papers disagree".
+
+---
+
+## 4. Why `TRUE_CONTRADICTION` is zero
+
+`TRUE_CONTRADICTION` recall cannot be measured on this corpus: 98.3% of the 1063
+supported claims assert an improvement, leaving 2 LEVEL and 16 DOWN claims and
+zero opposite-direction pairs. The type is verified by constructed fixtures only.
+
+Two further measurements pin the same conclusion from different sides:
+
+1. **Direction.** After the four-valued fix, `achieves/reports/reaches` assert no
+   direction at all. A claim reporting 39.18 dB can no longer be read as the
+   opposite of a claim reporting an improvement — the failure that would have
+   produced false contradictions.
+2. **Conditions.** All 25 assessments that passed the conditions gate rested on
+   conditions inherited from a section's first mention; **zero pairs had
+   sentence-level conditions on both sides.** Had the weak tier been trusted as
+   proof of a shared setup, every one of those 25 would have been a candidate for
+   a contradiction verdict on evidence that does not support it.
+
+That second number is the reason for HD-014. `section-first-mention` conditions
+are now allowed to *disprove* a shared setup but never to *prove* one, so the
+`TRUE_CONTRADICTION` gate is effectively "both sides state their setup in the
+sentence or in the heading". Measured effect on this corpus today: 0 pairs
+downgraded, because there were no opposite-direction pairs to downgrade. The rule
+is insurance, and its cost is currently zero.
+
+---
+
+## 5. End-to-end behaviour
+
+One real paper (`2606.22801`, 1 105 chunks, 151 claims) through the full
+supervisor path produces:
+
+```text
+# Contradictions and Open Questions
+
+Assessed 192 of 192 candidate pairs (coverage 100%).
+Skipped: 152 without a dataset, 36 without a metric, 1176 self pairs without a dataset or metric.
+
+## True contradictions (0)
+## Experimental incompatibilities (0)
+## Scope differences (1)
+- dataset differs: sidd vs urban100
+  - A: `c_839eae74460a` — sv_2d9f24ecfb53 · IV-D1 Zero-shot generalization ... · chars 0-114
+  - B: `c_d789e8db6b7e` — sv_2d9f24ecfb53 · IV-D3 Generalization to unknown ... · chars 701-865
+## Complementary findings (2)
+## Insufficient evidence (1)
+```
+
+Every verdict names its dimension and both values, and every claim carries the
+source version, section and character offsets of its supporting evidence. A
+reader can open the paper at `chars 0-114` and check the claim. Verdicts that
+cannot be located say `no locatable evidence` instead of printing placeholder
+coordinates.
+
+---
+
+## 6. Known limits, restated with the numbers behind them
+
+1. **`TRUE_CONTRADICTION` is unobservable on real text** (§4). The type exists,
+   is tested by fixtures, and cannot be trusted to fire correctly on a corpus
+   where it never fires.
+2. **Fixture accuracy is circular** (§2.1). Independent labelling remains open.
+3. **18% of claims carry a dataset** (§3.1), so 87% of comparable pairs are
+   skipped before judgement. Improving this is a P4 extraction problem, not a P5
+   rule problem, and lowering the gate would be exactly the "missing means the
+   same" error this phase exists to avoid.
+4. **Conditions are mostly inherited** (§4). A shared setup is asserted with a
+   provenance tag at best, never from the sentence itself on both sides.
+
+---
+
+## Reproducing
+
+```bash
+D:/Anaconda/envs/reOS/python.exe scripts/holdout_claim_quality.py \
+    --papers 20 --ids-file docs/evaluation/holdout-ids-2026-11-12.txt
+
+D:/Anaconda/envs/reOS/python.exe scripts/evaluate_contradiction.py
+
+D:/Anaconda/envs/reOS/python.exe -m pytest
+```
+
+The P5 distribution in §3.2–3.3 is produced by running
+`HeuristicContradictionAssessor().assess(claims)` over the claims built from the
+same 20 papers; the harness prints each counter of `PairingStats` and each entry
+of `emitted_by_type`, which are the numbers transcribed above.
