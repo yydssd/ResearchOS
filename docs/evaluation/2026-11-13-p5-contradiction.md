@@ -117,9 +117,24 @@ comparable", not "these two papers disagree".
 
 ## 4. Why `TRUE_CONTRADICTION` is zero
 
-`TRUE_CONTRADICTION` recall cannot be measured on this corpus: 98.3% of the 1063
-supported claims assert an improvement, leaving 2 LEVEL and 16 DOWN claims and
-zero opposite-direction pairs. The type is verified by constructed fixtures only.
+`TRUE_CONTRADICTION` recall cannot be measured on this corpus: 98.3% of the 1075
+supported claims assert an improvement or merely report a value, leaving 2 LEVEL
+and 16 DOWN claims and zero opposite-direction pairs. The type is verified by
+constructed fixtures only.
+
+Direction distribution, re-measured on the post-fix corpus (n = 1075):
+
+| direction | count | share |
+|---|---|---|
+| `UP` (claims improvement) | 372 | 34.6% |
+| `None` (reports a value, asserts no direction) | 685 | 63.7% |
+| `DOWN` (claims degradation) | 16 | 1.5% |
+| `LEVEL` (explicit no-gain) | 2 | 0.2% |
+
+`UP + None = 1057 / 1075 = 98.3%`. Note what the 98.3% means: it is "not a
+negative or flat claim", not "asserts an improvement". The design spec's §2 used
+1063 claims (`UP 369 / None 676`) measured before the prerequisite fixes; the
+conclusion is unchanged, but the report of record uses the re-measured numbers.
 
 Two further measurements pin the same conclusion from different sides:
 

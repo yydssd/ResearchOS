@@ -101,7 +101,7 @@ Supervisor 独占预算（`search_calls` / `sources_discovered`）与事件；pr
 | ADR-022 | `UNSUPPORTED` 只表示"无支撑证据"（推测/未来工作）；"有证据但数值未结构化 / 范围不可判定 / 比较无对照"一律 SUPPORTED + LOW + 命名 flag。否则 unsupported 会退化成"低置信度"的同义词 | ACTIVE |
 | ADR-023 | **参考文献章节整节剔除**（`References` / `Bibliography`，含罗马数字或阿拉伯数字编号变体）。20 篇留出集里 bibliography 贡献 1889/6703 条证据（28%），28 条还成了主张（`[13] Hadsell, R., …`）。参考文献条目是**别人的标题**，不是本文论断；附录不剔除（含真实实验） | ACTIVE |
 | ADR-024 | task 增加**文档级兜底**：章节标题不含任务名时，取文档自身的 task，**优先从摘要读**（后续章节可能研究第二个任务，不能反过来定义论文）。dataset 不做文档级兜底——那是猜不是 scope。20 篇实测：task 有值 11% → 98% | ACTIVE |
-| ADR-025 | 推断出的 `self` 主语标记 `subject_inferred`，但**不改变合并键**（flag 是 provenance 不是 identity）。留出集 459 条 self 中 409 条为推断，抽样 12 条仅 2 条真是 `our method`；默认保留（绑文档 id，不会跨文档合并），但下游需能区分"本文声称"与"本文假设" | ACTIVE |
+| ADR-025 | 推断出的 `self` 主语标记 `subject_inferred`，但**不改变合并键**（flag 是 provenance 不是 identity）。留出集 459 条 self 中 409 条为推断（**P5 重测为 476 / 425**，见维护记录），抽样 12 条仅 2 条真是 `our method`；默认保留（绑文档 id，不会跨文档合并），但下游需能区分"本文声称"与"本文假设" | ACTIVE |
 | ADR-026 | `direction` 改为四值，语义是**主张对质量的结论**而非数值移动：`UP`（声称变好）/`DOWN`（声称变差）/`LEVEL`（明确说没有改善）/`None`（只报数值）。`reduce`/`increase` 按**宾语极性**定性（`reduces error`→UP，`reduces PSNR`→DOWN）；否定式先判（`fails to improve`→LEVEL）。旧三值把 `achieves/reaches/reports` 归入 `LEVEL`，留出集 196 条 LEVEL **全部**是这种形式，导致「提高 PSNR」与「报告 30 dB」被判成相反方向。代价：合并门槛 111→73（direction 无值不再满足门槛） | ACTIVE |
 | ADR-027 | 实验条件扩为四类（`backbone`/`degradation`/`baseline`/`training`），每类**最多一个值**、**不设默认**、值小写归一；并允许**块级继承**（heading → 节内首个提及），继承必须记 provenance。单句覆盖 2.6% → 四类 13.4% → 加继承 69.1%（heading 仅 5.1%）。继承是"本节有人这么说过"，不是"这条主张用了它" | ACTIVE |
 | ADR-028 | 条件相等**分两级**（见 HD-014）：provenance 为 `sentence`/`heading` 时可支持 `TRUE_CONTRADICTION`；为 `section-first-mention` 时不可，降 `INSUFFICIENT_EVIDENCE`。错误是不对称的——继承条件**不相等**仍可否证相同，只有**相等**不可信。用"跳过对比句"的正则收窄只能从 69.1% 降到 62.9% 且会误跳正常设置段，故在判定层而非抽取层区分 | ACTIVE |
@@ -127,7 +127,7 @@ Supervisor 独占预算（`search_calls` / `sources_discovered`）与事件；pr
 HTTP：`POST /research` · `GET /research/{run_id}` · `/report` · `/claims` · **`/sources`**
 CLI（主接口）：`research-os run/status/claims/report/inspect-claim` · **`discover/sources`**
 
-## 已知限制（P2/P3）
+## 已知限制（P2/P3，数字已按 P5 重测口径更新）
 
 1. 发现只保证身份可核验，不保证主题相关（查询为确定性关键词；相关性/改写属 P7）。
 2. 作者元数据缺失时按标题合并，可能把同名不同作合并（当前 22 个 work 中暂无此例，但机制上可能）。
@@ -137,10 +137,10 @@ CLI（主接口）：`research-os run/status/claims/report/inspect-claim` · **`
 6. 通用网页的**散文档**站点文案（如 arXivLabs 说明段，本身是完整句子）仍会入证据；标签碎片已由句界判据挡掉，剩下的是主题相关性问题，属 P7。
 7. 定量抽取只认 ASCII 指标词与数字，表格结构不还原；无指标词的增益已由 `delta` 通道覆盖（P4），但表格与图注中的数值仍抽不到。
 8. 跨源合并在真实语料上几乎不触发：需要同一方法在同一数据集上被他人复现。验收证据来自 `tests/fixtures/claim_merge/`，不来自真实论文。
-9. `SELF` 默认依赖第三方标识黑名单（previous/baseline/SOTA…），漏判会把前人方法的结果算到本文方法头上；相关通道只会降置信，不会纠正归属。20 篇实测 459 条 self 中 409 条是**推断**而来（标 `subject_inferred`），抽样 12 条仅 2 条为真自指，其余是机理描述与图注。
+9. `SELF` 默认依赖第三方标识黑名单（previous/baseline/SOTA…），漏判会把前人方法的结果算到本文方法头上；相关通道只会降置信，不会纠正归属。20 篇实测 476 条 self 中 425 条是**推断**而来（标 `subject_inferred`），抽样 12 条仅 2 条为真自指，其余是机理描述与图注。
 10. 段落级回指只覆盖"段首点名"一种；代词与别名指代抽不到。
-11. **dataset 是主张层的瓶颈**：83% 的主张拿不到 dataset（论文用 "this dataset" / "Table 2" 指代），合并门槛满足率 10%。补齐需要表格解析或代词消解，不属 P4。
-12. 跨源合并实测不触发：20 篇里 111 个可合并键，跨文档命中 0 组。验收靠构造夹具，不靠真实论文。
+11. **dataset 是主张层的瓶颈**：82% 的主张拿不到 dataset（论文用 "this dataset" / "Table 2" 指代），合并门槛满足率 7%（P5 前置修正后重测；原为 83% / 10%）。补齐需要表格解析或代词消解，不属 P4/P5。
+12. 跨源合并实测不触发：20 篇里 73 个可合并键，跨文档命中 0 组。验收靠构造夹具，不靠真实论文。
 
 ## 维护约定（代码注释规则）
 

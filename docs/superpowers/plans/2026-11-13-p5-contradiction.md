@@ -2121,9 +2121,10 @@ Expected: the section lists assessments with locations, or explains that no comp
 Create `docs/evaluation/2026-11-13-p5-contradiction.md` with: fixture accuracy per subset, confusion matrix, `TRUE_CONTRADICTION` precision/recall, the hold-out distribution, and this sentence when it applies:
 
 ```markdown
-`TRUE_CONTRADICTION` recall cannot be measured on this corpus: 98.3% of the 1063
-supported claims assert an improvement, leaving 2 LEVEL and 16 DOWN claims and
-zero opposite-direction pairs. The type is verified by constructed fixtures only.
+`TRUE_CONTRADICTION` recall cannot be measured on this corpus: 98.3% of the 1075
+supported claims assert an improvement or merely report a value, leaving 2 LEVEL
+and 16 DOWN claims and zero opposite-direction pairs. The type is verified by
+constructed fixtures only.
 ```
 
 - [ ] **Step 5: Commit**

@@ -26,7 +26,13 @@ Claim × Claim（同 task、subject 可比）
 
 ## 2. 实测：现有标签不足以支撑判定
 
-**样本**：P4 留出集 20 篇未见论文，1063 条 SUPPORTED 且带 `identity_key` 的主张。
+> **口径说明（2026-11-13 傍晚补）**：本节所有数字是**设计时的测量**，样本为 P5 前置修正之前
+> 的 P4 输出（1063 条支持主张）。前置修正改写了 `direction` 与 conditions，同一批 20 篇重测
+> 后是 **1075 条**支持主张。因此本节的 1063 / 369 / 676 / 64.3% 等数字是历史快照，不是当前值；
+> 当前值见 **§11 实施偏差** 与 `docs/evaluation/2026-11-13-p5-contradiction.md`。
+> 结论（方向对立对为 0）在两套口径下都成立，所以没有改写本节的推理。
+
+**样本**：P4 留出集 20 篇未见论文，1063 条 SUPPORTED 且带 `identity_key` 的主张（设计时口径）。
 
 ### 2.1 direction 的语义错误（必须先修）
 
@@ -261,15 +267,19 @@ PairingStats: total_before_cap, evaluated, skipped{missing_dataset, missing_metr
 **memo**：`# Contradictions and Open Questions` 分节，顺序固定；首行报规模与覆盖率：
 
 ```text
-Assessed 1063 of 1063 candidate pairs (100%). Skipped: 0 missing dataset,
-0 missing metric, 0 self-pair prefilter, 0 truncated by cap.
+Assessed 192 of 192 candidate pairs (coverage 100%).
+Skipped: 152 without a dataset, 36 without a metric,
+1176 self pairs without a dataset or metric.
 
 ## True contradictions (0)
-## Experimental incompatibilities (n)
-## Scope differences (n)
-## Complementary findings (n)   # 按 subject 折叠为一行
-## Insufficient evidence (n)
+## Experimental incompatibilities (0)
+## Scope differences (1)
+## Complementary findings (2)   # 按 subject 折叠为一行
+## Insufficient evidence (1)
 ```
+
+上面是 `2606.22801` 单篇端到端的**实测输出**，不是示意：覆盖率与跳过分解必须同时出现，
+「100% 覆盖率」只针对已进入级联的候选对，被 `self@` 预过滤丢弃的 1176 对单列。
 
 无判定时写 `No comparable claim pair in this run.`，不留空段。
 
@@ -353,9 +363,11 @@ Assessed 1063 of 1063 candidate pairs (100%). Skipped: 0 missing dataset,
 
 ## 10. 已知限制
 
-1. 真矛盾在真实语料上结构性不可达（§2.5）：语料中 98.3% 的主张都在报告提升，只有 2 条
-   `LEVEL` + 16 条 `DOWN`，方向对立对为 0。这与 conditions 覆盖率无关，扩充与继承都不改变它。
-   本阶段的可信度建立在「不轻易断言矛盾」，不是「能找出矛盾」。
+1. 真矛盾在真实语料上结构性不可达（§2.5）：重测 1075 条支持主张里只有 2 条 `LEVEL`
+   + 16 条 `DOWN`（1.7%）是负向/持平信号，其余 98.3% 是 `UP`（声称提升）或 `None`
+   （只报数值、不声称方向），方向对立对为 0。这与 conditions 覆盖率无关，扩充与继承都不改变它。
+   注意 98.3% 的含义是「非负向」，不是「都在声称提升」。本阶段的可信度建立在
+   「不轻易断言矛盾」，不是「能找出矛盾」。
 2. direction 修正后六成主张无方向（`None`），P4 合并门槛从 111（10%）降到 **73（7%）**；
    主张数从 1063 升到 1075（合并变少则主张变多）。这是刻意的代价，不是回退。
 3. 具名 subject 仍有误抽风险：`dB` 已修，但缩写、模型代号（`MIRNet` 与 `MIRNet-v2`）仍可能被当成
@@ -391,3 +403,4 @@ Assessed 1063 of 1063 candidate pairs (100%). Skipped: 0 missing dataset,
 | 9 | §9 验收 4b | **第二轮盲标未做**。`ANNOTATION.md` 的 pass log 记为 not performed | 单会话完成，标注与实现同源。后果：夹具 100% 只能作回归锁，见 HD-015 |
 | 10 | §10 限制 2 | 合并门槛实测 **73/1075（7%）**，本文原写 71 | direction 四值化后重测；主张数由 1063 变 1075（合并变少则主张变多） |
 | 11 | §2.5 可达性 | 留出集实测：候选对 1049 → 判定 30（真矛盾 **0** / 实验不可比 2 / 范围不同 18 / 互补 5 / 证据不足 5）；25/30 条判定的条件来自 `section-first-mention`，**没有一对双方句子明写** | 与 §2.5 的「真矛盾为 0」预测一致；新增的事实是条件从不显式 |
+| 12 | §2.1 / §2.5 方向分布 | 重测为 `UP 372 / DOWN 16 / LEVEL 2 / None 685`（共 1075 条支持主张），设计时写 `UP 369 / DOWN 16 / LEVEL 2 / None 676`（1063 条）。非负向（UP+None）占比 **98.3% 不变**（1057/1075） | 前置修正与合并门槛变化使主张数 +12，但方向对立对仍为 0，§2.5 的结论不受影响 |
