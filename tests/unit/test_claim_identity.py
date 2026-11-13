@@ -189,3 +189,15 @@ def test_inferred_subject_does_not_change_the_key():
 
     assert implicit.subject_inferred is True
     assert implicit.key() == explicit.key()
+
+
+def test_unit_words_are_not_method_names():
+    """'dB' has an inner capital, so the proper-noun rule accepted it and `db`
+    became the most repeated named subject across the hold-out (9 papers)."""
+    for text in (
+        "The performance improvement is over 55 dB on dehazing.",
+        "The gain reaches 0.42 dB on Rain100H compared with the previous work.",
+        "It improves 3.1 % over the strongest competitor.",
+    ):
+        identity = _identity(text)
+        assert identity.subject not in {"db", "psnr", "ssim"}, text

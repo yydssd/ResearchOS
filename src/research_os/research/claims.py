@@ -46,6 +46,13 @@ COMMON_CAPS = frozenset(
         "finally", "significant", "similarly", "overall", "first", "second", "third",
     }
 )
+
+# Units and metric names are never subjects. `dB` is the reason this exists: its
+# inner capital satisfied the proper-noun test, so `db` was read as a method
+# name in 9 of the 20 hold-out papers.
+NOT_A_SUBJECT = frozenset(
+    {"db", "psnr", "ssim", "lpips", "fid", "mae", "mse", "percent", "%", "×"}
+)
 # Direction is the claim's conclusion about quality, not the raw movement of the
 # number: "reduces error" is an improvement, "reduces PSNR" is not, and "reports
 # 39.18 dB" asserts no direction at all. The old three-value scheme put
@@ -142,7 +149,12 @@ def _subject(text: str) -> tuple[str | None, bool]:
     for token_match in re.finditer(r"[A-Za-z][A-Za-z0-9\-]*", prefix):
         token = token_match.group(0)
         low = token.lower()
-        if low in COMMON_CAPS or low in dataset_words or low in metric_words:
+        if (
+            low in COMMON_CAPS
+            or low in dataset_words
+            or low in metric_words
+            or low in NOT_A_SUBJECT
+        ):
             continue
         has_inner_caps = any(char.isupper() for char in token[1:])
         is_acronym = token.isupper() and len(token) >= 2
