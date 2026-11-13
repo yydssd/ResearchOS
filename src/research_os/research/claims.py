@@ -46,11 +46,25 @@ COMMON_CAPS = frozenset(
         "finally", "significant", "similarly", "overall", "first", "second", "third",
     }
 )
-DIRECTION_UP = re.compile(
-    r"\b(improv\w*|gain\w*|outperform\w*|better|surpass\w*|exceed\w*|reduc\w*|increas\w*)",
+# Direction is the claim's conclusion about quality, not the raw movement of the
+# number: "reduces error" is an improvement, "reduces PSNR" is not, and "reports
+# 39.18 dB" asserts no direction at all. The old three-value scheme put
+# achiev/reach/report into LEVEL, which made "improves PSNR" and "reports 30 dB"
+# look like opposites (196 of 196 LEVEL claims on the hold-out were of that kind).
+_IMPROVE = re.compile(r"\b(improv\w*|gain\w*|outperform\w*|better|surpass\w*|exceed\w*)\b", re.IGNORECASE)
+_DEGRADE = re.compile(r"\b(degrades?|drops?|worse|hurts?|fails? on)\b", re.IGNORECASE)
+_NO_GAIN = re.compile(
+    r"\b(no (?:clear |significant )?(?:gain|improvement|difference)|"
+    r"fails? to improv\w*|does not improv\w*|without (?:any )?improvement|"
+    r"on par with|comparable to)\b",
     re.IGNORECASE,
 )
-DIRECTION_LEVEL = re.compile(r"\b(achiev\w*|reach\w*|report\w*)", re.IGNORECASE)
+_ERROR_SIDE = r"(?:error|loss|noise|artifact\w*|complexity|params|parameters)"
+_QUALITY_SIDE = r"(?:psnr|ssim|accuracy|performance|quality)"
+_REDUCE_LOWERS_ERROR = re.compile(rf"\breduc\w*\s+(?:the\s+)?{_ERROR_SIDE}\b", re.IGNORECASE)
+_REDUCE_LOWERS_QUALITY = re.compile(rf"\breduc\w*\s+(?:the\s+)?{_QUALITY_SIDE}\b", re.IGNORECASE)
+_INCREASE_RAISES_QUALITY = re.compile(rf"\bincreas\w*\s+(?:the\s+)?{_QUALITY_SIDE}\b", re.IGNORECASE)
+_INCREASE_RAISES_ERROR = re.compile(rf"\bincreas\w*\s+(?:the\s+)?{_ERROR_SIDE}\b", re.IGNORECASE)
 CONDITION_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"\b(cnn|transformer|convolutional)\b\s+backbone", re.IGNORECASE), "backbone"),
     (re.compile(r"\b(synthetic|real[- ]world)\b", re.IGNORECASE), "setting"),
@@ -150,6 +164,18 @@ def _conditions(text: str) -> tuple[str, ...]:
     return tuple(sorted(found))
 
 
+def _direction(text: str) -> str | None:
+    """UP / DOWN / LEVEL / None. Negation is checked first so that
+    "fails to improve" is LEVEL rather than UP."""
+    if _NO_GAIN.search(text):
+        return "LEVEL"
+    if _DEGRADE.search(text) or _REDUCE_LOWERS_QUALITY.search(text) or _INCREASE_RAISES_ERROR.search(text):
+        return "DOWN"
+    if _IMPROVE.search(text) or _REDUCE_LOWERS_ERROR.search(text) or _INCREASE_RAISES_QUALITY.search(text):
+        return "UP"
+    return None
+
+
 def _buckets(quantitative: list[QuantitativeEvidence]) -> tuple[str, ...]:
     buckets = []
     for row in quantitative:
@@ -182,11 +208,7 @@ def extract_identity(
         inferred = True
     if subject == "self":
         subject = f"self@{source_version_id}"
-    direction = (
-        "UP"
-        if DIRECTION_UP.search(text)
-        else ("LEVEL" if DIRECTION_LEVEL.search(text) else None)
-    )
+    direction = _direction(text)
     return ClaimIdentity(
         subject=subject,
         task=task,
