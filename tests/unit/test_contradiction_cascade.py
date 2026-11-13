@@ -79,8 +79,10 @@ def test_missing_conditions_means_insufficient_evidence_not_a_contradiction():
 
 
 def test_same_explicit_scope_and_opposite_direction_is_a_true_contradiction():
-    a = _claim(direction="UP", conditions="backbone=transformer")
-    b = _claim(direction="LEVEL", conditions="backbone=transformer")
+    # HD-014: TRUE_CONTRADICTION needs provenance that proves a shared setup.
+    # "Explicit conditions" alone is not enough - both sides must be `sentence`.
+    a = _claim(direction="UP", conditions="backbone=transformer", conditions_from="sentence")
+    b = _claim(direction="LEVEL", conditions="backbone=transformer", conditions_from="sentence")
 
     result = assess_pair(a, b)
 
@@ -146,8 +148,10 @@ def test_inherited_conditions_can_still_disprove_a_shared_setup():
     [("UP", "LEVEL"), ("UP", "DOWN"), ("DOWN", "LEVEL")],
 )
 def test_every_opposite_pair_combination(a_dir, b_dir):
-    a = _claim(direction=a_dir, conditions="backbone=cnn", bucket="psnr=39.18")
-    b = _claim(direction=b_dir, conditions="backbone=cnn", bucket="psnr=39.18")
+    # HD-014: every opposite pair is only a contradiction when both setups are
+    # stated in the sentences; without the tier the cascade must answer LOW.
+    a = _claim(direction=a_dir, conditions="backbone=cnn", bucket="psnr=39.18", conditions_from="sentence")
+    b = _claim(direction=b_dir, conditions="backbone=cnn", bucket="psnr=39.18", conditions_from="sentence")
 
     assert _relationship(a, b) == ContradictionType.TRUE_CONTRADICTION
 
@@ -160,3 +164,38 @@ def test_explanation_names_the_dimension_and_the_values():
 
     assert "dataset differs" in result.explanation
     assert "rain100h" in result.explanation and "sidd" in result.explanation
+
+
+def test_missing_provenance_cannot_prove_a_contradiction():
+    """D13 is a whitelist, not a blacklist. A claim with no conditions_from tag
+    says nothing about where its setup came from, so equal conditions cannot be
+    promoted to "same experiment" - that is silence used as evidence (HD-014)."""
+    a = _claim(direction="UP", conditions="backbone=cnn")
+    b = _claim(direction="LEVEL", conditions="backbone=cnn")
+
+    result = assess_pair(a, b)
+
+    assert result.relationship == ContradictionType.INSUFFICIENT_EVIDENCE
+    assert result.confidence_label == ConfidenceLabel.LOW
+    assert "provenance missing" in result.explanation
+
+
+def test_unknown_provenance_tier_cannot_prove_a_contradiction():
+    """Legacy rows and future tier names are untrusted for the same reason: only
+    `sentence` and `heading` were ever defined as evidence of a shared setup."""
+    a = _claim(direction="UP", conditions="backbone=cnn", conditions_from="legacy-unknown")
+    b = _claim(direction="LEVEL", conditions="backbone=cnn", conditions_from="legacy-unknown")
+
+    assert _relationship(a, b) == ContradictionType.INSUFFICIENT_EVIDENCE
+
+
+def test_sentence_level_conditions_are_evidence():
+    """The strongest tier: both sentences state their own setup. This is the
+    tier the fixtures must exercise before claiming TRUE_CONTRADICTION is tested."""
+    a = _claim(direction="UP", conditions="backbone=cnn", conditions_from="sentence")
+    b = _claim(direction="LEVEL", conditions="backbone=cnn", conditions_from="sentence")
+
+    result = assess_pair(a, b)
+
+    assert result.relationship == ContradictionType.TRUE_CONTRADICTION
+    assert result.confidence_label == ConfidenceLabel.DISPUTED

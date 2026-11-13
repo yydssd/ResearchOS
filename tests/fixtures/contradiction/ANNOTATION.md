@@ -41,10 +41,14 @@ and recall on this fixture measure self-consistency, not correctness.
 
 ## Label semantics
 
-- `conditions_from` absent (null): the conditions are treated as stated by the
-  sentence itself. The cascade only distinguishes a confirmed setup from one
-  inherited from a section's first mention; a fixture that omits the field is
-  asserting the confirmed tier.
+- **D13 is a whitelist.** Only `sentence` and `heading` prove that a claim used
+  the setup it names, so only those tiers can support `TRUE_CONTRADICTION`.
+  `section-first-mention` is an assumption, and an absent or unknown tier is
+  silence - both yield `INSUFFICIENT_EVIDENCE`. A fixture expecting
+  `TRUE_CONTRADICTION` MUST therefore set `a_conditions_from` and
+  `b_conditions_from` explicitly (p04/p14/p15/p21 use `sentence`, p26 uses
+  `heading`). Earlier revisions treated a missing tag as "confirmed"; that was
+  the exact "silence as evidence" error HD-014 exists to prevent.
 - `expected: null` means "no judgement". Two causes, both recorded per entry:
   the pair is never produced by `pair_candidates` (different subject or task,
   cross-document `self@`), or `assess_pair` declines to judge it.

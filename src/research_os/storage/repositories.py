@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, or_, select
 from sqlalchemy.orm import Session
 
 from research_os.domain.enums import (
@@ -592,12 +592,20 @@ class SqlContradictionRepository:
         return [self._to_domain(r) for r in rows]
 
     def list_by_run(self, run_id: str) -> list[ContradictionAssessment]:
-        """Run-scoped read (ADR-019): a trace output must never leak across runs."""
+        """Run-scoped read (ADR-019): a trace output must never leak across runs.
+
+        Both endpoints are checked. Anchoring only on `claim_a_id` would let a
+        row whose `claim_b_id` belongs to another run appear in this run's memo,
+        where `_claim_location` cannot resolve it and the audit trail breaks.
+        `replace_for_run` refuses to write such rows, but `create()` is public
+        and pre-P5 rows can predate that check.
+        """
+        own_claims = select(t.ClaimRow.id).where(t.ClaimRow.run_id == run_id)
         rows = (
             self._s.execute(
                 select(t.ContradictionAssessmentRow)
-                .join(t.ClaimRow, t.ClaimRow.id == t.ContradictionAssessmentRow.claim_a_id)
-                .where(t.ClaimRow.run_id == run_id)
+                .where(t.ContradictionAssessmentRow.claim_a_id.in_(own_claims))
+                .where(t.ContradictionAssessmentRow.claim_b_id.in_(own_claims))
                 .order_by(
                     t.ContradictionAssessmentRow.claim_a_id,
                     t.ContradictionAssessmentRow.claim_b_id,
@@ -625,9 +633,15 @@ class SqlContradictionRepository:
                 raise ValueError(f"cross_run_pair: {item.claim_a_id} / {item.claim_b_id}")
 
         claim_ids = select(t.ClaimRow.id).where(t.ClaimRow.run_id == run_id)
+        # Either endpoint may carry a stale cross-run row. Cleaning only rows
+        # anchored on this run's claim_a would leave a mixed-run row pointing at
+        # this run forever, and no rerun would ever remove it.
         deleted = self._s.execute(
             delete(t.ContradictionAssessmentRow).where(
-                t.ContradictionAssessmentRow.claim_a_id.in_(claim_ids)
+                or_(
+                    t.ContradictionAssessmentRow.claim_a_id.in_(claim_ids),
+                    t.ContradictionAssessmentRow.claim_b_id.in_(claim_ids),
+                )
             )
         ).rowcount or 0
         for item in items:

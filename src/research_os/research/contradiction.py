@@ -127,6 +127,10 @@ def _buckets(claim: Claim) -> tuple[str, ...]:
 
 OPPOSITE = {("UP", "LEVEL"), ("LEVEL", "UP"), ("UP", "DOWN"), ("DOWN", "UP"), ("DOWN", "LEVEL"), ("LEVEL", "DOWN")}
 
+# Provenance tiers that actually prove a claim used the setup it names (HD-014).
+# Anything else - including a missing tag - is not evidence of a shared setup.
+_CONFIRMED_TIERS = frozenset({"sentence", "heading"})
+
 
 def _assessment(a: Claim, b: Claim, relation: ContradictionType, explanation: str, confidence: ConfidenceLabel):
     return ContradictionAssessment(
@@ -193,19 +197,28 @@ def assess_pair(a: Claim, b: Claim) -> ContradictionAssessment | None:
         )
 
     if (direction_a, direction_b) in OPPOSITE:
-        assumed = [
-            side
+        # D13 is a whitelist, not a blacklist. Only `sentence` and `heading` were
+        # ever defined as evidence that a claim used the setup it names. A missing
+        # tag, a legacy row, or an unknown tier is silence, not confirmation -
+        # treating any of them as "confirmed" would put a TRUE_CONTRADICTION on a
+        # shared setup nobody established. Inherited conditions may still
+        # *disprove* equality (row 3 does not read provenance); they may not
+        # *prove* it.
+        unconfirmed = [
+            (side, _conditions_from(claim))
             for side, claim in (("A", a), ("B", b))
-            if _conditions_from(claim) == "section-first-mention"
+            if _conditions_from(claim) not in _CONFIRMED_TIERS
         ]
-        if assumed:
-            # D13: a condition inherited from the section's first mention is an
-            # assumption, not evidence. Inherited conditions may still *disprove*
-            # a shared setup (their inequality is real); they may not *prove* one.
+        if unconfirmed:
+            inherited = any(tier == "section-first-mention" for _, tier in unconfirmed)
+            reason = (
+                "conditions inherited from the section's first mention; setup not confirmed"
+                if inherited
+                else "conditions provenance missing or unknown; setup not confirmed"
+            )
             return _assessment(
                 a, b, ContradictionType.INSUFFICIENT_EVIDENCE,
-                f"opposite direction, but conditions on side {'/'.join(assumed)} are "
-                "inherited from the section's first mention; setup not confirmed",
+                f"opposite direction, but side {'/'.join(side for side, _ in unconfirmed)}: {reason}",
                 ConfidenceLabel.LOW,
             )
         return _assessment(

@@ -14,7 +14,13 @@ from research_os.research.contradiction import HeuristicContradictionAssessor
 
 def _claim(direction: str = "UP", bucket: str = "psnr=39.18", dataset: str = "sidd") -> Claim:
     key = "|".join(["restormer", "image restoration", dataset, "psnr", direction, "backbone=cnn", bucket])
-    return Claim(text="x", status=ClaimStatus.SUPPORTED, identity_key=key)
+    # HD-014: a sentence-stated setup is the confirmed tier. Without this flag
+    # the cascade refuses to emit TRUE_CONTRADICTION, so the counter test below
+    # would be measuring INSUFFICIENT_EVIDENCE instead.
+    return Claim(
+        text="x", status=ClaimStatus.SUPPORTED, identity_key=key,
+        conditions=["conditions_from=sentence"],
+    )
 
 
 def test_emitted_types_are_counted():

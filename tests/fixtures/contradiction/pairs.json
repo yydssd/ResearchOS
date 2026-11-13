@@ -49,10 +49,10 @@
       "b_text": "With a CNN backbone, Restormer shows no improvement on SIDD.",
       "a_key": "restormer|image restoration|sidd|psnr|UP|backbone=cnn|psnr=39.18",
       "b_key": "restormer|image restoration|sidd|psnr|LEVEL|backbone=cnn|psnr=39.18",
-      "a_conditions_from": null,
-      "b_conditions_from": null,
+      "a_conditions_from": "sentence",
+      "b_conditions_from": "sentence",
       "expected": "TRUE_CONTRADICTION",
-      "notes": "Same named method, same benchmark, same stated backbone, opposite conclusions, and the conditions are the sentence's own (no conditions_from flag), so row 7b applies."
+      "notes": "Same named method, same benchmark, same stated backbone, opposite conclusions, and the conditions are the sentence's own (no conditions_from flag), so row 7b applies. (D13: both setups are stated by the sentences themselves - `sentence` tier, not an absent tag.)"
     },
     {
       "id": "p05",
@@ -179,10 +179,10 @@
       "b_text": "NAFNet lowers PSNR on SIDD to 38.90 dB.",
       "a_key": "nafnet|image restoration|sidd|psnr|UP|backbone=cnn|psnr=39.40",
       "b_key": "nafnet|image restoration|sidd|psnr|DOWN|backbone=cnn|psnr=38.90",
-      "a_conditions_from": null,
-      "b_conditions_from": null,
+      "a_conditions_from": "sentence",
+      "b_conditions_from": "sentence",
       "expected": "TRUE_CONTRADICTION",
-      "notes": "Same method, benchmark, metric and stated backbone, opposite directions, no inherited provenance: row 7b."
+      "notes": "Same method, benchmark, metric and stated backbone, opposite directions, no inherited provenance: row 7b. (D13: both setups are stated by the sentences themselves - `sentence` tier, not an absent tag.)"
     },
     {
       "id": "p15",
@@ -192,10 +192,10 @@
       "b_text": "NAFNet leaves PSNR on SIDD unchanged at 39.18 dB.",
       "a_key": "nafnet|image restoration|sidd|psnr|DOWN|backbone=cnn|psnr=38.60",
       "b_key": "nafnet|image restoration|sidd|psnr|LEVEL|backbone=cnn|psnr=39.18",
-      "a_conditions_from": null,
-      "b_conditions_from": null,
+      "a_conditions_from": "sentence",
+      "b_conditions_from": "sentence",
       "expected": "TRUE_CONTRADICTION",
-      "notes": "DOWN against LEVEL on an identical setup; LEVEL still denies the direction DOWN asserts, so row 7b applies."
+      "notes": "DOWN against LEVEL on an identical setup; LEVEL still denies the direction DOWN asserts, so row 7b applies. (D13: both setups are stated by the sentences themselves - `sentence` tier, not an absent tag.)"
     },
     {
       "id": "p16",
@@ -271,10 +271,10 @@
       "b_text": "DAR-Net reports an average PSNR of 30.68 dB under the five-degradation setting.",
       "a_key": "dar-net|image restoration|all-in-one benchmark|psnr|UP|setting=5d|psnr=+0.34",
       "b_key": "dar-net|image restoration|all-in-one benchmark|psnr|LEVEL|setting=5d|psnr=30.68",
-      "a_conditions_from": null,
-      "b_conditions_from": null,
+      "a_conditions_from": "sentence",
+      "b_conditions_from": "sentence",
       "expected": "TRUE_CONTRADICTION",
-      "notes": "Conditions are equal and explicitly stated by the sentences themselves, so no conditions_from flag is written; that confirmed tier is what row 7b accepts."
+      "notes": "Conditions are equal and explicitly stated by the sentences themselves, so no conditions_from flag is written; that confirmed tier is what row 7b accepts. (D13: both setups are stated by the sentences themselves - `sentence` tier, not an absent tag.)"
     },
     {
       "id": "p22",

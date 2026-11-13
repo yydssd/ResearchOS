@@ -294,7 +294,10 @@ def _stats_lines(graph: RunGraph) -> list[str]:
     """
     stats = graph.assessment_stats
     if not stats:
-        return []
+        # A pre-P5 or unassessed run is not "no contradictions found": the
+        # assessment never happened. Say so, or the empty section is read as a
+        # result rather than a missing step.
+        return ["No contradiction assessment was run for this run.", ""]
     lines = [
         f"Assessed {stats.get('evaluated', 0)} of {stats.get('total_before_cap', 0)} "
         f"candidate pairs (coverage {float(stats.get('coverage', 0.0)):.0%})."
@@ -317,7 +320,16 @@ def _render_contradictions(graph: RunGraph) -> list[str]:
     lines = ["# Contradictions and Open Questions", ""]
     lines.extend(_stats_lines(graph))
     if not graph.assessments:
-        lines.extend(["No comparable claim pair in this run.", ""])
+        evaluated = graph.assessment_stats.get("evaluated", 0)
+        if evaluated:
+            # "Assessed 10 of 10" followed by "nothing was comparable" would
+            # contradict itself: the pairs WERE comparable, the cascade declined.
+            lines.append(
+                f"All {evaluated} evaluated pairs were skipped and produced no judgement."
+            )
+        else:
+            lines.append("No comparable claim pair in this run.")
+        lines.append("")
         return lines
 
     by_type: dict[ContradictionType, list] = {}
@@ -331,18 +343,19 @@ def _render_contradictions(graph: RunGraph) -> list[str]:
         if not items:
             continue
         if relation is ContradictionType.COMPLEMENTARY:
-            subjects = sorted({i.explanation for i in items})
+            # Folding these into a count used to drop both claim ids and their
+            # evidence locations. A complementary verdict is still a relation
+            # between two claims and must be as locatable as any other type.
             lines.append(f"- {len(items)} pair(s) agree across different scopes.")
-            for explanation in subjects[:5]:
-                lines.append(f"  - {explanation}")
-            lines.append("")
-            continue
         for item in items[:20]:
-            lines.append(f"- {item.explanation}")
+            if relation is not ContradictionType.COMPLEMENTARY:
+                lines.append(f"- {item.explanation}")
+            else:
+                lines.append(f"  - {item.explanation}")
             lines.append(f"  - A: `{item.claim_a_id}` — {_claim_location(graph, item.claim_a_id)}")
             lines.append(f"  - B: `{item.claim_b_id}` — {_claim_location(graph, item.claim_b_id)}")
         if len(items) > 20:
-            lines.append(f"- … {len(items) - 20} more")
+            lines.append(f"- … {len(items) - 20} more (locations omitted above the display cap)")
         lines.append("")
     return lines
 

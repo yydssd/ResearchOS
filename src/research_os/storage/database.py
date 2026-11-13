@@ -85,6 +85,19 @@ def _apply_sqlite_migrations(engine) -> None:
                 if name not in existing:
                     conn.exec_driver_sql(f"ALTER TABLE {table} ADD COLUMN {name} {ddl}")
 
+        # A UNIQUE INDEX cannot be created over a table that already contains
+        # duplicates - and duplicates are exactly what pre-P5 databases were
+        # allowed to store. Collapse them to the oldest row first, or init_db()
+        # would crash on the very databases this migration exists to repair.
+        # This is the one place data is rewritten: the discarded rows are exact
+        # duplicates of the same claim pair, not distinct assessments.
+        conn.exec_driver_sql(
+            "DELETE FROM contradiction_assessments WHERE rowid NOT IN ("
+            "  SELECT MIN(rowid) FROM contradiction_assessments"
+            "  GROUP BY claim_a_id, claim_b_id"
+            ")"
+        )
+
         # Runs after create_all, so the table exists on both fresh and old databases.
         for statement in _ADDED_INDEXES:
             conn.exec_driver_sql(statement)
