@@ -12,7 +12,8 @@
 - Week 2 ✅ P3 Evidence Quality（PDF/Markdown/README/HTML → 分块落库 → 精确偏移证据 → 定量证据）
 - Week 3 ✅ P4 Claim Synthesis（块级 scope 继承 → identity 键 → 按身份合并 → 支撑性标记）
 - Week 3 ✅ P5 Contradiction（四值方向 → 四类条件与章节继承 → 候选配对 → 级联判定 → run 作用域落库）
-- 测试：`pytest` 239 passed（另有 2 个 opt-in 真实网络测试）
+- 测试：`pytest` 249 passed（另有 2 个 opt-in 真实网络测试）
+- 代码审查：`docs/evaluation/2026-11-13-p5-review.md`（6 项已修，5 类未偿项列为待办）
 - 权威计划：`ResearchOS-Implementation-Plan.md`（v1.1）
 - 架构快照：`architect.md` · 人类决策：`human_decision.md` · 设计与计划：`docs/superpowers/`
 
@@ -104,7 +105,8 @@ reports/           生成的 Markdown memo
 - `ResearchOS-Implementation-Plan.md` 是权威计划 v1.1（17 步规格），**不是进度表**；
   `research-os-implementation-plan.html` 是它的同源渲染，改 md 就要同步 HTML。
 - `reports/*.md` 是 run 生成物，不手工维护。
-- 阶段状态以 git tag 为准：当前 `w3-p5`，上一阶段 `w3-p4.1`。
+- 阶段状态以 git tag 为准：当前 `w3-p5`，上一阶段 `w3-p4.1`。tag 是里程碑标记，
+  **不是** spec §9 全部验收通过的认证；未偿项见审查记录。
 - 每次收尾的同步清单：阶段状态与限制 → ADR / 维护记录 → 人类决策 → spec 实施偏差表
   → 评估报告 → 全量测试 → 打 tag。
 

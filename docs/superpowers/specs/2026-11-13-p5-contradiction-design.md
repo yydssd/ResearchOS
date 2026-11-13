@@ -209,7 +209,7 @@ Claim × Claim（同 task、subject 可比）
 | 4 | metric 集合无交集 | `EXPERIMENTAL_INCOMPATIBILITY` | MEDIUM |
 | 5 | 任一方 conditions 为空 | `INSUFFICIENT_EVIDENCE`（无法证实设置一致） | LOW |
 | 6 | 任一方 direction 为 `None` | `INSUFFICIENT_EVIDENCE` | LOW |
-| 7 | direction 对立，但**任一方 `conditions_from` 为 `section-first-mention`** | `INSUFFICIENT_EVIDENCE`（继承≠证实相同） | LOW |
+| 7 | direction 对立，但**任一方 `conditions_from` 不在 `{sentence, heading}`**（含缺失、未知 tier、`section-first-mention`） | `INSUFFICIENT_EVIDENCE`（白名单：只有 sentence/heading 能证明相同） | LOW |
 | 7b | direction 对立，双方 conditions 均为 `sentence` 或 `heading` 级 | `TRUE_CONTRADICTION` | DISPUTED |
 | 8 | direction 相同，双方都有数值且不同 | `EXPERIMENTAL_INCOMPATIBILITY` | MEDIUM |
 | 9 | direction 相同，一方无数值 | `INSUFFICIENT_EVIDENCE` | LOW |
@@ -404,3 +404,6 @@ Skipped: 152 without a dataset, 36 without a metric,
 | 10 | §10 限制 2 | 合并门槛实测 **73/1075（7%）**，本文原写 71 | direction 四值化后重测；主张数由 1063 变 1075（合并变少则主张变多） |
 | 11 | §2.5 可达性 | 留出集实测：候选对 1049 → 判定 30（真矛盾 **0** / 实验不可比 2 / 范围不同 18 / 互补 5 / 证据不足 5）；25/30 条判定的条件来自 `section-first-mention`，**没有一对双方句子明写** | 与 §2.5 的「真矛盾为 0」预测一致；新增的事实是条件从不显式 |
 | 12 | §2.1 / §2.5 方向分布 | 重测为 `UP 372 / DOWN 16 / LEVEL 2 / None 685`（共 1075 条支持主张），设计时写 `UP 369 / DOWN 16 / LEVEL 2 / None 676`（1063 条）。非负向（UP+None）占比 **98.3% 不变**（1057/1075） | 前置修正与合并门槛变化使主张数 +12，但方向对立对仍为 0，§2.5 的结论不受影响 |
+| 13 | §5 第 7 行 / §9 #7 | 门控由「排除 `section-first-mention` 的黑名单」改为「只接受 `sentence`/`heading` 的白名单」。无 tag 或未知 tier 的对立对不再判 `TRUE_CONTRADICTION`。夹具 p04/p14/p15/p21 补 `conditions_from=sentence`，新增 3 条单测覆盖无 tag / 未知 tier / sentence 层 | 代码审查（2026-11-13 晚）复现：无 provenance 的 claim 被当成「设置已证实」而判真矛盾，是 HD-012/013/014 要根除的「用沉默当证据」。§5 第 7b 行本来就写「双方均为 sentence/heading」，实现与规格不符；且 `sentence` 层此前从未进入过级联 |
+| 14 | §6 / §9 #14–16 | 审查后补：`list_by_run` 与 `replace_for_run` 同时约束 `claim_b_id` 的 run；`scripts/holdout_contradiction_quality.py` 入库以复现 §3 全部数字；COMPLEMENTARY 也渲染双方 id 与位置；迁移先去重再建唯一索引 | 独立代码审查实测复现：跨 run 行会泄漏进 memo 且追溯链断裂；评估报告数字无可复现脚本；旧库含重复行时 `init_db()` 崩溃。详见 `docs/evaluation/2026-11-13-p5-review.md` |
+| 15 | §9 验收状态 | 方向词表盲区（否定式、名词 `gain`）、`FAILURE` 事件、三组 5×5 混淆矩阵、第二轮盲标等**仍未满足**，不作已验收表述 | 方向词表是输入契约，修改会连带改写全部实测数字，需独立度量周期；事件语义涉及「跨 run 是否中止 run」的行为决策。均在审查记录中列为未偿 |

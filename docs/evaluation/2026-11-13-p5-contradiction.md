@@ -204,15 +204,55 @@ coordinates.
 ## Reproducing
 
 ```bash
+# §3.1 inputs and §4 direction distribution
 D:/Anaconda/envs/reOS/python.exe scripts/holdout_claim_quality.py \
     --papers 20 --ids-file docs/evaluation/holdout-ids-2026-11-12.txt
 
+# §3.2 pairing, §3.3 result distribution, §4 condition provenance
+D:/Anaconda/envs/reOS/python.exe scripts/holdout_contradiction_quality.py \
+    --ids-file docs/evaluation/holdout-ids-2026-11-12.txt
+
+# §2 fixture set
 D:/Anaconda/envs/reOS/python.exe scripts/evaluate_contradiction.py
 
 D:/Anaconda/envs/reOS/python.exe -m pytest
 ```
 
-The P5 distribution in §3.2–3.3 is produced by running
-`HeuristicContradictionAssessor().assess(claims)` over the claims built from the
-same 20 papers; the harness prints each counter of `PairingStats` and each entry
-of `emitted_by_type`, which are the numbers transcribed above.
+Every number in §3–§4 is printed by one of the two hold-out scripts;
+`holdout_contradiction_quality.py` rebuilds the claims from the cached pages and
+runs the same `HeuristicContradictionAssessor` the supervisor uses. Neither
+script needs network access. The first version of this report transcribed
+§3.2–3.3 from an uncommitted ad-hoc probe, which a code review correctly flagged
+as unverifiable; the harness above is that probe, committed.
+
+---
+
+## Post-review note (2026-11-13 evening)
+
+An independent code review (`docs/evaluation/2026-11-13-p5-review.md`) found that
+this report's §3.2–3.3 numbers had no committed harness. That is fixed: the
+second command under **Reproducing** now prints every figure transcribed here.
+The review also closed a provenance-gate defect (a missing `conditions_from` tag
+could produce `TRUE_CONTRADICTION`) and a run-scope leak. Re-running the harness
+after those fixes reproduced §3 unchanged — in particular `TRUE_CONTRADICTION`
+was already 0, so the whitelist gate changed no real-corpus verdict.
+
+Several §9 acceptance items remain open (direction word-list blind spots,
+`FAILURE` events, three separate confusion matrices, the second blind annotation
+pass). They are listed in the review record; this report does not claim they are met.
+
+---
+
+## Post-review note (2026-11-13 evening)
+
+An independent code review (`docs/evaluation/2026-11-13-p5-review.md`) found that
+this report's §3.2–3.3 numbers had no committed harness. That is fixed: the
+second command under **Reproducing** now prints every figure transcribed here.
+The review also closed a provenance-gate defect (a missing `conditions_from` tag
+could produce `TRUE_CONTRADICTION`) and a run-scope leak. Re-running the harness
+after those fixes reproduced §3 unchanged — in particular `TRUE_CONTRADICTION`
+was already 0, so the whitelist gate changed no real-corpus verdict.
+
+Several §9 acceptance items remain open (direction word-list blind spots,
+`FAILURE` events, three separate confusion matrices, the second blind annotation
+pass). They are listed in the review record; this report does not claim they are met.
