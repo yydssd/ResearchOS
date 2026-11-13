@@ -22,7 +22,7 @@ Claim × Claim（同 task、subject 可比）
 
 计划 §17 的硬约束：**默认结果不得是 `TRUE_CONTRADICTION`**。本规格把它实现为
 「只有范围被**证实**相同、方向被**证实**对立时才升级为真矛盾」——不是靠顺序把结果压下去，
-而是靠证据门槛让它很少成立。§2.4 给出了这个门槛的实测可达性。
+而是靠证据门槛让它很少成立。§2.5 给出了这个门槛的实测可达性。
 
 ## 2. 实测：现有标签不足以支撑判定
 
@@ -40,34 +40,37 @@ Claim × Claim（同 task、subject 可比）
 `DIRECTION_LEVEL` = `achiev|reach|report`。「提高 PSNR」与「报告 PSNR 为 30 dB」可以同时成立，
 把它们判为对立是语义错误。
 
-### 2.2 conditions 几乎抽不到（需要扩充）
+### 2.2 conditions 几乎抽不到，且条件写在章节而非句子
 
 | 现象 | 数字 |
 |---|---|
-| 现有 conditions 覆盖率 | **28 / 1063（2.6%）** |
+| 现有 conditions 覆盖率（单句） | **28 / 1063（2.6%）** |
 | 其中 `setting` / `granularity` / `backbone` | 26 / 2 / 1 |
 | 具名对里「双方 conditions 都非空且相等」 | **1 对** |
 | 具名对里「至少一方为空」 | **1046 / 1047** |
 
-「两边都是空列表」只能说明没抽到，不能说明设置一致。按 §4.2 扩充四类模式后：
+按 §4.2 扩充四类模式后，单句覆盖率升到 143 条（13.4%）：
+`backbone` 60 / `degradation` 56 / `baseline` 19 / `training` 13。
 
-| 类别 | 覆盖主张数 | 占比 |
+但真正的跃迁来自**块级继承**（P4 已在 task/dataset 上验证过这条路）：条件通常写在实验节标题或
+该节首个点名句，而不在每条主张的句子里。
+
+| conditions 来源 | 覆盖主张 | 占比 |
 |---|---|---|
-| `backbone` | 60 | 5.6% |
-| `degradation` | 56 | 5.3% |
-| `baseline` | 19 | 1.8% |
-| `training` | 13 | 1.2% |
-| **至少一类** | **143** | **13.4%** |
+| 仅单句 | 143 | 13.4% |
+| + 章节标题 | 138（本轮统计口径略窄） | 13.0% |
+| **+ 节内首个点名句** | **684** | **64.3%** |
 
-覆盖提升 5 倍，但仍只覆盖七分之一——这个数字决定了后面真矛盾的上限，不是可以绕过的细节。
+因此 §4.2 采用三级继承，并记录 **provenance**（`sentence` / `heading` / `section-first-mention`）。
+继承来的条件必须能被读者看出是继承的——否则又是一次「用沉默当证据」。
 
 ### 2.3 subject 把单位词当方法名（顺带修）
 
 `dB` 里的大写 `B` 触发「内部有大写即专名」规则，于是 `db` 成为跨 **9 篇文档**、15 条主张的假方法名
-（`... improvement is over 55 dB on dehazing` → `subject=db`）。它是留出集里"跨文档重复出现最多的
-具名主语"，直接污染配对与统计，必须在 P5 之前修掉。
+（`... improvement is over 55 dB on dehazing` → `subject=db`）。它是留出集里跨文档重复最多的
+"具名主语"，直接污染配对与统计，必须在 P5 之前修掉。
 
-### 2.4 配对规模与真矛盾可达性
+### 2.4 配对规模
 
 | 配对规则 | 组数 | 候选对 | 跨文档对 |
 |---|---|---|---|
@@ -75,7 +78,7 @@ Claim × Claim（同 task、subject 可比）
 | 同 task + dataset 相等 | 19 | 1471 | 772 |
 | 仅同 task | 5 | 425220 | 395015 |
 
-具名 1047 对中：数据集不同 **387** 对。同文档 `self@` 对需预处理：
+同文档 `self@` 对需预处理：
 
 | 预处理 | 剩余对 |
 |---|---|
@@ -86,20 +89,29 @@ Claim × Claim（同 task、subject 可比）
 
 采用 16 这一档，与级联第 1 步的跳过条件一致。**合计候选对 1047 + 16 = 1063 对 / 20 篇**。
 
-按 §5 的严格门槛（同 subject + 同 dataset + metric 有交集 + 双方 conditions 相等 + 方向对立），
-逐层收窄后的实测：
+### 2.5 真矛盾为什么不可达：语料里没有负向主张
 
-| 收窄条件 | 剩余对 |
-|---|---|
-| 具名对（同 subject + 同 task） | 1047 |
-| + 双方都抽到 conditions | **44** |
-| + 两侧 conditions 相等 | **26** |
-| + 方向对立 | **1** |
-| + dataset 相等且 metric 有交集 | **0** |
+按 §5 的严格门槛逐层收窄（已用四值 direction 与「dataset 非空」重算）：
 
-**结论：即使扩充 conditions，真矛盾在真实语料上仍预期为 0。** 不是实现问题，是语料里
-「同一具名方法 + 同一数据集 + 同一设置 + 结论相反」的主张几乎不存在；唯一跨文档重复的具名方法
-`adair`（3 篇）方向一致，而 `db` 是误抽。本阶段不为了凑出非零结果放松门槛（§9 #16）。
+| 收窄条件 | 仅单句 conditions | 块级继承 conditions |
+|---|---|---|
+| 具名对（同 subject + 同 task，双方 dataset 非空） | 1047 | 1047 |
+| + 双方都抽到 conditions | 3 | 67 |
+| + 两侧 conditions 相等 | 2 | 30 |
+| + **方向对立** | **0** | **0** |
+| + dataset 相等且 metric 有交集 | 0 | 0 |
+
+**根因不是 conditions，是方向**：1063 条主张里只有 **2 条 `LEVEL` + 16 条 `DOWN`**（合计 1.7%），
+其余全部在报告提升。论文的写作习惯决定它很少写「某方法没有改善」；负向结果集中在消融
+（「去掉 X 会变差」），而那时主语是本文自己的组件，构不成跨方法对立。
+
+> 过程记录：一次中间统计曾得出「4 对可达」，复核后是探针自身的两个缺陷——用了旧的
+> `direction` 标签（`achieves the best` 被判 `LEVEL`，新语义应为 `None`），且把「双方 dataset
+> 都为空」当成相等。修正后为 0。这类偏差正是 §9 要求分层报告的原因。
+
+**结论**：`TRUE_CONTRADICTION` 在本语料上结构性不可达，扩充 conditions 与继承人条件都改变不了。
+本阶段不放松门槛（§9 #16），该类型的正确性只能由构造夹具验证；其真实召回要等语料里出现
+「复现/再评估」类论文（属 P2 发现层策略，不在 P5 范围内）。
 
 ## 3. 设计决策
 
@@ -109,7 +121,7 @@ Claim × Claim（同 task、subject 可比）
 | D2 | 配对键 = **同 task + subject 可比**，不要求 dataset 相同 | §17 范例的两条主张数据集不同，若要求数据集有交集则范例永不成立 |
 | D3 | 跨文档 `self@` 不配对；同文档 `self@` 配对但**无判定特权** | 两个 `self@` 是不同方法；同源也不能证明设置一致 |
 | D4 | **修 direction 语义**（§4.1）：`achiev/reach/report` → `None`，`LEVEL` 只留明确无改善，`reduce/increase` 看宾语极性 | 196/196 的 `LEVEL` 是数值陈述 |
-| D5 | **扩充 conditions**（§4.2）到 backbone / degradation / baseline / training 四类 | 覆盖率 2.6% → 13.4%，否则「范围相同」永远无法被证实 |
+| D5 | **扩充 conditions** 到 backbone / degradation / baseline / training 四类，并允许**块级继承**（句 → 章节标题 → 节内首个点名句），继承必须带 provenance | 单句覆盖率 2.6% → 13.4%，继承后 → 64.3%；条件写在实验节而不是每条句子里 |
 | D6 | **修 subject 单位词**（§4.3）：`dB`、指标名、单位不得成为 subject | `db` 跨 9 篇文档，会制造大量假配对 |
 | D7 | `TRUE_CONTRADICTION` 需**范围被证实相同**：dataset 相等、双方 conditions 非空且相等、metric 有交集、方向对立 | 空 conditions ≠ 相同；缺失不得当证据用 |
 | D8 | `COMPLEMENTARY` = **范围不同但方向相同**（互补发现），confidence `MEDIUM` | 「同方向」只说明不冲突；互补的语义是「在不同条件下都成立」 |
@@ -117,6 +129,8 @@ Claim × Claim（同 task、subject 可比）
 | D10 | P5 **不修改** claim 的 `status` / `confidence_label` | P4 状态语义刚钉死（ADR-022） |
 | D11 | 统计必须报**截断前总量、已评估量、覆盖率**，跳过按原因分解 | 否则「没发现矛盾」会被误读为「不存在矛盾」 |
 | D12 | 落库补**唯一约束与跨 run 校验**，重复运行幂等 | 现有表无唯一约束；跨 run 配对会污染审计链（ADR-019） |
+| D13 | 结论依赖**继承条件**时 confidence 降一级（`MEDIUM`→`LOW`），`explanation` 注明 provenance | 继承条件弱于句子明写；不能与显式条件同等对待 |
+| D14 | P5 的产出定位为**可比性判定**，不是"矛盾发现器"；真实语料上真矛盾为 0 属预期 | 语料只有 1.7% 负向主张（§2.5），把"找不到矛盾"当成失败会诱导放松门槛 |
 
 ## 4. 前置修正（P4 amendment，先行落地）
 
@@ -150,9 +164,21 @@ Claim × Claim（同 task、subject 可比）
 | `training` | `from scratch`、`pretrained`、`finetuned` | `training=from-scratch` |
 
 规则：每类**最多取一个值**（首个命中）；值小写归一；同一主张可命中多类，按类别名排序拼接。
-不推断、不填默认值——抽不到就是没有，这正是 D7 要求的使用方式。
+不推断、不填默认值——抽不到就是没有。
 
-**实测覆盖率**：`28/1063` → **`143/1063（13.4%）`**；四类分别 60 / 56 / 19 / 13 条。
+**三级继承**（与 P4 的 task/dataset 继承同一机制，ADR-020/024）：
+
+| 优先级 | 来源 | provenance |
+|---|---|---|
+| 1 | 主张所在句子 | `sentence` |
+| 2 | 该块所属章节标题 | `heading` |
+| 3 | 该节首个命中条件的块（只取首个，避免整节并集把多设置混在一起） | `section-first-mention` |
+
+`provenance` 不进入 `identity_key`（与 `subject_inferred` 同理：是来源信息，不是身份），
+但必须随 claim 落库并在 memo 与 `inspect-claim` 中显示。继承条件参与判定时 confidence 降一级（D13）。
+
+**实测覆盖率**：单句 `28/1063（2.6%）` → 四类模式 `143（13.4%）` → 加继承 **`684（64.3%）`**。
+四类分别为 60 / 56 / 19 / 13 条。
 
 **对 P4 的影响**：conditions 参与 `identity_key`，条件变多会让键更容易不同，
 同键合并更保守。这符合「范围更精确才允许合并」的方向，但需在计划中量化前后合并数。
@@ -177,7 +203,7 @@ Claim × Claim（同 task、subject 可比）
 | 4 | metric 集合无交集 | `EXPERIMENTAL_INCOMPATIBILITY` | MEDIUM |
 | 5 | 任一方 conditions 为空 | `INSUFFICIENT_EVIDENCE`（无法证实设置一致） | LOW |
 | 6 | 任一方 direction 为 `None` | `INSUFFICIENT_EVIDENCE` | LOW |
-| 7 | direction 对立（`UP`↔`LEVEL`、`UP`↔`DOWN`、`DOWN`↔`LEVEL`） | `TRUE_CONTRADICTION` | DISPUTED |
+| 7 | direction 对立（`UP`↔`LEVEL`、`UP`↔`DOWN`、`DOWN`↔`LEVEL`） | `TRUE_CONTRADICTION` | DISPUTED（任一侧条件为继承时 LOW） |
 | 8 | direction 相同，双方都有数值且不同 | `EXPERIMENTAL_INCOMPATIBILITY` | MEDIUM |
 | 9 | direction 相同，一方无数值 | `INSUFFICIENT_EVIDENCE` | LOW |
 | 10 | direction 相同，数值也相同 | **跳过**（P4 应已合并；命中即缺陷，记事件） | — |
@@ -282,6 +308,8 @@ Assessed 1063 of 1063 candidate pairs (100%). Skipped: 0 missing dataset,
 
 5. 「提升 PSNR」vs「报告 PSNR 为 30 dB」→ **不得**为 `TRUE_CONTRADICTION`（前者 `UP`，后者 `None`
    → `INSUFFICIENT_EVIDENCE`）。
+5b. 条件来自继承时，结论的 confidence 比显式条件低一级，且 `explanation` 必须写出
+   provenance（如 `conditions inherited from section: backbone=transformer`）。
 6. §17 范例（spatial conditioning，Rain100H/Transformer vs SIDD/CNN，方向对立）→ `SCOPE_DIFFERENCE`。
 7. 同 subject 同 dataset 同 metric、方向对立、**conditions 双方空** → `INSUFFICIENT_EVIDENCE`；
    双方 conditions 显式相等 → `TRUE_CONTRADICTION` + `DISPUTED`。
@@ -301,13 +329,15 @@ Assessed 1063 of 1063 candidate pairs (100%). Skipped: 0 missing dataset,
 13. 统计口径完整：`total_before_cap / evaluated / coverage` 与跳过分解出现在事件与 memo 中。
 14. 落库幂等：同一 run 跑两次，assessment 条数与内容逐条相同，`replaced` 数可查。
 15. 跨 run 配对被拒收并记事件；P5 跑完后 claim 的 `status` / `confidence_label` 与跑前逐条相等。
-16. 留出集 20 篇跑通，报五类分布与覆盖率。**按 §2.4，真矛盾预期为 0**：此时必须在报告里写明
-    「该类召回无法在真实语料上验证，仅由构造夹具覆盖」，**不得**为凑非零结果放松 D7 的门槛。
+16. 留出集 20 篇跑通，报五类分布与覆盖率。**按 §2.5，真矛盾预期为 0**：报告必须写明
+    「该类召回无法在真实语料上验证，仅由构造夹具覆盖」，并给出原因（负向主张仅 1.7%）。
+    **不得**为凑非零结果放松 D7 的门槛，也不得通过扩大 subject 匹配范围去制造对立。
 17. `pytest` 全绿；因 §4 三项修正需要更新的既有断言，必须在计划中逐条列出并说明理由。
 
 ## 10. 已知限制
 
-1. conditions 扩充后覆盖率 13.4%，真矛盾的严格门槛在真实语料上仍不可达（§2.4 逐层实测为 0）。
+1. 真矛盾在真实语料上结构性不可达（§2.5）：语料中 98.3% 的主张都在报告提升，只有 2 条
+   `LEVEL` + 16 条 `DOWN`，方向对立对为 0。这与 conditions 覆盖率无关，扩充与继承都不改变它。
    本阶段的可信度建立在「不轻易断言矛盾」，不是「能找出矛盾」。
 2. direction 修正后六成主张无方向（`None`），P4 合并门槛从 111 降到 71。
 3. 具名 subject 仍有误抽风险：`dB` 已修，但缩写、模型代号（`MIRNet` 与 `MIRNet-v2`）仍可能被当成
@@ -316,4 +346,7 @@ Assessed 1063 of 1063 candidate pairs (100%). Skipped: 0 missing dataset,
    fidelity` 这类复合句仍可能判错。
 5. 同 scope 同方向但数值不同记为 `EXPERIMENTAL_INCOMPATIBILITY`，不区分「复现失败」与「设置不同」。
 6. `baseline` 作为条件只取 1 个对照名，多基线主张（`vs MPRNet and Restormer`）会被简化。
-7. 真矛盾召回在本阶段**无法用真实语料验证**，只能由构造夹具保证规则正确性。
+7. 真矛盾召回在本阶段**无法用真实语料验证**，只能由构造夹具保证规则正确性。要让该类型在真实
+   语料上出现，需要发现层引入"复现/再评估/基准研究"类论文（属 P2 策略），不是判定层能解决的。
+8. 块级继承的条件可能与该节内其他实验不符（同一节常并列多个设置）；`provenance` + 降一级
+   confidence 是缓解手段，不是消除手段。
