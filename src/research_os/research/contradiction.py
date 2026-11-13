@@ -16,8 +16,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from itertools import combinations
 
-from research_os.domain.enums import ClaimStatus
-from research_os.domain.models import Claim
+from research_os.domain.enums import ClaimStatus, ConfidenceLabel, ContradictionType
+from research_os.domain.models import Claim, ContradictionAssessment
 
 MAX_PAIRS = 50_000
 
@@ -92,3 +92,142 @@ def pair_candidates(claims: list[Claim]) -> tuple[list[tuple[Claim, Claim]], Pai
         pairs = pairs[:MAX_PAIRS]
     stats.evaluated = len(pairs)
     return pairs, stats
+
+
+def _directions(claim: Claim) -> str | None:
+    parts = _parts(claim)
+    return (parts[4] or None) if len(parts) >= 7 else None
+
+
+def _conditions(claim: Claim) -> tuple[str, ...]:
+    parts = _parts(claim)
+    return tuple(filter(None, parts[5].split(";"))) if len(parts) >= 7 else ()
+
+
+def _conditions_from(claim: Claim) -> str | None:
+    """Where the conditions came from, read off the quality flags (D13).
+
+    `sentence` and `heading` state the setup; `section-first-mention` only says
+    someone earlier in the section did. Only the first two can prove two claims
+    share a setup, so the cascade needs this distinction before it may call a
+    pair a true contradiction.
+    """
+    for item in claim.conditions:
+        if item.startswith("conditions_from="):
+            return item.split("=", 1)[1]
+    return None
+
+
+def _buckets(claim: Claim) -> tuple[str, ...]:
+    parts = _parts(claim)
+    return tuple(filter(None, parts[6].split(";"))) if len(parts) >= 7 else ()
+
+
+OPPOSITE = {("UP", "LEVEL"), ("LEVEL", "UP"), ("UP", "DOWN"), ("DOWN", "UP"), ("DOWN", "LEVEL"), ("LEVEL", "DOWN")}
+
+
+def _assessment(a: Claim, b: Claim, relation: ContradictionType, explanation: str, confidence: ConfidenceLabel):
+    return ContradictionAssessment(
+        claim_a_id=a.id,
+        claim_b_id=b.id,
+        relationship=relation,
+        explanation=explanation,
+        confidence_label=confidence,
+    )
+
+
+def assess_pair(a: Claim, b: Claim) -> ContradictionAssessment | None:
+    """Ordered cascade; first match wins. Returns None when the pair is skipped.
+
+    The order is the plan's "default must not be TRUE_CONTRADICTION" made
+    executable: dataset and conditions are facts, an opposite direction is only a
+    surface clash, and a missing condition is never read as an agreeing one.
+    """
+    datasets_a, datasets_b = _datasets(a), _datasets(b)
+    metrics_a, metrics_b = _metrics(a), _metrics(b)
+    if not datasets_a or not datasets_b or not metrics_a or not metrics_b:
+        return None
+
+    direction_a, direction_b = _directions(a), _directions(b)
+    same_direction = direction_a is not None and direction_a == direction_b
+
+    if datasets_a != datasets_b:
+        relation = ContradictionType.COMPLEMENTARY if same_direction else ContradictionType.SCOPE_DIFFERENCE
+        return _assessment(
+            a, b, relation,
+            f"dataset differs: {','.join(sorted(datasets_a))} vs {','.join(sorted(datasets_b))}",
+            ConfidenceLabel.MEDIUM,
+        )
+
+    conditions_a, conditions_b = _conditions(a), _conditions(b)
+    if conditions_a and conditions_b and conditions_a != conditions_b:
+        relation = ContradictionType.COMPLEMENTARY if same_direction else ContradictionType.SCOPE_DIFFERENCE
+        return _assessment(
+            a, b, relation,
+            f"conditions differ: {';'.join(conditions_a)} vs {';'.join(conditions_b)}",
+            ConfidenceLabel.MEDIUM,
+        )
+
+    if not (metrics_a & metrics_b):
+        return _assessment(
+            a, b, ContradictionType.EXPERIMENTAL_INCOMPATIBILITY,
+            f"metric has no overlap: {','.join(sorted(metrics_a))} vs {','.join(sorted(metrics_b))}",
+            ConfidenceLabel.MEDIUM,
+        )
+
+    if not conditions_a or not conditions_b:
+        return _assessment(
+            a, b, ContradictionType.INSUFFICIENT_EVIDENCE,
+            "conditions not extracted on at least one side; setup cannot be confirmed",
+            ConfidenceLabel.LOW,
+        )
+
+    if direction_a is None or direction_b is None:
+        missing = "A" if direction_a is None else "B"
+        return _assessment(
+            a, b, ContradictionType.INSUFFICIENT_EVIDENCE,
+            f"direction not stated on side {missing}",
+            ConfidenceLabel.LOW,
+        )
+
+    if (direction_a, direction_b) in OPPOSITE:
+        assumed = [
+            side
+            for side, claim in (("A", a), ("B", b))
+            if _conditions_from(claim) == "section-first-mention"
+        ]
+        if assumed:
+            # D13: a condition inherited from the section's first mention is an
+            # assumption, not evidence. Inherited conditions may still *disprove*
+            # a shared setup (their inequality is real); they may not *prove* one.
+            return _assessment(
+                a, b, ContradictionType.INSUFFICIENT_EVIDENCE,
+                f"opposite direction, but conditions on side {'/'.join(assumed)} are "
+                "inherited from the section's first mention; setup not confirmed",
+                ConfidenceLabel.LOW,
+            )
+        return _assessment(
+            a, b, ContradictionType.TRUE_CONTRADICTION,
+            f"same scope, opposite direction: {direction_a} vs {direction_b}",
+            ConfidenceLabel.DISPUTED,
+        )
+
+    buckets_a, buckets_b = _buckets(a), _buckets(b)
+    if buckets_a and buckets_b and buckets_a != buckets_b:
+        return _assessment(
+            a, b, ContradictionType.EXPERIMENTAL_INCOMPATIBILITY,
+            f"same scope, same direction, different values: {';'.join(buckets_a)} vs {';'.join(buckets_b)}",
+            ConfidenceLabel.MEDIUM,
+        )
+
+    if not buckets_a or not buckets_b:
+        # Spec §5 row 9: one side reporting no value cannot corroborate a
+        # same-direction claim, so the pair is left unjudged rather than skipped.
+        missing_values = "A" if not buckets_a else "B"
+        return _assessment(
+            a, b, ContradictionType.INSUFFICIENT_EVIDENCE,
+            f"same direction, value not reported on side {missing_values}",
+            ConfidenceLabel.LOW,
+        )
+
+    return None
