@@ -15,6 +15,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from itertools import combinations
+from typing import Protocol
 
 from research_os.domain.enums import ClaimStatus, ConfidenceLabel, ContradictionType
 from research_os.domain.models import Claim, ContradictionAssessment
@@ -31,6 +32,7 @@ class PairingStats:
     skipped_missing_dataset: int = 0
     skipped_missing_metric: int = 0
     skipped_self_prefilter: int = 0
+    skipped_same_value: int = 0  # P4 should have merged these; a hit is a defect
     skipped_cap: int = 0
     emitted_by_type: dict[str, int] = field(default_factory=dict)
 
@@ -231,3 +233,38 @@ def assess_pair(a: Claim, b: Claim) -> ContradictionAssessment | None:
         )
 
     return None
+
+
+class ContradictionAssessor(Protocol):
+    """Same shape as ClaimBuilder/EvidenceExtractor so P8 can swap in an LLM
+    assessor without touching the supervisor."""
+
+    def assess(self, claims: list[Claim]) -> tuple[list[ContradictionAssessment], PairingStats]: ...
+
+
+class HeuristicContradictionAssessor:
+    """Deterministic pairing plus the cascade. No LLM, no randomness."""
+
+    def assess(self, claims: list[Claim]) -> tuple[list[ContradictionAssessment], PairingStats]:
+        pairs, stats = pair_candidates(claims)
+        assessments: list[ContradictionAssessment] = []
+        for a, b in pairs:
+            result = assess_pair(a, b)
+            if result is None:
+                if _datasets(a) and _datasets(b) and _metrics(a) and _metrics(b):
+                    # With a dataset and a metric on both sides, same direction
+                    # and the same value is the only silent path left: P4 was
+                    # supposed to merge that pair, so a hit is a defect and is
+                    # counted rather than hidden.
+                    stats.skipped_same_value += 1
+                elif not _datasets(a) or not _datasets(b):
+                    stats.skipped_missing_dataset += 1
+                else:
+                    stats.skipped_missing_metric += 1
+                continue
+            assessments.append(result)
+            stats.emitted_by_type[result.relationship.value] = (
+                stats.emitted_by_type.get(result.relationship.value, 0) + 1
+            )
+        stats.evaluated = len(pairs)
+        return assessments, stats

@@ -27,6 +27,7 @@ from research_os.domain.models import (
 from research_os.orchestration.tasks import complete_task, create_task
 from research_os.reporting.memo import build_memo_from_run
 from research_os.research.claim_builder import ClaimBuilder, HeuristicClaimBuilder
+from research_os.research.contradiction import ContradictionAssessor, HeuristicContradictionAssessor
 from research_os.research.evidence_extractor import (
     EvidenceExtractor,
     HeuristicEvidenceExtractor,
@@ -41,6 +42,7 @@ from research_os.storage.repositories import (
     SqlChunkRepository,
     SqlClaimEvidenceRelationRepository,
     SqlClaimRepository,
+    SqlContradictionRepository,
     SqlEventRepository,
     SqlEvidenceRepository,
     SqlQuestionRepository,
@@ -62,11 +64,13 @@ class Supervisor:
         claim_builder: ClaimBuilder | None = None,
         providers: list[SearchProvider] | None = None,
         quantitative_extractor: QuantitativeExtractor | None = None,
+        contradiction_assessor: ContradictionAssessor | None = None,
     ) -> None:
         self._session = session
         self._extractor = evidence_extractor or HeuristicEvidenceExtractor()
         self._builder = claim_builder or HeuristicClaimBuilder()
         self._quantitative = quantitative_extractor or HeuristicQuantitativeExtractor()
+        self._assessor = contradiction_assessor or HeuristicContradictionAssessor()
         # Injected for tests/offline runs; otherwise resolved from settings at
         # call time so configuration changes are picked up without re-import.
         self._providers = providers
@@ -361,6 +365,31 @@ class Supervisor:
         complete_task(self._session, build_task, output_ids=[c.id for c in claims])
         self._log(run.id, EventType.CLAIM_BUILT, f"{len(claims)} claims, {len(relations)} relations",
                   {"claims": len(claims), "relations": len(relations)})
+
+        # 4b) pairwise contradiction assessment (plan §17). Claims are read-only
+        # here on purpose: P4 owns status and confidence, P5 only relates them.
+        assess_task = create_task(self._session, run.id, TaskType.CHECK_CONTRADICTION)
+        assessments, stats = self._assessor.assess(claims)
+        replaced = SqlContradictionRepository(self._session).replace_for_run(run.id, assessments)
+        complete_task(self._session, assess_task, output_ids=[a.claim_a_id for a in assessments])
+        self._log(
+            run.id,
+            EventType.CONTRADICTION_ASSESSED,
+            f"{len(assessments)} assessments from {stats.evaluated} pairs",
+            {
+                "assessments": len(assessments),
+                "total_before_cap": stats.total_before_cap,
+                "evaluated": stats.evaluated,
+                "coverage": round(stats.coverage, 4),
+                "skipped_missing_dataset": stats.skipped_missing_dataset,
+                "skipped_missing_metric": stats.skipped_missing_metric,
+                "skipped_self_prefilter": stats.skipped_self_prefilter,
+                "skipped_same_value": stats.skipped_same_value,
+                "skipped_cap": stats.skipped_cap,
+                "by_type": stats.emitted_by_type,
+                "replaced": replaced,
+            },
+        )
 
         # 5) memo
         self._transition(run, RunStatus.SYNTHESIZING, "memo")
