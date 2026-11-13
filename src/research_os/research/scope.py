@@ -13,16 +13,18 @@ import re
 from dataclasses import dataclass, field
 
 from research_os.domain.models import DocumentChunk
+from research_os.research.conditions import extract_conditions
 from research_os.research.lexicon import DATASETS, TASKS
 
 
 @dataclass(frozen=True)
 class BlockScope:
-    """Task/dataset context a claim inherits from its section."""
+    """Task/dataset/condition context a claim inherits from its section."""
 
     task: str | None = None
     datasets: frozenset[str] = frozenset()
     inherited_from: dict[str, str] = field(default_factory=dict)
+    conditions: tuple[str, ...] = ()
 
 
 def _task_of(text: str) -> str | None:
@@ -67,6 +69,10 @@ def build_section_scopes(chunks: list[DocumentChunk]) -> dict[str, BlockScope]:
     wins, otherwise only the section's first dataset-naming chunk is inherited.
     That covers "name it once, then say 'this dataset'" and nothing more - no
     pronoun or alias resolution, which would need real coreference.
+
+    Conditions follow the same shape: a heading that names the setup wins,
+    otherwise the section's first condition-bearing sentence becomes the
+    default for the rest of the section.
     """
     scopes: dict[str, BlockScope] = {}
     sections: dict[tuple[str, str | None], list[DocumentChunk]] = {}
@@ -94,6 +100,16 @@ def build_section_scopes(chunks: list[DocumentChunk]) -> dict[str, BlockScope]:
                     provenance["datasets"] = "section-first-mention"
                     break
         task = heading_task or document_tasks.get(source_version)
+        conditions = extract_conditions(section or "")
+        if conditions:
+            provenance["conditions"] = "heading"
+        else:
+            for member in group:
+                found_conditions = extract_conditions(member.text)
+                if found_conditions:
+                    conditions = found_conditions
+                    provenance["conditions"] = "section-first-mention"
+                    break
         for chunk in group:
-            scopes[chunk.id] = BlockScope(task, inherited, dict(provenance))
+            scopes[chunk.id] = BlockScope(task, inherited, dict(provenance), conditions)
     return scopes

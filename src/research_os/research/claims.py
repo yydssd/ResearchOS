@@ -18,6 +18,7 @@ from dataclasses import dataclass, field
 
 from research_os.domain.enums import ClaimStatus, ConfidenceLabel
 from research_os.domain.models import QuantitativeEvidence
+from research_os.research.conditions import extract_conditions
 from research_os.research.lexicon import DATASETS, METRICS, THIRD_PARTY
 from research_os.research.scope import BlockScope
 
@@ -72,11 +73,6 @@ _REDUCE_LOWERS_ERROR = re.compile(rf"\breduc\w*\s+(?:the\s+)?{_ERROR_SIDE}\b", r
 _REDUCE_LOWERS_QUALITY = re.compile(rf"\breduc\w*\s+(?:the\s+)?{_QUALITY_SIDE}\b", re.IGNORECASE)
 _INCREASE_RAISES_QUALITY = re.compile(rf"\bincreas\w*\s+(?:the\s+)?{_QUALITY_SIDE}\b", re.IGNORECASE)
 _INCREASE_RAISES_ERROR = re.compile(rf"\bincreas\w*\s+(?:the\s+)?{_ERROR_SIDE}\b", re.IGNORECASE)
-CONDITION_PATTERNS: tuple[tuple[re.Pattern[str], str], ...] = (
-    (re.compile(r"\b(cnn|transformer|convolutional)\b\s+backbone", re.IGNORECASE), "backbone"),
-    (re.compile(r"\b(synthetic|real[- ]world)\b", re.IGNORECASE), "setting"),
-    (re.compile(r"\b(video|single[- ]image)\b", re.IGNORECASE), "granularity"),
-)
 _BUCKET_DIGITS = {"PSNR": 2, "SSIM": 3, "LPIPS": 3, "FID": 1, "MAE": 2, "MSE": 2}
 
 
@@ -95,6 +91,10 @@ class ClaimIdentity:
     # self-reference ("our method") or defaulted from the surrounding scope.
     # Downstream needs the difference; the merge key must not see it.
     subject_inferred: bool = field(default=False, compare=False)
+    # Provenance of the conditions tuple: "sentence", "heading",
+    # "section-first-mention", or None. Excluded from the key for the same reason
+    # as subject_inferred: it says where the value came from, not what it is.
+    conditions_from: str | None = field(default=None, compare=False)
 
     def key(self) -> str:
         """Stable, parseable identity string: missing fields render as empty.
@@ -167,13 +167,14 @@ def _subject(text: str) -> tuple[str | None, bool]:
     return None, False
 
 
-def _conditions(text: str) -> tuple[str, ...]:
-    found = []
-    for pattern, name in CONDITION_PATTERNS:
-        match = pattern.search(text)
-        if match:
-            found.append(f"{name}={match.group(1).lower().replace(' ', '-')}")
-    return tuple(sorted(found))
+def _conditions(text: str, scope: BlockScope | None) -> tuple[tuple[str, ...], str | None]:
+    """Sentence conditions win; otherwise inherit the section's, with provenance."""
+    own = extract_conditions(text)
+    if own:
+        return own, "sentence"
+    if scope is not None and scope.conditions:
+        return scope.conditions, scope.inherited_from.get("conditions")
+    return (), None
 
 
 def _direction(text: str) -> str | None:
@@ -221,15 +222,17 @@ def extract_identity(
     if subject == "self":
         subject = f"self@{source_version_id}"
     direction = _direction(text)
+    conditions, conditions_from = _conditions(text, scope)
     return ClaimIdentity(
         subject=subject,
         task=task,
         dataset=frozenset(datasets),
         metric=frozenset(metrics),
         direction=direction,
-        conditions=_conditions(text),
+        conditions=conditions,
         value_bucket=_buckets(quantitative),
         subject_inferred=inferred,
+        conditions_from=conditions_from,
     )
 
 

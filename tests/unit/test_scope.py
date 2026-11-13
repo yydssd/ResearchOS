@@ -129,3 +129,34 @@ def test_document_task_does_not_cross_sources():
     scopes = build_section_scopes(chunks)
 
     assert scopes[chunks[1].id].task is None
+
+
+def test_conditions_are_inherited_from_the_section():
+    """Conditions live in the experiment section, not in each sentence: single
+    sentence coverage is 2.6%, section inheritance lifts it to 64.3%."""
+    chunks = [
+        _chunk(0, "4.1 SIDD denoising", "We train a Transformer backbone for 300 epochs."),
+        _chunk(1, "4.1 SIDD denoising", "The gain over the baseline reaches 0.42 dB."),
+    ]
+
+    scopes = build_section_scopes(chunks)
+
+    assert scopes[chunks[1].id].conditions == ("backbone=transformer",)
+    assert scopes[chunks[1].id].inherited_from["conditions"] == "section-first-mention"
+
+
+def test_first_condition_mention_applies_to_the_rest_of_the_section():
+    """Inheritance is deliberately blind to contrast: a sentence introducing an
+    ablation ("with a CNN backbone") makes the CNN setup the section default for
+    the sentences that follow, even where the paper means its own model. The
+    provenance tag is what keeps this honest downstream - P5 downgrades a
+    verdict that rests on inherited conditions instead of trusting it.
+    """
+    chunks = [
+        _chunk(0, "4.2 Ablation", "With a CNN backbone the gain disappears."),
+        _chunk(1, "4.2 Ablation", "The full model reaches 32.8 dB."),
+    ]
+
+    scopes = build_section_scopes(chunks)
+
+    assert scopes[chunks[1].id].conditions == ("backbone=cnn",)
