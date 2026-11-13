@@ -769,9 +769,11 @@ def _claim(
     conditions="",
     bucket="psnr=39.18",
     text="x",
+    conditions_from=None,
 ) -> Claim:
     key = "|".join([subject, "image restoration", dataset, metric, direction, conditions, bucket])
-    return Claim(text=text, status=ClaimStatus.SUPPORTED, identity_key=key)
+    flags = [f"conditions_from={conditions_from}"] if conditions_from else []
+    return Claim(text=text, status=ClaimStatus.SUPPORTED, identity_key=key, conditions=flags)
 
 
 def _relationship(a: Claim, b: Claim):
@@ -859,6 +861,38 @@ def test_same_direction_without_values_is_insufficient_evidence():
     assert _relationship(a, b) == ContradictionType.INSUFFICIENT_EVIDENCE
 
 
+def test_equal_but_inherited_conditions_do_not_prove_a_contradiction():
+    """D13: "the section said so once" is an assumption, not evidence. Two claims
+    whose setup was inherited from the first mention may well disagree, but the
+    judgement cannot assert that their scopes are the same."""
+    a = _claim(direction="UP", conditions="backbone=transformer", conditions_from="section-first-mention")
+    b = _claim(direction="LEVEL", conditions="backbone=transformer", conditions_from="section-first-mention")
+
+    result = assess_pair(a, b)
+
+    assert result.relationship == ContradictionType.INSUFFICIENT_EVIDENCE
+    assert result.confidence_label == ConfidenceLabel.LOW
+    assert "inherited" in result.explanation
+
+
+def test_heading_level_conditions_are_evidence():
+    """A heading that names the setup governs the whole section, so it is
+    confirmed rather than assumed."""
+    a = _claim(direction="UP", conditions="backbone=transformer", conditions_from="heading")
+    b = _claim(direction="LEVEL", conditions="backbone=transformer", conditions_from="heading")
+
+    assert _relationship(a, b) == ContradictionType.TRUE_CONTRADICTION
+
+
+def test_inherited_conditions_can_still_disprove_a_shared_setup():
+    """The asymmetry is the point: inherited conditions that differ are real
+    evidence that the two claims came from different experiments."""
+    a = _claim(direction="UP", conditions="backbone=transformer", conditions_from="section-first-mention")
+    b = _claim(direction="LEVEL", conditions="backbone=cnn", conditions_from="section-first-mention")
+
+    assert _relationship(a, b) == ContradictionType.SCOPE_DIFFERENCE
+
+
 @pytest.mark.parametrize(
     "a_dir,b_dir",
     [("UP", "LEVEL"), ("UP", "DOWN"), ("DOWN", "LEVEL")],
@@ -902,6 +936,20 @@ def _directions(claim: Claim) -> str | None:
 def _conditions(claim: Claim) -> tuple[str, ...]:
     parts = _parts(claim)
     return tuple(filter(None, parts[5].split(";"))) if len(parts) >= 7 else ()
+
+
+def _conditions_from(claim: Claim) -> str | None:
+    """Where the conditions came from, read off the quality flags (D13).
+
+    `sentence` and `heading` state the setup; `section-first-mention` only says
+    someone earlier in the section did. Only the first two can prove two claims
+    share a setup, so the cascade needs this distinction before it may call a
+    pair a true contradiction.
+    """
+    for item in claim.conditions:
+        if item.startswith("conditions_from="):
+            return item.split("=", 1)[1]
+    return None
 
 
 def _buckets(claim: Claim) -> tuple[str, ...]:
@@ -977,6 +1025,21 @@ def assess_pair(a: Claim, b: Claim) -> ContradictionAssessment | None:
         )
 
     if (direction_a, direction_b) in OPPOSITE:
+        assumed = [
+            side
+            for side, claim in (("A", a), ("B", b))
+            if _conditions_from(claim) == "section-first-mention"
+        ]
+        if assumed:
+            # D13: a condition inherited from the section's first mention is an
+            # assumption, not evidence. Inherited conditions may still *disprove*
+            # a shared setup (their inequality is real); they may not *prove* one.
+            return _assessment(
+                a, b, ContradictionType.INSUFFICIENT_EVIDENCE,
+                f"opposite direction, but conditions on side {'/'.join(assumed)} are "
+                "inherited from the section's first mention; setup not confirmed",
+                ConfidenceLabel.LOW,
+            )
         return _assessment(
             a, b, ContradictionType.TRUE_CONTRADICTION,
             f"same scope, opposite direction: {direction_a} vs {direction_b}",
@@ -997,7 +1060,7 @@ def assess_pair(a: Claim, b: Claim) -> ContradictionAssessment | None:
 - [ ] **Step 4: Run it**
 
 Run: `python -m pytest tests/unit/test_contradiction_cascade.py -q`
-Expected: PASS (16 tests).
+Expected: PASS (19 tests).
 
 - [ ] **Step 5: Commit**
 
