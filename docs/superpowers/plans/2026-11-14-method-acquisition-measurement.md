@@ -555,7 +555,7 @@ if __name__ == "__main__":
 cd /d/ResearchOS && D:/Anaconda/envs/reOS/python.exe -m pytest tests/unit/test_method_acquisition_audit.py --basetemp=.pytest_tmp_mam
 ```
 
-预期：`8 passed`。
+预期：`7 passed`（Task 2 文件共 7 个 `def test_`）。
 
 - [ ] **Step 3: 变异验证（证明断言非空）**
 
