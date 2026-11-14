@@ -15,7 +15,14 @@ from sqlalchemy.orm import Session
 from research_os.config import settings
 from research_os.documents.chunks import chunk_pages
 from research_os.documents.loader import DocumentLoadError, load_document, make_source_version
-from research_os.domain.enums import EventType, FailureType, RunStatus, TaskStatus, TaskType
+from research_os.domain.enums import (
+    EventType,
+    EvidenceRelation,
+    FailureType,
+    RunStatus,
+    TaskStatus,
+    TaskType,
+)
 from research_os.domain.models import (
     ResearchBudget,
     ResearchEvent,
@@ -55,6 +62,22 @@ from research_os.storage.repositories import (
 )
 
 DEFAULT_REPORTS_DIR = Path(__file__).resolve().parent.parent.parent.parent / "reports"
+
+
+def _unlocatable_claims(assessments, relations) -> list[str]:
+    """Assessed claims with no SUPPORTS relation.
+
+    Same definition the memo uses: without supporting evidence a claim renders as
+    "no locatable evidence", so the event and the prose cannot disagree.
+    """
+    involved = {cid for item in assessments for cid in (item.claim_a_id, item.claim_b_id)}
+    supported = {
+        relation.claim_id
+        for relation in relations
+        if relation.relation is EvidenceRelation.SUPPORTS
+    }
+    return sorted(cid for cid in involved if cid not in supported)
+
 
 
 class Supervisor:
@@ -411,6 +434,39 @@ class Supervisor:
             )
             run.warnings.append(
                 f"CONTRADICTION_UNRESOLVED: {stats.failed_pairs} pair(s) failed to judge"
+            )
+            SqlRunRepository(self._session).update(run)
+
+        if stats.skipped_same_value:
+            # A same-value pair means P4's merge gate let a duplicate through.
+            # The counter alone answers "how many" but never says which run needs
+            # its dedup looked at, so the defect also lands in the failure record.
+            self._log(
+                run.id,
+                EventType.FAILURE,
+                f"{stats.skipped_same_value} pairs share an identical value",
+                {"skipped_same_value": stats.skipped_same_value},
+                failure_type=FailureType.CONTRADICTION_UNRESOLVED,
+            )
+            run.warnings.append(
+                f"CONTRADICTION_UNRESOLVED: {stats.skipped_same_value} pair(s) share an identical value"
+            )
+            SqlRunRepository(self._session).update(run)
+
+        unlocatable = _unlocatable_claims(assessments, relations)
+        if unlocatable:
+            # The memo already prints "no locatable evidence" next to such a claim,
+            # but prose is not queryable; the event makes the same gap filterable
+            # across runs without reading every memo.
+            self._log(
+                run.id,
+                EventType.FAILURE,
+                f"{len(unlocatable)} assessed claims have no locatable evidence",
+                {"claim_ids": unlocatable},
+                failure_type=FailureType.CITATION_LOCATION_MISSING,
+            )
+            run.warnings.append(
+                f"CITATION_LOCATION_MISSING: {len(unlocatable)} assessed claim(s) have no locatable evidence"
             )
             SqlRunRepository(self._session).update(run)
         self._log(

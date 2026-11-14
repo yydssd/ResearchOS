@@ -209,3 +209,65 @@ def test_failed_pairs_are_reported_in_an_event(session, tmp_path, monkeypatch):
     assert "Assessed 0 of 1 candidate pairs" in result["memo"]
     assert "Not judged: 1" in result["memo"]
     assert "Skipped: 1 failed to judge" not in result["memo"]
+
+
+def test_identical_value_pairs_are_reported_as_a_p4_defect(session, tmp_path):
+    """The counter says how many; the event is what makes it actionable without
+    reading the payload of every run."""
+    from research_os.research.contradiction import PairingStats
+
+    class _SameValueOnly:
+        def assess(self, claims):
+            return [], PairingStats(total_before_cap=1, evaluated=1, skipped_same_value=1)
+
+    paper = tmp_path / "paper.md"
+    paper.write_text(PAPER_BODY, encoding="utf-8")
+    result = _slice(Supervisor(session, contradiction_assessor=_SameValueOnly()), paper, tmp_path)
+
+    failures = [
+        event
+        for event in SqlEventRepository(session).list_by_run(result["run_id"])
+        if event.event_type is EventType.FAILURE
+        and event.failure_type is FailureType.CONTRADICTION_UNRESOLVED
+    ]
+    assert any(event.payload.get("skipped_same_value") == 1 for event in failures)
+
+
+def test_assessed_claims_without_evidence_are_reported(session, tmp_path, monkeypatch):
+    """The memo prints 'no locatable evidence'; §6 also wants an event, so the gap
+    is visible in the run's failure record and not only in prose."""
+    import research_os.orchestration.supervisor as module
+
+    monkeypatch.setattr(module, "_unlocatable_claims", lambda assessments, relations: ["c_fake"])
+
+    paper = tmp_path / "paper.md"
+    paper.write_text(PAPER_BODY, encoding="utf-8")
+    result = _slice(Supervisor(session), paper, tmp_path)
+
+    failures = [
+        event
+        for event in SqlEventRepository(session).list_by_run(result["run_id"])
+        if event.event_type is EventType.FAILURE
+        and event.failure_type is FailureType.CITATION_LOCATION_MISSING
+    ]
+    assert failures
+    assert failures[0].payload["claim_ids"] == ["c_fake"]
+
+
+def test_unlocatable_claims_only_counts_claims_without_supports():
+    """Definition must match the memo: no SUPPORTS relation means the claim renders
+    as 'no locatable evidence'."""
+    from research_os.domain.enums import EvidenceRelation
+    from research_os.domain.models import ClaimEvidenceRelation
+    from research_os.orchestration.supervisor import _unlocatable_claims
+
+    class _A:
+        claim_a_id = "c1"
+        claim_b_id = "c2"
+
+    relations = [
+        ClaimEvidenceRelation(claim_id="c1", evidence_id="e1", relation=EvidenceRelation.SUPPORTS),
+        ClaimEvidenceRelation(claim_id="c2", evidence_id="e2", relation=EvidenceRelation.BACKGROUND),
+    ]
+
+    assert _unlocatable_claims([_A()], relations) == ["c2"]
