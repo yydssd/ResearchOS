@@ -1,0 +1,2010 @@
+{
+  "labels": [
+    {
+      "arxiv_id": "2310.18293",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 15,
+              "quote": "UtilityIR is the first type and severity"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 24,
+              "quote": "Degradation Information Encoder (DIE)"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 2,
+              "quote": "to guide weather severity and type"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4.1 Implementation Details",
+              "page_label": "html",
+              "chunk_index": 67,
+              "quote": "set the batch size to 2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2403.14614",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 24,
+              "quote": "our AdaIR algorithm"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 22,
+              "quote": "Adaptive Frequency Learning Block (AFLB)"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 2,
+              "quote": "mine low- and high-frequency information"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4 Experiments",
+              "page_label": "html",
+              "chunk_index": 63,
+              "quote": "we adopt a batch size of 32"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2404.12495",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "II Instrument Overview",
+              "page_label": "html",
+              "chunk_index": 6,
+              "quote": "The all-in-one QDM is configurable"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "I Introduction",
+              "page_label": "html",
+              "chunk_index": 5,
+              "quote": "An LED with linear polarization control"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "I Introduction",
+              "page_label": "html",
+              "chunk_index": 5,
+              "quote": "to create a transmission measurement"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "II Instrument Overview",
+              "page_label": "html",
+              "chunk_index": 10,
+              "quote": "confocal laser excitation"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2407.11087",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 10,
+              "quote": "we propose Restore-RWKV"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 16,
+              "quote": "We present a recurrent WKV (Re-WKV)"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 11,
+              "quote": "by shifting tokens from all directions"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4.1 Dataset",
+              "page_label": "html",
+              "chunk_index": 86,
+              "quote": "The publicly available AAPM dataset"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2503.17915",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 7,
+              "quote": "we present Cat-AIR"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 13,
+              "quote": "alternating spatial-channel attention"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 15,
+              "quote": "that enables our framework to extend"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4.1 Implementation details",
+              "page_label": "html",
+              "chunk_index": 473,
+              "quote": "We report PSNR on benchmark datasets"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2504.09377",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1. Introduction",
+              "page_label": "html",
+              "chunk_index": 14,
+              "quote": "method called HOGformer"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1. Introduction",
+              "page_label": "html",
+              "chunk_index": 10,
+              "quote": "Dynamic HOG-aware Self-Attention"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1. Introduction",
+              "page_label": "html",
+              "chunk_index": 16,
+              "quote": "that incorporates gradient orientations"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4.2. Implementation Details.",
+              "page_label": "html",
+              "chunk_index": 310,
+              "quote": "on NVIDIA Tesla A100 GPUs"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2504.14249",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1. Introduction",
+              "page_label": "html",
+              "chunk_index": 17,
+              "quote": "We propose AnyIR"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Image Restoration (IR)",
+              "page_label": "html",
+              "chunk_index": 22,
+              "quote": "a convolutional patch embedding"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1. Introduction",
+              "page_label": "html",
+              "chunk_index": 15,
+              "quote": "optimally intertwines global context"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "3.2. Gated Degradation Adaption",
+              "page_label": "html",
+              "chunk_index": 46,
+              "quote": "state-of-the-art on three degradations"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2506.22736",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 9,
+              "quote": "framework, UniFuse"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "3.1 Overview",
+              "page_label": "html",
+              "chunk_index": 22,
+              "quote": "four core modules: DAPL, OUFR"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 7,
+              "quote": "To simultaneously achieve feature"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4.2 Implementation Details",
+              "page_label": "html",
+              "chunk_index": 84,
+              "quote": "a batch size of 3 for 500 epochs"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2507.22498",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 10,
+              "quote": "we propose SSGformer"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 4,
+              "quote": "Sobel operator and SVD"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 10,
+              "quote": "not only extracts essential features"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 3,
+              "quote": "The code is available at github.com"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2511.05873",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Introduction",
+              "page_label": "html",
+              "chunk_index": 8,
+              "quote": "we introduce EndoIR"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Methodology",
+              "page_label": "html",
+              "chunk_index": 22,
+              "quote": "Dual-Domain Prompter(DDP)"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Introduction",
+              "page_label": "html",
+              "chunk_index": 13,
+              "quote": "for stable diffusion restoration"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 2,
+              "quote": "on SegSTRONG-C and CEC datasets"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2602.00749",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 8,
+              "quote": "we first propose HSI-VAR"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "2.1 Regression Methods for Restoration",
+              "page_label": "html",
+              "chunk_index": 16,
+              "quote": "Structure of the multi-scale VQVAE"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 8,
+              "quote": "which progressively models the spectral"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4.1 Experimental Setup",
+              "page_label": "html",
+              "chunk_index": 572,
+              "quote": "We utilize two datasets, ICVL"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2604.05629",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 7,
+              "quote": "this paper presents LLaRS"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "3.1 Band Semantic Matching",
+              "page_label": "html",
+              "chunk_index": 17,
+              "quote": "using optimal transport (OT)"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "3.1 Band Semantic Matching",
+              "page_label": "html",
+              "chunk_index": 17,
+              "quote": "so multi-sensor inputs are routed"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 3,
+              "quote": "Repo: https://github.com/yc-cui/LLaRS"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2605.06127",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 7,
+              "quote": "we propose Continuous Expert Assembly"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 8,
+              "quote": "Cross-Attention Hyper-Adapter"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 8,
+              "quote": "the adapter uses learnable queries"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 2,
+              "quote": "Experiments on AIO-3, AIO-5, and CDD-11"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2606.19097",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "I Introduction",
+              "page_label": "html",
+              "chunk_index": 16,
+              "quote": "this paper proposes DVANet"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 2,
+              "quote": "a degradation representation module"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "I Introduction",
+              "page_label": "html",
+              "chunk_index": 19,
+              "quote": "a collaborative unfolding process"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "IV-A2 Implementation Details",
+              "page_label": "html",
+              "chunk_index": 127,
+              "quote": "a frozen DINOv3 ViT-L/16"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2606.22801",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "I Introduction",
+              "page_label": "html",
+              "chunk_index": 20,
+              "quote": "We develop MLMIR"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "I Introduction",
+              "page_label": "html",
+              "chunk_index": 18,
+              "quote": "multi-timescale liquid discretization"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "I Introduction",
+              "page_label": "html",
+              "chunk_index": 12,
+              "quote": "the model can automatically adapt its"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "IV-A1 Datasets",
+              "page_label": "html",
+              "chunk_index": 121,
+              "quote": "randomly sample 2,500 image pairs"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2607.28526",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1. Introduction",
+              "page_label": "html",
+              "chunk_index": 16,
+              "quote": "We propose DAR-Net for AIR"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1. Introduction",
+              "page_label": "html",
+              "chunk_index": 13,
+              "quote": "Spatial Ambiguity Rectification (SpAR)"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1. Introduction",
+              "page_label": "html",
+              "chunk_index": 12,
+              "quote": "DAR-Net reduces degradation-content"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4.1. Experimental Settings",
+              "page_label": "html",
+              "chunk_index": 594,
+              "quote": "we train on BSD400"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2608.06832",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 15,
+              "quote": "We propose FIT"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 12,
+              "quote": "a lightweight Degradation Encoder"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 5,
+              "quote": "FIT bends patch grids"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Datasets.",
+              "page_label": "html",
+              "chunk_index": 69,
+              "quote": "we train on DIV2K"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2608.06939",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "I Introduction",
+              "page_label": "html",
+              "chunk_index": 19,
+              "quote": "we propose a Degradation-Aware"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "I Introduction",
+              "page_label": "html",
+              "chunk_index": 25,
+              "quote": "Cross-Modal Prompt Generator"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 3,
+              "quote": "that disentangles degradation artifacts"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "IV-A Datasets",
+              "page_label": "html",
+              "chunk_index": 134,
+              "quote": "Snow100K [56], Outdoor-Rain [57]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2609.02839",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 8,
+              "quote": "we present FReSH-IR"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "3.2 Overall Framework",
+              "page_label": "html",
+              "chunk_index": 22,
+              "quote": "Spectral Decomposition Block (SDB)"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 8,
+              "quote": "designed to bridge the gap"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4.1 Implementation Details",
+              "page_label": "html",
+              "chunk_index": 59,
+              "quote": "three datasets: RainDrop"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2609.16578",
+      "domain": "image_restoration",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 7,
+              "quote": "we propose GraLoD"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 2,
+              "quote": "minimal-sufficient footprint calibration"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 8,
+              "quote": "evaluates the local restoration utility"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4 Experiments",
+              "page_label": "html",
+              "chunk_index": 74,
+              "quote": "EfDeRain+ Guo et al. (2025a)"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2605.27762",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 1,
+              "quote": "We present PEAM"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 8,
+              "quote": "A slow deliberative LLM handles"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 7,
+              "quote": "PEAM consolidates experience into"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4.1 Setup",
+              "page_label": "html",
+              "chunk_index": 111,
+              "quote": "We instantiate PEAM in Minecraft 1.19"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2406.11247",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 2,
+              "quote": "STEVE Series"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4 Hierarchical Multi-Agent System",
+              "page_label": "html",
+              "chunk_index": 6,
+              "quote": "our Hierarchical Multi-Agent System"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "5 Distill Embodied Agent into a Single Model",
+              "page_label": "html",
+              "chunk_index": 7,
+              "quote": "that refines the alignment of tasks"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "2 Data and Environment",
+              "page_label": "html",
+              "chunk_index": 4,
+              "quote": "20,000 Question-Answering pairs"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2504.17950",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 6,
+              "quote": "we introduce mindcraft"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "3.2 Agent Architecture",
+              "page_label": "html",
+              "chunk_index": 54,
+              "quote": "a server for launching"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "3.3 Multi-agent Collaboration",
+              "page_label": "html",
+              "chunk_index": 56,
+              "quote": "is enabled by a conversation manager"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "3.4 Additional Features",
+              "page_label": "html",
+              "chunk_index": 57,
+              "quote": "github.com/kolbytn/mindcraft"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2311.15209",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 1,
+              "quote": "This paper proposes STEVE"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 5,
+              "quote": "Vision Perception, Language Instruction"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "3.1 Overview",
+              "page_label": "html",
+              "chunk_index": 24,
+              "quote": "integrates Visual Perception"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 14,
+              "quote": "STEVE-21K dataset, including 600+"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2505.12321",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 1,
+              "quote": "simulator, BeliefNest"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 2,
+              "quote": "multiple physical simulators"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 1,
+              "quote": "by leveraging Theory of Mind"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 11,
+              "quote": "source code is available at https"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2508.18722",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 7,
+              "quote": "we propose VistaWise"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 7,
+              "quote": "a cross-modal knowledge graph"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 8,
+              "quote": "to directly predict actions"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4.1 Dataset and Implementation",
+              "page_label": "html",
+              "chunk_index": 159,
+              "quote": "on an L4 GPU with 24G VRAM"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2505.24157",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 7,
+              "quote": "we propose Robust and Efficient Planning"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 7,
+              "quote": "Adaptive Dependency Learning (ADL)"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 2,
+              "quote": "to enhance robustness to knowledge"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Implementation details",
+              "page_label": "html",
+              "chunk_index": 45,
+              "quote": "we use Qwen2.5-VL-7B"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2606.12852",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 9,
+              "quote": "we introduce WISE"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 16,
+              "quote": "a Causal Event Graph"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 10,
+              "quote": "the scheduler adapts to newly observed"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4.1 Experiment Setups",
+              "page_label": "html",
+              "chunk_index": 85,
+              "quote": "four NVIDIA RTX 4080 GPUs"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2409.19479",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 7,
+              "quote": "Thirdly, LangProp"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 8,
+              "quote": "a vision-to-action transformer backend"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 7,
+              "quote": "by treating code as learnable policies"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 8,
+              "quote": "third place in the MineRL BASALT"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2405.15414",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4 Method",
+              "page_label": "html",
+              "chunk_index": 15,
+              "quote": "we introduce the Luban agent"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4 Method",
+              "page_label": "html",
+              "chunk_index": 16,
+              "quote": "3D structural speculation stage"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 7,
+              "quote": "aimed at empowering open-ended agents"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "5.1 Exprimental Settings",
+              "page_label": "html",
+              "chunk_index": 28,
+              "quote": "with gpt-4-vision-preview"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2507.03293",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1.2 Contributions",
+              "page_label": "html",
+              "chunk_index": 12,
+              "quote": "We propose LTLCrit"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1.2 Contributions",
+              "page_label": "html",
+              "chunk_index": 15,
+              "quote": "a two-timescale architecture"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1.2 Contributions",
+              "page_label": "html",
+              "chunk_index": 12,
+              "quote": "by protecting the planners against"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4.1 Experimental Setup",
+              "page_label": "html",
+              "chunk_index": 81,
+              "quote": "Temperatures are set to 0.1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2601.05215",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract.",
+              "page_label": "html",
+              "chunk_index": 2,
+              "quote": "We present MineNPC-Task"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1. Introduction",
+              "page_label": "html",
+              "chunk_index": 15,
+              "quote": "Intent routing parses chat"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1. Introduction",
+              "page_label": "html",
+              "chunk_index": 6,
+              "quote": "To execute tasks reproducibly"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract.",
+              "page_label": "html",
+              "chunk_index": 3,
+              "quote": "instantiate the framework with GPT-4o"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2305.16291",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 1,
+              "quote": "We introduce Voyager"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 6,
+              "quote": "an automatic curriculum"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 1,
+              "quote": "that continuously explores the world"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "3.1 Experimental Setup",
+              "page_label": "html",
+              "chunk_index": 47,
+              "quote": "We set all temperatures to 0"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2403.08282",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 11,
+              "quote": "We introduce HAS"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "3 HAS: A Multi-agent Navigation Framework",
+              "page_label": "html",
+              "chunk_index": 21,
+              "quote": "M-MLM and A-MLM"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 11,
+              "quote": "It utilizes centralized planning"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4.1 Experimental Setups",
+              "page_label": "html",
+              "chunk_index": 54,
+              "quote": "gpt-4-1106-vision-preview"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2608.22055",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1. Introduction",
+              "page_label": "html",
+              "chunk_index": 17,
+              "quote": "GenCoord represents sender and peer"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1. Introduction",
+              "page_label": "html",
+              "chunk_index": 11,
+              "quote": "parse, schema check, canonical"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1. Introduction",
+              "page_label": "html",
+              "chunk_index": 8,
+              "quote": "to compose goals, capabilities, objects"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "5.2. Data and Training",
+              "page_label": "html",
+              "chunk_index": 83,
+              "quote": "Training uses two epochs"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2411.12977",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 8,
+              "quote": "we introduce the MindForge framework"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 9,
+              "quote": "perspective-taking through a causal ToM"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 8,
+              "quote": "using Theory of Mind (ToM)"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "5.2 Voyager With Open-Weight LLMs",
+              "page_label": "html",
+              "chunk_index": 34,
+              "quote": "Mistral-7B [25], Mixtral-8x7B"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2410.07484",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 9,
+              "quote": "World Alignment by ruLe LEarning"
+            },
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 2,
+              "quote": "WALL-E achieves higher success rates"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 9,
+              "quote": "the neurosymbolic world model"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 9,
+              "quote": "by learning complementary rules with"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4 Experiments",
+              "page_label": "html",
+              "chunk_index": 64,
+              "quote": "134 testing tasks from the ALFWorld"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2411.06736",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 8,
+              "quote": "MrSteve (Memory Recall Steve)"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "3 Method",
+              "page_label": "html",
+              "chunk_index": 19,
+              "quote": "consists of Memory Module and Solver"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 9,
+              "quote": "this framework enables the agent to"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Abstract",
+              "page_label": "html",
+              "chunk_index": 2,
+              "quote": "project page: https://sites.google.com"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2501.19318",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 12,
+              "quote": "we propose MINDSTORES"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 13,
+              "quote": "an experience database storing natural"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 13,
+              "quote": "operates cyclically: observe, retrieve"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4.1 Experimental Setup",
+              "page_label": "html",
+              "chunk_index": 48,
+              "quote": "Sentence-BERT embeddings (768-dim)"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "arxiv_id": "2405.17424",
+      "domain": "agent_in_mc",
+      "layers": {
+        "L1": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "1 Introduction",
+              "page_label": "html",
+              "chunk_index": 7,
+              "quote": "we first propose Large Auto-Regressive"
+            }
+          ]
+        },
+        "L2": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4.1 Referee Reinforcement Learning",
+              "page_label": "html",
+              "chunk_index": 43,
+              "quote": "we introduce referee RL"
+            }
+          ]
+        },
+        "L3": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "4.1 Referee Reinforcement Learning",
+              "page_label": "html",
+              "chunk_index": 43,
+              "quote": "to provide an auxiliary reward feedback"
+            }
+          ]
+        },
+        "L4": {
+          "label": "present",
+          "evidence": [
+            {
+              "section": "Keywords:",
+              "page_label": "html",
+              "chunk_index": 3,
+              "quote": "lizhuoling.github.io/LARM_webpage/"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
