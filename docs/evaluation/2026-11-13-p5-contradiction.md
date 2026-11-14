@@ -250,24 +250,6 @@ Several §9 acceptance items remain open (direction word-list blind spots,
 `FAILURE` events, three separate confusion matrices, the second blind annotation
 pass). They are listed in the review record; this report does not claim they are met.
 
----
-
-## Post-review note (2026-11-13 evening)
-
-An independent code review (`docs/evaluation/2026-11-13-p5-review.md`) found that
-this report's §3.2–3.3 numbers had no committed harness. That is fixed: the
-second command under **Reproducing** now prints every figure transcribed here.
-The review also closed a provenance-gate defect (a missing `conditions_from` tag
-could produce `TRUE_CONTRADICTION`) and a run-scope leak. Re-running the harness
-after those fixes reproduced §3 unchanged — in particular `TRUE_CONTRADICTION`
-was already 0, so the whitelist gate changed no real-corpus verdict.
-
-Several §9 acceptance items remain open (direction word-list blind spots,
-`FAILURE` events, three separate confusion matrices, the second blind annotation
-pass). They are listed in the review record; this report does not claim they are met.
-
----
-
 ## Failure events and per-subset matrices (2026-11-14)
 
 P5 now persists four kinds of failure instead of swallowing them (plan §25):
