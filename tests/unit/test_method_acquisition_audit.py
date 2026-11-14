@@ -100,6 +100,8 @@ def test_every_cell_is_traceable_to_an_arxiv_id():
     assert len(report["cells"]) == 16
     assert {c["arxiv_id"] for c in report["cells"]} == {"a1", "a2", "b1", "b2"}
     assert all({"layer", "label", "covered"} <= set(c) for c in report["cells"])
+    assert sum(1 for c in report["cells"] if c["covered"]) == 4
+    assert sum(1 for c in report["cells"] if c["label"] == "ambiguous") == 1
 
 
 def test_layer_mapping():
@@ -109,6 +111,11 @@ def test_layer_mapping():
     assert covered_for("L3", SIDES["a1"]) is False
     assert covered_for("L4", SIDES["a2"]) is True
     assert cause_for("L3", SIDES["a1"]) == "无结构化字段"
+    # Both other causes must be reachable, or cause_for could collapse to a
+    # constant and every test above would still pass.
+    empty_side = {"structured": False, "proxy": 0, "L2": False, "L4": False, "empty": True}
+    assert cause_for("L4", empty_side) == "无来源定位"
+    assert cause_for("L2", SIDES["a2"]) == "词表未覆盖"
 
 
 def test_real_labels_pass_the_contract():
