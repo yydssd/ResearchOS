@@ -61,6 +61,26 @@ def test_pairing_level_exclusions_are_not_counted_as_wrong():
     assert rows["p18"]["actual"] is None
 
 
+def test_confusion_is_reported_per_subset():
+    """Spec §9 #3: real, constructed and combined each need their own matrix.
+
+    Averaging them hides the only comparison that matters - whether the rules work
+    on real sentences or only on the ones written to match them.
+    """
+    rows = [
+        {"id": "r1", "source": "real", "expected": "SCOPE_DIFFERENCE", "actual": "SCOPE_DIFFERENCE"},
+        {"id": "r2", "source": "real", "expected": "SCOPE_DIFFERENCE", "actual": "TRUE_CONTRADICTION"},
+        {"id": "c1", "source": "constructed", "expected": "COMPLEMENTARY", "actual": "COMPLEMENTARY"},
+    ]
+
+    report = summarise(rows)
+
+    assert report["confusion"]["SCOPE_DIFFERENCE"]["SCOPE_DIFFERENCE"] == 1
+    assert report["confusion_by_subset"]["real"]["SCOPE_DIFFERENCE"]["TRUE_CONTRADICTION"] == 1
+    assert report["confusion_by_subset"]["constructed"]["COMPLEMENTARY"]["COMPLEMENTARY"] == 1
+    assert report["confusion_by_subset"]["real"]["COMPLEMENTARY"]["COMPLEMENTARY"] == 0
+
+
 def test_the_fixture_set_matches_the_cascade_it_pins():
     """This is a regression lock, not a quality measure: the labels were derived
     from the same rules, so agreement proves the rules still behave as written,

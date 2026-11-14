@@ -74,6 +74,20 @@ def evaluate(path: Path) -> list[dict]:
     return rows
 
 
+def _confusion(rows: list[dict]) -> dict[str, dict[str, int]]:
+    """Expected x actual counts.
+
+    SKIPPED is a real column: a pair that was never judged has to stay visible, or
+    the matrix silently flatters the classifier.
+    """
+    table = {expected: {column: 0 for column in COLUMNS} for expected in TYPES}
+    for row in rows:
+        if row["expected"] is None:
+            continue
+        table[row["expected"]][row["actual"] or "SKIPPED"] += 1
+    return table
+
+
 def summarise(rows: list[dict]) -> dict:
     def block(subset: list[dict]) -> dict:
         judged = [r for r in subset if r["expected"] is not None]
@@ -89,12 +103,7 @@ def summarise(rows: list[dict]) -> dict:
             "accuracy": round(correct / len(judged), 3) if judged else 0.0,
         }
 
-    confusion = {expected: {column: 0 for column in COLUMNS} for expected in TYPES}
-    for row in rows:
-        if row["expected"] is None:
-            continue
-        column = row["actual"] or "SKIPPED"
-        confusion[row["expected"]][column] += 1
+    confusion = _confusion(rows)
 
     tp = sum(1 for r in rows if r["expected"] == "TRUE_CONTRADICTION" and r["actual"] == "TRUE_CONTRADICTION")
     fp = sum(1 for r in rows if r["actual"] == "TRUE_CONTRADICTION" and r["expected"] != "TRUE_CONTRADICTION")
@@ -108,6 +117,10 @@ def summarise(rows: list[dict]) -> dict:
             "recall": round(tp / (tp + fn), 3) if tp + fn else 0.0,
         },
         "confusion": confusion,
+        "confusion_by_subset": {
+            "real": _confusion([r for r in rows if r["source"] == "real"]),
+            "constructed": _confusion([r for r in rows if r["source"] == "constructed"]),
+        },
     }
 
 
@@ -129,10 +142,16 @@ def main() -> None:
     print("\nconfusion (rows = expected, cols = actual)")
     width = max(len(name) for name in TYPES) + 2
     header = "".join(f"{ALIASES[c]:>8}" for c in COLUMNS)
-    print(f"{'':<{width}}{header}")
-    for expected, row in report["confusion"].items():
-        cells = "".join(f"{row[c]:>8}" for c in COLUMNS)
-        print(f"{expected:<{width}}{cells}")
+    for label, table in (
+        ("overall", report["confusion"]),
+        ("real", report["confusion_by_subset"]["real"]),
+        ("constructed", report["confusion_by_subset"]["constructed"]),
+    ):
+        print(f"\n[{label}]")
+        print(f"{'':<{width}}{header}")
+        for expected, row in table.items():
+            cells = "".join(f"{row[c]:>8}" for c in COLUMNS)
+            print(f"{expected:<{width}}{cells}")
 
     print(
         "\nNote: fixture labels were derived from the same rules the cascade implements.\n"
