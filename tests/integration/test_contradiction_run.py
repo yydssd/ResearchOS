@@ -93,3 +93,32 @@ def test_assessment_records_an_event_with_skip_accounting(session, tmp_path):
                   "skipped_self_prefilter", "skipped_same_value", "skipped_cap",
                   "by_type", "replaced"):
         assert field in payload, field
+
+
+def test_cross_run_rejection_is_logged_and_the_run_survives(session, tmp_path, monkeypatch):
+    """Section 25: a rejected pair must leave a failure event, not kill the run.
+
+    A cross-run row means the store was written outside this run. Refusing it is
+    right; aborting the whole research run because of it is not - P5 relates
+    claims, it does not gate the run.
+    """
+    from research_os.domain.enums import EventType, FailureType
+    from research_os.storage.repositories import SqlContradictionRepository
+
+    def reject(self, run_id, items):
+        raise ValueError("cross_run_pair: c1 / c2")
+
+    monkeypatch.setattr(SqlContradictionRepository, "replace_for_run", reject)
+
+    paper = tmp_path / "paper.md"
+    paper.write_text(PAPER_BODY, encoding="utf-8")
+    result = _slice(Supervisor(session), paper, tmp_path)
+
+    failures = [
+        event
+        for event in SqlEventRepository(session).list_by_run(result["run_id"])
+        if event.event_type is EventType.FAILURE
+    ]
+    assert any(event.failure_type is FailureType.CROSS_RUN_PAIR for event in failures)
+    assert "cross_run_pair" in " ".join(event.message for event in failures)
+    assert result["memo"]

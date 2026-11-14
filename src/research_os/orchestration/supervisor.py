@@ -370,7 +370,20 @@ class Supervisor:
         # here on purpose: P4 owns status and confidence, P5 only relates them.
         assess_task = create_task(self._session, run.id, TaskType.CHECK_CONTRADICTION)
         assessments, stats = self._assessor.assess(claims)
-        replaced = SqlContradictionRepository(self._session).replace_for_run(run.id, assessments)
+        try:
+            replaced = SqlContradictionRepository(self._session).replace_for_run(run.id, assessments)
+        except ValueError as exc:
+            # Plan §25 asks for a persisted failure event, not for the run to die.
+            # Refusing a cross-run pair is correct; cascading the exception out of
+            # run_vertical_slice would lose the memo over a dirty storage row.
+            self._log(
+                run.id,
+                EventType.FAILURE,
+                str(exc),
+                {"run_id": run.id, "rejected": len(assessments)},
+                failure_type=FailureType.CROSS_RUN_PAIR,
+            )
+            assessments, replaced = [], 0
         complete_task(self._session, assess_task, output_ids=[a.claim_a_id for a in assessments])
         self._log(
             run.id,
