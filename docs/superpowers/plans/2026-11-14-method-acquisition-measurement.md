@@ -278,9 +278,10 @@ def test_covered_over_20_and_proxy_and_ambiguous():
 def test_gap_causes_are_classified():
     report = summarise(LABELS, SIDES, domain_size=2)
     assert report["gaps"]["d0|L3|无结构化字段"] == 1
+    assert report["gaps"]["d1|L1|无结构化字段"] == 1
     assert report["gaps"]["d1|L3|无结构化字段"] == 1
     assert report["gaps"]["d1|L4|无结构化字段"] == 1
-    assert sum(report["gaps"].values()) == 3
+    assert sum(report["gaps"].values()) == 4
 
 
 def test_every_cell_is_traceable_to_an_arxiv_id():
