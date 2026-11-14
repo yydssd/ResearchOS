@@ -265,3 +265,24 @@ was already 0, so the whitelist gate changed no real-corpus verdict.
 Several §9 acceptance items remain open (direction word-list blind spots,
 `FAILURE` events, three separate confusion matrices, the second blind annotation
 pass). They are listed in the review record; this report does not claim they are met.
+
+---
+
+## Failure events and per-subset matrices (2026-11-14)
+
+P5 now persists four kinds of failure instead of swallowing them (plan §25):
+`CROSS_RUN_PAIR` when storage holds a pair spanning two runs (the run continues,
+the batch is dropped and the count is recorded), `CONTRADICTION_UNRESOLVED` for a
+pair that raised and for an identical-value pair that P4 should have merged, and
+`CITATION_LOCATION_MISSING` for an assessed claim with no supporting evidence.
+Each also appends to `run.warnings`, so `research-os status` shows it.
+
+`coverage` now uses `judged = evaluated - failed_pairs` as its numerator. Before
+this change a run whose only pair raised reported "Assessed 1 of 1 candidate
+pairs (coverage 100%)" and then "All 1 evaluated pairs were skipped" - two
+statements that were both false.
+
+The confusion matrix is printed three times - overall, real, constructed. The
+split makes visible what the combined table hid: every `TRUE_CONTRADICTION` hit
+comes from the constructed subset; the real row is zero across the board. That is
+the same fact the recall note below states in words, now visible in the numbers.

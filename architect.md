@@ -9,7 +9,7 @@
 ## 当前状态（2026-11-13 · W3 / P5 完成）
 
 - **阶段**：P0 ✅ · P1 ✅ · P2 ✅ · P3 ✅ · P4 ✅ · **P5 Contradiction ✅**
-- **验收结果**：`pytest` 304 passed（+2 opt-in 真实网络）；主张带七维 `identity_key`，矛盾评估带 run 作用域、唯一约束与可定位证据
+- **验收结果**：`pytest` 319 passed（+2 opt-in 真实网络）；主张带七维 `identity_key`，矛盾评估带 run 作用域、唯一约束与可定位证据
 - **格式覆盖**：PDF · Markdown · README · HTML（含 ar5iv 全文；公式回声已净化）
 - **实测口径**：留出集 20 篇 / 13871 块 / 4814 证据 / 1173 主张（1075 支撑）；P5 候选对 1049 → 判定 30（真矛盾 0，预期）；夹具 26 对全通过
 - **下一步**：P6 Research Memo（结构化 memo 收口），再 P7 Falsification
@@ -109,6 +109,8 @@ Supervisor 独占预算（`search_calls` / `sources_discovered`）与事件；pr
 | ADR-028 | 条件相等**分两级**（见 HD-014）：provenance 为 `sentence`/`heading` 时可支持 `TRUE_CONTRADICTION`；为 `section-first-mention` 时不可，降 `INSUFFICIENT_EVIDENCE`。错误是不对称的——继承条件**不相等**仍可否证相同，只有**相等**不可信。用"跳过对比句"的正则收窄只能从 69.1% 降到 62.9% 且会误跳正常设置段，故在判定层而非抽取层区分 | ACTIVE |
 | ADR-029 | 配对键为 **subject + task**，不要求 dataset 相同：计划 §17 的 scope 差异范例两条主张 dataset 不同，要求 dataset 相交会让该范例不可配对。`self@` 只允许同一文档内配对（两篇论文的"our method"是两个方法），且需双方都有 dataset 与 metric（预过滤 6177→16）。`MAX_PAIRS=50_000`，截断必须报截断前总量与覆盖率 | ACTIVE |
 | ADR-030 | 矛盾评估落库**按 run 作用域**（承接 ADR-019）：`(claim_a_id, claim_b_id)` 唯一索引、`list_by_run` 读取、`replace_for_run` 先删后写使重跑收敛；跨 run 主张对拒收（`cross_run_pair`）。行 id 是 `con_<a[:10]>_<b[:10]>`，截断会让两对不同的主张撞主键，所以唯一性必须声明在列上而不是靠主键 | ACTIVE |
+| ADR-031 | P5 的矛盾判定用**确定性级联**，不走 LLM，尽管计划 §2.5 把 contradiction judgment 列在「LLM 适用场景」里。理由：判定输入是已落库的七维 identity，输出是五选一的关系，取值空间可枚举；确定性实现让同一输入必然得出同一结论，也让「这条为什么被判成矛盾」能在代码里逐行指出。换 LLM 的入口留在 `ContradictionAssessor` 协议上，P8 需要时替换实现，supervisor 不用改 | ACTIVE |
+| ADR-032 | 评估工具放 `scripts/`（`holdout_claim_quality.py`、`holdout_contradiction_quality.py`、`evaluate_contradiction.py`、`compare_annotation_sheet.py`），不建计划 §6 里的 `evaluation/` 包。理由：四者都是离线一次性分析，不被 runtime 引用；建包会把它们变成公开 API，需要版本与稳定性承诺，而当前没有第二个消费者 | ACTIVE |
 
 ## 阶段状态
 
@@ -170,3 +172,4 @@ CLI（主接口）：`research-os run/status/claims/report/inspect-claim` · **`
 | 2026-11-13 | P5 实测：候选对 1049 → 判定 30（真矛盾 0 / 实验不可比 2 / 范围不同 18 / 互补 5 / 证据不足 5），跳过 917 缺 dataset + 102 缺 metric，`self@` 预过滤丢弃 6601。30 条判定里 25 条的条件来自 `section-first-mention`，**没有一对是双方句子明写**——这是 HD-014 的直接依据 |
 | 2026-11-13 | P5 存储决策落地：`(claim_a_id, claim_b_id)` 唯一索引（不靠 `con_<a[:10]>_<b[:10]>` 主键，截断会撞）、`list_by_run` run 作用域、`replace_for_run` 先删后写使重跑收敛、跨 run 对拒收 |
 | 2026-11-13 | P5 独立代码审查（3 个只读子代理 + 实跑验证）：修 HD-014 门控改白名单、`list_by_run`/`replace_for_run` 双侧 run 约束、COMPLEMENTARY 证据位置、旧库去重迁移、夹具引文回归锁、留出集 P5 harness 入库；测试 239→249。剩余方向词表盲区、FAILURE 事件等 5 项列入审查记录 |
+| 2026-11-14 | P5 补齐（subagent-driven，10 任务）：失败事件四类（`CROSS_RUN_PAIR` / `CONTRADICTION_UNRESOLVED` ×2 / `CITATION_LOCATION_MISSING`）、三组混淆矩阵并拒绝未知 source、幂等内容断言、主张对主键改摘要、评估路径脱离 CWD、四处空断言改值断言、补三个覆盖缺口；测试 249→319。新增 ADR-031/032 |
