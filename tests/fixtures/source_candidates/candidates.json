@@ -1,0 +1,63 @@
+[
+  {
+    "title": "AutoDIR: Automatic All-in-One Image Restoration with Latent Diffusion",
+    "authors": ["Yitong Jiang", "Zhaoyang Zhang", "Tianfan Xue", "Jinwei Gu"],
+    "year": 2023,
+    "arxiv_id": "2310.10123",
+    "arxiv_version": "5",
+    "url": "https://arxiv.org/abs/2310.10123",
+    "source_type": "arxiv"
+  },
+  {
+    "title": "AutoDIR: Automatic All-in-One Image Restoration with Latent Diffusion",
+    "authors": ["Yitong Jiang", "Zhaoyang Zhang", "Tianfan Xue", "Jinwei Gu"],
+    "year": 2024,
+    "venue": "Computer Vision - ECCV 2024",
+    "doi": "10.1007/978-3-031-73661-2_19",
+    "url": "https://doi.org/10.1007/978-3-031-73661-2_19",
+    "source_type": "conference"
+  },
+  {
+    "title": "PromptIR: Prompting for All-in-One Image Restoration",
+    "authors": ["Vaishnav Potlapalli", "Syed Waqas Zamir", "Fahad Shahbaz Khan", "Salman Khan"],
+    "year": 2023,
+    "venue": "Advances in Neural Information Processing Systems",
+    "doi": "10.52202/075280-3121",
+    "url": "https://doi.org/10.52202/075280-3121",
+    "source_type": "conference"
+  },
+  {
+    "title": "Restormer: Efficient Transformer for High-Resolution Image Restoration",
+    "authors": ["Syed Waqas Zamir", "Aditya Arora", "Salman Khan", "Munawar Hayat"],
+    "year": 2022,
+    "venue": "2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)",
+    "doi": "10.1109/cvpr52688.2022.00564",
+    "url": "https://doi.org/10.1109/cvpr52688.2022.00564",
+    "source_type": "conference"
+  },
+  {
+    "title": "All-In-One Image Restoration for Unknown Corruption",
+    "authors": ["Boyun Li", "Xiao Liu", "Peng Hu", "Zhongqin Wu", "Jiancheng Lv"],
+    "year": 2022,
+    "venue": "2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)",
+    "doi": "10.1109/cvpr52688.2022.01693",
+    "url": "https://doi.org/10.1109/cvpr52688.2022.01693",
+    "source_type": "conference"
+  },
+  {
+    "title": "ConStyle v2: A Strong Prompter for All-in-One Image Restoration",
+    "authors": ["Dongqi Fan", "Junhao Zhang", "Liang Chang"],
+    "year": 2024,
+    "arxiv_id": "2406.18242",
+    "arxiv_version": "1",
+    "url": "https://arxiv.org/abs/2406.18242",
+    "source_type": "arxiv"
+  },
+  {
+    "title": "Synthetic example: unindexed blog post (test fixture)",
+    "authors": [],
+    "year": 2025,
+    "url": "https://example.invalid/blog/unindexed-post",
+    "source_type": "web"
+  }
+]
