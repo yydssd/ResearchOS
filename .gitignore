@@ -23,3 +23,4 @@ reports/
 
 # Hold-out harness: cached ar5iv pages are re-downloadable, ids are not
 .holdout_cache/
+/.pytest_tmp*/

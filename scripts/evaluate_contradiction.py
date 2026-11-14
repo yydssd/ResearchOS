@@ -2,8 +2,9 @@
 
 A single accuracy number hides everything that matters here: the classes are
 unbalanced (the corpus produces almost no true contradictions), so 'always
-answer SCOPE_DIFFERENCE' scores well. This reports per-subset accuracy, a full
-confusion matrix, TRUE_CONTRADICTION precision/recall, and the skip rate.
+answer SCOPE_DIFFERENCE' scores well. This reports per-subset accuracy, overall
+and per-subset confusion matrices, TRUE_CONTRADICTION precision/recall, and the
+skip rate.
 
     python scripts/evaluate_contradiction.py [--json tests/fixtures/contradiction/pairs.json]
 """
@@ -31,6 +32,10 @@ ALIASES = {
     "SKIPPED": "SKIPPED",
 }
 FIXTURE = Path("tests/fixtures/contradiction/pairs.json")
+# The pair sources the report splits on. Every source must be listed here: the
+# per-subset tables are drawn from this tuple, so a source missing from it would
+# be counted in the overall matrix only.
+SUBSETS = ("real", "constructed")
 
 
 def _claim(key: str, text: str, ident: str) -> Claim:
@@ -103,23 +108,29 @@ def summarise(rows: list[dict]) -> dict:
             "accuracy": round(correct / len(judged), 3) if judged else 0.0,
         }
 
+    # An unknown source would disappear from the overall and every per-subset
+    # table at once, and the per-subset sums would quietly stop matching the
+    # overall one. An unknown expected already fails loudly with a KeyError, so
+    # reject the row set here rather than report fewer rows than were supplied.
+    unknown = {row["source"] for row in rows} - set(SUBSETS)
+    if unknown:
+        raise ValueError(f"unknown fixture source(s): {sorted(unknown)}")
+
     confusion = _confusion(rows)
 
     tp = sum(1 for r in rows if r["expected"] == "TRUE_CONTRADICTION" and r["actual"] == "TRUE_CONTRADICTION")
     fp = sum(1 for r in rows if r["actual"] == "TRUE_CONTRADICTION" and r["expected"] != "TRUE_CONTRADICTION")
     fn = sum(1 for r in rows if r["expected"] == "TRUE_CONTRADICTION" and r["actual"] != "TRUE_CONTRADICTION")
     return {
-        "overall": block([r for r in rows]),
-        "real": block([r for r in rows if r["source"] == "real"]),
-        "constructed": block([r for r in rows if r["source"] == "constructed"]),
+        "overall": block(rows),
+        **{name: block([r for r in rows if r["source"] == name]) for name in SUBSETS},
         "TRUE_CONTRADICTION": {
             "precision": round(tp / (tp + fp), 3) if tp + fp else 0.0,
             "recall": round(tp / (tp + fn), 3) if tp + fn else 0.0,
         },
         "confusion": confusion,
         "confusion_by_subset": {
-            "real": _confusion([r for r in rows if r["source"] == "real"]),
-            "constructed": _confusion([r for r in rows if r["source"] == "constructed"]),
+            name: _confusion([r for r in rows if r["source"] == name]) for name in SUBSETS
         },
     }
 
@@ -132,22 +143,23 @@ def main() -> None:
     rows = evaluate(Path(args.json))
     report = summarise(rows)
 
-    for name in ("overall", "real", "constructed"):
+    for name in ("overall", *SUBSETS):
         block = report[name]
         print(f"{name:<12} n={block['n']:<3} judged={block['judged']:<3} "
               f"correct={block['correct']:<3} skipped={block['skipped']:<3} acc={block['accuracy']:.1%}")
     print(f"\nTRUE_CONTRADICTION precision={report['TRUE_CONTRADICTION']['precision']:.1%} "
           f"recall={report['TRUE_CONTRADICTION']['recall']:.1%}")
 
-    print("\nconfusion (rows = expected, cols = actual)")
+    print("\nconfusion")
     width = max(len(name) for name in TYPES) + 2
     header = "".join(f"{ALIASES[c]:>8}" for c in COLUMNS)
-    for label, table in (
-        ("overall", report["confusion"]),
-        ("real", report["confusion_by_subset"]["real"]),
-        ("constructed", report["confusion_by_subset"]["constructed"]),
-    ):
-        print(f"\n[{label}]")
+    sections = [("overall", report["confusion"], "overall")]
+    sections += [(name, report["confusion_by_subset"][name], name) for name in SUBSETS]
+    for label, table, block_key in sections:
+        summary = report[block_key]
+        omitted = summary["n"] - summary["judged"]
+        print(f"\n[{label}] rows = expected, cols = actual, "
+              f"judged={summary['judged']}, unpaired rows omitted={omitted}")
         print(f"{'':<{width}}{header}")
         for expected, row in table.items():
             cells = "".join(f"{row[c]:>8}" for c in COLUMNS)

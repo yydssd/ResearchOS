@@ -76,9 +76,23 @@ def test_confusion_is_reported_per_subset():
     report = summarise(rows)
 
     assert report["confusion"]["SCOPE_DIFFERENCE"]["SCOPE_DIFFERENCE"] == 1
+    # COMPLEMENTARY->COMPLEMENTARY only exists in the constructed row: without this
+    # the overall matrix could silently degrade into the real one and still pass.
+    assert report["confusion"]["COMPLEMENTARY"]["COMPLEMENTARY"] == 1
     assert report["confusion_by_subset"]["real"]["SCOPE_DIFFERENCE"]["TRUE_CONTRADICTION"] == 1
     assert report["confusion_by_subset"]["constructed"]["COMPLEMENTARY"]["COMPLEMENTARY"] == 1
     assert report["confusion_by_subset"]["real"]["COMPLEMENTARY"]["COMPLEMENTARY"] == 0
+
+
+def test_an_unknown_source_is_rejected_rather_than_dropped():
+    """A third source would vanish from all three matrices without a word, and the
+    per-subset sums would stop adding up to the overall one."""
+    import pytest as _pytest
+
+    rows = [{"id": "x", "source": "holdout", "expected": "COMPLEMENTARY", "actual": "COMPLEMENTARY"}]
+
+    with _pytest.raises(ValueError, match="unknown fixture source"):
+        summarise(rows)
 
 
 def test_the_fixture_set_matches_the_cascade_it_pins():
