@@ -166,6 +166,23 @@ def test_replace_cleans_rows_anchored_in_another_run(session):
     assert repo.list_all() == []
 
 
+def test_two_distinct_pairs_sharing_a_prefix_are_both_stored(session):
+    """The row id used to be con_<a[:10]>_<b[:10]>. Two genuinely different pairs
+    whose claim ids share ten characters collided on the primary key and the
+    second was rejected as a duplicate - a false rejection no unique index on the
+    columns can repair, because the collision happens before it is consulted."""
+    _seed(session, "run_1", ("c_AAAAAAAA11", "c_BBBBBBBB11", "c_AAAAAAAA22", "c_BBBBBBBB22"))
+    repo = SqlContradictionRepository(session)
+
+    repo.create(_assessment("c_AAAAAAAA11", "c_BBBBBBBB11"))
+    session.commit()
+    repo.create(_assessment("c_AAAAAAAA22", "c_BBBBBBBB22"))
+    session.commit()
+
+    stored = {(a.claim_a_id, a.claim_b_id) for a in repo.list_by_run("run_1")}
+    assert stored == {("c_AAAAAAAA11", "c_BBBBBBBB11"), ("c_AAAAAAAA22", "c_BBBBBBBB22")}
+
+
 def test_migration_dedupes_a_legacy_database_before_creating_the_index(tmp_path):
     """The index exists precisely because pre-P5 databases could store the same
     pair twice. Creating it over such a database must converge, not crash the

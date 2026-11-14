@@ -6,6 +6,7 @@ persisted independently, each in its own table.
 
 from __future__ import annotations
 
+import hashlib
 from typing import Protocol
 
 from sqlalchemy import delete, or_, select
@@ -575,6 +576,18 @@ class CrossRunPairError(ValueError):
         self.claim_b_id = claim_b_id
 
 
+def _assessment_id(claim_a_id: str, claim_b_id: str) -> str:
+    """Full-fidelity id for a claim pair.
+
+    The previous scheme truncated each id to ten characters, so two different
+    pairs could collide on the primary key and the second was rejected before the
+    column-level unique index could tell them apart. Old rows keep their ids: the
+    field is a key, not part of any identity or trace.
+    """
+    digest = hashlib.sha1(f"{claim_a_id}|{claim_b_id}".encode("utf-8")).hexdigest()
+    return f"con_{digest[:16]}"
+
+
 class SqlContradictionRepository:
     def __init__(self, session: Session) -> None:
         self._s = session
@@ -582,7 +595,7 @@ class SqlContradictionRepository:
     def create(self, a: ContradictionAssessment) -> ContradictionAssessment:
         self._s.add(
             t.ContradictionAssessmentRow(
-                id=f"con_{a.claim_a_id[:10]}_{a.claim_b_id[:10]}",
+                id=_assessment_id(a.claim_a_id, a.claim_b_id),
                 claim_a_id=a.claim_a_id,
                 claim_b_id=a.claim_b_id,
                 relationship=a.relationship.value,
