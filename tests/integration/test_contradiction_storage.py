@@ -8,7 +8,11 @@ from sqlalchemy.exc import IntegrityError
 from research_os.domain.enums import ClaimStatus, ConfidenceLabel, ContradictionType
 from research_os.domain.models import Claim, ContradictionAssessment
 from research_os.storage.database import init_db, session_factory
-from research_os.storage.repositories import SqlClaimRepository, SqlContradictionRepository
+from research_os.storage.repositories import (
+    CrossRunPairError,
+    SqlClaimRepository,
+    SqlContradictionRepository,
+)
 
 
 @pytest.fixture()
@@ -96,7 +100,7 @@ def test_replace_rejects_a_pair_from_another_run(session):
     _seed(session, "run_1", ("c1",))
     _seed(session, "run_2", ("c2",))
 
-    with pytest.raises(ValueError, match="cross_run_pair"):
+    with pytest.raises(CrossRunPairError, match="cross_run_pair"):
         SqlContradictionRepository(session).replace_for_run("run_1", [_assessment("c1", "c2")])
 
 

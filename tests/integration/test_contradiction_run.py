@@ -100,8 +100,8 @@ class _CrossRunAssessor:
     """Assessor that always returns one pair whose B side belongs to another run.
 
     Driving the real repository rather than faking `replace_for_run` matters: the
-    test has to fail if the repository's message and the supervisor's exception
-    type ever drift apart.
+    test fails if the repository stops raising `CrossRunPairError`, because a bare
+    ValueError would escape `run_vertical_slice` and the run would never complete.
     """
 
     def assess(self, claims):
@@ -132,9 +132,11 @@ def test_cross_run_rejection_is_logged_and_the_run_survives(session, tmp_path):
     result = _slice(supervisor, paper, tmp_path)
 
     events = SqlEventRepository(session).list_by_run(result["run_id"])
-    failures = [e for e in events if e.event_type is EventType.FAILURE]
+    failures = [
+        e for e in events
+        if e.event_type is EventType.FAILURE and e.failure_type is FailureType.CROSS_RUN_PAIR
+    ]
     assert len(failures) == 1
-    assert failures[0].failure_type is FailureType.CROSS_RUN_PAIR
     assert failures[0].payload["claim_b_id"] == "c_from_another_run"
     assert failures[0].payload["dropped"] == 1
 
@@ -143,4 +145,22 @@ def test_cross_run_rejection_is_logged_and_the_run_survives(session, tmp_path):
     assert assessed[0].payload["dropped"] == 1
 
     assert result["status"] == "COMPLETED"
-    assert SqlContradictionRepository(session).list_by_run(result["run_id"]) == []
+    assert SqlContradictionRepository(session).list_all() == []
+
+
+def test_a_non_cross_run_value_error_is_not_relabelled(session, tmp_path, monkeypatch):
+    """Narrowing the catch is the whole point of CrossRunPairError: pydantic's
+    ValidationError subclasses ValueError, so a wide catch would relabel a schema
+    error as a cross-run rejection and discard the batch in silence."""
+    from research_os.storage.repositories import SqlContradictionRepository
+
+    def explode(self, run_id, items):
+        raise ValueError("ValidationError: something else entirely")
+
+    monkeypatch.setattr(SqlContradictionRepository, "replace_for_run", explode)
+
+    paper = tmp_path / "paper.md"
+    paper.write_text(PAPER_BODY, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="something else entirely"):
+        _slice(Supervisor(session), paper, tmp_path)
