@@ -31,7 +31,7 @@ ALIASES = {
     "INSUFFICIENT_EVIDENCE": "INSUFF",
     "SKIPPED": "SKIPPED",
 }
-FIXTURE = Path("tests/fixtures/contradiction/pairs.json")
+FIXTURE = Path(__file__).resolve().parents[1] / "tests" / "fixtures" / "contradiction" / "pairs.json"
 # The pair sources the report splits on. Every source must be listed here: the
 # per-subset tables are drawn from this tuple, so a source missing from it would
 # be counted in the overall matrix only.

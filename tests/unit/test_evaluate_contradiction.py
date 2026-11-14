@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from scripts.evaluate_contradiction import summarise
+from scripts.evaluate_contradiction import FIXTURE, evaluate, summarise
 
 
 def test_precision_and_recall_are_reported_for_true_contradiction():
@@ -51,11 +51,7 @@ def test_pairing_level_exclusions_are_not_counted_as_wrong():
     """p17 and p18 are `null` because pairing never produced the pair. That is a
     different fact from "the cascade judged it and declined" - both are silence,
     but only one of them is the cascade's decision."""
-    from pathlib import Path
-
-    from scripts.evaluate_contradiction import evaluate
-
-    rows = {row["id"]: row for row in evaluate(Path("tests/fixtures/contradiction/pairs.json"))}
+    rows = {row["id"]: row for row in evaluate(FIXTURE)}
 
     assert rows["p17"]["actual"] is None
     assert rows["p18"]["actual"] is None
@@ -99,10 +95,21 @@ def test_the_fixture_set_matches_the_cascade_it_pins():
     """This is a regression lock, not a quality measure: the labels were derived
     from the same rules, so agreement proves the rules still behave as written,
     never that they are right."""
-    from pathlib import Path
-
-    from scripts.evaluate_contradiction import evaluate
-
-    wrong = [r for r in evaluate(Path("tests/fixtures/contradiction/pairs.json")) if r["expected"] != r["actual"]]
+    wrong = [r for r in evaluate(FIXTURE) if r["expected"] != r["actual"]]
 
     assert wrong == []
+
+
+def test_the_fixture_path_does_not_depend_on_the_working_directory(monkeypatch, tmp_path):
+    """The suite used to be green only when run from the repository root.
+
+    The script resolved `tests/fixtures/...` relatively, so running the same file
+    from another directory failed with FileNotFoundError while looking like a code
+    bug.
+    """
+    assert FIXTURE.is_absolute()
+    assert FIXTURE.exists()
+
+    monkeypatch.chdir(tmp_path)
+    assert FIXTURE.exists()
+    assert evaluate(FIXTURE)
