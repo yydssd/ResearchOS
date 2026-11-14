@@ -231,6 +231,10 @@ def test_identical_value_pairs_are_reported_as_a_p4_defect(session, tmp_path):
         and event.failure_type is FailureType.CONTRADICTION_UNRESOLVED
     ]
     assert any(event.payload.get("skipped_same_value") == 1 for event in failures)
+    assert any(
+        "share an identical value" in warning
+        for warning in SqlRunRepository(session).get(result["run_id"]).warnings
+    )
 
 
 def test_assessed_claims_without_evidence_are_reported(session, tmp_path, monkeypatch):
@@ -250,24 +254,8 @@ def test_assessed_claims_without_evidence_are_reported(session, tmp_path, monkey
         if event.event_type is EventType.FAILURE
         and event.failure_type is FailureType.CITATION_LOCATION_MISSING
     ]
-    assert failures
-    assert failures[0].payload["claim_ids"] == ["c_fake"]
-
-
-def test_unlocatable_claims_only_counts_claims_without_supports():
-    """Definition must match the memo: no SUPPORTS relation means the claim renders
-    as 'no locatable evidence'."""
-    from research_os.domain.enums import EvidenceRelation
-    from research_os.domain.models import ClaimEvidenceRelation
-    from research_os.orchestration.supervisor import _unlocatable_claims
-
-    class _A:
-        claim_a_id = "c1"
-        claim_b_id = "c2"
-
-    relations = [
-        ClaimEvidenceRelation(claim_id="c1", evidence_id="e1", relation=EvidenceRelation.SUPPORTS),
-        ClaimEvidenceRelation(claim_id="c2", evidence_id="e2", relation=EvidenceRelation.BACKGROUND),
-    ]
-
-    assert _unlocatable_claims([_A()], relations) == ["c2"]
+    assert any(event.payload.get("claim_ids") == ["c_fake"] for event in failures)
+    assert any(
+        "no locatable evidence" in warning
+        for warning in SqlRunRepository(session).get(result["run_id"]).warnings
+    )

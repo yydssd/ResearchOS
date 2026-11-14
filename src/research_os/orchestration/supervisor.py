@@ -71,13 +71,15 @@ def _unlocatable_claims(assessments, relations) -> list[str]:
     "no locatable evidence", so the event and the prose cannot disagree.
     """
     involved = {cid for item in assessments for cid in (item.claim_a_id, item.claim_b_id)}
+    # `==` rather than `is`: the enum is a StrEnum, and an upstream row that
+    # carries the bare string "SUPPORTS" must not be silently treated as
+    # unsupported. The memo compares the same way.
     supported = {
         relation.claim_id
         for relation in relations
-        if relation.relation is EvidenceRelation.SUPPORTS
+        if relation.relation == EvidenceRelation.SUPPORTS
     }
     return sorted(cid for cid in involved if cid not in supported)
-
 
 
 class Supervisor:
@@ -394,6 +396,10 @@ class Supervisor:
         # here on purpose: P4 owns status and confidence, P5 only relates them.
         assess_task = create_task(self._session, run.id, TaskType.CHECK_CONTRADICTION)
         assessments, stats = self._assessor.assess(claims)
+        # Computed before the write because the cross-run branch below empties
+        # `assessments`; the run that most needs "evidence is not locatable" is
+        # exactly the one whose batch was rejected.
+        unlocatable = _unlocatable_claims(assessments, relations)
         dropped = 0
         try:
             replaced = SqlContradictionRepository(self._session).replace_for_run(run.id, assessments)
@@ -444,7 +450,7 @@ class Supervisor:
             self._log(
                 run.id,
                 EventType.FAILURE,
-                f"{stats.skipped_same_value} pairs share an identical value",
+                f"{stats.skipped_same_value} pair(s) share an identical value",
                 {"skipped_same_value": stats.skipped_same_value},
                 failure_type=FailureType.CONTRADICTION_UNRESOLVED,
             )
@@ -453,7 +459,6 @@ class Supervisor:
             )
             SqlRunRepository(self._session).update(run)
 
-        unlocatable = _unlocatable_claims(assessments, relations)
         if unlocatable:
             # The memo already prints "no locatable evidence" next to such a claim,
             # but prose is not queryable; the event makes the same gap filterable

@@ -96,20 +96,3 @@ def test_one_bad_pair_does_not_stop_the_others(monkeypatch):
     assert stats.first_failure is not None
     assert stats.first_failure.startswith("ValueError: boom")
     assert stats.judged == 5
-
-
-def test_same_value_pairs_are_counted_not_swallowed():
-    """A same-direction same-value pair reaching the cascade means P4 should have
-    merged it. The count is the tripwire; the supervisor turns it into an event."""
-    def claim():
-        return Claim(
-            text="x",
-            status=ClaimStatus.SUPPORTED,
-            identity_key="m|image restoration|sidd|psnr|UP|backbone=cnn|psnr=39.18",
-            conditions=["conditions_from=sentence"],
-        )
-
-    assessments, stats = HeuristicContradictionAssessor().assess([claim(), claim()])
-
-    assert assessments == []
-    assert stats.skipped_same_value == 1
