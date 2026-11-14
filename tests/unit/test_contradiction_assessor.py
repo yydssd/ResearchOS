@@ -7,6 +7,8 @@ exactly one bucket (P5 spec §5).
 
 from __future__ import annotations
 
+import pytest
+
 from research_os.domain.enums import ClaimStatus
 from research_os.domain.models import Claim
 from research_os.research.contradiction import HeuristicContradictionAssessor
@@ -96,3 +98,53 @@ def test_one_bad_pair_does_not_stop_the_others(monkeypatch):
     assert stats.first_failure is not None
     assert stats.first_failure.startswith("ValueError: boom")
     assert stats.judged == 5
+
+
+def test_pairs_missing_only_a_metric_are_counted_as_such():
+    """The missing-dataset branch used to catch these too, so the metric counter
+    could have been wired to the wrong branch and no test would notice."""
+    from research_os.domain.enums import ClaimStatus
+    from research_os.domain.models import Claim
+
+    def claim(metric):
+        # Same subject/task/dataset; one side simply has no metric recorded.
+        key = f"m|image restoration|sidd|{metric}||backbone=cnn|"
+        return Claim(
+            text="x",
+            status=ClaimStatus.SUPPORTED,
+            identity_key=key,
+            conditions=["conditions_from=sentence"],
+        )
+
+    assessments, stats = HeuristicContradictionAssessor().assess([claim(""), claim("psnr")])
+
+    assert assessments == []
+    assert stats.skipped_missing_metric == 1
+    assert stats.skipped_missing_dataset == 0
+
+
+def test_truncation_is_counted_and_shrinks_the_coverage_denominator(monkeypatch):
+    """MAX_PAIRS is 50 000 in production, so `skipped_cap` was untestable and could
+    have stayed at zero forever."""
+    import research_os.research.contradiction as module
+    from research_os.domain.enums import ClaimStatus
+    from research_os.domain.models import Claim
+
+    monkeypatch.setattr(module, "MAX_PAIRS", 2)
+
+    def claim(direction, bucket):
+        key = f"m|image restoration|sidd|psnr|{direction}|backbone=cnn|{bucket}"
+        return Claim(
+            text="x",
+            status=ClaimStatus.SUPPORTED,
+            identity_key=key,
+            conditions=["conditions_from=sentence"],
+        )
+
+    claims = [claim("UP", "psnr=1"), claim("LEVEL", "psnr=1"), claim("DOWN", "psnr=1")]
+    _, stats = module.HeuristicContradictionAssessor().assess(claims)
+
+    assert stats.total_before_cap == 3
+    assert stats.skipped_cap == 1
+    assert stats.evaluated == 2
+    assert stats.coverage == pytest.approx(2 / 3)

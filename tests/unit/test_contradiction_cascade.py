@@ -67,6 +67,19 @@ def test_metric_without_overlap_is_experimental_incompatibility():
     assert _relationship(a, b) == ContradictionType.EXPERIMENTAL_INCOMPATIBILITY
 
 
+def test_different_conditions_with_the_same_direction_are_complementary():
+    """Row 3 has two arms: opposite directions give SCOPE_DIFFERENCE (covered),
+    same direction gives COMPLEMENTARY (not covered). Without this the
+    same-direction arm could return anything."""
+    a = _claim(direction="UP", conditions="backbone=transformer", conditions_from="sentence")
+    b = _claim(
+        direction="UP", conditions="backbone=cnn", conditions_from="sentence",
+        bucket="psnr=38.5",
+    )
+
+    assert _relationship(a, b) == ContradictionType.COMPLEMENTARY
+
+
 def test_missing_conditions_means_insufficient_evidence_not_a_contradiction():
     """Empty conditions on both sides only prove the extractor found nothing."""
     a = _claim(direction="UP", conditions="")
