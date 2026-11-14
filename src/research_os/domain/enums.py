@@ -1,0 +1,140 @@
+"""Domain enums for ResearchOS.
+
+All enum values follow the implementation plan (ResearchOS-Implementation-Plan.md).
+"""
+
+from enum import StrEnum
+
+
+class SourceType(StrEnum):
+    PDF = "pdf"
+    HTML = "html"
+    MARKDOWN = "markdown"
+    README = "readme"
+    ARXIV = "arxiv"
+    CONFERENCE = "conference"
+    REPOSITORY = "repository"
+    WEB = "web"
+
+
+class SourceTier(StrEnum):
+    """Discovery metadata describing how authoritative a version looks (plan §8).
+
+    Deliberately NOT a global ranking: authority depends on the claim being
+    evaluated (proceedings prove publication status, a repository proves
+    implementation details). Use it to pick a canonical version, never to decide
+    whether a claim is true.
+    """
+
+    OFFICIAL_PUBLICATION = "OFFICIAL_PUBLICATION"
+    PREPRINT = "PREPRINT"
+    REPOSITORY = "REPOSITORY"
+    WEB = "WEB"
+    UNKNOWN = "UNKNOWN"
+
+
+class EvidenceType(StrEnum):
+    TEXT = "text"
+    QUANTITATIVE = "quantitative"
+    TABLE = "table"
+    FIGURE = "figure"
+
+
+class ClaimStatus(StrEnum):
+    SUPPORTED = "SUPPORTED"
+    PARTIALLY_SUPPORTED = "PARTIALLY_SUPPORTED"
+    DISPUTED = "DISPUTED"
+    UNSUPPORTED = "UNSUPPORTED"
+    REJECTED = "REJECTED"
+    UNKNOWN = "UNKNOWN"
+
+
+class ConfidenceLabel(StrEnum):
+    HIGH = "HIGH"
+    MEDIUM = "MEDIUM"
+    LOW = "LOW"
+    DISPUTED = "DISPUTED"
+
+
+class ClaimType(StrEnum):
+    FACTUAL = "factual"
+    COMPARATIVE = "comparative"
+    CAUSAL = "causal"
+    MECHANISTIC = "mechanistic"
+    METHODOLOGICAL = "methodological"
+
+
+class EvidenceRelation(StrEnum):
+    SUPPORTS = "SUPPORTS"
+    CONTRADICTS = "CONTRADICTS"
+    QUALIFIES = "QUALIFIES"
+    BACKGROUND = "BACKGROUND"
+    UNRELATED = "UNRELATED"
+
+
+class ContradictionType(StrEnum):
+    TRUE_CONTRADICTION = "TRUE_CONTRADICTION"
+    SCOPE_DIFFERENCE = "SCOPE_DIFFERENCE"
+    EXPERIMENTAL_INCOMPATIBILITY = "EXPERIMENTAL_INCOMPATIBILITY"
+    COMPLEMENTARY = "COMPLEMENTARY"
+    INSUFFICIENT_EVIDENCE = "INSUFFICIENT_EVIDENCE"
+
+
+class TaskType(StrEnum):
+    DECOMPOSE_QUESTION = "DECOMPOSE_QUESTION"
+    DISCOVER_SOURCES = "DISCOVER_SOURCES"
+    VERIFY_SOURCE = "VERIFY_SOURCE"
+    READ_SOURCE = "READ_SOURCE"
+    EXTRACT_EVIDENCE = "EXTRACT_EVIDENCE"
+    BUILD_CLAIM = "BUILD_CLAIM"
+    CHECK_CONTRADICTION = "CHECK_CONTRADICTION"
+    SEARCH_COUNTEREVIDENCE = "SEARCH_COUNTEREVIDENCE"
+    REVIEW_FINDING = "REVIEW_FINDING"
+
+
+class TaskStatus(StrEnum):
+    PENDING = "PENDING"
+    RUNNING = "RUNNING"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+
+
+class RunStatus(StrEnum):
+    CREATED = "CREATED"
+    PLANNING = "PLANNING"
+    RESEARCHING = "RESEARCHING"
+    SYNTHESIZING = "SYNTHESIZING"
+    REVIEWING = "REVIEWING"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+    PAUSED = "PAUSED"
+
+
+class EventType(StrEnum):
+    RUN_CREATED = "RUN_CREATED"
+    RUN_STATE_CHANGED = "RUN_STATE_CHANGED"
+    TASK_STARTED = "TASK_STARTED"
+    TASK_COMPLETED = "TASK_COMPLETED"
+    TASK_FAILED = "TASK_FAILED"
+    SOURCE_DISCOVERED = "SOURCE_DISCOVERED"
+    SOURCE_VERIFIED = "SOURCE_VERIFIED"
+    EVIDENCE_EXTRACTED = "EVIDENCE_EXTRACTED"
+    CLAIM_BUILT = "CLAIM_BUILT"
+    CONTRADICTION_ASSESSED = "CONTRADICTION_ASSESSED"
+    FAILURE = "FAILURE"
+    BUDGET_WARNING = "BUDGET_WARNING"
+    BUDGET_EXCEEDED = "BUDGET_EXCEEDED"
+
+
+class FailureType(StrEnum):
+    NETWORK_ERROR = "NETWORK_ERROR"
+    SOURCE_UNAVAILABLE = "SOURCE_UNAVAILABLE"
+    SOURCE_IDENTITY_AMBIGUOUS = "SOURCE_IDENTITY_AMBIGUOUS"
+    PDF_PARSE_ERROR = "PDF_PARSE_ERROR"
+    MODEL_SCHEMA_ERROR = "MODEL_SCHEMA_ERROR"
+    CITATION_LOCATION_MISSING = "CITATION_LOCATION_MISSING"
+    INSUFFICIENT_EVIDENCE = "INSUFFICIENT_EVIDENCE"
+    SEARCH_STAGNATION = "SEARCH_STAGNATION"
+    BUDGET_EXCEEDED = "BUDGET_EXCEEDED"
+    CONTRADICTION_UNRESOLVED = "CONTRADICTION_UNRESOLVED"
+    CROSS_RUN_PAIR = "CROSS_RUN_PAIR"

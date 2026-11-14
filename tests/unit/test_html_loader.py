@@ -1,0 +1,153 @@
+"""HTML loader: heading-based sections with boilerplate removed (plan §15)."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+from research_os.documents.chunks import chunk_pages
+from research_os.documents.html import html_to_pages, load_html
+from research_os.documents.loader import load_document, source_type_for
+from research_os.domain.enums import SourceType
+from research_os.research.evidence_extractor import HeuristicEvidenceExtractor
+
+HTML = """<html><head><style>.x{color:red}</style><script>alert(1)</script></head>
+<body>
+<nav>menu</nav>
+<h1>Restormer</h1>
+<p>Efficient transformer for high-resolution restoration.</p>
+<h2>Results</h2>
+<p>PSNR 39.18 dB on SIDD &amp; a 0.42 dB gain on Rain100H.</p>
+<ul><li>Tested on GoPro.</li></ul>
+<footer>copyright</footer>
+</body></html>"""
+
+
+def test_html_sections_and_boilerplate_are_handled():
+    pages = html_to_pages(HTML)
+
+    assert [p.section for p in pages] == ["Restormer", "Results", "Results"]
+    assert all(
+        token not in p.text for p in pages for token in ("alert", "menu", "copyright", "color:red")
+    )
+    # entities are unescaped
+    assert any("&" in p.text for p in pages)
+    assert all(p.page_label == "html" and p.page_index == 0 for p in pages)
+
+
+def test_load_document_dispatches_html(tmp_path):
+    path = tmp_path / "page.html"
+    path.write_text(HTML, encoding="utf-8")
+
+    pages = load_document(path, "auto")
+
+    assert pages
+    assert any(p.section == "Results" for p in pages)
+    assert any("GoPro" in p.text for p in pages)
+
+
+def test_main_container_excludes_site_chrome():
+    page = """<body><div>Skip to main content</div><main>
+    <h2>Abstract</h2><p>Restormer achieves 39.18 dB PSNR on SIDD.</p></main>
+    <footer>Copyright 2026</footer></body>"""
+
+    pages = html_to_pages(page)
+
+    assert len(pages) == 1
+    assert pages[0].section == "Abstract"
+    assert "Skip to main" not in pages[0].text
+
+
+def test_source_type_detects_html_and_readme(tmp_path):
+    assert source_type_for(tmp_path / "a.html") == SourceType.HTML
+    assert source_type_for(tmp_path / "README.md") == SourceType.README
+    assert source_type_for(tmp_path / "notes.md") == SourceType.MARKDOWN
+
+
+def test_latex_echo_is_deduplicated(tmp_path):
+    """ar5iv renders ``96%96\\%`` and ``1×11\\times 1``: the rendered form is
+    immediately repeated as LaTeX source. Left in place, one number reads as two."""
+    page = (
+        "<html><body><main><p>AutoDIR gathers more than 96%96\\% of the votes.</p>"
+        "<p>We use 1×11\\times 1 convolution and a 10×10\\times patch.</p></main></body></html>"
+    )
+    path = tmp_path / "echo.html"
+    path.write_text(page, encoding="utf-8")
+
+    body = " ".join(p.text for p in load_html(path))
+
+    assert "96%96\\%" not in body
+    assert "96% of the votes" in body
+    assert "1×1 convolution" in body
+    assert "10×10 patch" in body
+
+
+def test_deduplication_keeps_offsets_consistent(tmp_path):
+    page = (
+        "<html><body><p>It gathers more than 96%96\\% of the votes in the user study, "
+        "which is far ahead of every competing restoration method.</p></body></html>"
+    )
+    path = tmp_path / "echo2.html"
+    path.write_text(page, encoding="utf-8")
+
+    chunks = chunk_pages(load_html(path), "sv_echo")
+    evidence = HeuristicEvidenceExtractor().extract(chunks)
+
+    assert evidence
+    assert all(chunk.text[e.char_start : e.char_end] == e.text for chunk in chunks for e in evidence)
+
+
+def test_reference_list_is_not_evidence(tmp_path):
+    """On 20 real ar5iv papers the bibliography supplied 28% of every evidence
+    row, and 28 bibliographic entries became claims ("[13] Hadsell, R., ...").
+    A reference entry is somebody else's title, not this paper's assertion."""
+    page = (
+        "<html><body><main>"
+        "<h2>4. Results</h2><p>Our model restores Rain100H better than the baseline.</p>"
+        "<h2>References</h2>"
+        "<p>[13] Hadsell, R., Chopra, S., LeCun, Y.: Dimensionality reduction by learning "
+        "an invariant mapping.</p>"
+        "<p>[63] Wang, Z., Bovik, A.C.: Image quality assessment: from error visibility "
+        "to structural similarity.</p>"
+        "</main></body></html>"
+    )
+    path = tmp_path / "bib.html"
+    path.write_text(page, encoding="utf-8")
+
+    body = " ".join(p.text for p in load_html(path))
+
+    assert "restores Rain100H better" in body
+    assert "Dimensionality reduction" not in body
+    assert "structural similarity" not in body
+
+
+def test_numbered_bibliography_heading_is_recognised_too(tmp_path):
+    """ar5iv emits "References" and "Bibliography" with and without numbering."""
+    for heading in ("Bibliography", "VII. References", "7 References"):
+        page = (
+            f"<html><body><main><h2>Results</h2><p>It is 0.4 dB better on SIDD.</p>"
+            f"<h2>{heading}</h2><p>[1] Someone, A.: An unrelated paper title.</p>"
+            f"</main></body></html>"
+        )
+        path = tmp_path / f"bib_{heading.replace(' ', '_').replace('.', '')}.html"
+        path.write_text(page, encoding="utf-8")
+
+        body = " ".join(p.text for p in load_html(path))
+
+        assert "0.4 dB better" in body
+        assert "unrelated paper title" not in body, heading
+
+
+def test_appendix_survives_the_bibliography_filter(tmp_path):
+    """Appendices hold real experiments; only the bibliography is dropped."""
+    page = (
+        "<html><body><main><h2>References</h2><p>[1] Someone, A.: An unrelated title.</p>"
+        "<h2>A. Appendix</h2><p>We additionally ablate the patch size on SIDD.</p>"
+        "</main></body></html>"
+    )
+    path = tmp_path / "appendix.html"
+    path.write_text(page, encoding="utf-8")
+
+    body = " ".join(p.text for p in load_html(path))
+
+    assert "ablate the patch size" in body
+    assert "unrelated title" not in body
