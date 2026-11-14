@@ -304,13 +304,17 @@ def _stats_lines(graph: RunGraph) -> list[str]:
         f"candidate pairs (coverage {float(stats.get('coverage', 0.0)):.0%})."
     ]
     reasons = (
-        ("failed_pairs", "failed to judge (assessor raised)"),
         ("skipped_missing_dataset", "without a dataset"),
         ("skipped_missing_metric", "without a metric"),
         ("skipped_self_prefilter", "self pairs without a dataset or metric"),
         ("skipped_same_value", "with an identical value"),
         ("skipped_cap", "over the pair cap"),
     )
+    failed = stats.get("failed_pairs", 0)
+    if failed:
+        # A raised pair was attempted and lost, not skipped: "Skipped" is the
+        # bucket this change exists to keep it out of.
+        lines.append(f"Not judged: {failed} (the assessor raised).")
     skipped = [f"{stats[key]} {label}" for key, label in reasons if stats.get(key)]
     if skipped:
         lines.append("Skipped: " + ", ".join(skipped) + ".")
@@ -326,10 +330,7 @@ def _render_contradictions(graph: RunGraph) -> list[str]:
         failed = stats.get("failed_pairs", 0)
         attempted = stats.get("evaluated", 0)
         if failed:
-            lines.append(
-                f"{failed} of {attempted} attempted pairs failed to judge; "
-                "see the run's failure events."
-            )
+            lines.append("No pair produced a judgement; see the run's failure events.")
         elif attempted:
             # "Assessed 10 of 10" followed by "nothing was comparable" would
             # contradict itself: the pairs WERE comparable, the cascade declined.

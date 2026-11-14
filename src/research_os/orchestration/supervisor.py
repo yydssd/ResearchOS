@@ -417,7 +417,8 @@ class Supervisor:
             run.id,
             EventType.CONTRADICTION_ASSESSED,
             f"{len(assessments)} assessments written from {stats.evaluated} pairs"
-            + (f" ({dropped} dropped)" if dropped else ""),
+            + (f" ({dropped} dropped)" if dropped else "")
+            + (f" ({stats.failed_pairs} failed)" if stats.failed_pairs else ""),
             {
                 "assessments": len(assessments),
                 "total_before_cap": stats.total_before_cap,

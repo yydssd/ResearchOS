@@ -204,6 +204,8 @@ def test_failed_pairs_are_reported_in_an_event(session, tmp_path, monkeypatch):
     assert assessed[0].payload["judged"] == 0
 
     # The memo is rendered from that payload: claiming 100% coverage while every
-    # pair went unjudged is worse than saying nothing.
+    # pair went unjudged is worse than saying nothing. "Skipped" is the bucket a
+    # raised pair must stay out of, so both halves are asserted.
     assert "Assessed 0 of 1 candidate pairs" in result["memo"]
-    assert "failed to judge" in result["memo"]
+    assert "Not judged: 1" in result["memo"]
+    assert "Skipped: 1 failed to judge" not in result["memo"]

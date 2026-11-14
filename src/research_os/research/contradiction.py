@@ -41,8 +41,13 @@ class PairingStats:
 
     @property
     def judged(self) -> int:
-        """Pairs that produced a verdict. `evaluated` counts attempted pairs, which
-        includes the ones the assessor raised on."""
+        """Pairs the assessor did not raise on.
+
+        Scope skips are included: this subtracts only pairs that failed, and is
+        the denominator behind `coverage`. A pair skipped for a missing dataset
+        was still attempted and still cannot produce a comparison, which is what
+        coverage measures.
+        """
         return max(self.evaluated - self.failed_pairs, 0)
 
     @property
@@ -280,7 +285,11 @@ class HeuristicContradictionAssessor:
                 name = type(exc).__name__
                 stats.failed_by_error[name] = stats.failed_by_error.get(name, 0) + 1
                 if stats.first_failure is None:
-                    stats.first_failure = f"{name}: {exc} [{a.id} vs {b.id}]"
+                    detail = str(exc)
+                    stats.first_failure = (
+                        f"{name}: {detail[:500]}{'…' if len(detail) > 500 else ''}"
+                        f" [{a.id} vs {b.id}]"
+                    )
                 continue
             if result is None:
                 if _datasets(a) and _datasets(b) and _metrics(a) and _metrics(b):
