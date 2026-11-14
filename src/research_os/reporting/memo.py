@@ -315,6 +315,11 @@ def _stats_lines(graph: RunGraph) -> list[str]:
         # A raised pair was attempted and lost, not skipped: "Skipped" is the
         # bucket this change exists to keep it out of.
         lines.append(f"Not judged: {failed} (the assessor raised).")
+    dropped = stats.get("dropped", 0)
+    if dropped:
+        # The batch was refused as cross-run: nothing was written, and calling that
+        # "skipped" would blame the cascade for a storage problem.
+        lines.append(f"Not written: {dropped} (rejected as cross-run).")
     skipped = [f"{stats[key]} {label}" for key, label in reasons if stats.get(key)]
     if skipped:
         lines.append("Skipped: " + ", ".join(skipped) + ".")
@@ -327,9 +332,15 @@ def _render_contradictions(graph: RunGraph) -> list[str]:
     lines.extend(_stats_lines(graph))
     if not graph.assessments:
         stats = graph.assessment_stats
+        dropped = stats.get("dropped", 0)
         failed = stats.get("failed_pairs", 0)
         attempted = stats.get("evaluated", 0)
-        if failed:
+        if dropped:
+            lines.append(
+                f"{dropped} assessment(s) were rejected as cross-run; "
+                "see the run's failure events."
+            )
+        elif failed:
             lines.append("No pair produced a judgement; see the run's failure events.")
         elif attempted:
             # "Assessed 10 of 10" followed by "nothing was comparable" would

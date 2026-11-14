@@ -149,6 +149,9 @@ def test_cross_run_rejection_is_logged_and_the_run_survives(session, tmp_path):
     assert result["status"] == "COMPLETED"
     assert SqlContradictionRepository(session).list_all() == []
 
+    assert "Not written: 1 (rejected as cross-run)." in result["memo"]
+    assert "Skipped:" not in result["memo"].split("# Contradictions")[1].split("##")[0]
+
 
 def test_a_non_cross_run_value_error_is_not_relabelled(session, tmp_path, monkeypatch):
     """Narrowing the catch is the whole point of CrossRunPairError: pydantic's

@@ -44,12 +44,12 @@ def _seed(session, run_id: str, ids: tuple[str, str]) -> None:
 
 
 def test_unique_index_exists_on_the_pair(session):
-    """A primary key on a truncated pair id is not a constraint on the pair.
+    """A primary key on a derived row id is not a constraint on the pair.
 
-    The row id is `con_<a[:10]>_<b[:10]>`, so two distinct pairs sharing their
-    first ten characters collide by accident while a genuine duplicate is caught
-    for the wrong reason. The uniqueness we rely on has to be declared on the
-    columns themselves.
+    The row id is `con_` plus the first 16 hex digits of a sha1 digest of the
+    pair, so it does not encode the pair itself: a collision would reject a
+    genuine pair while a duplicate could still look distinct. The uniqueness we
+    rely on has to be declared on the columns themselves.
     """
     from sqlalchemy import text
 
@@ -167,10 +167,11 @@ def test_replace_cleans_rows_anchored_in_another_run(session):
 
 
 def test_two_distinct_pairs_sharing_a_prefix_are_both_stored(session):
-    """The row id used to be con_<a[:10]>_<b[:10]>. Two genuinely different pairs
-    whose claim ids share ten characters collided on the primary key and the
-    second was rejected as a duplicate - a false rejection no unique index on the
-    columns can repair, because the collision happens before it is consulted."""
+    """The row id used to be con_<a[:10]>_<b[:10]>, and two genuinely different
+    pairs whose claim ids shared ten characters collided on the primary key - a
+    false rejection no unique index on the columns can repair, because the
+    collision happens before it is consulted. The id is now `con_` plus the first
+    16 hex digits of a sha1 digest, so both pairs stay distinct."""
     _seed(session, "run_1", ("c_AAAAAAAA11", "c_BBBBBBBB11", "c_AAAAAAAA22", "c_BBBBBBBB22"))
     repo = SqlContradictionRepository(session)
 
