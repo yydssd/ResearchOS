@@ -100,11 +100,12 @@
 
 规则：
 
-- 标 `present` 必须附**至少一处**可定位证据：`arxiv_id` + `section` + 原句片段。
+- 标 `present` 必须附**至少一处**可定位证据：`arxiv_id` + `section`（为 `None` 时
+  以 `page_label` / `chunk_index` 替代） + 原句片段（≤40 字符）。
   `section` 取自 `load_html` / `chunk_pages` 产出的 chunk 章节字段，与系统侧同一套来源。
 - **边界兜底**（审验 N4）：`html.py:66` 的 `_section` 初值为 `None`、仅由 heading 赋值，
-  无标题 HTML 可能产出 `section is None` 的 chunk。此时证据必须改附 `page_label`
-  或 `chunk_index` 并在报告中标注「无标题」。「≤40 字符」指 **Unicode 字符**，
+  无标题 HTML 可能产出 `section is None` 的 chunk。此时按上一条替代定位，
+  并在报告中标注「无标题」。「≤40 字符」指 **Unicode 字符**，
   片段须为该句内唯一可定位子串。
 - `ambiguous` **不计入 present**，单独列数，不并入任何比率。把「暗示」当「给出」会抬高分母。
 - 标注只回答「论文有没有给出」，**不回答「系统抽得对不对」**。
@@ -126,7 +127,6 @@
 
 ```json
 {
-  "corpus": {"image_restoration": ["2310.18293"], "agent_in_mc": ["2605.27762"]},
   "labels": [
     {
       "arxiv_id": "2605.27762",
@@ -147,7 +147,9 @@
 
 `label ∈ {present, absent, ambiguous}`；`label=present` 时 `evidence` 至少一条；
 每条 evidence 的 `section` 为 `null` 时必须有 `page_label` 或 `chunk_index`；
-`quote` ≤40 Unicode 字符。上例只示意结构，`corpus` 与 `labels` 实为 40 个 id。
+`quote` ≤40 Unicode 字符。`labels` 是脚本的**唯一输入**，不另设 id 清单；
+`domain` 取 `image_restoration` / `agent_in_mc` 二值；脚本须断言其中 `arxiv_id`
+唯一且恰为 40 个，避免两份清单漂移。上例只示意结构，实为 40 个对象。
 
 ## 5. 系统侧覆盖的判定映射
 
@@ -162,8 +164,7 @@
 
 **L4 不认领 `QuantitativeEvidence.protocol`**（审验 I1）：该字段存的是数值单位而非
 评测协议，计入 `covered` 会把单位标记冒充为 L4 覆盖、系统性抬高 `C(L4)`，且与 §2
-「evaluation protocol 无落点」自相矛盾。若实现中仍需观察该字段，只能单列「单位标记
-计数」，不并入 `covered`。
+「evaluation protocol 无落点」自相矛盾。**该字段不参与本次度量。**
 
 「覆盖」定义为：该篇存在至少一个可追溯到该篇、且属于上表认领对象的产出。
 不使用关键词命中、章节标题猜测或任何近似信号来推断覆盖——那是用不可靠信号替代证据。
@@ -188,8 +189,8 @@ L1 的 `covered` **以 `structured` 为准**：`proxy`（claim subject）只单�
   不作趋势解读。只报裸百分比会把 `1/1=100%` 读成「覆盖充分」。
 - 当 `present(l,d) = 0` 时，`C(l,d)` 记 `N/A`，**不写 0% 也不写 100%**。
 - L1 额外单列 `proxy` 计数，不并入 `C`；`ambiguous` 单列，不并入任何比率。
-- 本报告的「系统覆盖率 C」与项目既有的 `coverage`（`judged/total_before_cap`）
-  **不是同一指标、分母不同**，报告须显式声明两者无关。
+- 本报告的「系统覆盖率 C」与项目既有的 `coverage` **不是同一指标、分母不同**，
+  报告须显式声明两者无关，不重新解释既有口径。
 - 报告禁止出现「准确率 / quality / agreement / 正确率」等词；本次不建 gold label，
   因此任何正确率都无从谈起。
 - 既有 `coverage 100%` 的口径问题（把 scope skip 算进 `judged`）属于**另一个独立议题**，
