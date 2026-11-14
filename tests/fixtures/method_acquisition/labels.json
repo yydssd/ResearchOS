@@ -1398,8 +1398,15 @@
       "domain": "agent_in_mc",
       "layers": {
         "L1": {
-          "label": "ambiguous",
-          "evidence": []
+          "label": "present",
+          "evidence": [
+            {
+              "section": "7 Conclusion",
+              "page_label": "html",
+              "chunk_index": 1137,
+              "quote": "This work presented LangProp"
+            }
+          ]
         },
         "L2": {
           "label": "present",

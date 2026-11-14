@@ -19,8 +19,8 @@
 - 两个时刻均由 `date` 实取：本机 `date` 直接输出 `+0800`，并以 `TZ='UTC-8' date`
   （POSIX 东八区）与 `date -u` 交叉核对一致；`TZ='Asia/Shanghai'` 在本机无 tzdata、
   显示 `+0000`，故不采用。未做任何推算或编造。
-- 后两次都是**对已冻结标签的重新判定**，不是新一轮独立标注，因此没有新的独立标注
-  起止时间；三次判读沿用同一批 HTML 原文与同一批 owner 侧判读。
+- 后三次都是**对已冻结标签的重新判定**，不是新一轮独立标注，因此没有新的独立标注
+  起止时间；历次判读沿用同一批 HTML 原文与同一批 owner 侧判读。
 
 ## 隔离顺序
 
@@ -29,16 +29,20 @@
 2. 第一次修订（提交 `93c3174`）：**坦白，方向错了**。它把「首次挑的那条 quote
    不合格」当成「论文没有该层信息」，把 13 格 L4 直接改判 `ambiguous`/`absent`，
    没有全文重新取证；复审判 Approved: NO。
-3. 本次修订：按 §4 对 14 格**扫该篇全部 chunks 重新取证**（去掉 `chunks[:40]`
-   限制），找到 §4 五类具体值就换 `evidence`、保持/恢复 `present`；全文确实找不到
-   才保留非 present 并写出核查记录。以 **新提交** 修订，保留 `424c976` 与
-   `93c3174` 历史。冻结之后才实现 / 运行 `scripts/method_acquisition_audit.py`
-   （本次修订期间该文件仍不存在，也未被读取或运行）。
-4. 顺序可用 `git log --oneline -- tests/fixtures/method_acquisition/` 复核：该路径
-   按时间先后应列出 `424c976`、`93c3174` 与「本次修订的最新一条提交」；具体 SHA 以
-   该命令实际输出为准，本文不写自引用的当前提交号。
+3. 第二次修订（提交 `078dd91`）：按 §4 对 14 格**扫该篇全部 chunks 重新取证**
+   （去掉 `chunks[:40]` 限制），找到 §4 五类具体值就换 `evidence`、保持/恢复
+   `present`；全文确实找不到才保留非 present 并写出核查记录。
+4. 本次修订：第三次复审指出 `2409.19479`/L1 的命名句在结论章；按同一条「全文
+   找到就换证据、label 保持 `present`」纪律，回查该篇 ci=1137 `7 Conclusion`
+   的 `This work presented LangProp`，把该格由 `ambiguous` 改回 `present`。以
+   **新提交** 修订，保留 `424c976` / `93c3174` / `078dd91` 历史。冻结之后才
+   实现 / 运行 `scripts/method_acquisition_audit.py`（本次修订期间该文件仍不存在，
+   也未被读取或运行）。
+5. 顺序可用 `git log --oneline -- tests/fixtures/method_acquisition/` 复核：该路径
+   按时间先后应列出 `424c976`、`93c3174`、`078dd91` 与「本次修订的最新一条提交」；
+   具体 SHA 以该命令实际输出为准，本文不写自引用的当前提交号。
 
-隔离禁令在三次判读中一直有效：禁止读取或 import `src/research_os/research/claims.py`、
+隔离禁令在历次判读中一直有效：禁止读取或 import `src/research_os/research/claims.py`、
 `quantitative.py`、`conditions.py`、`claim_builder.py`、`lexicon.py`；禁止运行任何会
 产出 claims / quantitative_evidence / identity_key / conditions 的 pipeline；禁止读取
 或运行 `scripts/method_acquisition_audit.py`。全程未触碰上述文件或产出，也未读取
@@ -93,7 +97,10 @@ label 保持 `present`；**全文确实找不到**才判 `absent` 或 `ambiguous
   一致。它**不证明**判据符合性；把 `ALL OK` 当作「判据已满足」是错误的。
 - **判据符合性**（本次新增）：逐格人工重读证据句，判断其是否真的给出该层要求的
   信息；对 14 格进一步扫该篇**全部 chunks** 重新取证，让 `label` 回答「论文有没有
-  给出该层信息」，而不是「首次挑的那条 quote 合不合格」。
+  给出该层信息」，而不是「首次挑的那条 quote 合不合格」。本次第三次复审又对
+  `2409.19479`/L1 沿用同一纪律：该篇 1555 chunks 已全扫，在 ci=1137
+  `7 Conclusion` 找到 `This work presented LangProp`，据以把该格由 `ambiguous`
+  改回 `present`。
 
 审验独立回查给出的分布（按首次冻结证据判定）。**口径分别标明**：`N` = 明确不满足，
 `B` = 边界（仅数据集/基准名），「含边界」= `N + B`。上次 `ANNOTATION.md` 的
@@ -136,9 +143,11 @@ label 保持 `present`；**全文确实找不到**才判 `absent` 或 `ambiguous
 
 ### 逐层重判结果
 
-- **L1**：`2409.19479`/L1 保留 `ambiguous`（`Thirdly, LangProp` 无法定位到本文提出
-  的命名句）；`2310.18293`/L1、`2404.12495`/L1 两格换含专名的命名句后保持
-  `present`；其余 36 格复核后保留 `present`。最终 **present 39 / ambiguous 1**。
+- **L1**：`2409.19479`/L1 按该篇全文 1555 chunks 复核，在 ci=1137 `7 Conclusion`
+  找到 `This work presented LangProp`（ci=436 `6 Conclusion` 另有 CALVIN 的归属
+  命名句），两句均满足 §4 L1「出现方法名且能看出是本文提出」，故由 `ambiguous`
+  改回 `present` 并换证据；`2310.18293`/L1、`2404.12495`/L1 两格换含专名的命名句
+  后保持 `present`；其余各格复核后保留 `present`。最终 **40/40 `present`**。
 - **L2**：全量复核 40 格，证据均为具体组件、模块、backbone 或流程步骤的描述，
   40/40 `present`，未触发 `ambiguous`。
 - **L3**：全量复核 40 格，证据均为机制或设计意图句，40/40 `present`，未触发
@@ -149,7 +158,7 @@ label 保持 `present`；**全文确实找不到**才判 `absent` 或 `ambiguous
 
 ## 统计
 
-总计 **158 `present` / 0 `absent` / 2 `ambiguous`**（160 格）。
+总计 **159 `present` / 0 `absent` / 1 `ambiguous`**（160 格）。
 
 | 领域 | 层 | present | absent | ambiguous |
 |---|---|---|---|---|
@@ -158,12 +167,12 @@ label 保持 `present`；**全文确实找不到**才判 `absent` 或 `ambiguous
 | image_restoration | L3 | 20 | 0 | 0 |
 | image_restoration | L4 | 19 | 0 | 1 |
 | image_restoration | 合计 | 79 | 0 | 1 |
-| agent_in_mc | L1 | 19 | 0 | 1 |
+| agent_in_mc | L1 | 20 | 0 | 0 |
 | agent_in_mc | L2 | 20 | 0 | 0 |
 | agent_in_mc | L3 | 20 | 0 | 0 |
 | agent_in_mc | L4 | 20 | 0 | 0 |
-| agent_in_mc | 合计 | 79 | 0 | 1 |
-| 全部 | 合计 | 158 | 0 | 2 |
+| agent_in_mc | 合计 | 80 | 0 | 0 |
+| 全部 | 合计 | 159 | 0 | 1 |
 
 ## 判读说明与边界样本
 
@@ -172,7 +181,8 @@ label 保持 `present`；**全文确实找不到**才判 `absent` 或 `ambiguous
   第一次修订误把「证据差」当成「事实缺失」，把 13 格直接改判；本次按 §4 全文重新
   取证后，L4 有 39/40 格的论文确实给出了具体值，而**证据已全部换成 §4 五类之一的
   真实具体值**（仓库 URL、GPU 型号、batch size / learning rate / epochs / 附录超参、
-  baseline 具体名）。
+  baseline 具体名）。第三次复审进一步指出 `2409.19479`/L1 的命名句在结论章；按
+  同一纪律回查 ci=1137 并改回 `present`，该篇四层现均为 `present`。
 - 每条 `present` 证据的可定位性仍经机械回查（`ALL OK`），但如「判据符合性自查」
   所述，该回查只证明定位性；符合性由逐格人工重读给出，见下表逐条依据。
 - `page_label` 恒为 `html`（`load_html` 对 HTML 页固定产出 `page_label="html"`），
@@ -181,9 +191,10 @@ label 保持 `present`；**全文确实找不到**才判 `absent` 或 `ambiguous
 - 边界样本：`2404.12495` 是量子金刚石显微镜仪器 / 测量论文而非 ML 方法论文（落在
   图像复原 holdout 清单里属清单噪声），L1/L2/L3 按字面判据可定位，L4 全文 120
   chunks 无 §4 五类具体值，保留 `ambiguous`；`2409.19479` 是博士论文，含 CALVIN /
-  SOAP / LangProp / Voggite 多个本文方法名，L4 有 `https://github.com/shuishida/calvin`
-  与 `{20,40,60,80,100}` 超参集合，已改回 `present`，但 L1 的 `Thirdly, LangProp`
-  孤立看仍无法定位到「本文提出」，保留 `ambiguous`；`2406.11247` 是 65-chunk 短文，
+  SOAP / LangProp / Voggite 多个本文方法名，L4 已按 `https://github.com/shuishida/calvin`
+  与 `{20,40,60,80,100}` 超参集合改回 `present`，L1 亦在 ci=1137 `7 Conclusion`
+  找到 `This work presented LangProp`（ci=436 `6 Conclusion` 另有 CALVIN 归属句），
+  该篇四层现均为 `present`；`2406.11247` 是 65-chunk 短文，
   L1 已换为 `Our STEVE Series agents`；`2601.05215`、`2504.17950`、
   `2505.12321` 是 benchmark / 平台 / 模拟器论文——其「方法」是评测框架 / 平台本身。
 - `2405.17424`/L4 按关键纪律不再用 `Keywords:` 区 URL，全文取证改取 ci=147 的
@@ -196,19 +207,20 @@ label 保持 `present`；**全文确实找不到**才判 `absent` 或 `ambiguous
 - 标注由 owner 侧同一 agent 产生，非独立、非盲标；无第二位标注者、无独立复标、
   无跨日重标，因此不存在可报告的一致率 / 正确率。
 - 判读存在主观性，尤其 L3（「机制或设计意图句」）与 L4（「具体值」是否属于列举的
-  5 类）；`ambiguous` 是主观边界的出口，本次在 L4（1 格）与 L1（1 格）触发，
-  L2/L3 复核后未触发。这不代表他人判读会得出同样结果。
+  5 类）；`ambiguous` 是主观边界的出口，本次仅在 L4（1 格）触发（L1 已回到
+  40/40 `present`），L2/L3 复核后未触发。这不代表他人判读会得出同样结果。
 - 本夹具 **不回答「系统抽得对不对」**：它只固定覆盖率 C 的分母（论文里可获取的
   方法信息）；分子（系统实际抽取）由冻结之后实现的审计脚本给出，两者不得互相参照。
-- **`A` 不再恒 100%**：`image_restoration`/L4 为 19 格 `present`、
-  `agent_in_mc`/L1 为 19 格 `present`，均小于 20，因此 `C` 的分母不再恒为 20；
-  任何按「每层 20 篇全 present」写的公式或断言都必须按本表重算。
+- **`A` 不再恒 100%**：现仅由 `image_restoration`/L4 的 19 格 `present` 单独
+  支撑（`agent_in_mc` 四层均已回到 20 格 `present`），该层小于 20，因此 `C` 的
+  分母不再恒为 20；任何按「每层 20 篇全 present」写的公式或断言都必须按本表重算。
 - **本次没有任何（领域, 层）组合 `present=0`**（最低为 19）。因此
   `present=0 → N/A` 分支在真实夹具上不触发，只由合成夹具验证；不能据此声称该
   分支已被真实语料覆盖。
-- **不得静默改数**：三次判读分别是首次冻结 `424c976`、第一次修订 `93c3174`
-  （方向错误）与本次修订（新提交），历史全部保留；不 amend、不 force push、不删
-  旧提交。`160/160`、`146/1/13`、`158/0/2` 三个版本都在
+- **不得静默改数**：四次判读分别是首次冻结 `424c976`、第一次修订 `93c3174`
+  （方向错误）、第二次修订 `078dd91`（全文重新取证）与本次修订（新提交），历史
+  全部保留；不 amend、不 force push、不删旧提交。`160/160`、`146/1/13`、
+  `158/0/2`、`159/0/1` 四个版本都在
   `git log --oneline -- tests/fixtures/method_acquisition/` 中可见，纠正以可见的
   方式完成。若后续独立复核再改判某格，须同样以新提交修订 `labels.json` 并重算覆盖率。
 - `labels.json` 顶层只有 `labels` 一个键；本夹具不另设 id 清单，`domain` 仅取
@@ -341,7 +353,7 @@ label 保持 `present`；**全文确实找不到**才判 `absent` 或 `ambiguous
 | 2606.12852 | L2 | present | 1 Introduction | `a Causal Event Graph` | 16 | — |
 | 2606.12852 | L3 | present | 1 Introduction | `the scheduler adapts to newly observed` | 10 | — |
 | 2606.12852 | L4 | present | 4.1 Experiment Setups | `four NVIDIA RTX 4080 GPUs` | 85 | — |
-| 2409.19479 | L1 | ambiguous | — | — | — | 首次证据 `Thirdly, LangProp` 孤立看是贡献列表中的一项、像引用前人，无法从该句定位到「本文提出方法」的命名句，故保留 `ambiguous`。 |
+| 2409.19479 | L1 | present | 7 Conclusion | `This work presented LangProp` | 1137 | 全文复核：ci=1137 `7 Conclusion` 的 `This work presented LangProp`（ci=436 `6 Conclusion` 另有 CALVIN 归属句），明确本文提出的方法，故由 `ambiguous` 改回 `present`。 |
 | 2409.19479 | L2 | present | Abstract | `a vision-to-action transformer backend` | 8 | — |
 | 2409.19479 | L3 | present | Abstract | `by treating code as learnable policies` | 7 | — |
 | 2409.19479 | L4 | present | 6 Implementation | `https://github.com/shuishida/calvin` | 435 | 全文重取证：ci=435 `https://github.com/shuishida/calvin`（代码仓库）；原仅竞赛名次。 |
@@ -392,15 +404,16 @@ label 保持 `present`；**全文确实找不到**才判 `absent` 或 `ambiguous
 
 ## ambiguous 单独列出
 
-本次 `ambiguous` 共 **2 格**（`absent` **0 格**），按重判后的真实统计为
-**`image_restoration` 1 格 / `agent_in_mc` 1 格**（上一版写的「12 格 IR / 1 格 MC」
-是 13 个非 present 格的旧口径，且漏了 `2409.19479`/L1，已按本次统计改正）：
+本次 `ambiguous` 共 **1 格**（`absent` **0 格**），按重判后的真实统计为
+**`image_restoration` 1 格 / `agent_in_mc` 0 格**：唯一剩余的是 `2404.12495`/L4。
+上一版「IR 1 / MC 1」中的 MC 1 格为 `2409.19479`/L1，本次已在其
+`7 Conclusion`（ci=1137）找到 `This work presented LangProp` 并改回 `present`，
+MC 四层现均为 20 格 `present`。
 
 | arxiv_id | 层 | label | 领域 | 核查记录 |
 |---|---|---|---|---|
 | 2404.12495 | L4 | ambiguous | image_restoration | 扫过 120 chunks，按五类模式命中 2 行（ci=79 GPU 拟合工具 / 数据规模、ci=119 致谢），人工核定无 §4 五类具体值 |
-| 2409.19479 | L1 | ambiguous | agent_in_mc | `Thirdly, LangProp` 孤立看像引用前人，无法定位到「本文提出方法」的命名句 |
 
 `absent` 本次 0 格：上轮唯一的 `2609.16578`/L4 已在附录 A.2.2 找到
 `γ=0.05 / τ=0.20 / β=10` 等超参，改回 `present`。`ambiguous` 出口仍真实触发
-（2 格），不再出现「声明是出口却 0 次使用」的状态。
+（1 格），不再出现「声明是出口却 0 次使用」的状态。
