@@ -616,7 +616,7 @@ for key in sorted(r["A"]):
 print("\n| 缺口成因 | 计数 |")
 print("|---|---|")
 for k, v in sorted(r["gaps"].items()):
-    print(f"| {k} | {v} |")
+    print(f"| {k.replace('|', '·')} | {v} |")
 print(f"\nproxy（claim subject，不等于 §15 的 method）：{r['proxy']}")
 print(f"ambiguous（不计入任何比率）：{r['ambiguous']}")
 PY
