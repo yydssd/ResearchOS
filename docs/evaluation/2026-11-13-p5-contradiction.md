@@ -32,17 +32,17 @@ hold-out corpus) and 14 `constructed`.
 | real | 12 | 8 | 8 | 0 | 100.0% |
 | constructed | 14 | 13 | 13 | 0 | 100.0% |
 
-`TRUE_CONTRADICTION` precision = 100.0% (5/5), recall = 100.0% (5/5).
+`TRUE_CONTRADICTION` precision = 100.0% (4/4), recall = 100.0% (4/4).
 
 Confusion (rows = expected, columns = actual):
 
 | expected \ actual | TRUE_CON | SCOPE | EXPERIM | COMPLEM | INSUFF | SKIPPED |
 |---|---|---|---|---|---|---|
-| TRUE_CONTRADICTION | 5 | 0 | 0 | 0 | 0 | 0 |
-| SCOPE_DIFFERENCE | 0 | 5 | 0 | 0 | 0 | 0 |
+| TRUE_CONTRADICTION | 4 | 0 | 0 | 0 | 0 | 0 |
+| SCOPE_DIFFERENCE | 0 | 4 | 0 | 0 | 0 | 0 |
 | EXPERIMENTAL_INCOMPATIBILITY | 0 | 0 | 3 | 0 | 0 | 0 |
-| COMPLEMENTARY | 0 | 0 | 0 | 3 | 0 | 0 |
-| INSUFFICIENT_EVIDENCE | 0 | 0 | 0 | 0 | 5 | 0 |
+| COMPLEMENTARY | 0 | 0 | 0 | 4 | 0 | 0 |
+| INSUFFICIENT_EVIDENCE | 0 | 0 | 0 | 0 | 6 | 0 |
 
 Five fixtures expect no judgement (`null`) and all five produce none. Two of them
 (p17, p18) never become candidates at all — pairing refuses a cross-document
@@ -65,11 +65,14 @@ human reading rather than from rule output. Both are fixed and pinned by
 version of this number that every entry actually earns through the rules; it is
 still not an independent agreement rate, because no blind second pass exists.
 
-What *was* independently verified: all 24 `real` sentence pairs appear verbatim
-in the arXiv HTML named in their `from` field (checked by substring search over
-`.holdout_cache/`, no edited or spliced sentences). The provenance of the labels
-themselves is not independent — see `tests/fixtures/contradiction/ANNOTATION.md`,
-where both passes carry the same annotator.
+What *was* independently verified: the 24 `real` sentences (12 pairs) appear
+verbatim in the arXiv HTML named in their `from` field (checked by substring
+search over `.holdout_cache/`, no edited or spliced sentences). The labels
+themselves have **no independent provenance** — see
+`tests/fixtures/contradiction/ANNOTATION.md`: pass 2 (the blind relabel) was
+**not performed**. What exists is one agent pass plus an owner expert review on
+2026-11-14, which is curation of machine output, not a second independent
+annotation. No independent agreement rate can be reported.
 
 ---
 
@@ -250,6 +253,11 @@ Several §9 acceptance items remain open (direction word-list blind spots,
 `FAILURE` events, three separate confusion matrices, the second blind annotation
 pass). They are listed in the review record; this report does not claim they are met.
 
+The items listed as open in the post-review note above are addressed in the
+final section below.
+
+---
+
 ## Failure events and per-subset matrices (2026-11-14)
 
 P5 now persists four kinds of failure instead of swallowing them (plan §25):
@@ -267,4 +275,4 @@ statements that were both false.
 The confusion matrix is printed three times - overall, real, constructed. The
 split makes visible what the combined table hid: every `TRUE_CONTRADICTION` hit
 comes from the constructed subset; the real row is zero across the board. That is
-the same fact the recall note below states in words, now visible in the numbers.
+the same fact the recall note in §4 states in words, now visible in the numbers.
