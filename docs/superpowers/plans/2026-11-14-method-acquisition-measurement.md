@@ -371,14 +371,14 @@ from research_os.research.claim_builder import HeuristicClaimBuilder
 from research_os.research.evidence_extractor import HeuristicEvidenceExtractor
 from research_os.research.quantitative import HeuristicQuantitativeExtractor
 
-CACHE = Path(".holdout_cache")
+CACHE = Path(__file__).resolve().parents[1] / ".holdout_cache"
 LAYERS = ("L1", "L2", "L3", "L4")
 LABELS = ("present", "absent", "ambiguous")
 DOMAINS = ("image_restoration", "agent_in_mc")
 PLACEHOLDER_METHOD = "proposed method"
 
 
-def load_labels(path: Path) -> list[dict]:
+def load_labels(path: Path, *, require_full_corpus: bool = False) -> list[dict]:
     """Validate the frozen schema. A present cell without locatable evidence is
     rejected here so it can never quietly become a denominator."""
     data = json.loads(path.read_text(encoding="utf-8"))
@@ -404,6 +404,9 @@ def load_labels(path: Path) -> list[dict]:
                     if (ev["section"] is None and ev["page_label"] is None
                             and ev["chunk_index"] is None):
                         raise ValueError(f"{row['arxiv_id']}/{layer}: evidence has no location")
+    if require_full_corpus:
+        if len(ids) != 40 or {row["domain"] for row in rows} != set(DOMAINS):
+            raise ValueError("labels must contain exactly 40 papers across both domains")
     return rows
 
 
@@ -517,13 +520,15 @@ def summarise(labels: list[dict], sides: dict[str, dict], domain_size: int | Non
 def print_report(report: dict) -> None:
     print("=== method acquisition audit ===")
     print("A = present/domain_size   C = covered/present (N/A when present=0)")
-    print("C denominators differ per cell; do not compare C across layers.\n")
+    print("C denominators differ per cell; do not compare C across layers or domains.")
+    print("Cells with present < 5 are not read as trends.")
     for key in sorted(report["A"]):
         a = report["A"][key]
         c = report["C"][key]
         c_text = "N/A" if c == "N/A" else f"{c[0]}/{c[1]}"
         o = report["covered_over_20"][key]
-        print(f"  {key:<28} A={a[0]}/{a[1]}  C={c_text:<8} covered/domain={o[0]}/{o[1]}")
+        size_label = f"covered/{a[1]}"
+        print(f"  {key:<28} A={a[0]}/{a[1]}  C={c_text:<8} {size_label}={o[0]}/{o[1]}")
     print("\n=== gap causes ===")
     for key, count in sorted(report["gaps"].items()):
         print(f"  {key:<40} {count}")
@@ -539,7 +544,7 @@ def main() -> None:
     parser.add_argument("--cache", type=Path, default=CACHE)
     args = parser.parse_args()
 
-    labels = load_labels(args.labels)
+    labels = load_labels(args.labels, require_full_corpus=True)
     sides = {row["arxiv_id"]: system_side(row["arxiv_id"], args.cache) for row in labels}
     report = summarise(labels, sides)
     print_report(report)
