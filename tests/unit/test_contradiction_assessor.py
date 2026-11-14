@@ -53,3 +53,35 @@ def test_pairs_missing_a_dataset_are_counted_separately():
     assert assessments == []
     assert stats.skipped_missing_dataset == 1
     assert stats.skipped_same_value == 0
+
+
+def test_one_bad_pair_does_not_stop_the_others(monkeypatch):
+    """A single malformed pair must cost one judgement, not the whole run.
+
+    The counter is the only evidence that a pair was dropped for an error rather
+    than for a missing scope, so it has to be distinct from the skip counters.
+    """
+    import research_os.research.contradiction as module
+
+    real = module.assess_pair
+    calls = {"n": 0}
+
+    def flaky(a, b):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            raise RuntimeError("boom")
+        return real(a, b)
+
+    monkeypatch.setattr(module, "assess_pair", flaky)
+
+    assessments, stats = module.HeuristicContradictionAssessor().assess(
+        [_claim("UP"), _claim("LEVEL"), _claim("UP"), _claim("LEVEL")]
+    )
+
+    assert stats.failed_pairs == 1
+    # Four claims in one scope group make six pairs: four with opposite
+    # directions and two with the same value. Whichever pair the stub hits, the
+    # remaining five are still judged, so the batch loses one judgement instead
+    # of the whole run - and the loss is not folded into a skip counter.
+    assert len(assessments) + stats.skipped_same_value == 5
+    assert set(stats.emitted_by_type) == {"TRUE_CONTRADICTION"}

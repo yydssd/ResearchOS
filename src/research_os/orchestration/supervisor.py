@@ -395,6 +395,14 @@ class Supervisor:
             run.warnings.append(f"CROSS_RUN_PAIR: {dropped} assessment(s) not written")
             SqlRunRepository(self._session).update(run)
         complete_task(self._session, assess_task, output_ids=[a.claim_a_id for a in assessments])
+        if stats.failed_pairs:
+            self._log(
+                run.id,
+                EventType.FAILURE,
+                f"{stats.failed_pairs} pairs could not be judged",
+                {"failed_pairs": stats.failed_pairs},
+                failure_type=FailureType.CONTRADICTION_UNRESOLVED,
+            )
         self._log(
             run.id,
             EventType.CONTRADICTION_ASSESSED,

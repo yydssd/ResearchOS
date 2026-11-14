@@ -33,6 +33,7 @@ class PairingStats:
     skipped_missing_metric: int = 0
     skipped_self_prefilter: int = 0
     skipped_same_value: int = 0  # P4 should have merged these; a hit is a defect
+    failed_pairs: int = 0  # assess_pair raised; distinct from any scope skip
     skipped_cap: int = 0
     emitted_by_type: dict[str, int] = field(default_factory=dict)
 
@@ -262,7 +263,13 @@ class HeuristicContradictionAssessor:
         pairs, stats = pair_candidates(claims)
         assessments: list[ContradictionAssessment] = []
         for a, b in pairs:
-            result = assess_pair(a, b)
+            try:
+                result = assess_pair(a, b)
+            except Exception:  # noqa: BLE001 - one bad pair must not stop the rest
+                # Swallowing silently is what plan §25 forbids; the count is
+                # surfaced as a failure event by the supervisor.
+                stats.failed_pairs += 1
+                continue
             if result is None:
                 if _datasets(a) and _datasets(b) and _metrics(a) and _metrics(b):
                     # With a dataset and a metric on both sides, same direction

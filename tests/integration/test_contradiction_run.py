@@ -164,3 +164,26 @@ def test_a_non_cross_run_value_error_is_not_relabelled(session, tmp_path, monkey
 
     with pytest.raises(ValueError, match="something else entirely"):
         _slice(Supervisor(session), paper, tmp_path)
+
+
+def test_failed_pairs_are_reported_in_an_event(session, tmp_path, monkeypatch):
+    import research_os.research.contradiction as module
+    from research_os.domain.enums import EventType, FailureType
+
+    def always_boom(a, b):
+        raise RuntimeError("boom")
+
+    paper = tmp_path / "paper.md"
+    paper.write_text(PAPER_BODY, encoding="utf-8")
+    monkeypatch.setattr(module, "assess_pair", always_boom)
+
+    result = _slice(Supervisor(session), paper, tmp_path)
+
+    failures = [
+        event
+        for event in SqlEventRepository(session).list_by_run(result["run_id"])
+        if event.event_type is EventType.FAILURE
+        and event.failure_type is FailureType.CONTRADICTION_UNRESOLVED
+    ]
+    assert failures, "expected a CONTRADICTION_UNRESOLVED failure event"
+    assert failures[0].payload["failed_pairs"] >= 1
