@@ -90,11 +90,12 @@ def test_assessment_records_an_event_with_skip_accounting(session, tmp_path):
 
     assert len(events) == 1
     payload = events[0].payload
-    for field in ("assessments", "total_before_cap", "evaluated", "coverage",
-                  "skipped_missing_dataset", "skipped_missing_metric",
-                  "skipped_self_prefilter", "skipped_same_value", "skipped_cap",
-                  "by_type", "replaced"):
-        assert field in payload, field
+    # Values, not key names: filling every field with 0 would have passed.
+    assert payload["assessments"] == sum(payload["by_type"].values())
+    assert payload["evaluated"] == payload["total_before_cap"] - payload["skipped_cap"]
+    assert 0.0 <= payload["coverage"] <= 1.0
+    assert payload["assessments"] >= 1, "the fixture pair is a true contradiction"
+    assert payload["judged"] + payload["failed_pairs"] == payload["evaluated"]
 
 
 class _CrossRunAssessor:

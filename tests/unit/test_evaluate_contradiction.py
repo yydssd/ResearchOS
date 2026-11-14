@@ -45,6 +45,10 @@ def test_confusion_matrix_is_square_over_the_five_types():
         "INSUFFICIENT_EVIDENCE",
         "SKIPPED",
     }
+    # The key set above is built from a constant, so emptying the accumulation
+    # loop would still pass it; these pin the cell the single row lands in.
+    assert report["confusion"]["COMPLEMENTARY"]["COMPLEMENTARY"] == 1
+    assert sum(report["confusion"]["COMPLEMENTARY"].values()) == 1
 
 
 def test_pairing_level_exclusions_are_not_counted_as_wrong():

@@ -42,9 +42,10 @@ def test_memo_lists_the_assessment_with_its_reason(session, tmp_path):
     memo = build_memo_from_run(session, run_id)
 
     assert "# Contradictions and Open Questions" in memo
-    assert "Assessed" in memo and "coverage" in memo.lower()
-    assert "same scope, opposite direction" in memo or "SCOPE_DIFFERENCE" in memo
-    assert "chars" in memo  # evidence location travels with the claim text
+    assert "Assessed 1 of 1 candidate pairs (coverage 100%)" in memo
+    assert "## True contradictions (1)" in memo
+    assert "same scope, opposite direction" in memo
+    assert "chars " in memo  # evidence location travels with the claim text
 
 
 def test_inspect_claim_exposes_partners_and_provenance(session, tmp_path):
@@ -56,5 +57,7 @@ def test_inspect_claim_exposes_partners_and_provenance(session, tmp_path):
     detail = inspect_claim(session, run_id, claim.id)
 
     assert "contradictions" in detail
-    assert detail["contradictions"], "the paired claim should appear as a partner"
-    assert "relationship" in detail["contradictions"][0]
+    partners = detail["contradictions"]
+    assert len(partners) == 1
+    assert partners[0]["relationship"] == "TRUE_CONTRADICTION"
+    assert partners[0]["claim_id"] != claim.id
