@@ -34,12 +34,20 @@ class PairingStats:
     skipped_self_prefilter: int = 0
     skipped_same_value: int = 0  # P4 should have merged these; a hit is a defect
     failed_pairs: int = 0  # assess_pair raised; distinct from any scope skip
+    failed_by_error: dict[str, int] = field(default_factory=dict)  # error type -> count
+    first_failure: str | None = None  # enough context to start debugging
     skipped_cap: int = 0
     emitted_by_type: dict[str, int] = field(default_factory=dict)
 
     @property
+    def judged(self) -> int:
+        """Pairs that produced a verdict. `evaluated` counts attempted pairs, which
+        includes the ones the assessor raised on."""
+        return max(self.evaluated - self.failed_pairs, 0)
+
+    @property
     def coverage(self) -> float:
-        return self.evaluated / self.total_before_cap if self.total_before_cap else 0.0
+        return self.judged / self.total_before_cap if self.total_before_cap else 0.0
 
 
 def _parts(claim: Claim) -> list[str]:
@@ -265,10 +273,14 @@ class HeuristicContradictionAssessor:
         for a, b in pairs:
             try:
                 result = assess_pair(a, b)
-            except Exception:  # noqa: BLE001 - one bad pair must not stop the rest
-                # Swallowing silently is what plan §25 forbids; the count is
-                # surfaced as a failure event by the supervisor.
+            except Exception as exc:  # boundary: one bad pair must not stop the batch
+                # Logging does not exist in this repo, so the event is the only
+                # observation channel: keep the error type and one concrete pair.
                 stats.failed_pairs += 1
+                name = type(exc).__name__
+                stats.failed_by_error[name] = stats.failed_by_error.get(name, 0) + 1
+                if stats.first_failure is None:
+                    stats.first_failure = f"{name}: {exc} [{a.id} vs {b.id}]"
                 continue
             if result is None:
                 if _datasets(a) and _datasets(b) and _metrics(a) and _metrics(b):
@@ -286,5 +298,6 @@ class HeuristicContradictionAssessor:
             stats.emitted_by_type[result.relationship.value] = (
                 stats.emitted_by_type.get(result.relationship.value, 0) + 1
             )
-        stats.evaluated = len(pairs)
+        # `evaluated` is already set by pair_candidates; re-assigning here would
+        # be a dead store that silently hides a future divergence.
         return assessments, stats

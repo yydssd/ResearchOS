@@ -298,11 +298,13 @@ def _stats_lines(graph: RunGraph) -> list[str]:
         # assessment never happened. Say so, or the empty section is read as a
         # result rather than a missing step.
         return ["No contradiction assessment was run for this run.", ""]
+    judged = stats.get("judged", stats.get("evaluated", 0))
     lines = [
-        f"Assessed {stats.get('evaluated', 0)} of {stats.get('total_before_cap', 0)} "
+        f"Assessed {judged} of {stats.get('total_before_cap', 0)} "
         f"candidate pairs (coverage {float(stats.get('coverage', 0.0)):.0%})."
     ]
     reasons = (
+        ("failed_pairs", "failed to judge (assessor raised)"),
         ("skipped_missing_dataset", "without a dataset"),
         ("skipped_missing_metric", "without a metric"),
         ("skipped_self_prefilter", "self pairs without a dataset or metric"),
@@ -320,12 +322,19 @@ def _render_contradictions(graph: RunGraph) -> list[str]:
     lines = ["# Contradictions and Open Questions", ""]
     lines.extend(_stats_lines(graph))
     if not graph.assessments:
-        evaluated = graph.assessment_stats.get("evaluated", 0)
-        if evaluated:
+        stats = graph.assessment_stats
+        failed = stats.get("failed_pairs", 0)
+        attempted = stats.get("evaluated", 0)
+        if failed:
+            lines.append(
+                f"{failed} of {attempted} attempted pairs failed to judge; "
+                "see the run's failure events."
+            )
+        elif attempted:
             # "Assessed 10 of 10" followed by "nothing was comparable" would
             # contradict itself: the pairs WERE comparable, the cascade declined.
             lines.append(
-                f"All {evaluated} evaluated pairs were skipped and produced no judgement."
+                f"All {attempted} evaluated pairs were skipped and produced no judgement."
             )
         else:
             lines.append("No comparable claim pair in this run.")

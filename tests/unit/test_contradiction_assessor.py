@@ -69,7 +69,7 @@ def test_one_bad_pair_does_not_stop_the_others(monkeypatch):
     def flaky(a, b):
         calls["n"] += 1
         if calls["n"] == 1:
-            raise RuntimeError("boom")
+            raise ValueError("boom")
         return real(a, b)
 
     monkeypatch.setattr(module, "assess_pair", flaky)
@@ -83,5 +83,16 @@ def test_one_bad_pair_does_not_stop_the_others(monkeypatch):
     # directions and two with the same value. Whichever pair the stub hits, the
     # remaining five are still judged, so the batch loses one judgement instead
     # of the whole run - and the loss is not folded into a skip counter.
-    assert len(assessments) + stats.skipped_same_value == 5
+    assert stats.evaluated == 6
+    assert len(assessments) + stats.skipped_same_value + stats.failed_pairs == stats.evaluated
+    assert stats.skipped_missing_dataset == 0
+    assert stats.skipped_missing_metric == 0
+    assert stats.skipped_self_prefilter == 0
+    assert stats.skipped_cap == 0
     assert set(stats.emitted_by_type) == {"TRUE_CONTRADICTION"}
+    # Without logging the event is the only channel, so the error type and one
+    # concrete pair have to survive the catch.
+    assert stats.failed_by_error == {"ValueError": 1}
+    assert stats.first_failure is not None
+    assert stats.first_failure.startswith("ValueError: boom")
+    assert stats.judged == 5

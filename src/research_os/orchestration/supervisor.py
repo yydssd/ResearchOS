@@ -399,10 +399,20 @@ class Supervisor:
             self._log(
                 run.id,
                 EventType.FAILURE,
-                f"{stats.failed_pairs} pairs could not be judged",
-                {"failed_pairs": stats.failed_pairs},
+                f"contradiction assessor raised on {stats.failed_pairs} of {stats.evaluated} pairs",
+                {
+                    "failed_pairs": stats.failed_pairs,
+                    "evaluated": stats.evaluated,
+                    "total_before_cap": stats.total_before_cap,
+                    "by_error": stats.failed_by_error,
+                    "first_failure": stats.first_failure,
+                },
                 failure_type=FailureType.CONTRADICTION_UNRESOLVED,
             )
+            run.warnings.append(
+                f"CONTRADICTION_UNRESOLVED: {stats.failed_pairs} pair(s) failed to judge"
+            )
+            SqlRunRepository(self._session).update(run)
         self._log(
             run.id,
             EventType.CONTRADICTION_ASSESSED,
@@ -412,6 +422,8 @@ class Supervisor:
                 "assessments": len(assessments),
                 "total_before_cap": stats.total_before_cap,
                 "evaluated": stats.evaluated,
+                "judged": stats.judged,
+                "failed_pairs": stats.failed_pairs,
                 "coverage": round(stats.coverage, 4),
                 "skipped_missing_dataset": stats.skipped_missing_dataset,
                 "skipped_missing_metric": stats.skipped_missing_metric,

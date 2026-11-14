@@ -11,6 +11,7 @@ from research_os.storage.repositories import (
     SqlClaimRepository,
     SqlContradictionRepository,
     SqlEventRepository,
+    SqlRunRepository,
 )
 
 PAPER_BODY = (
@@ -168,7 +169,6 @@ def test_a_non_cross_run_value_error_is_not_relabelled(session, tmp_path, monkey
 
 def test_failed_pairs_are_reported_in_an_event(session, tmp_path, monkeypatch):
     import research_os.research.contradiction as module
-    from research_os.domain.enums import EventType, FailureType
 
     def always_boom(a, b):
         raise RuntimeError("boom")
@@ -186,4 +186,24 @@ def test_failed_pairs_are_reported_in_an_event(session, tmp_path, monkeypatch):
         and event.failure_type is FailureType.CONTRADICTION_UNRESOLVED
     ]
     assert failures, "expected a CONTRADICTION_UNRESOLVED failure event"
-    assert failures[0].payload["failed_pairs"] >= 1
+    assert failures[0].payload["failed_pairs"] == 1
+    # The event is the only observation channel, so it must carry what raised.
+    assert failures[0].payload["evaluated"] == 1
+    assert failures[0].payload["by_error"] == {"RuntimeError": 1}
+    assert failures[0].payload["first_failure"].startswith("RuntimeError: boom")
+
+    run = SqlRunRepository(session).get(result["run_id"])
+    assert any("CONTRADICTION_UNRESOLVED" in w for w in run.warnings)
+
+    assessed = [
+        event
+        for event in SqlEventRepository(session).list_by_run(result["run_id"])
+        if event.event_type is EventType.CONTRADICTION_ASSESSED
+    ]
+    assert assessed[0].payload["failed_pairs"] == 1
+    assert assessed[0].payload["judged"] == 0
+
+    # The memo is rendered from that payload: claiming 100% coverage while every
+    # pair went unjudged is worse than saying nothing.
+    assert "Assessed 0 of 1 candidate pairs" in result["memo"]
+    assert "failed to judge" in result["memo"]
