@@ -71,27 +71,27 @@
       "id": "p06",
       "source": "constructed",
       "from": null,
-      "a_text": "Restormer reaches 39.18 dB PSNR on SIDD with a Transformer backbone.",
-      "b_text": "Restormer reaches 38.50 dB PSNR on SIDD with a Transformer backbone.",
+      "a_text": "Restormer improves PSNR to 39.18 dB on SIDD with a Transformer backbone.",
+      "b_text": "Restormer improves PSNR to 38.50 dB on SIDD with a Transformer backbone.",
       "a_key": "restormer|image restoration|sidd|psnr|UP|backbone=transformer|psnr=39.18",
       "b_key": "restormer|image restoration|sidd|psnr|UP|backbone=transformer|psnr=38.50",
       "a_conditions_from": null,
       "b_conditions_from": null,
       "expected": "EXPERIMENTAL_INCOMPATIBILITY",
-      "notes": "Same scope and same direction but different reported values; row 8 reports experimental incompatibility instead of folding the numbers into an agreement."
+      "notes": "Same scope and same direction but different reported values; row 8 reports experimental incompatibility instead of folding the numbers into an agreement. (Text says 'improves' rather than 'reaches': per §4.1 a bare value report has no direction, and this row is about same-direction/different-value, not about direction.)"
     },
     {
       "id": "p07",
       "source": "constructed",
       "from": null,
-      "a_text": "Restormer reaches 39.18 dB PSNR on SIDD with a Transformer backbone.",
+      "a_text": "Restormer improves PSNR to 39.18 dB on SIDD with a Transformer backbone.",
       "b_text": "Restormer reports a gain on SIDD with a Transformer backbone.",
       "a_key": "restormer|image restoration|sidd|psnr|UP|backbone=transformer|psnr=39.18",
       "b_key": "restormer|image restoration|sidd|psnr|UP|backbone=transformer|",
       "a_conditions_from": null,
       "b_conditions_from": null,
       "expected": "INSUFFICIENT_EVIDENCE",
-      "notes": "Same scope and direction, but B reports no value; row 9 leaves the pair unjudged rather than skipped, because the claims do concern the same scope."
+      "notes": "Same scope and direction, but B reports no value; row 9 leaves the pair unjudged rather than skipped, because the claims do concern the same scope. (Text says 'improves' so both sides carry a direction; with 'reaches' the pair would stop at row 6 instead of exercising row 9.)"
     },
     {
       "id": "p08",
@@ -126,11 +126,11 @@
       "a_text": "The gains are most visible on SOTS dehazing and Rain100L deraining, which involve spatially varying weather degradations.",
       "b_text": "The largest gains appear on dehazing and deraining, while the model remains competitive but slightly lower on GoPro deblurring compared with MoCE-IR.",
       "a_key": "cea-ir-s|image restoration|sots,rain100l|psnr|UP||",
-      "b_key": "cea-ir-s|image restoration|gopro|psnr|DOWN||",
+      "b_key": "cea-ir-s|image restoration|gopro|psnr|UP||",
       "a_conditions_from": null,
       "b_conditions_from": null,
-      "expected": "SCOPE_DIFFERENCE",
-      "notes": "A reports gains on SOTS and Rain100L, B reports a slight loss on GoPro; datasets differ and the directions do not match, so row 2 answers scope difference."
+      "expected": "COMPLEMENTARY",
+      "notes": "A real multi-clause sentence that claims both a gain (dehazing/deraining) and a small loss (GoPro) in one breath. The extractor keeps it as one claim and takes the first direction word, so the key must record UP rather than the DOWN a human would pick for the GoPro clause. With the datasets differing and both sides reading UP, row 2 gives COMPLEMENTARY. Kept as-is on purpose: it documents a P4 extraction defect rather than hiding it behind a hand-written key."
     },
     {
       "id": "p11",
@@ -151,12 +151,12 @@
       "from": "2606.22801",
       "a_text": "The proposed adaptive fusion strategy achieves the best performance, reaching 34.23 dB PSNR.",
       "b_text": "On the GoPro dataset, MLMIR achieves 34.47 dB PSNR, outperforming all competing methods.",
-      "a_key": "mlmir|image restoration||psnr|UP||psnr=34.23",
+      "a_key": "mlmir|image restoration||psnr|||psnr=34.23",
       "b_key": "mlmir|image restoration|gopro|psnr|UP||psnr=34.47",
       "a_conditions_from": null,
       "b_conditions_from": null,
       "expected": null,
-      "notes": "A states no dataset at all. pair_candidates still produces the pair (subject and task match), but assess_pair returns None at row 1 for the missing dataset."
+      "notes": "A states no dataset at all. pair_candidates still produces the pair (subject and task match), but assess_pair returns None at row 1 for the missing dataset. (Key direction corrected to empty: the sentence reports a number, which §4.1 reads as no direction. The case tests the missing-dataset skip, so direction is irrelevant here.)"
     },
     {
       "id": "p13",
@@ -241,14 +241,14 @@
       "id": "p19",
       "source": "constructed",
       "from": null,
-      "a_text": "HOGformer reports 39.18 dB PSNR and 0.960 SSIM on SIDD.",
-      "b_text": "HOGformer reports 38.50 dB PSNR on SIDD.",
+      "a_text": "HOGformer improves PSNR to 39.18 dB and SSIM to 0.960 on SIDD.",
+      "b_text": "HOGformer improves PSNR to 38.50 dB on SIDD.",
       "a_key": "hogformer|image restoration|sidd|psnr,ssim|UP|backbone=cnn|psnr=39.18;ssim=0.960",
       "b_key": "hogformer|image restoration|sidd|psnr|UP|backbone=cnn|psnr=38.50",
       "a_conditions_from": null,
       "b_conditions_from": null,
       "expected": "EXPERIMENTAL_INCOMPATIBILITY",
-      "notes": "The metric sets overlap on psnr, so row 4 is not triggered and the pair is judged; the differing values then make it experimental incompatibility."
+      "notes": "The metric sets overlap on psnr, so row 4 is not triggered and the pair is judged; the differing values then make it experimental incompatibility. (Texts say 'improves' so the pair reaches row 8; a bare report would stop at row 6.)"
     },
     {
       "id": "p20",
@@ -257,11 +257,11 @@
       "a_text": "Our method achieves the best performance on rain and raindrop, outperforming the second-best method by +0.35dB and +0.18dB in PSNR, respectively, and the highest PSNR with the second-best SSIM in snow.",
       "b_text": "In raindrop, the SSIM is the highest, and the PSNR is confirmed to be the second best.",
       "a_key": "self@2507.22498|image restoration|rain,raindrop,snow|psnr|UP||psnr=+0.35",
-      "b_key": "self@2507.22498|image restoration|raindrop|psnr|LEVEL||",
+      "b_key": "self@2507.22498|image restoration|raindrop|psnr|||",
       "a_conditions_from": null,
       "b_conditions_from": null,
       "expected": "SCOPE_DIFFERENCE",
-      "notes": "Three datasets against one, with an improvement claim against a second-best report; row 2 treats the unequal overlap as a scope difference."
+      "notes": "Three datasets against one, with an improvement claim against a second-best report; row 2 treats the unequal overlap as a scope difference. (Key direction corrected to empty: 'SSIM is the highest, PSNR second best' is a ranking, not a claim of no gain. The verdict is driven by the dataset difference.)"
     },
     {
       "id": "p21",
@@ -270,11 +270,11 @@
       "a_text": "DAR-Net improves the average PSNR by 0.34 dB under the five-degradation setting.",
       "b_text": "DAR-Net reports an average PSNR of 30.68 dB under the five-degradation setting.",
       "a_key": "dar-net|image restoration|all-in-one benchmark|psnr|UP|setting=5d|psnr=+0.34",
-      "b_key": "dar-net|image restoration|all-in-one benchmark|psnr|LEVEL|setting=5d|psnr=30.68",
+      "b_key": "dar-net|image restoration|all-in-one benchmark|psnr||setting=5d|psnr=30.68",
       "a_conditions_from": "sentence",
       "b_conditions_from": "sentence",
-      "expected": "TRUE_CONTRADICTION",
-      "notes": "Conditions are equal and explicitly stated by the sentences themselves, so no conditions_from flag is written; that confirmed tier is what row 7b accepts. (D13: both setups are stated by the sentences themselves - `sentence` tier, not an absent tag.)"
+      "expected": "INSUFFICIENT_EVIDENCE",
+      "notes": "B only reports a number, so §4.1 gives it no direction and row 6 answers INSUFFICIENT_EVIDENCE. This is the case §9 #5 names explicitly: 'improves PSNR' vs 'reports 30 dB' must not be a TRUE_CONTRADICTION. The conditions are stated by the sentences (sentence tier), which is why row 5 does not fire first."
     },
     {
       "id": "p22",
@@ -306,14 +306,14 @@
       "id": "p24",
       "source": "constructed",
       "from": null,
-      "a_text": "Restormer reaches 39.18 dB PSNR on SIDD with a Transformer backbone.",
-      "b_text": "Restormer also reaches 39.18 dB PSNR on SIDD with a Transformer backbone.",
+      "a_text": "Restormer improves PSNR to 39.18 dB on SIDD with a Transformer backbone.",
+      "b_text": "Restormer also improves PSNR to 39.18 dB on SIDD with a Transformer backbone.",
       "a_key": "restormer|image restoration|sidd|psnr|UP|backbone=transformer|psnr=39.18",
       "b_key": "restormer|image restoration|sidd|psnr|UP|backbone=transformer|psnr=39.18",
       "a_conditions_from": null,
       "b_conditions_from": null,
       "expected": null,
-      "notes": "Same scope, same direction, identical values: the cascade returns None because P4 should already have merged the pair, so a hit here would be a dedup defect."
+      "notes": "Same scope, same direction, identical values: the cascade returns None because P4 should already have merged the pair, so a hit here would be a dedup defect. (Text says 'improves' rather than 'reaches': per §4.1 a bare value report has no direction, and this row is about same-direction/different-value, not about direction.)"
     },
     {
       "id": "p25",

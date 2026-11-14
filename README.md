@@ -12,7 +12,7 @@
 - Week 2 ✅ P3 Evidence Quality（PDF/Markdown/README/HTML → 分块落库 → 精确偏移证据 → 定量证据）
 - Week 3 ✅ P4 Claim Synthesis（块级 scope 继承 → identity 键 → 按身份合并 → 支撑性标记）
 - Week 3 ✅ P5 Contradiction（四值方向 → 四类条件与章节继承 → 候选配对 → 级联判定 → run 作用域落库）
-- 测试：`pytest` 249 passed（另有 2 个 opt-in 真实网络测试）
+- 测试：`pytest` 304 passed（另有 2 个 opt-in 真实网络测试）
 - 代码审查：`docs/evaluation/2026-11-13-p5-review.md`（6 项已修，5 类未偿项列为待办）
 - 权威计划：`ResearchOS-Implementation-Plan.md`（v1.1）
 - 架构快照：`architect.md` · 人类决策：`human_decision.md` · 设计与计划：`docs/superpowers/`

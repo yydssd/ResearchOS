@@ -9,7 +9,7 @@
 ## 当前状态（2026-11-13 · W3 / P5 完成）
 
 - **阶段**：P0 ✅ · P1 ✅ · P2 ✅ · P3 ✅ · P4 ✅ · **P5 Contradiction ✅**
-- **验收结果**：`pytest` 249 passed（+2 opt-in 真实网络）；主张带七维 `identity_key`，矛盾评估带 run 作用域、唯一约束与可定位证据
+- **验收结果**：`pytest` 304 passed（+2 opt-in 真实网络）；主张带七维 `identity_key`，矛盾评估带 run 作用域、唯一约束与可定位证据
 - **格式覆盖**：PDF · Markdown · README · HTML（含 ar5iv 全文；公式回声已净化）
 - **实测口径**：留出集 20 篇 / 13871 块 / 4814 证据 / 1173 主张（1075 支撑）；P5 候选对 1049 → 判定 30（真矛盾 0，预期）；夹具 26 对全通过
 - **下一步**：P6 Research Memo（结构化 memo 收口），再 P7 Falsification

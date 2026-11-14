@@ -70,3 +70,25 @@ def test_explicit_no_gain_is_level(text):
 def test_negation_beats_the_word_it_negates():
     """`fails to improve` contains `improve`; LEVEL must win over UP."""
     assert _direction("The module fails to improve PSNR on Rain100H.") == "LEVEL"
+
+
+def test_verb_pairs_that_raise_and_lower_are_directions():
+    """`raises PSNR` and `lowers PSNR` say which way quality moved without using
+    any word the old list knew. Three fixtures depended on this and had hand-written
+    directions the rules could not reproduce."""
+    assert _direction("NAFNet raises PSNR on SIDD to 39.40 dB.") == "UP"
+    assert _direction("NAFNet lowers PSNR on SIDD to 38.90 dB.") == "DOWN"
+
+
+def test_explicit_no_change_is_level():
+    """`leaves ... unchanged` is the clearest possible statement of no gain, yet
+    it read as None because the list only knew 'no improvement' and 'on par with'."""
+    assert _direction("NAFNet leaves PSNR on SIDD unchanged at 39.18 dB.") == "LEVEL"
+    assert _direction("The score stays the same on SIDD.") == "LEVEL"
+    assert _direction("There is no change in accuracy.") == "LEVEL"
+
+
+def test_lower_as_an_adjective_is_not_a_degradation_verb():
+    """`lower` used adjectivally must not be read as 'lowers'. Adding the verb must
+    not turn every 'the lower layers' into a claim of degradation."""
+    assert _direction("The lower layers carry high-frequency texture.") is None

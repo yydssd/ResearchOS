@@ -136,9 +136,11 @@ def main() -> None:
 
     print(
         "\nNote: fixture labels were derived from the same rules the cascade implements.\n"
-        "Agreement therefore measures regression, not correctness. TRUE_CONTRADICTION\n"
-        "recall is unverified on real text: the hold-out corpus contains no such pair,\n"
-        "and the constructed ones were written from the rules they are meant to test."
+        "An owner review on 2026-11-14 corrected three of them, and every key's\n"
+        "direction is now pinned to the rule by test_fixture_consistency. Agreement\n"
+        "therefore measures regression, not correctness. TRUE_CONTRADICTION recall is\n"
+        "unverified on real text: the hold-out corpus contains no such pair, and the\n"
+        "constructed ones were written from the rules they are meant to test."
     )
 
     wrong = [r for r in rows if r["expected"] is not None and r["actual"] != r["expected"]]

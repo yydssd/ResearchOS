@@ -59,12 +59,19 @@ NOT_A_SUBJECT = frozenset(
 # 39.18 dB" asserts no direction at all. The old three-value scheme put
 # achiev/reach/report into LEVEL, which made "improves PSNR" and "reports 30 dB"
 # look like opposites (196 of 196 LEVEL claims on the hold-out were of that kind).
-_IMPROVE = re.compile(r"\b(improv\w*|gain\w*|outperform\w*|better|surpass\w*|exceed\w*)\b", re.IGNORECASE)
-_DEGRADE = re.compile(r"\b(degrades?|drops?|worse|hurts?|fails? on)\b", re.IGNORECASE)
+_IMPROVE = re.compile(
+    r"\b(improv\w*|gain\w*|outperform\w*|better|surpass\w*|exceed\w*|raises?)\b", re.IGNORECASE
+)
+# `lowers`/`lowered` only: the adjective ("the lower layers") must not read as a
+# degradation verb, which is why the pattern is not a bare `lower\w*`.
+_DEGRADE = re.compile(
+    r"\b(degrades?|drops?|worse|hurts?|fails? on|lowers|lowered|lowering)\b", re.IGNORECASE
+)
 _NO_GAIN = re.compile(
     r"\b(no (?:clear |significant )?(?:gain|improvement|difference)|"
     r"fails? to improv\w*|does not improv\w*|without (?:any )?improvement|"
-    r"on par with|comparable to)\b",
+    r"on par with|comparable to|"
+    r"unchanged|no change|(?:stays?|remains?|leaves?) (?:the )?(?:same|unchanged))\b",
     re.IGNORECASE,
 )
 _ERROR_SIDE = r"(?:error|loss|noise|artifact\w*|complexity|params|parameters)"

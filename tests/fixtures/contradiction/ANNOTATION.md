@@ -21,23 +21,46 @@ so every entry that lands on row 7b is constructed on purpose.
 | date | pass | annotator | agreement with final |
 |---|---|---|---|
 | 2026-11-13 | 1 | agent (labels derived from the cascade table in spec §5) | 26/26 |
-| — | 2 | **not performed** | — |
+| — | 2 | **not performed** (blind relabel) | — |
+| 2026-11-14 | expert review | owner | 23/26 unchanged, 3 corrected |
 
-The second pass did not happen. The protocol asks for a blind relabel at least a
-day later, and the work was done in one session: pass 1 was produced while the
-rules were in view, so agreement between pass 1 and the fixture is not evidence
-that the labels are right. It is evidence that the fixture and the code agree.
+Pass 2 never happened and the blind-relabel gap is still open: the 26 labels were
+produced with the rules in view, so agreement between them and the code proves
+consistency, not correctness.
 
-Consequence, stated plainly because the evaluation report depends on it:
-`docs/evaluation/2026-11-13-p5-contradiction.md` reports 100% fixture accuracy and
-that number must be read as a regression lock only. An independent annotator who
-labels the 26 pairs from the claim texts alone, without reading `spec §5` or
-`contradiction.py`, is the missing step; until then `TRUE_CONTRADICTION` precision
-and recall on this fixture measure self-consistency, not correctness.
+The 2026-11-14 review is a different thing and does not close that gap. The owner
+reviewed the labels against the claim texts and found three that were wrong or
+unsupported by the rules; 23 were accepted unchanged. That is expert curation of
+machine output - it satisfies "manually curated" in the plan's §17 in the sense
+that a human ruled on every entry, but it is **not** an independent blind
+annotation, so no independent agreement rate can be reported.
+
+## Disagreements (2026-11-14 review)
+
+| id | was | now | ruling |
+|---|---|---|---|
+| p15.b | key `LEVEL`, rule produced `None` | key stays `LEVEL`, rule fixed | **Rule defect, not a label defect.** `NAFNet leaves PSNR unchanged` is the clearest possible no-gain statement; `_NO_GAIN` simply lacked `unchanged` / `no change` / `stays the same`. |
+| p20.b | key `LEVEL` | key `None` | **Label defect.** "SSIM is the highest, PSNR second best" is a ranking, not a claim of no improvement. The verdict (`SCOPE_DIFFERENCE`) is unchanged because the dataset difference fires first. |
+| p21.b | key `LEVEL`, `expected: TRUE_CONTRADICTION` | key `None`, `expected: INSUFFICIENT_EVIDENCE` | **Label defect that violated the spec.** §4.1 reads `reports 30.68 dB` as no direction, and §9 #5 says "improves PSNR" vs "reports 30 dB" must never be a `TRUE_CONTRADICTION`. The fixture was asserting the opposite of the rule it was testing. |
+| p10.b | key `DOWN` | key `UP`, `expected: COMPLEMENTARY` | **Extraction defect, recorded rather than hidden.** A real sentence claims a gain on dehazing/deraining and a small loss on GoPro in one clause pair; the extractor keeps one claim and takes the first direction word. The key now records what the rule actually produces. |
+
+## Key/rule consistency
+
+An audit on 2026-11-14 compared every fixture key's direction segment with what
+`_direction` produces for that text. **15 of 52 sides disagreed.** Eleven were the
+rule missing `raises` / `lowers` / `unchanged`; four were keys written from a human
+reading of the sentence (p12, p20, p21, p10).
+
+That matters for how the 100% should be read: before this audit, a majority of the
+fixture set was passing on hand-written keys rather than on rule output.
+`tests/unit/test_fixture_consistency.py` now pins all 52 sides to the rule and
+fails if a key drifts again. Four constructed texts were reworded from
+`reaches X dB` to `improves PSNR to X dB` so the rows they exercise (8 and 9) are
+reachable at all; a bare value report stops at row 6.
 
 ## Disagreements
 
-(none recorded yet)
+(none recorded before 2026-11-14; see the table above)
 
 ## Label semantics
 
@@ -46,7 +69,7 @@ and recall on this fixture measure self-consistency, not correctness.
   `section-first-mention` is an assumption, and an absent or unknown tier is
   silence - both yield `INSUFFICIENT_EVIDENCE`. A fixture expecting
   `TRUE_CONTRADICTION` MUST therefore set `a_conditions_from` and
-  `b_conditions_from` explicitly (p04/p14/p15/p21 use `sentence`, p26 uses
+  `b_conditions_from` explicitly (p04/p14/p15 use `sentence`, p26 uses
   `heading`). Earlier revisions treated a missing tag as "confirmed"; that was
   the exact "silence as evidence" error HD-014 exists to prevent.
 - `expected: null` means "no judgement". Two causes, both recorded per entry:

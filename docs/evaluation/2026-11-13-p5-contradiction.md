@@ -56,6 +56,15 @@ therefore shows the rules still behave as written; it cannot show the rules are
 right. The `85%` target in the original plan is met trivially and should not be
 read as a quality result.
 
+An expert review on 2026-11-14 (owner, all 26 entries) accepted 23 labels and
+corrected 3. A separate audit compared every key's direction segment with what
+`_direction` produces: **15 of 52 sides disagreed** — eleven because the rule was
+missing `raises`/`lowers`/`unchanged`, four because the key was written from a
+human reading rather than from rule output. Both are fixed and pinned by
+`tests/unit/test_fixture_consistency.py`. The 100% above is therefore the first
+version of this number that every entry actually earns through the rules; it is
+still not an independent agreement rate, because no blind second pass exists.
+
 What *was* independently verified: all 24 `real` sentence pairs appear verbatim
 in the arXiv HTML named in their `from` field (checked by substring search over
 `.holdout_cache/`, no edited or spliced sentences). The provenance of the labels
