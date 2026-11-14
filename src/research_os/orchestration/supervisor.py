@@ -39,6 +39,7 @@ from research_os.sources.providers import ProviderError, SearchProvider, build_p
 from research_os.sources.query import build_queries
 from research_os.sources.resolver import resolve_candidates
 from research_os.storage.repositories import (
+    CrossRunPairError,
     SqlChunkRepository,
     SqlClaimEvidenceRelationRepository,
     SqlClaimRepository,
@@ -370,25 +371,35 @@ class Supervisor:
         # here on purpose: P4 owns status and confidence, P5 only relates them.
         assess_task = create_task(self._session, run.id, TaskType.CHECK_CONTRADICTION)
         assessments, stats = self._assessor.assess(claims)
+        dropped = 0
         try:
             replaced = SqlContradictionRepository(self._session).replace_for_run(run.id, assessments)
-        except ValueError as exc:
+        except CrossRunPairError as exc:
             # Plan §25 asks for a persisted failure event, not for the run to die.
-            # Refusing a cross-run pair is correct; cascading the exception out of
-            # run_vertical_slice would lose the memo over a dirty storage row.
+            # Only the dedicated type is caught: a pydantic ValidationError is also
+            # a ValueError, and relabelling one as a cross-run rejection would drop
+            # the batch silently instead of surfacing a real schema defect.
+            dropped = len(assessments)
             self._log(
                 run.id,
                 EventType.FAILURE,
                 str(exc),
-                {"run_id": run.id, "rejected": len(assessments)},
+                {
+                    "dropped": dropped,
+                    "claim_a_id": exc.claim_a_id,
+                    "claim_b_id": exc.claim_b_id,
+                },
                 failure_type=FailureType.CROSS_RUN_PAIR,
             )
             assessments, replaced = [], 0
+            run.warnings.append(f"CROSS_RUN_PAIR: {dropped} assessment(s) not written")
+            SqlRunRepository(self._session).update(run)
         complete_task(self._session, assess_task, output_ids=[a.claim_a_id for a in assessments])
         self._log(
             run.id,
             EventType.CONTRADICTION_ASSESSED,
-            f"{len(assessments)} assessments from {stats.evaluated} pairs",
+            f"{len(assessments)} assessments written from {stats.evaluated} pairs"
+            + (f" ({dropped} dropped)" if dropped else ""),
             {
                 "assessments": len(assessments),
                 "total_before_cap": stats.total_before_cap,
@@ -401,6 +412,7 @@ class Supervisor:
                 "skipped_cap": stats.skipped_cap,
                 "by_type": stats.emitted_by_type,
                 "replaced": replaced,
+                "dropped": dropped,
             },
         )
 

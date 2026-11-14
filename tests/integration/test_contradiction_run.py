@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import pytest
 
+from research_os.domain.enums import EventType, FailureType
 from research_os.orchestration.supervisor import Supervisor
 from research_os.storage.database import init_db, session_factory
 from research_os.storage.repositories import (
@@ -95,30 +96,51 @@ def test_assessment_records_an_event_with_skip_accounting(session, tmp_path):
         assert field in payload, field
 
 
-def test_cross_run_rejection_is_logged_and_the_run_survives(session, tmp_path, monkeypatch):
-    """Section 25: a rejected pair must leave a failure event, not kill the run.
+class _CrossRunAssessor:
+    """Assessor that always returns one pair whose B side belongs to another run.
 
-    A cross-run row means the store was written outside this run. Refusing it is
-    right; aborting the whole research run because of it is not - P5 relates
-    claims, it does not gate the run.
+    Driving the real repository rather than faking `replace_for_run` matters: the
+    test has to fail if the repository's message and the supervisor's exception
+    type ever drift apart.
     """
-    from research_os.domain.enums import EventType, FailureType
-    from research_os.storage.repositories import SqlContradictionRepository
 
-    def reject(self, run_id, items):
-        raise ValueError("cross_run_pair: c1 / c2")
+    def assess(self, claims):
+        from research_os.domain.enums import ConfidenceLabel, ContradictionType
+        from research_os.domain.models import ContradictionAssessment
+        from research_os.research.contradiction import PairingStats
 
-    monkeypatch.setattr(SqlContradictionRepository, "replace_for_run", reject)
+        return (
+            [
+                ContradictionAssessment(
+                    claim_a_id=claims[0].id,
+                    claim_b_id="c_from_another_run",
+                    relationship=ContradictionType.SCOPE_DIFFERENCE,
+                    explanation="planted cross-run pair",
+                    confidence_label=ConfidenceLabel.MEDIUM,
+                )
+            ],
+            PairingStats(total_before_cap=1, evaluated=1),
+        )
 
+
+def test_cross_run_rejection_is_logged_and_the_run_survives(session, tmp_path):
+    """Plan section 25: a rejected pair must leave a failure event, not kill the run."""
     paper = tmp_path / "paper.md"
     paper.write_text(PAPER_BODY, encoding="utf-8")
-    result = _slice(Supervisor(session), paper, tmp_path)
+    supervisor = Supervisor(session, contradiction_assessor=_CrossRunAssessor())
 
-    failures = [
-        event
-        for event in SqlEventRepository(session).list_by_run(result["run_id"])
-        if event.event_type is EventType.FAILURE
-    ]
-    assert any(event.failure_type is FailureType.CROSS_RUN_PAIR for event in failures)
-    assert "cross_run_pair" in " ".join(event.message for event in failures)
-    assert result["memo"]
+    result = _slice(supervisor, paper, tmp_path)
+
+    events = SqlEventRepository(session).list_by_run(result["run_id"])
+    failures = [e for e in events if e.event_type is EventType.FAILURE]
+    assert len(failures) == 1
+    assert failures[0].failure_type is FailureType.CROSS_RUN_PAIR
+    assert failures[0].payload["claim_b_id"] == "c_from_another_run"
+    assert failures[0].payload["dropped"] == 1
+
+    assessed = [e for e in events if e.event_type is EventType.CONTRADICTION_ASSESSED]
+    assert assessed[0].payload["assessments"] == 0
+    assert assessed[0].payload["dropped"] == 1
+
+    assert result["status"] == "COMPLETED"
+    assert SqlContradictionRepository(session).list_by_run(result["run_id"]) == []

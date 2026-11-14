@@ -561,6 +561,20 @@ class SqlClaimEvidenceRelationRepository:
         return [self._to_domain(r) for r in rows]
 
 
+class CrossRunPairError(ValueError):
+    """A pair whose two claims belong to different runs.
+
+    Its own type, not a bare ValueError: pydantic's ValidationError inherits from
+    ValueError, so catching the base class here would relabel a schema error as a
+    cross-run rejection and discard the batch.
+    """
+
+    def __init__(self, claim_a_id: str, claim_b_id: str) -> None:
+        super().__init__(f"cross_run_pair: {claim_a_id} / {claim_b_id}")
+        self.claim_a_id = claim_a_id
+        self.claim_b_id = claim_b_id
+
+
 class SqlContradictionRepository:
     def __init__(self, session: Session) -> None:
         self._s = session
@@ -630,7 +644,7 @@ class SqlContradictionRepository:
         }
         for item in items:
             if claim_rows.get(item.claim_a_id) != run_id or claim_rows.get(item.claim_b_id) != run_id:
-                raise ValueError(f"cross_run_pair: {item.claim_a_id} / {item.claim_b_id}")
+                raise CrossRunPairError(item.claim_a_id, item.claim_b_id)
 
         claim_ids = select(t.ClaimRow.id).where(t.ClaimRow.run_id == run_id)
         # Either endpoint may carry a stale cross-run row. Cleaning only rows
