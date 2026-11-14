@@ -84,16 +84,33 @@ def test_list_by_run_hides_other_runs(session):
 
 
 def test_replace_for_run_is_idempotent(session):
+    """Rerunning must reproduce the same rows, not just the same count.
+
+    Counting alone passes even if the second run writes a different relationship
+    or explanation, which is exactly the kind of drift a rerun is supposed to
+    prove absent.
+    """
     _seed(session, "run_1", ("c1", "c2"))
     repo = SqlContradictionRepository(session)
-    repo.replace_for_run("run_1", [_assessment("c1", "c2")])
-    session.commit()
+    items = [_assessment("c1", "c2")]
 
-    deleted = repo.replace_for_run("run_1", [_assessment("c1", "c2")])
+    repo.replace_for_run("run_1", items)
     session.commit()
+    first = [
+        (a.claim_a_id, a.claim_b_id, a.relationship.value, a.explanation, a.confidence_label.value)
+        for a in repo.list_by_run("run_1")
+    ]
+
+    deleted = repo.replace_for_run("run_1", items)
+    session.commit()
+    second = [
+        (a.claim_a_id, a.claim_b_id, a.relationship.value, a.explanation, a.confidence_label.value)
+        for a in repo.list_by_run("run_1")
+    ]
 
     assert deleted == 1
-    assert len(repo.list_by_run("run_1")) == 1
+    assert len(second) == 1
+    assert second == first
 
 
 def test_replace_rejects_a_pair_from_another_run(session):
