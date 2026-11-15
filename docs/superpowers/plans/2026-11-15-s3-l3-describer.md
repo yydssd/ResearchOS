@@ -9,13 +9,13 @@
 **Tech Stack:** Python 3.12 / Pydantic v2 / SQLAlchemy 2 / SQLite / pytest。解释器 `D:/Anaconda/envs/reOS/python.exe`。
 
 **设计依据：** `docs/superpowers/specs/2026-11-15-method-acquisition-design.md` §7（全节）、§10.1（原因枚举）、§10.4（L3 用录制回放重跑）。
-**回归基线：** `374 passed, 2 skipped / 376 collected`（S2 收官实测）。本计划只允许新增用例，不允许既有用例消失；每任务末尾的期望数字都以此递推。
+**回归基线：** `374 passed, 2 skipped / 376 collected`（S2 收官实测）。本计划只允许新增用例，不允许既有用例消失；每任务末尾的期望数字都以此递推：`380 → 390 → 394 → 398 → 402 → 405 → 408`，收官 `408 passed, 2 skipped / 410 collected`（新增 34 条）。
 
 **前置约束（写给执行者）：**
 - 跑测试**必须** `-o addopts=""`，`--basetemp` 每次换新目录名。
 - **不碰** `claims.py`、`contradiction.py`、`scope.py`、`conditions.py`；S3 不改 `identity_key`、不改主张数。
 - **不改**审计脚本的 L3 判据语义（`bool(profile.points)`），只加「为什么是 0」的原因。
-- 不引入新依赖：`asyncio` 是标准库；`httpx` 已装（provider 用）。
+- 不引入新依赖：`asyncio` 是标准库；本计划的所有新模块都不 import `httpx`（S3 不带真实 provider 客户端）。
 - S3 显式**不做**：真实 provider 实现（OpenAI/Anthropic 客户端）、`conditions` 新维度（S4）、域名词表。
 
 ---
@@ -27,12 +27,13 @@
 | `src/research_os/llm/base.py` | provider 协议 | 新增 `MethodPointDraft` / `MethodDescriptionResponse` / `DescriptionAttempt` / `LLMInEventLoopError` |
 | `src/research_os/llm/describer.py` | **新建**：`MethodDescriber` 协议 + `AsyncProviderDescriber` + prompt 构造 | 新建 |
 | `src/research_os/research/method_description.py` | **新建**：四道防线 `validate_description` | 新建 |
-| `src/research_os/config.py` | 配置 | `llm_provider` / `llm_model` / `llm_api_key` |
+| `src/research_os/config.py` | 配置 | `llm_provider` / `llm_model` / `llm_api_key` / `llm_fixture_dir` |
+| `src/research_os/llm/factory.py` | **新建**：按配置装配 describer | 新建 |
 | `src/research_os/orchestration/supervisor.py` | 编排 | 注入 describer；预算「先查后加」；调用 + 事件 + points 落库 |
 | `src/research_os/domain/enums.py` | 枚举 | `FailureType` 加四项 |
 | `src/research_os/cli.py` / `main.py` | 装配 | 按 `llm_provider` 构造 describer |
-| `src/research_os/llm/recorded.py` | **新建**：录制回放 provider | 新建 |
-| `scripts/record_method_descriptions.py` | **新建**：把真实响应录成夹具 | 新建 |
+| `src/research_os/llm/recorded.py` | **新建**：回放 provider（内容哈希做键、`prompt_index` 定位） | 新建 |
+| `scripts/record_method_descriptions.py` | **新建**：录制命令；S3 只固定命令行与拒绝路径（退出码 2） | 新建 |
 | `scripts/method_acquisition_audit.py` | 只读审计 | `--describer` 选项 + L3 原因 |
 | `architect.md` / `docs/` | 文档 | ADR-035、已知限制、§13 偏差、报告、交接 |
 
@@ -152,6 +153,17 @@ def test_a_provider_error_becomes_an_attempt_not_an_exception():
     assert attempt.response is None
     assert attempt.error is not None
     assert "500" in attempt.error
+
+
+def test_building_the_describer_inside_a_loop_is_refused_too():
+    """Construction happens during wiring, which is exactly where an async caller
+    would do it; failing there names the defect before the first paper loads."""
+
+    async def build_inside_loop():
+        return AsyncProviderDescriber(FakeProvider())
+
+    with pytest.raises(LLMInEventLoopError):
+        asyncio.run(build_inside_loop())
 ```
 
 - [ ] **Step 2: 运行，确认失败**
@@ -230,7 +242,7 @@ class DescriptionAttempt:
 `LLMProvider.generate` is async; the vertical slice is sync. One adapter, one
 rule: never nest an event loop. Everything else here is prompt construction,
 which is deterministic on purpose - a prompt that changes between runs makes the
-recorded fixtures (Task 6) unusable.
+recorded fixtures (Task 3) unusable.
 """
 
 from __future__ import annotations
@@ -356,11 +368,11 @@ cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" \
   tests/unit/test_method_describer.py -v --basetemp=.pytest_tmp_s3_t1_green
 ```
 
-预期：5 passed。
+预期：6 passed。
 
 - [ ] **Step 6: 全量**
 
-预期：`379 passed, 2 skipped`。
+预期：`380 passed, 2 skipped`。
 
 - [ ] **Step 7: 提交**
 
@@ -507,6 +519,37 @@ def test_one_bad_point_does_not_discard_the_good_one():
 
     assert len(outcome.points) == 1
     assert outcome.reason == "METHOD_POINT_UNLOCATABLE"
+
+
+def test_an_aspect_word_alone_does_not_support_a_statement():
+    """"mechanism" is the schema's word, not the paper's: with it removed,
+    "Mechanism decides reuse" shares only one content word with its quote."""
+    quote = "The gating mechanism decides which programs are reused"
+    outcome = _validate(_draft(quote=quote, statement="Mechanism decides reuse."))
+
+    assert outcome.points == []
+    assert outcome.reason == "METHOD_STATEMENT_UNSUPPORTED"
+
+
+def test_a_quote_across_a_line_break_still_locates():
+    """Chunks keep the source's line breaks; a model that answers with one space
+    quotes the same text. Folding must apply to the uniqueness check too, or a
+    correct quote is dropped for its whitespace."""
+    wrapped = [
+        DocumentChunk(
+            id="chunk_0", source_version_id="sv_1", section="Method", chunk_index=0,
+            text="We store each policy\nas code and score it by execution feedback.",
+        )
+    ]
+    outcome = validate_description(
+        MethodDescriptionResponse(
+            points=[_draft(quote="We store each policy as code", statement="Stores each policy as code.")]
+        ),
+        wrapped,
+    )
+
+    assert len(outcome.points) == 1
+    assert outcome.reason is None
 ```
 
 - [ ] **Step 2: 运行，确认失败**
@@ -560,6 +603,10 @@ _STOPWORDS = frozenset(
         "then", "not", "no", "can", "may", "uses", "use", "using", "via",
     }
 )
+# The schema's own vocabulary is not evidence: a statement whose only overlap with
+# its quote is "mechanism" is supported by the label, not by the sentence
+# (design §7.4.2 excludes aspect words explicitly).
+_ASPECT_WORDS = frozenset({"goal", "mechanism", "why", "it", "works", "io"})
 _WORD = re.compile(r"[a-z0-9]+")
 
 
@@ -575,18 +622,22 @@ def _content_words(text: str) -> set[str]:
     return {
         word
         for word in _WORD.findall(text.lower())
-        if len(word) > 2 and word not in _STOPWORDS
+        if len(word) > 2 and word not in _STOPWORDS and word not in _ASPECT_WORDS
     }
 
 
 def _locates(quote: str, chunk_text: str) -> bool:
-    """Verbatim, at least four words, and unique inside the chunk."""
+    """Verbatim after whitespace folding, at least four words, unique in the chunk.
+
+    Both sides are folded before counting: a PDF or Markdown chunk breaks lines
+    mid-sentence, so a quote that crosses a line break is the same text to a
+    reader. Counting on the raw chunk would drop it - and the fold used to test
+    containment must be the fold used to test uniqueness, or the two disagree.
+    """
     collapsed = " ".join(quote.split())
     if len(collapsed.split()) < _MIN_QUOTE_WORDS:
         return False
-    if collapsed not in " ".join(chunk_text.split()):
-        return False
-    return chunk_text.count(collapsed) == 1
+    return " ".join(chunk_text.split()).count(collapsed) == 1
 
 
 def validate_description(
@@ -627,7 +678,7 @@ def validate_description(
                 section=draft.section or sections.get(draft.chunk_id),
             )
         )
-    return DescriptionOutcome(points, reason if not points else reason)
+    return DescriptionOutcome(points, reason)
 ```
 
 - [ ] **Step 4: 运行，确认通过**
@@ -637,11 +688,11 @@ cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" \
   tests/unit/test_method_description.py -v --basetemp=.pytest_tmp_s3_t2_green
 ```
 
-预期：8 passed。若 `test_a_quote_that_appears_twice_is_dropped` 红：确认 `chunk_text.count(collapsed)` 用的是**原始文本**而不是折叠后的（重复句在折叠后仍重复，两者都该判 2）。
+预期：10 passed。三条最容易写错的：`test_a_quote_that_appears_twice_is_dropped`（`count` 必须在**折叠后**的 chunk 上做，折叠后重复句仍是 2）、`test_a_quote_across_a_line_break_still_locates`（折叠只用于包含、不用于计数，就会把跨行的正确引用丢掉）、`test_an_aspect_word_alone_does_not_support_a_statement`（去掉 `_ASPECT_WORDS` 这条会红）。
 
 - [ ] **Step 5: 全量**
 
-预期：`387 passed, 2 skipped`。
+预期：`390 passed, 2 skipped`。
 
 - [ ] **Step 6: 提交**
 
@@ -657,158 +708,285 @@ one point."
 
 ---
 
-### Task 3: 配置与装配
+### Task 3: 录制回放 provider + 录制脚本
 
 **Files:**
-- Modify: `src/research_os/config.py`
-- Create: `src/research_os/llm/factory.py`
-- Modify: `src/research_os/cli.py` / `src/research_os/main.py`
-- Test: `tests/unit/test_llm_config.py`（新建）
+- Create: `src/research_os/llm/recorded.py`
+- Create: `scripts/record_method_descriptions.py`
+- Test: `tests/unit/test_recorded_provider.py`（新建）
+
+> 顺序理由：工厂（Task 6）要 import `RecordedProvider`，所以回放先落地；反过来写就得先塞一个空骨架，而空骨架的回放逻辑在本任务才补齐，等于把一个已知坏的 provider 交给工厂测。本任务先做，Task 6 的工厂测试才是即插即用。
 
 - [ ] **Step 1: 写会失败的测试**
 
-新建 `tests/unit/test_llm_config.py`：
+新建 `tests/unit/test_recorded_provider.py`：
 
 ```python
-"""Wiring by configuration, not by import side effects (design §7.2).
+"""Replay recorded L3 answers (design §7.6, ADR-010's pattern).
 
-`UnavailableProvider` was never instantiated anywhere; the honest default is "no
-describer at all", so a run with no key does zero calls and says so.
+The point is reproducibility, not convenience: the same fixtures must give the
+same audit numbers on a machine with no key and no network. Chunk ids are random
+per run, so both the file name and the point's chunk are expressed in terms the
+prompt can reproduce: its text and its order.
 """
 
 from __future__ import annotations
 
-from research_os.config import Settings
-from research_os.llm.describer import AsyncProviderDescriber
-from research_os.llm.factory import build_describer
+import asyncio
+import json
+
+from research_os.llm.base import MethodDescriptionResponse
+from research_os.llm.recorded import RecordedProvider, prompt_key
 
 
-def test_no_provider_means_no_describer():
-    settings = Settings(llm_provider="none")
-    assert build_describer(settings) is None
+def _messages(text: str):
+    from research_os.llm.base import Message
+
+    return [Message(role="system", content="s"), Message(role="user", content=text)]
 
 
-def test_an_unknown_provider_name_is_a_configuration_error():
-    settings = Settings(llm_provider="openai")
-    try:
-        build_describer(settings)
-    except ValueError as exc:
-        assert "llm_provider" in str(exc)
-    else:  # pragma: no cover - the assertion above is the test
-        raise AssertionError("an unimplemented provider name must not build silently")
+def _write(dir_path, prompt: str, points: list[dict]):
+    (dir_path / f"{prompt_key(prompt)}.json").write_text(
+        json.dumps({"points": points}), encoding="utf-8"
+    )
 
 
-def test_the_recorded_provider_builds_a_describer():
-    settings = Settings(llm_provider="recorded", llm_fixture_dir="tests/fixtures/method_descriptions")
-    describer = build_describer(settings)
-    assert isinstance(describer, AsyncProviderDescriber)
+def test_a_recorded_answer_is_replayed_for_its_chunk_id(tmp_path):
+    prompt = "[chunk_0] section=Abstract\nAll-in-one ..."
+    _write(
+        tmp_path,
+        prompt,
+        [
+            {
+                "aspect": "goal",
+                "statement": "Restore all degradations with one model.",
+                "quote": "All-in-one image restoration aims to handle multiple degradations",
+                "prompt_index": 0,
+                "section": "Abstract",
+            }
+        ],
+    )
+    provider = RecordedProvider(tmp_path)
+
+    response = asyncio.run(provider.generate(_messages(prompt)))
+
+    assert isinstance(response, MethodDescriptionResponse)
+    assert response.points[0].chunk_id == "chunk_0"
+
+
+def test_a_missing_recording_is_an_empty_answer_not_a_crash(tmp_path):
+    provider = RecordedProvider(tmp_path)
+
+    response = asyncio.run(provider.generate(_messages("[chunk_9] section=Method\nnope")))
+
+    assert response.points == []
+
+
+def test_a_bracketed_line_inside_a_chunk_is_not_mistaken_for_an_id(tmp_path):
+    """A citation at the start of a line must not shift the index: shifting it maps
+    a point onto the wrong chunk, and the validator then rejects a good point as
+    unlocatable - a silent coverage loss with no error anywhere."""
+    prompt = (
+        "[chunk_aaa] section=Method\n[13] Hadsell et al. describe a baseline.\n\n"
+        "[chunk_bbb] section=Method\nWe store the policy as code."
+    )
+    _write(tmp_path, prompt, [{"aspect": "io", "statement": "Policy as code.",
+                               "quote": "We store the policy as code", "prompt_index": 1}])
+    provider = RecordedProvider(tmp_path)
+
+    response = asyncio.run(provider.generate(_messages(prompt)))
+
+    assert [point.chunk_id for point in response.points] == ["chunk_bbb"]
+
+
+def test_the_recording_survives_a_new_run_with_new_chunk_ids(tmp_path):
+    """Ids are minted per run, so the key must not contain them; otherwise the
+    fixture misses on the second run and the audit reports a fake zero."""
+    recorded = "[chunk_aaa] section=Method\nWe store the policy as code."
+    replayed = "[chunk_bbb] section=Method\nWe store the policy as code."
+    _write(tmp_path, recorded, [{"aspect": "io", "statement": "Policy as code.",
+                                 "quote": "We store the policy as code", "prompt_index": 0}])
+    provider = RecordedProvider(tmp_path)
+
+    response = asyncio.run(provider.generate(_messages(replayed)))
+
+    assert [point.chunk_id for point in response.points] == ["chunk_bbb"]
 ```
 
 - [ ] **Step 2: 运行，确认失败**
 
 ```bash
 cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" \
-  tests/unit/test_llm_config.py -q --basetemp=.pytest_tmp_s3_t3_red
+  tests/unit/test_recorded_provider.py -q --basetemp=.pytest_tmp_s3_t3_red
 ```
 
-预期：`ImportError: cannot import name 'build_describer'`。
+预期：`ModuleNotFoundError: No module named 'research_os.llm.recorded'`。
 
-- [ ] **Step 3: 加配置**
+- [ ] **Step 3: 实现回放**
 
-`src/research_os/config.py`，在 `search_providers` 之后加：
-
-```python
-    # L3 describer (design §7.2). `none` means no describer is assembled at all -
-    # not "assembled but broken" - so a run without a key does zero LLM calls and
-    # reports L3 as "LLM 未启用" instead of an extraction failure.
-    llm_provider: str = "none"  # none | recorded | <provider name>
-    llm_model: str | None = None
-    llm_api_key: str | None = None
-    # Replay directory for `llm_provider="recorded"` (design §7.6).
-    llm_fixture_dir: str = "tests/fixtures/method_descriptions"
-```
-
-- [ ] **Step 4: 加工厂**
-
-`src/research_os/llm/factory.py`：
+`src/research_os/llm/recorded.py`：
 
 ```python
-"""Assemble one describer from settings (design §7.2).
+"""Replay recorded L3 answers from disk (design §7.6).
 
-Only `recorded` is implemented: a real provider needs a client library and a key,
-and neither is in scope for S3. Naming an unimplemented provider is a
-configuration error rather than a silent fallback, because "I configured OpenAI
-and got heuristics" is the kind of quiet failure this project keeps paying for.
+Two facts drive the fixture format:
+
+- Chunk ids are generated per run (`new_id("chunk")`), so a recorded `chunk_id`
+  can never be resolved on the next run. The recording therefore stores the point's
+  position in the prompt, and the reply maps that position onto the ids the current
+  prompt carries - the same chunk, by the same order, with a real id.
+- The file name hashes the prompt with those ids removed, for the same reason: a
+  key made of a per-run id would miss every time and report zero coverage as if the
+  model had answered nothing.
+
+A missing recording answers `points: []`. That is the honest reading: the model
+was not asked, so it described nothing. The audit turns an all-empty replay into
+"LLM 未启用" (Task 7) instead of reporting a coverage number it did not measure.
 """
 
 from __future__ import annotations
 
-from research_os.config import Settings
-from research_os.llm.describer import AsyncProviderDescriber, MethodDescriber
-from research_os.llm.recorded import RecordedProvider
+import hashlib
+import json
+import re
+from pathlib import Path
+
+from pydantic import BaseModel
+
+from research_os.llm.base import MethodDescriptionResponse, MethodPointDraft, Message
+
+# `build_prompt` starts every chunk block with `[chunk_xxx] ` at the beginning of
+# a line. The `chunk_` prefix is load-bearing: body text can start a line with a
+# citation ("[13] Hadsell et al. ..."), and reading that as an id would shift every
+# `prompt_index` by one and silently map points onto the wrong chunk.
+_ID_LINE = re.compile(r"^\[(chunk_[^\]]*)\] ", re.MULTILINE)
 
 
-def build_describer(settings: Settings) -> MethodDescriber | None:
-    name = (settings.llm_provider or "none").strip().lower()
-    if name in ("", "none"):
-        return None
-    if name == "recorded":
-        provider = RecordedProvider(settings.llm_fixture_dir)
-        return AsyncProviderDescriber(provider, model=settings.llm_model)
-    raise ValueError(
-        f"llm_provider={settings.llm_provider!r} is not implemented; "
-        "use 'none' or 'recorded'"
+class RecordedPoint(BaseModel):
+    """One point as recorded. `prompt_index` replaces `chunk_id` (see module doc)."""
+
+    aspect: str = ""
+    statement: str = ""
+    quote: str = ""
+    prompt_index: int = 0
+    section: str | None = None
+
+
+def prompt_key(prompt: str) -> str:
+    """Stable file name for one recording: the prompt without its per-run ids."""
+    body = _ID_LINE.sub("", prompt)
+    return hashlib.sha1(body.encode("utf-8")).hexdigest()[:16]
+
+
+class RecordedProvider:
+    """Reads `{prompt_key}.json` from a fixture directory; never touches the network."""
+
+    def __init__(self, fixture_dir: str | Path) -> None:
+        self._dir = Path(fixture_dir)
+        self.last_cost_usd: float | None = None
+
+    async def generate(self, messages: list[Message], response_model=None):
+        prompt = messages[-1].content if messages else ""
+        path = self._dir / f"{prompt_key(prompt)}.json"
+        if not path.exists():
+            return MethodDescriptionResponse(points=[])
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        ids = _ID_LINE.findall(prompt)
+        points = []
+        for raw in payload.get("points", []):
+            recorded = RecordedPoint(**raw)
+            index = recorded.prompt_index
+            points.append(
+                MethodPointDraft(
+                    aspect=recorded.aspect,
+                    statement=recorded.statement,
+                    quote=recorded.quote,
+                    # Out of range leaves the id empty, and the schema defence one
+                    # layer up rejects it - a wrong id would be worse than none.
+                    chunk_id=ids[index] if 0 <= index < len(ids) else "",
+                    section=recorded.section,
+                )
+            )
+        return MethodDescriptionResponse(points=points)
+```
+
+> 为什么不是 `{chunk_id}.json`：`new_id("chunk")` 每次运行都换（实测同一份 `named_paper.md` 两次分块得到 `chunk_6450f30f6bb5` 与 `chunk_ac1562d80b8e`），按 id 取夹具**永远 miss**，而 miss 的表现是「点了 0 条」——与「模型没答」长得一样。同一个理由也否掉了夹具里存 `chunk_id`：它回放时解析不到本次运行的 chunk。
+
+- [ ] **Step 4: 录制脚本**
+
+`scripts/record_method_descriptions.py`：
+
+```python
+"""Record L3 answers for the hold-out corpus (design §7.6).
+
+Requires a real provider, which S3 does not ship: this script fixes the command
+line and the exit code so recording is a repeatable command rather than a manual
+step, and so the replay path has an obvious place to get its data. It refuses to
+run without a provider and records nothing - fabricated L3 answers would look
+exactly like measured ones in the audit.
+"""
+
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+DEFAULT_CACHE = Path(__file__).resolve().parents[1] / ".holdout_cache"
+DEFAULT_OUT = Path(__file__).resolve().parents[1] / "tests/fixtures/method_descriptions"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--cache", type=Path, default=DEFAULT_CACHE)
+    parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
+    parser.add_argument("--provider", required=True, help="provider name to record with")
+    parser.add_argument("--limit", type=int, default=0)
+    args = parser.parse_args()
+
+    print(
+        "No provider client is shipped in S3; implement one and pass it here. "
+        "Refusing to fabricate recordings.",
+        file=sys.stderr,
     )
+    return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
 ```
 
-- [ ] **Step 5: 装配点**
-
-`src/research_os/cli.py` 的 `_cmd_run`：`supervisor = Supervisor(session)` 改成
-
-```python
-        supervisor = Supervisor(session, method_describer=build_describer(settings))
-```
-
-并在导入块加 `from research_os.config import settings` 与 `from research_os.llm.factory import build_describer`。
-
-`src/research_os/main.py` 同样改（该方法内已有 session）：
-
-```python
-        supervisor = Supervisor(session, method_describer=build_describer(settings))
-```
-
-导入同上。
-
-> 说明：Task 3 先让 `build_describer` 能返回 `None` 或 recorded，`Supervisor` 的 `method_describer` 参数在 Task 5 才加。测试只覆盖工厂，所以本任务全量仍是绿的；`cli/main` 的改动在 Task 5 之后才真正生效——**顺序不要调**，否则 `_cmd_run` 会在导入期就引用不存在的参数。
-
-- [ ] **Step 6: 运行，确认通过**
+- [ ] **Step 5: 运行，确认通过**
 
 ```bash
 cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" \
-  tests/unit/test_llm_config.py -v --basetemp=.pytest_tmp_s3_t3_green
+  tests/unit/test_recorded_provider.py -v --basetemp=.pytest_tmp_s3_t3_green
 ```
 
-预期：3 passed。若 `test_the_recorded_provider_builds_a_describer` 红：`recorded.py` 在 Task 6 才建，先建一个空的 `RecordedProvider` 骨架（构造函数收目录、`generate` 返回空 `MethodDescriptionResponse`），Task 6 再补回放逻辑。
+预期：4 passed。
 
-- [ ] **Step 7: 全量**
+- [ ] **Step 6: 全量**
 
 ```bash
 cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" \
   -q --basetemp=.pytest_tmp_s3_t3_all
 ```
 
-预期：`390 passed, 2 skipped`。
+预期：`394 passed, 2 skipped`。
 
-- [ ] **Step 8: 提交**
+- [ ] **Step 7: 提交**
 
 ```bash
-cd /d/ResearchOS && git add src/research_os/config.py src/research_os/llm/factory.py \
-        src/research_os/llm/recorded.py tests/unit/test_llm_config.py
-git commit -m "feat(llm): assemble the describer from configuration
+cd /d/ResearchOS && git add src/research_os/llm/recorded.py scripts/record_method_descriptions.py \
+        tests/unit/test_recorded_provider.py
+git commit -m "feat(llm): replay recorded L3 answers, and refuse to invent them
 
-'none' means no describer at all, so a keyless run does zero calls and reports L3
-as not-enabled instead of as an extraction failure. An unimplemented provider name
-raises instead of falling back to heuristics."
+Chunk ids are minted per run, so a fixture keyed by one can never hit. The key
+hashes the prompt without its ids, and a recorded point names its position in the
+prompt so the reply carries a chunk id that resolves in this run.
+
+The record script exits non-zero without a provider: fabricated L3 data would be
+indistinguishable from measured data in the audit."
 ```
 
 ---
@@ -837,7 +1015,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from research_os.domain.enums import EventType, FailureType
-from research_os.domain.models import MethodDescriptionResponse
+from research_os.llm.base import MethodDescriptionResponse
 from research_os.orchestration.supervisor import Supervisor
 from research_os.storage.database import session_scope
 from research_os.storage.repositories import (
@@ -1068,6 +1246,8 @@ cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" \
 
 > `FailureType(outcome.reason)` 依赖 `reason` 与枚举名一致（`METHOD_POINT_UNLOCATABLE` / `METHOD_STATEMENT_UNSUPPORTED` / `METHOD_DESCRIPTION_REJECTED`），这是 Task 2 的字符串契约，改一边必须改另一边。
 
+> 3c 故意**不动** `missing_layers`：Task 5 的一行改动与它的一条红测试就锁这件事。若在这里顺手删掉 `L3`，Task 5 会没有任何失败测试可写，那就成了「先写生产代码再补测试」。
+
 - [ ] **Step 5: 运行，确认通过**
 
 ```bash
@@ -1079,7 +1259,7 @@ cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" \
 
 - [ ] **Step 6: 全量**
 
-预期：`394 passed, 2 skipped`。
+预期：`398 passed, 2 skipped`。
 
 - [ ] **Step 7: 提交**
 
@@ -1098,7 +1278,7 @@ The check runs before the call and the increment after it, which is what keeps
 ### Task 5: 接线完成（描述 → 落库 → memo）
 
 **Files:**
-- Modify: `src/research_os/orchestration/supervisor.py`（若 Task 4 已含则跳过）
+- Modify: `src/research_os/orchestration/supervisor.py`（只加一行：`missing_layers` 去掉 `L3`；3c 的其余部分在 Task 4）
 - Test: `tests/integration/test_method_description_run.py`（新建）
 
 - [ ] **Step 1: 写会失败的测试**
@@ -1128,15 +1308,20 @@ class QuoteDescriber:
         self._aspect = aspect
 
     def describe(self, chunks):
+        # The quote lives in the Method chunk, not in chunks[0] (that is the
+        # Abstract): naming chunks[0] for every point is itself the "unlocatable"
+        # case the validator must catch, and it would make the two tests below
+        # fail for a reason that has nothing to do with what they assert.
+        chunk = next((item for item in chunks if self._quote in item.text), chunks[0])
         return DescriptionAttempt(
             response=MethodDescriptionResponse(
                 points=[
                     MethodPointDraft(
                         aspect=self._aspect,
-                        statement="Each policy is stored as code and scored.",
+                        statement="Stores each policy as code.",
                         quote=self._quote,
-                        chunk_id=chunks[0].id,
-                        section=chunks[0].section,
+                        chunk_id=chunk.id,
+                        section=chunk.section,
                     )
                 ]
             )
@@ -1174,7 +1359,7 @@ def test_the_memo_prints_the_point_with_its_section(db, tmp_path):
 
     section = memo.split("# Methods", 1)[1].split("\n# ", 1)[0]
     assert "mechanism" in section
-    assert "Each policy is stored as code" in section
+    assert "Stores each policy as code" in section
 
 
 def test_an_unlocatable_quote_is_logged_and_nothing_is_stored(db, tmp_path):
@@ -1220,17 +1405,22 @@ def test_no_describer_leaves_l3_missing_without_any_event(db, tmp_path):
 
 - [ ] **Step 2: 运行，确认失败**
 
-预期：4 条中至少 3 条红（`points == []`、`L3` 仍在）；若 Task 4 已把 3c 写完，则红在 memo 断言与 missing_layers 断言。
+```bash
+cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" \
+  tests/integration/test_method_description_run.py -q --basetemp=.pytest_tmp_s3_t5_red
+```
 
-- [ ] **Step 3: 补齐**
+预期：**1 条红**，其余 3 条绿。红的是 `test_points_are_persisted_and_leave_missing_layers`，断在 `assert 'L3' not in ['L3']`（points 已经写进去了，缺的是 `missing_layers` 的维护）。这一步故意只有一条红线：Task 4 的 3c 已经覆盖了写库与事件两条路径，本任务只补「落地即不再是 missing」这一条事实。
 
-- 若 Task 4 的 3c 已写入，本任务只需确认 `profile.missing_layers` 在 points 落地后去掉 `L3`：在 3c 的 `profile.points = outcome.points` 之后加
+- [ ] **Step 3: 去掉 `missing_layers` 里的 `L3`**
+
+Task 4 的 3c 只写 `points`，**故意不动** `missing_layers`（这样本任务的红/绿有鉴别力）。在 3c 的 `profile.points = outcome.points` 与 `upsert(...)` 之间插入一行：
 
 ```python
                     profile.missing_layers = [layer for layer in profile.missing_layers if layer != "L3"]
 ```
 
-- `reporting/memo.py` 的 `_render_methods_section` 已支持 `profile.points`（S2 写的），无需改；只确认 `point.aspect` 与 `point.section` 都被打印（`- {aspect}: {statement} _[{section}]_`）。
+`reporting/memo.py` 的 `_render_methods_section` 已支持 `profile.points`（S2 写的），无需改；它打印的是 `- {aspect}: {statement} _[{section or chunk_id}]_`，所以 memo 断言用 `statement` 的文本而不是 aspect 的枚举名来定位。
 
 - [ ] **Step 4: 运行，确认通过**
 
@@ -1243,7 +1433,7 @@ cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" \
 
 - [ ] **Step 5: 全量**
 
-预期：`398 passed, 2 skipped`。
+预期：`402 passed, 2 skipped`。
 
 - [ ] **Step 6: 提交**
 
@@ -1258,211 +1448,163 @@ A point that passes the four defences is a locatable statement, so L3 stops bein
 
 ---
 
-### Task 6: 录制回放 provider + 录制脚本
+### Task 6: 配置与装配
 
 **Files:**
-- Modify: `src/research_os/llm/recorded.py`
-- Create: `scripts/record_method_descriptions.py`
-- Test: `tests/unit/test_recorded_provider.py`（新建）
+- Modify: `src/research_os/config.py`
+- Create: `src/research_os/llm/factory.py`
+- Modify: `src/research_os/cli.py` / `src/research_os/main.py`
+- Test: `tests/unit/test_llm_config.py`（新建）
 
 - [ ] **Step 1: 写会失败的测试**
 
-```python
-"""Replay recorded L3 answers (design §7.6, ADR-010's pattern).
+新建 `tests/unit/test_llm_config.py`：
 
-The point is reproducibility, not convenience: the same fixtures must give the
-same audit numbers on a machine with no key and no network.
+```python
+"""Wiring by configuration, not by import side effects (design §7.2).
+
+`UnavailableProvider` was never instantiated anywhere; the honest default is "no
+describer at all", so a run with no key does zero calls and says so.
 """
 
 from __future__ import annotations
 
-import asyncio
-import json
-
-from research_os.llm.base import MethodDescriptionResponse
-from research_os.llm.recorded import RecordedProvider
+from research_os.config import Settings
+from research_os.llm.describer import AsyncProviderDescriber
+from research_os.llm.factory import build_describer
 
 
-def _messages(text: str):
-    from research_os.llm.base import Message
-
-    return [Message(role="system", content="s"), Message(role="user", content=text)]
-
-
-def test_a_recorded_answer_is_replayed_for_its_chunk_id(tmp_path):
-    (tmp_path / "chunk_0.json").write_text(
-        json.dumps(
-            {
-                "points": [
-                    {
-                        "aspect": "goal",
-                        "statement": "Restore all degradations with one model.",
-                        "quote": "All-in-one image restoration aims to handle multiple degradations",
-                        "chunk_id": "chunk_0",
-                        "section": "Abstract",
-                    }
-                ]
-            }
-        ),
-        encoding="utf-8",
-    )
-    provider = RecordedProvider(tmp_path)
-
-    response = asyncio.run(provider.generate(_messages("[chunk_0] section=Abstract\nAll-in-one ...")))
-
-    assert isinstance(response, MethodDescriptionResponse)
-    assert response.points[0].chunk_id == "chunk_0"
+def test_no_provider_means_no_describer():
+    settings = Settings(llm_provider="none")
+    assert build_describer(settings) is None
 
 
-def test_a_missing_recording_is_an_empty_answer_not_a_crash(tmp_path):
-    provider = RecordedProvider(tmp_path)
+def test_an_unknown_provider_name_is_a_configuration_error():
+    settings = Settings(llm_provider="openai")
+    try:
+        build_describer(settings)
+    except ValueError as exc:
+        assert "llm_provider" in str(exc)
+    else:  # pragma: no cover - the assertion above is the test
+        raise AssertionError("an unimplemented provider name must not build silently")
 
-    response = asyncio.run(provider.generate(_messages("[chunk_9] section=Method\nnope")))
 
-    assert response.points == []
-
-
-def test_the_recording_is_keyed_by_the_first_chunk_id_in_the_prompt(tmp_path):
-    """The key has to come from the prompt itself: the provider sees messages, not
-    a source id, and inventing one would make the fixtures unreadable."""
-    (tmp_path / "chunk_a.json").write_text(json.dumps({"points": []}), encoding="utf-8")
-    provider = RecordedProvider(tmp_path)
-
-    response = asyncio.run(provider.generate(_messages("[chunk_a] section=Method\nx")))
-
-    assert response.points == []
+def test_the_recorded_provider_builds_a_describer():
+    settings = Settings(llm_provider="recorded", llm_fixture_dir="tests/fixtures/method_descriptions")
+    describer = build_describer(settings)
+    assert isinstance(describer, AsyncProviderDescriber)
 ```
 
 - [ ] **Step 2: 运行，确认失败**
 
-预期：`ImportError`（`recorded.py` 还没有回放逻辑）。
-
-- [ ] **Step 3: 实现回放**
-
-`src/research_os/llm/recorded.py`：
-
-```python
-"""Replay recorded L3 answers from disk (design §7.6).
-
-The key is the first `[chunk_id]` in the user message: the provider only sees
-messages, and the chunk id is already in the prompt for the model's benefit, so
-using it again costs nothing and invents no identifier.
-
-A missing recording answers `points: []`. That is the honest reading: the model
-was not asked, so it described nothing. The audit turns an all-empty replay into
-"no recording" (Task 7) instead of reporting a coverage number it did not measure.
-"""
-
-from __future__ import annotations
-
-import json
-from pathlib import Path
-
-from research_os.llm.base import MethodDescriptionResponse, Message
-
-_CHUNK_MARK = "[chunk"
-
-
-class RecordedProvider:
-    """Reads `{chunk_id}.json` from a fixture directory; never touches the network."""
-
-    def __init__(self, fixture_dir: str | Path) -> None:
-        self._dir = Path(fixture_dir)
-        self.last_cost_usd: float | None = None
-
-    async def generate(self, messages: list[Message], response_model=None):
-        prompt = messages[-1].content if messages else ""
-        key = self._key(prompt)
-        if key is None:
-            return MethodDescriptionResponse(points=[])
-        path = self._dir / f"{key}.json"
-        if not path.exists():
-            return MethodDescriptionResponse(points=[])
-        return MethodDescriptionResponse.model_validate(json.loads(path.read_text(encoding="utf-8")))
-
-    def _key(self, prompt: str) -> str | None:
-        start = prompt.find(_CHUNK_MARK)
-        if start < 0:
-            return None
-        end = prompt.find("]", start)
-        if end < 0:
-            return None
-        return prompt[start + 1 : end]
+```bash
+cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" \
+  tests/unit/test_llm_config.py -q --basetemp=.pytest_tmp_s3_t6_red
 ```
 
-- [ ] **Step 4: 录制脚本**
+预期：`ModuleNotFoundError: No module named 'research_os.llm.factory'`（没有这个模块，报的不是名字导入失败）。
 
-`scripts/record_method_descriptions.py`：
+- [ ] **Step 3: 加配置**
+
+`src/research_os/config.py`，在 `search_providers` 之后加：
 
 ```python
-"""Record L3 answers for the hold-out corpus (design §7.6).
+    # L3 describer (design §7.2). `none` means no describer is assembled at all -
+    # not "assembled but broken" - so a run without a key does zero LLM calls and
+    # reports L3 as "LLM 未启用" instead of an extraction failure.
+    llm_provider: str = "none"  # none | recorded | <provider name>
+    llm_model: str | None = None
+    llm_api_key: str | None = None
+    # Replay directory for `llm_provider="recorded"` (design §7.6).
+    llm_fixture_dir: str = "tests/fixtures/method_descriptions"
+```
 
-Requires a real provider, which S3 does not ship: this script exists so the
-recording is a repeatable command rather than a manual step, and so the replay
-path has an obvious place to get its data. Without a key it exits 2 and records
-nothing - it must never fabricate answers, since fabricated L3 data would look
-exactly like measured L3 data in the audit.
+- [ ] **Step 4: 加工厂**
+
+`src/research_os/llm/factory.py`：
+
+```python
+"""Assemble one describer from settings (design §7.2).
+
+Only `recorded` is implemented: a real provider needs a client library and a key,
+and neither is in scope for S3. Naming an unimplemented provider is a
+configuration error rather than a silent fallback, because "I configured OpenAI
+and got heuristics" is the kind of quiet failure this project keeps paying for.
 """
 
 from __future__ import annotations
 
-import argparse
-import json
-import sys
-from pathlib import Path
-
-from research_os.documents.chunks import chunk_pages
-from research_os.documents.html import load_html
-from research_os.llm.describer import build_prompt
-from research_os.research.patterns import EVAL_PROTOCOL  # noqa: F401  (import cost check)
-
-DEFAULT_CACHE = Path(__file__).resolve().parents[1] / ".holdout_cache"
-DEFAULT_OUT = Path(__file__).resolve().parents[1] / "tests/fixtures/method_descriptions"
+from research_os.config import Settings
+from research_os.llm.describer import AsyncProviderDescriber, MethodDescriber
+from research_os.llm.recorded import RecordedProvider
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--cache", type=Path, default=DEFAULT_CACHE)
-    parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
-    parser.add_argument("--provider", required=True, help="provider name to record with")
-    parser.add_argument("--limit", type=int, default=0)
-    args = parser.parse_args()
-
-    print(
-        "No provider client is shipped in S3; implement one and pass it here. "
-        "Refusing to fabricate recordings.",
-        file=sys.stderr,
+def build_describer(settings: Settings) -> MethodDescriber | None:
+    name = (settings.llm_provider or "none").strip().lower()
+    if name in ("", "none"):
+        return None
+    if name == "recorded":
+        provider = RecordedProvider(settings.llm_fixture_dir)
+        return AsyncProviderDescriber(provider, model=settings.llm_model)
+    raise ValueError(
+        f"llm_provider={settings.llm_provider!r} is not implemented; "
+        "use 'none' or 'recorded'"
     )
-    return 2
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
 ```
 
-- [ ] **Step 5: 运行，确认通过**
+- [ ] **Step 5: 装配点**
+
+`src/research_os/cli.py` 的 `_cmd_run`：`supervisor = Supervisor(session)` 改成
+
+```python
+        supervisor = Supervisor(session, method_describer=build_describer(settings))
+```
+
+并在导入块加两行（`cli.py` 目前**没有** `settings` 的导入，别以为它和 `main.py` 一样）：
+
+```python
+from research_os.config import settings
+from research_os.llm.factory import build_describer
+```
+
+`src/research_os/main.py` 同样改（该方法内已有 session，且已在模块顶部 `from research_os.config import settings`）：
+
+```python
+        supervisor = Supervisor(session, method_describer=build_describer(settings))
+```
+
+导入只需补一行 `from research_os.llm.factory import build_describer`。
+
+> 顺序：本任务在 Task 4 之后，`Supervisor.__init__` 已经有 `method_describer` 参数，所以每一次提交都能跑 `research-os run`。若把这两行挪到 Task 4 之前，`import research_os.cli` 仍然是好的（参数在调用时才检查），但 `research-os run` 会以 `TypeError: Supervisor.__init__() got an unexpected keyword argument 'method_describer'` 失败——而**没有一条测试会红**，这正是这种顺序事故容易被漏过的原因。
+
+- [ ] **Step 6: 运行，确认通过**
 
 ```bash
 cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" \
-  tests/unit/test_recorded_provider.py -v --basetemp=.pytest_tmp_s3_t6_green
+  tests/unit/test_llm_config.py -v --basetemp=.pytest_tmp_s3_t6_green
 ```
 
 预期：3 passed。
 
-- [ ] **Step 6: 全量**
-
-预期：`401 passed, 2 skipped`。
-
-- [ ] **Step 7: 提交**
+- [ ] **Step 7: 全量**
 
 ```bash
-cd /d/ResearchOS && git add src/research_os/llm/recorded.py scripts/record_method_descriptions.py \
-        tests/unit/test_recorded_provider.py
-git commit -m "feat(llm): replay recorded L3 answers, and refuse to invent them
+cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" \
+  -q --basetemp=.pytest_tmp_s3_t6_all
+```
 
-The replay key is the chunk id already in the prompt, so no new identifier is
-invented. The record script exits non-zero without a provider: fabricated L3 data
-would be indistinguishable from measured L3 data in the audit."
+预期：`405 passed, 2 skipped`。
+
+- [ ] **Step 8: 提交**
+
+```bash
+cd /d/ResearchOS && git add src/research_os/config.py src/research_os/llm/factory.py \
+        src/research_os/cli.py src/research_os/main.py tests/unit/test_llm_config.py
+git commit -m "feat(llm): assemble the describer from configuration
+
+'none' means no describer at all, so a keyless run does zero calls and reports L3
+as not-enabled instead of as an extraction failure. An unimplemented provider name
+raises instead of falling back to heuristics."
 ```
 
 ---
@@ -1471,13 +1613,22 @@ would be indistinguishable from measured L3 data in the audit."
 
 **Files:**
 - Modify: `scripts/method_acquisition_audit.py`
-- Test: `tests/unit/test_method_acquisition_audit.py`（追加 2 条）
+- Test: `tests/unit/test_method_acquisition_audit.py`（追加 3 条）
 
 - [ ] **Step 1: 写会失败的测试**
 
-在 `tests/unit/test_method_acquisition_audit.py` 末尾追加：
+在 `tests/unit/test_method_acquisition_audit.py` 末尾追加（`SIDES` 是文件内已有的合成夹具）：
 
 ```python
+HTML = """<html><body><h2>Method</h2><p>LangProp stores each policy as code and
+scores it by execution feedback.</p></body></html>"""
+
+
+def _mini_cache(tmp_path):
+    (tmp_path / "x.html").write_text(HTML, encoding="utf-8")
+    return tmp_path
+
+
 def test_l3_cause_says_whether_a_describer_was_configured():
     """0/20 for L3 has two very different meanings: "nothing can fill this layer"
     and "nobody asked". After S3 the field exists, so the audit must say which."""
@@ -1488,49 +1639,115 @@ def test_l3_cause_says_whether_a_describer_was_configured():
     assert cause_for("L3", SIDES["a1"]) == "无结构化字段"
 
 
-def test_system_side_reports_an_l3_cause_without_a_describer():
+def test_system_side_reports_an_l3_cause_without_a_describer(tmp_path):
     from scripts.method_acquisition_audit import system_side
 
-    side = system_side("2311.15209")  # cached, has a method section
+    side = system_side("x", _mini_cache(tmp_path))
 
     assert side["L3"] is False
     assert side["L3_cause"] == "LLM 未启用"
+
+
+def test_a_describer_with_a_locatable_point_makes_l3_covered(tmp_path):
+    """The replay path must be able to move L3; a flag that can only relabel the
+    cause would turn "not measured" into "measured as zero"."""
+    from scripts.method_acquisition_audit import system_side
+
+    class StubDescriber:
+        def describe(self, chunks):
+            from research_os.llm.base import DescriptionAttempt, MethodDescriptionResponse, MethodPointDraft
+
+            chunk = chunks[0]
+            return DescriptionAttempt(
+                response=MethodDescriptionResponse(
+                    points=[
+                        MethodPointDraft(
+                            aspect="mechanism",
+                            statement="Stores each policy as code.",
+                            quote="stores each policy as code and scores it",
+                            chunk_id=chunk.id,
+                            section=chunk.section,
+                        )
+                    ]
+                )
+            )
+
+    side = system_side("x", _mini_cache(tmp_path), StubDescriber())
+
+    assert side["L3"] is True
+    assert side["L3_cause"] is None
 ```
+
+> 为什么不用真实论文 id：`system_side("2311.15209")` 读的是 `.holdout_cache/*.html`，那是 gitignored 的，新克隆上会 `FileNotFoundError`。同一文件的 `test_fixture_provenance.py` 为此整条 skip；审计的因果分支不该依赖一个会被跳过的夹具。`_mini_cache` 把「一篇有 Method 段的小论文」写进 `tmp_path`，这条用例在任何机器上都跑。
 
 - [ ] **Step 2: 运行，确认失败**
 
-预期：`KeyError: 'L3_cause'` 或断言失败。
+```bash
+cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" \
+  tests/unit/test_method_acquisition_audit.py -q --basetemp=.pytest_tmp_s3_t7_red
+```
+
+预期：3 条红——`test_l3_cause...` 断在 `assert '无结构化字段' == 'LLM 未启用'`（`cause_for` 还是常量），另两条 `KeyError: 'L3_cause'`。
 
 - [ ] **Step 3: 改审计**
 
 `scripts/method_acquisition_audit.py`：
 
+导入加一行 `from research_os.research.method_description import validate_description`。
+
 `cause_for` 的 L3 分支改为：
 
 ```python
     if layer == "L3":
-        # A hint from the observation wins: after S3 "no field" and "no describer"
-        # are different causes, and only the run knows which one it is.
+        # After S3 the field exists, so "no field" would be a lie. The observation
+        # carries the real cause; the old string survives only for sides built
+        # before the field existed (synthetic fixtures, S2 reports).
         return side.get("L3_cause") or "无结构化字段"
 ```
 
-`system_side` 加一个参数与一个键：
+`system_side` 加一个参数，并把 L3 的判据换成「真的调一次再校验」：
 
 ```python
 def system_side(arxiv_id: str, cache: Path = CACHE, describer=None) -> dict:
+    """...（docstring 追加）describer 由调用方传入，不在这里构造：provider 与预算归调用方
+    （设计 §7.3）。给了 describer 时 L3 是真测的——points 与 run 时走同一个校验器，
+    回放会被拒的点在这里也被拒，而不是被算成覆盖。"""
 ```
 
-返回字典里加：
+函数体尾部（原 `return {...}` 之前）：
 
 ```python
-        "L3_cause": (
-            None
-            if (profile and profile.points)
-            else ("LLM 未启用" if describer is None else "无结构化字段")
-        ),
+    points = list(profile.points) if profile else []
+    if describer is not None:
+        attempt = describer.describe(chunks)
+        if attempt.response is None:
+            points, l3_cause = [], "LLM 输出被拒"
+        else:
+            outcome = validate_description(attempt.response, chunks)
+            points = outcome.points
+            # design §10.1 closes the cause set: a refused quote is "no source
+            # location", a malformed answer is "output refused", and an empty
+            # answer is the same fact as no describer - the model said nothing.
+            if points:
+                l3_cause = None
+            elif outcome.reason in ("METHOD_POINT_UNLOCATABLE", "METHOD_STATEMENT_UNSUPPORTED"):
+                l3_cause = "无来源定位"
+            elif outcome.reason == "METHOD_DESCRIPTION_REJECTED":
+                l3_cause = "LLM 输出被拒"
+            else:
+                l3_cause = "LLM 未启用"
+    else:
+        l3_cause = None if points else "LLM 未启用"
 ```
 
-并在 `main()` 里加：
+返回字典里 `"L3"` 改成 `bool(points)`，并加一个键：
+
+```python
+        "L3": bool(points),
+        "L3_cause": l3_cause,
+```
+
+并在 `main()` 里加参数与构造：
 
 ```python
     parser.add_argument(
@@ -1540,8 +1757,6 @@ def system_side(arxiv_id: str, cache: Path = CACHE, describer=None) -> dict:
         help="recorded replays tests/fixtures/method_descriptions (design §7.6)",
     )
 ```
-
-`main()` 构造 describer：
 
 ```python
     describer = None
@@ -1555,6 +1770,8 @@ def system_side(arxiv_id: str, cache: Path = CACHE, describer=None) -> dict:
     sides = {row["arxiv_id"]: system_side(row["arxiv_id"], args.cache, describer) for row in labels}
 ```
 
+> `bool(points)` 与 `bool(profile and profile.points)` 等价（`extract_methods` 从不产 points），但前者在本任务里由 describer 填充，写 `profile.points` 会让「回放出来的点」被静默丢掉。
+
 - [ ] **Step 4: 运行，确认通过**
 
 ```bash
@@ -1562,11 +1779,11 @@ cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" \
   tests/unit/test_method_acquisition_audit.py -v --basetemp=.pytest_tmp_s3_t7_green
 ```
 
-预期：9 passed。
+预期：10 passed（既有 7 条 + 新增 3 条）。
 
 - [ ] **Step 5: 全量**
 
-预期：`403 passed, 2 skipped`。
+预期：`408 passed, 2 skipped`。
 
 - [ ] **Step 6: 实跑（关键判据）**
 
@@ -1577,8 +1794,14 @@ cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" scripts/method_acquisitio
   --labels tests/fixtures/method_acquisition/labels.json --describer recorded
 ```
 
-预期：两次都是 **L3 `C=0/20`、`gaps` 48**，且原因行从
-`无结构化字段 20` 变成 **`LLM 未启用` 40**（两个领域各 20）。
+预期：两次输出**逐格相同**——L1 `16/20`+`16/20`、L2 `20/20`+`20/20`、L3 都是 `C=0/20`、L4 `19/19`+`20/20`、`gaps` 合计 48；原因行从 S2 的两条 `L3|无结构化字段 20` 变成两条 `L3|LLM 未启用 20`：
+
+```
+  agent_in_mc|L3|LLM 未启用                   20
+  image_restoration|L3|LLM 未启用             20
+```
+
+（`--describer recorded` 与不带它同值，因为 `tests/fixtures/method_descriptions/` 是空的：没有录制 = 没人问过 = `LLM 未启用`。这正是 D19 的处理。）
 
 **如果 `--describer recorded` 出现 L3 覆盖 > 0，说明夹具目录里有别人的录制数据，停下来查清楚来源再继续。**
 
@@ -1589,8 +1812,9 @@ cd /d/ResearchOS && git add scripts/method_acquisition_audit.py tests/unit/test_
 git commit -m "feat(audit): say whether L3 is empty because nobody asked
 
 After S3 the layer has a field, so 'no structured field' would be a lie. The cause
-now distinguishes a run with no describer from a describer that produced nothing,
-and --describer recorded replays fixtures without touching the network."
+now distinguishes a run with no describer from an output that was refused, and
+--describer recorded runs the replay through the same validator the run uses, so
+a refused point cannot be counted as coverage."
 ```
 
 ---
@@ -1598,8 +1822,8 @@ and --describer recorded replays fixtures without touching the network."
 ### Task 8: 文档与交接
 
 **Files:**
-- Modify: `architect.md`（ADR-035、已知限制 17–18、维护记录）
-- Modify: `docs/superpowers/specs/2026-11-15-method-acquisition-design.md`（§13 D16–D19）
+- Modify: `architect.md`（ADR-035、已知限制 17–19、维护记录）
+- Modify: `docs/superpowers/specs/2026-11-15-method-acquisition-design.md`（§13 D16–D22）
 - Modify: `docs/evaluation/2026-11-15-method-acquisition-s2.md`（追加「S3 之后」一节）
 - Modify: `docs/handover/2026-11-15-method-acquisition-handover.md`
 
@@ -1616,8 +1840,9 @@ and --describer recorded replays fixtures without touching the network."
 「已知限制」末尾（第 16 条之后）加：
 
 ```markdown
-17. **L3 的覆盖在本仓库里仍是未测量状态**：S3 落地了协议、四道防线、预算与录制回放，但**没有 provider 客户端**，`tests/fixtures/method_descriptions/` 是空的。审计在 `--describer recorded` 下报 `LLM 未启用`，不报一个没测过的数字。要动这一格，必须先实现 provider 并用 `scripts/record_method_descriptions.py` 录 40 篇。
+17. **L3 的覆盖在本仓库里仍是未测量状态**：S3 落地了协议、四道防线、预算与录制回放，但**没有 provider 客户端**，`tests/fixtures/method_descriptions/` 是空的，`scripts/record_method_descriptions.py` 还没有录制循环。审计在 `--describer recorded` 下报 `LLM 未启用`，不报一个没测过的数字。要动这一格，必须先实现 provider、补录制循环，再录 40 篇。
 18. 四道防线是**形式判据**：`quote` 能定位、`statement` 与它有词重叠，不等于 `statement` 说得对。这一层不宣称描述正确率，只保证「每条要点都能指回原文的一句」。
+19. **回放键不看论文 id**：夹具按「去掉 chunk id 的 prompt」哈希命名（D22），所以同一篇论文只要分块结果变了（换了解析器、改了 `max_chars`），旧录制就 miss，表现为 0 条点而不是报错。录制批次与解析器版本要一起登记。
 ```
 
 - [ ] **Step 3: 设计 §13 偏差**
@@ -1628,7 +1853,10 @@ and --describer recorded replays fixtures without touching the network."
 | D16 | §7.1 协议是 `describe(...) -> MethodDescriptionResponse \| None` | 返回 `DescriptionAttempt`（response / cost_usd / error） | §7.3 要求「provider 返回用量则回填 cost_usd」，而原签名没有位置放成本与错误。三者同为一次调用的结果，分成三个返回值只会让调用方拼装状态 |
 | D17 | §4.1 的 `MethodPoint` 直接作为模型输出模型 | 新增 `MethodPointDraft`（宽松）作输出模型，`MethodPoint` 只由校验器产出 | 若直接让 pydantic 校验模型输出，一个越界 aspect 会抛 `ValidationError`，整篇描述连带丢失，且事件只能记成「schema 坏」；而 §7.4 要求「不合 → 丢弃该点」与「schema 坏 → 整篇拒绝」分开 |
 | D18 | §7.2 未给配置项命名 | `llm_provider` / `llm_model` / `llm_api_key` / `llm_fixture_dir`；`none` 表示不装配 describer | `UnavailableProvider` 从未被实例化，与其假装默认是它，不如让默认是「没有 describer」：零调用、零成本、事件明确 |
-| D19 | §7.6 「把 40 篇的 L3 响应录成夹具」 | 只实现录制与回放两条通路，夹具目录留空，审计报「LLM 未启用」 | 本仓库没有 provider 客户端、没有 key；伪造 40 份响应会让「未测量」看起来像「已测量」，正是本项目反复在修的同一类错误。TRADE-OFF 已写进已知限制 17 |
+| D19 | §7.6 「把 40 篇的 L3 响应录成夹具」 | **回放**已实现（内容哈希做键、`prompt_index` 定位），夹具目录留空；**录制循环**未实现——`scripts/record_method_descriptions.py` 只固定命令行与退出码 2，不写任何文件 | 本仓库没有 provider 客户端、没有 key；伪造 40 份响应会让「未测量」看起来像「已测量」，正是本项目反复在修的同一类错误。审计在 `--describer recorded` 下报「LLM 未启用」，因为空夹具 = 没人问过。TRADE-OFF 已写进已知限制 17 |
+| D20 | §7.4.4 「无 provider / 超预算 → `METHOD_DESCRIPTION_SKIPPED` + `missing_layers` 加 `L3`」 | **超预算**走 SKIPPED 事件；**无 provider** 时零事件，L3 只留在 `missing_layers` 里，审计的「LLM 未启用」由「没装配 describer」这个配置事实推出，不由事件推出 | 若照设计给每个（run, 论文）记一条 SKIPPED，默认配置（`llm_provider="none"`）下每个 run 都多出 N 条 `EventType.FAILURE`，把「这一轮没配 key」计进失败数，与 §7.5「四项都是**该有描述却**没拿到」的定义相反；而 `run_vertical_slice` 的失败事件是 memo 与 `run.warnings` 的输入。代价说清：§10.1 的这条原因只能追到 `missing_layers` 的 `L3`（该条允许「事件**或** missing_layers」），追不到事件。Task 5 的 `test_no_describer_leaves_l3_missing_without_any_event` 就是这条的锁 |
+| D21 | §7.5 只给四个 `METHOD_*` 失败类型 | provider 抛错（`DescriptionAttempt.response is None`）也记 `METHOD_DESCRIPTION_REJECTED`，与「模型答了但 schema 不合格」共用一个类型 | 设计把枚举封在四项；加第五项（如 `METHOD_DESCRIPTION_FAILED`）会连带改 §10.1 的原因表与审计的闭合集，超出 S3。代价：`METHOD_DESCRIPTION_REJECTED` 的 payload 目前只带 `source_version_id`，区分「传输失败」与「输出被拒」要看 event.message 里的 `attempt.error`。审计侧不读这个类型，所以不影响 L3 的原因判据 |
+| D22 | §7.6 未规定夹具格式 | 夹具文件名 = `sha1(去掉 chunk id 的 prompt)[:16]`，每条点用 `prompt_index`（prompt 内序号）而不是 `chunk_id` | `chunk_pages` 用 `new_id("chunk")` 生成 id，每次运行都变（实测同一份 `named_paper.md` 两次得到 `chunk_6450f30f6bb5` 与 `chunk_ac1562d80b8e`）。按 id 命名的夹具永远 miss，而 miss 的表现是「0 条点」，与「模型没答」无法区分；夹具里存 `chunk_id` 同理解析不到本次运行。`prompt_index` 让回放把位置映射到**本次** prompt 的 id，落库的 `MethodPoint.chunk_id` 因此仍是真实可追溯的 chunk |
 ```
 
 - [ ] **Step 4: 报告追加一节**
@@ -1669,7 +1897,7 @@ cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" -
 git status --short
 ```
 
-预期：`403 passed, 2 skipped`、`405 tests collected`、工作区干净。
+预期：`408 passed, 2 skipped`、`410 tests collected`、工作区干净。
 
 - [ ] **Step 7: 提交**
 
@@ -1689,13 +1917,13 @@ still unmeasured - which is different from reporting zero coverage as a defect."
 | # | 判据 | 怎么验 |
 |---|---|---|
 | 1 | 同步协议 + async 适配器可用 | `test_describe_runs_the_async_provider_synchronously` |
-| 2 | 事件循环里不嵌套 | `test_a_running_event_loop_is_refused_instead_of_nested`（构造期与调用期各一次） |
-| 3 | 四道防线各有一条路径 | `test_method_description.py` 的 7 条，含「一个坏点不连坐」 |
+| 2 | 事件循环里不嵌套 | `test_a_running_event_loop_is_refused_instead_of_nested`（调用期）+ `test_building_the_describer_inside_a_loop_is_refused_too`（构造期）；各自删掉实现里的探测会红，已做变异验证 |
+| 3 | 四道防线各有一条路径 | `test_method_description.py` 的 10 条，含「一个坏点不连坐」「aspect 词不算共享词」「跨行引用仍可定位」 |
 | 4 | 预算先查后加 | `max_llm_calls=0` → 0 次调用 + 1 条 SKIPPED；`=2` + 3 篇 → 恰好 2 次 |
 | 5 | 落库 + memo 显示 | `test_points_are_persisted_and_leave_missing_layers`、`test_the_memo_prints_the_point_with_its_section` |
-| 6 | 无 provider 不伪装成调过 | `test_no_describer_leaves_l3_missing_without_any_event` |
-| 7 | 审计不谎报 L3 | 两次实跑都是 `L3 C=0/20`，原因行 `LLM 未启用 20+20` |
-| 8 | 既有用例一条不少 | 收集数 `405`（376 + 29） |
+| 6 | 无 provider 不伪装成调过 | `test_no_describer_leaves_l3_missing_without_any_event`（D20 的锁：零事件，L3 只在 missing_layers 里） |
+| 7 | 审计不谎报 L3 | 两次实跑都是 `L3 C=0/20`、`gaps` 48，原因行 `LLM 未启用` 两域各 20 |
+| 8 | 既有用例一条不少 | 收集数 `410`（376 + 34）；每个任务末尾的期望数即沿此递推 |
 
 ## 明确不做（S3 边界）
 
