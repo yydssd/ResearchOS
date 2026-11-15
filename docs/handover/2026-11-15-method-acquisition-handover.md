@@ -263,7 +263,7 @@ T5 落地：`architect.md` 加 ADR-033 与已知限制第 13 条、维护记录�
 
 ### S4 起手要做的事
 
-1. **先写计划**：`docs/superpowers/plans/2026-11-16-s4-conditions-scale-protocol.md`，依据设计 §8：
+1. **先写计划**：`docs/superpowers/plans/2026-11-15-s4-conditions-scale-protocol.md`，依据设计 §8：
    `conditions.py` 四类扩六类（`scale=` / `protocol=`）、**按 kind 的 provenance**（`dict[kind] -> (value, tier)`）、
    `contradiction.py` 的确认判据改为「参与比较的每个 kind 的 tier 都在 `_CONFIRMED_TIERS` 内」、
    级联安全、三份 before/after 报告。
