@@ -16,6 +16,7 @@ from research_os.documents.chunks import chunk_pages
 from research_os.documents.html import load_html
 from research_os.research.claim_builder import HeuristicClaimBuilder
 from research_os.research.evidence_extractor import HeuristicEvidenceExtractor
+from research_os.research.method_description import validate_description
 from research_os.research.methods import extract_methods, setup_filled
 from research_os.research.quantitative import HeuristicQuantitativeExtractor
 
@@ -64,17 +65,46 @@ def _named_subject(claim) -> bool:
     return bool(subject) and not subject.startswith("self@")
 
 
-def system_side(arxiv_id: str, cache: Path = CACHE) -> dict:
+def system_side(arxiv_id: str, cache: Path = CACHE, describer=None) -> dict:
     """Observe (never modify) the current pipeline's output for one paper.
 
-    L1/L2/L4 now read `MethodProfile` instead of the `conditions` strings they
-    used to borrow: the old mapping scored L2 from `backbone=` and L4 from
-    `training=`, so the newly added components and setup could break completely
-    and the audit would still report the same numbers (design §6.7).
+    L1/L2/L4 read `MethodProfile` instead of the `conditions` strings they used to
+    borrow: the old mapping scored L2 from `backbone=` and L4 from `training=`, so
+    components and setup could break completely and the audit would still report
+    the same numbers (design §6.7).
+
+    `describer` is passed in, never built here: the provider and the budget belong
+    to the caller (design §7.3). With a describer, L3 is genuinely measured - the
+    points go through the same validator the run uses, so a point the run would
+    refuse is refused here too rather than being counted as coverage.
     """
     chunks = chunk_pages(load_html(cache / f"{arxiv_id}.html"), f"sv_{arxiv_id}")
     extraction = extract_methods(chunks)
     profile = extraction.profiles[0] if extraction.profiles else None
+
+    points = list(profile.points) if profile else []
+    if describer is not None:
+        attempt = describer.describe(chunks)
+        if attempt.response is None:
+            points, l3_cause = [], "LLM 输出被拒"
+        else:
+            outcome = validate_description(attempt.response, chunks)
+            points = outcome.points
+            # design §10.1 closes the cause set: a refused quote is "no source
+            # location", a malformed answer is "output refused", and an empty
+            # answer means the model said nothing - the same fact as no describer.
+            if points:
+                l3_cause = None
+            elif outcome.reason in ("METHOD_POINT_UNLOCATABLE", "METHOD_STATEMENT_UNSUPPORTED"):
+                l3_cause = "无来源定位"
+            elif outcome.reason == "METHOD_DESCRIPTION_REJECTED":
+                l3_cause = "LLM 输出被拒"
+            else:
+                l3_cause = "LLM 未启用"
+    else:
+        l3_cause = None if points else "LLM 未启用"
+
+
     evidence = HeuristicEvidenceExtractor().extract(chunks)
     quantitative = HeuristicQuantitativeExtractor().extract(evidence)
     claims, _ = HeuristicClaimBuilder().build(
@@ -84,7 +114,8 @@ def system_side(arxiv_id: str, cache: Path = CACHE) -> dict:
         "L1": bool(profile and profile.name),
         "L1_ambiguous": bool(profile and profile.source_version_id in extraction.ambiguous),
         "L2": bool(profile and profile.components),
-        "L3": bool(profile and profile.points),
+        "L3": bool(points),
+        "L3_cause": l3_cause,
         "L4": bool(profile and setup_filled(profile.setup)),
         "proxy": sum(1 for claim in claims if _named_subject(claim)),
         "empty": not claims and not quantitative,
@@ -119,9 +150,10 @@ def cause_for(layer: str, side: dict) -> str:
     if layer == "L1" and side.get("L1_ambiguous"):
         return "命名歧义"
     if layer == "L3":
-        # The one layer with no producer at all: its reason is structural, not a
-        # vocabulary miss (design §10.1).
-        return "无结构化字段"
+        # After S3 the field exists, so "no field" would be a lie. The observation
+        # carries the real cause; the old string survives only for sides built
+        # before the field existed (synthetic fixtures, S2 reports).
+        return side.get("L3_cause") or "无结构化字段"
     # L1/L2/L4 all have a field; what failed is the pattern vocabulary reaching
     # this paper's wording.
     return "词表未覆盖"
@@ -206,10 +238,24 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--labels", type=Path, required=True)
     parser.add_argument("--cache", type=Path, default=CACHE)
+    parser.add_argument(
+        "--describer",
+        choices=("none", "recorded"),
+        default="none",
+        help="recorded replays tests/fixtures/method_descriptions (design §7.6)",
+    )
     args = parser.parse_args()
 
     labels = load_labels(args.labels, require_full_corpus=True)
-    sides = {row["arxiv_id"]: system_side(row["arxiv_id"], args.cache) for row in labels}
+    describer = None
+    if args.describer == "recorded":
+        from research_os.config import Settings
+        from research_os.llm.factory import build_describer
+
+        describer = build_describer(
+            Settings(llm_provider="recorded", llm_fixture_dir="tests/fixtures/method_descriptions")
+        )
+    sides = {row["arxiv_id"]: system_side(row["arxiv_id"], args.cache, describer) for row in labels}
     report = summarise(labels, sides)
     print_report(report)
 

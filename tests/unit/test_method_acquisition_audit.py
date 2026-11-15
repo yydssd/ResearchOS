@@ -152,3 +152,62 @@ def test_load_labels_rejects_a_present_cell_without_evidence(tmp_path):
     path.write_text(json.dumps(bad), encoding="utf-8")
     with pytest.raises(ValueError, match="present without evidence"):
         load_labels(path)
+
+
+HTML = """<html><body><h2>Method</h2><p>LangProp stores each policy as code and
+scores it by execution feedback.</p></body></html>"""
+
+
+def _mini_cache(tmp_path):
+    (tmp_path / "x.html").write_text(HTML, encoding="utf-8")
+    return tmp_path
+
+
+def test_l3_cause_says_whether_a_describer_was_configured():
+    """0/20 for L3 has two very different meanings: "nothing can fill this layer"
+    and "nobody asked". After S3 the field exists, so the audit must say which."""
+    side = {**SIDES["a1"], "L3_cause": "LLM 未启用"}
+
+    assert cause_for("L3", side) == "LLM 未启用"
+    # No hint at all keeps the S2 behaviour for the synthetic fixtures above.
+    assert cause_for("L3", SIDES["a1"]) == "无结构化字段"
+
+
+def test_system_side_reports_an_l3_cause_without_a_describer(tmp_path):
+    from scripts.method_acquisition_audit import system_side
+
+    side = system_side("x", _mini_cache(tmp_path))
+
+    assert side["L3"] is False
+    assert side["L3_cause"] == "LLM 未启用"
+
+
+def test_a_describer_with_a_locatable_point_makes_l3_covered(tmp_path):
+    """The replay path must be able to move L3; a flag that can only relabel the
+    cause would turn "not measured" into "measured as zero"."""
+    from scripts.method_acquisition_audit import system_side
+
+    class StubDescriber:
+        def describe(self, chunks):
+            from research_os.llm.base import DescriptionAttempt, MethodDescriptionResponse, MethodPointDraft
+
+            chunk = chunks[0]
+            return DescriptionAttempt(
+                response=MethodDescriptionResponse(
+                    points=[
+                        MethodPointDraft(
+                            aspect="mechanism",
+                            statement="Stores each policy as code.",
+                            quote="stores each policy as code and scores it",
+                            chunk_id=chunk.id,
+                            section=chunk.section,
+                        )
+                    ]
+                )
+            )
+
+    side = system_side("x", _mini_cache(tmp_path), StubDescriber())
+
+    assert side["L3"] is True
+    assert side["L3_cause"] is None
+
