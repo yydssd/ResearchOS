@@ -8,11 +8,10 @@ from pathlib import Path
 import pytest
 
 from scripts.method_acquisition_audit import (
+    cause_for,
+    covered_for,
     load_labels,
     summarise,
-    covered_for,
-    cause_for,
-    PLACEHOLDER_METHOD,
 )
 
 DOMAINS = ("d0", "d1")
@@ -54,11 +53,18 @@ LABELS = [
                       "L4": ("absent", None)}),
 ]
 
+# `L3` is observed from the profile's points, not hardcoded: the previous audit
+# returned False for L3 by construction, which is why the layer could never be
+# seen to start working.
 SIDES = {
-    "a1": {"structured": True,  "proxy": 2, "L2": False, "L4": False, "empty": False},
-    "a2": {"structured": False, "proxy": 0, "L2": False, "L4": True,  "empty": False},
-    "b1": {"structured": False, "proxy": 1, "L2": True,  "L4": False, "empty": False},
-    "b2": {"structured": True,  "proxy": 3, "L2": False, "L4": False, "empty": False},
+    "a1": {"L1": True,  "L1_ambiguous": False, "L2": False, "L3": False, "L4": False,
+           "proxy": 2, "empty": False},
+    "a2": {"L1": False, "L1_ambiguous": False, "L2": False, "L3": False, "L4": True,
+           "proxy": 0, "empty": False},
+    "b1": {"L1": True,  "L1_ambiguous": False, "L2": True,  "L3": False, "L4": False,
+           "proxy": 1, "empty": False},
+    "b2": {"L1": False, "L1_ambiguous": True,  "L2": False, "L3": False, "L4": False,
+           "proxy": 3, "empty": False},
 }
 
 
@@ -89,7 +95,7 @@ def test_covered_over_20_and_proxy_and_ambiguous():
 def test_gap_causes_are_classified():
     report = summarise(LABELS, SIDES, domain_size=2)
     assert report["gaps"]["d0|L3|无结构化字段"] == 1
-    assert report["gaps"]["d1|L1|无结构化字段"] == 1
+    assert report["gaps"]["d1|L1|命名歧义"] == 1
     assert report["gaps"]["d1|L3|无结构化字段"] == 1
     assert report["gaps"]["d1|L4|无结构化字段"] == 1
     assert sum(report["gaps"].values()) == 4
@@ -100,6 +106,9 @@ def test_every_cell_is_traceable_to_an_arxiv_id():
     assert len(report["cells"]) == 16
     assert {c["arxiv_id"] for c in report["cells"]} == {"a1", "a2", "b1", "b2"}
     assert all({"layer", "label", "covered"} <= set(c) for c in report["cells"])
+    # a1/L1, a2/L4, b1/L1, b1/L2. b2 names two methods, so its L1 is present in
+    # the labels but not covered by the system - the case the ambiguity cause
+    # exists for.
     assert sum(1 for c in report["cells"] if c["covered"]) == 4
     assert sum(1 for c in report["cells"] if c["label"] == "ambiguous") == 1
 
@@ -108,14 +117,19 @@ def test_layer_mapping():
     assert covered_for("L1", SIDES["a1"]) is True
     assert covered_for("L1", SIDES["a2"]) is False
     assert covered_for("L2", SIDES["b1"]) is True
-    assert covered_for("L3", SIDES["a1"]) is False
     assert covered_for("L4", SIDES["a2"]) is True
+    # L3 must read the observation, not a constant: a profile with a point turns
+    # the cell green even though S2 has no describer.
+    assert covered_for("L3", SIDES["a1"]) is False
+    assert covered_for("L3", {**SIDES["a1"], "L3": True}) is True
     assert cause_for("L3", SIDES["a1"]) == "无结构化字段"
     # Both other causes must be reachable, or cause_for could collapse to a
     # constant and every test above would still pass.
-    empty_side = {"structured": False, "proxy": 0, "L2": False, "L4": False, "empty": True}
+    empty_side = {**SIDES["a1"], "empty": True}
     assert cause_for("L4", empty_side) == "无来源定位"
     assert cause_for("L2", SIDES["a2"]) == "词表未覆盖"
+    # A paper that named two methods gets the ambiguity cause, not "no field".
+    assert cause_for("L1", SIDES["b2"]) == "命名歧义"
 
 
 def test_real_labels_pass_the_contract():

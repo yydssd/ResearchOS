@@ -16,13 +16,13 @@ from research_os.documents.chunks import chunk_pages
 from research_os.documents.html import load_html
 from research_os.research.claim_builder import HeuristicClaimBuilder
 from research_os.research.evidence_extractor import HeuristicEvidenceExtractor
+from research_os.research.methods import extract_methods, setup_filled
 from research_os.research.quantitative import HeuristicQuantitativeExtractor
 
 CACHE = Path(__file__).resolve().parents[1] / ".holdout_cache"
 LAYERS = ("L1", "L2", "L3", "L4")
 LABELS = ("present", "absent", "ambiguous")
 DOMAINS = ("image_restoration", "agent_in_mc")
-PLACEHOLDER_METHOD = "proposed method"
 
 
 def load_labels(path: Path, *, require_full_corpus: bool = False) -> list[dict]:
@@ -67,47 +67,57 @@ def _named_subject(claim) -> bool:
 def system_side(arxiv_id: str, cache: Path = CACHE) -> dict:
     """Observe (never modify) the current pipeline's output for one paper.
 
-    `QuantitativeEvidence.protocol` deliberately does NOT appear, and after the
-    S1 split the earlier reason for that no longer holds: the unit now lives in
-    `unit`, and `protocol` is empty everywhere because nothing extracts an
-    evaluation protocol yet. It stays out of the observation for the new reason
-    -- an empty field would only be re-observed as empty -- until S4 fills it.
+    L1/L2/L4 now read `MethodProfile` instead of the `conditions` strings they
+    used to borrow: the old mapping scored L2 from `backbone=` and L4 from
+    `training=`, so the newly added components and setup could break completely
+    and the audit would still report the same numbers (design §6.7).
     """
     chunks = chunk_pages(load_html(cache / f"{arxiv_id}.html"), f"sv_{arxiv_id}")
+    extraction = extract_methods(chunks)
+    profile = extraction.profiles[0] if extraction.profiles else None
     evidence = HeuristicEvidenceExtractor().extract(chunks)
     quantitative = HeuristicQuantitativeExtractor().extract(evidence)
     claims, _ = HeuristicClaimBuilder().build(
         evidence, quantitative=quantitative, chunks=chunks
     )
-    conditions = [cond for claim in claims for cond in claim.conditions]
     return {
-        "structured": any(
-            q.method and q.method != PLACEHOLDER_METHOD for q in quantitative
-        ),
+        "L1": bool(profile and profile.name),
+        "L1_ambiguous": bool(profile and profile.source_version_id in extraction.ambiguous),
+        "L2": bool(profile and profile.components),
+        "L3": bool(profile and profile.points),
+        "L4": bool(profile and setup_filled(profile.setup)),
         "proxy": sum(1 for claim in claims if _named_subject(claim)),
-        "L2": any(cond.startswith(("backbone=", "baseline=")) for cond in conditions),
-        "L4": any(cond.startswith("training=") for cond in conditions),
         "empty": not claims and not quantitative,
     }
 
 
 def covered_for(layer: str, side: dict) -> bool:
-    """The fixed claim-object mapping from spec section 5."""
+    """Which observation makes a layer count as covered (design §6.7).
+
+    Every branch reads the side, including L3: a constant there is how the layer
+    stayed invisible for a whole measurement cycle.
+    """
     if layer == "L1":
-        return bool(side["structured"])
+        return bool(side["L1"])
     if layer == "L2":
         return bool(side["L2"])
     if layer == "L3":
-        return False  # no field exists: structural absence, not an extraction error
+        return bool(side["L3"])
     if layer == "L4":
         return bool(side["L4"])
     raise ValueError(f"unknown layer: {layer}")
 
 
 def cause_for(layer: str, side: dict) -> str:
-    """Direct reason a present cell was not covered. Three values only."""
+    """Direct reason a present cell was not covered (design §10.1).
+
+    A closed set: every gap gets one of these, so "unexplained uncovered" stays
+    at zero and no cell can be left without a conclusion.
+    """
     if side["empty"]:
         return "无来源定位"
+    if layer == "L1" and side.get("L1_ambiguous"):
+        return "命名歧义"
     if layer == "L2":
         return "词表未覆盖"
     return "无结构化字段"
