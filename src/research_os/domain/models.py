@@ -152,6 +152,11 @@ class QuantitativeEvidence(BaseModel):
     comparator: str | None = None
     comparator_value: float | None = None
     protocol: str | None = None
+    # The unit attached to this value ("dB"/"percent"). It lives apart from
+    # `protocol` because plan §15 gives that slot to the evaluation protocol
+    # ("zero-shot"), and a field named protocol holding "dB" made every delta
+    # bucket read `db:0.44` while pretending to be a protocol.
+    unit: str | None = None
     # A gain stated without naming a metric ("+0.44 dB", "a 0.11 dB improvement").
     # 78% of value-bearing sentences look like this, so without `delta` they would
     # carry no structured fact at all (P4 spec §7).

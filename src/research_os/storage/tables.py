@@ -109,6 +109,7 @@ class QuantitativeEvidenceRow(Base):
     comparator: Mapped[str | None] = mapped_column(Text, nullable=True)
     comparator_value: Mapped[float | None] = mapped_column(Float, nullable=True)
     protocol: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    unit: Mapped[str | None] = mapped_column(String(32), nullable=True)
     delta: Mapped[float | None] = mapped_column(Float, nullable=True)
 
 

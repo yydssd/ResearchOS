@@ -15,6 +15,7 @@ from research_os.domain.models import (
     Claim,
     ClaimEvidenceRelation,
     Evidence,
+    QuantitativeEvidence,
     ResearchEvent,
     ResearchQuestion,
     ResearchRun,
@@ -28,6 +29,7 @@ from research_os.storage.repositories import (
     SqlClaimRepository,
     SqlEventRepository,
     SqlEvidenceRepository,
+    SqlQuantitativeEvidenceRepository,
     SqlQuestionRepository,
     SqlRunRepository,
     SqlSourceVersionRepository,
@@ -119,3 +121,29 @@ def test_event_persistence(db):
         assert len(events) == 1
         assert events[0].event_type == EventType.RUN_CREATED
         assert events[0].payload == {"a": 1}
+
+
+def test_quantitative_evidence_keeps_unit_apart_from_protocol(db):
+    """plan §15 gives `protocol` to the evaluation protocol. The unit ("dB") is a
+    different fact and used to be stored there; a row that carries both must come
+    back with both, unchanged."""
+    with session_scope() as s:
+        work = ResearchWork(canonical_title="W")
+        SqlWorkRepository(s).create(work)
+        sv = SourceVersion(work_id=work.id, source_type=SourceType.PDF, title="W.pdf", local_path="x.pdf")
+        SqlSourceVersionRepository(s).create(sv)
+        ev = Evidence(source_version_id=sv.id, text="PSNR 39.18 dB on SIDD.")
+        SqlEvidenceRepository(s).create(ev)
+        SqlQuantitativeEvidenceRepository(s).create_many(
+            [
+                QuantitativeEvidence(
+                    evidence_id=ev.id, seq=0, dataset="SIDD", metric="PSNR",
+                    value=39.18, unit="dB", protocol="zero-shot",
+                )
+            ]
+        )
+    with session_scope() as s:
+        rows = SqlQuantitativeEvidenceRepository(s).list_all()
+        assert len(rows) == 1
+        assert rows[0].unit == "dB"
+        assert rows[0].protocol == "zero-shot"

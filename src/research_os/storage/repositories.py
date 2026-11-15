@@ -392,6 +392,7 @@ class SqlQuantitativeEvidenceRepository:
                     comparator=fact.comparator,
                     comparator_value=fact.comparator_value,
                     protocol=fact.protocol,
+                    unit=fact.unit,
                     delta=fact.delta,
                 )
             )
@@ -409,6 +410,7 @@ class SqlQuantitativeEvidenceRepository:
             comparator=row.comparator,
             comparator_value=row.comparator_value,
             protocol=row.protocol,
+            unit=row.unit,
             delta=row.delta,
         )
 
