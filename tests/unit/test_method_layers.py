@@ -104,3 +104,12 @@ def test_missing_layers_always_reports_l3_until_s3_exists():
     # L1 (name), L2 (gating mechanism) and L4 (lr=3e-4) all landed here, so the
     # list is exactly the one layer no code can fill yet.
     assert complete.missing_layers == ["L3"]
+
+
+def test_a_scheme_less_repository_url_is_still_a_repository():
+    """Hold-out paper 2507.22498 writes "The code is available at github.com/..."
+    with no scheme, and its own L4 label quotes that sentence. Requiring `https://`
+    made the setup look absent while the paper had named a repository."""
+    profile = _profile(_chunk("The code is available at github.com/foo/ssgformer."))
+    assert profile.setup.repository == "https://github.com/foo/ssgformer"
+    assert "L4" not in profile.missing_layers

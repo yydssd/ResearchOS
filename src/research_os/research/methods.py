@@ -321,8 +321,10 @@ def _setup(chunks: list[DocumentChunk]) -> MethodSetup:
         if setup.repository is None:
             match = REPOSITORY_URL.search(text)
             if match:
-                # Trailing punctuation belongs to the sentence, not the URL.
-                setup.repository = match.group(0).rstrip(".,;:")
+                # Trailing punctuation belongs to the sentence, not the URL, and
+                # a scheme-less match is normalised so the field stays clickable.
+                found = match.group(0).rstrip(".,;:")
+                setup.repository = found if "://" in found else f"https://{found}"
         if setup.scale is None:
             setup.scale = _scale(text)
         if setup.protocol is None:

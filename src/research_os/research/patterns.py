@@ -100,7 +100,12 @@ EVAL_PROTOCOL = re.compile(r"\b(zero-?shot|few-?shot|\d+-shot|pass@\d+)\b", re.I
 # and "39.18 dB" cannot read as "42 dB" -> 42B parameters.
 SCALE_PARAMS = re.compile(r"(?<![\w.])(\d+(?:\.\d+)?)\s?([BM])\b")
 SCALE_GPU = re.compile(r"(\d+)\s?[×x]\s?(A100|H100|V100|GPU|TPU)\b", re.IGNORECASE)
-REPOSITORY_URL = re.compile(r"https?://(?:github\.com|gitlab\.com|huggingface\.co)/[^\s)\]>,;]+")
+# The scheme is optional: papers write "github.com/foo/bar" as often as the full
+# URL, and one hold-out paper's own repository evidence is exactly that form.
+# Without a path the match is rejected, so "see github.com" is not a repository.
+REPOSITORY_URL = re.compile(
+    r"(?:https?://)?(?:www\.)?(?:github\.com|gitlab\.com|huggingface\.co)/[^\s)\]>,;]+"
+)
 HYPERPARAMETERS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("lr", re.compile(r"(?i)\blearning rate\b[^\d]{0,12}(\d+(?:\.\d+)?(?:[eE]-?\d+)?)")),
     ("batch", re.compile(r"(?i)\bbatch(?: size)?\b[^\d]{0,12}(\d+)")),
