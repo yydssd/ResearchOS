@@ -49,6 +49,11 @@ def prompt_key(prompt: str) -> str:
     return hashlib.sha1(body.encode("utf-8")).hexdigest()[:16]
 
 
+def prompt_ids(prompt: str) -> list[str]:
+    """Chunk ids in prompt order. Recording and replay must agree on this."""
+    return _ID_LINE.findall(prompt)
+
+
 class RecordedProvider:
     """Reads `{prompt_key}.json` from a fixture directory; never touches the network."""
 
@@ -62,7 +67,7 @@ class RecordedProvider:
         if not path.exists():
             return MethodDescriptionResponse(points=[])
         payload = json.loads(path.read_text(encoding="utf-8"))
-        ids = _ID_LINE.findall(prompt)
+        ids = prompt_ids(prompt)
         points = []
         for raw in payload.get("points", []):
             recorded = RecordedPoint(**raw)
