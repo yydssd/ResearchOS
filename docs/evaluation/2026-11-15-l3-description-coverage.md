@@ -194,3 +194,46 @@ by stratum:  model=partial 2/5 = 40%   model=supported 3/5 = 60%
 - **下一步最小改动**：把 rubric 钉成两条明文规则（片段补主语**不算**添加；上位词替换**算**丢失），
   二值化（`supported` / `needs-review`），再抽 20 条、两个标注者各自独立填——那时才谈得上一致率。
   在此之前，L3 的可报告指标只有**覆盖率**（`19/20` / `20/20`），不是支持率。
+
+## 11. 关键发现：引文不是整句，前面 10 节的判断都建立在半句上
+
+上面 §7/§10 的分歧有一个更朴素的原因，是用户提出来的：**`quote` 里存的是半句**。核实结果：
+
+对 290 条已定位要点逐条检查「引文在 chunk 里是否起于句首、止于句末」：
+
+| | 条数 | 占比 |
+|---|---|---|
+| 完整句 | **15** | **5.2%** |
+| 句首被截（丢主语/条件） | 214 | 73.8% |
+| 句末被截 | 154 | 53.1% |
+
+三条实例（原文 vs 引文）：
+
+| 论文 | 原文 | 引文 |
+|---|---|---|
+| `2507.03293` | `We formalize planning as graph traversal …, allowing **LTLCrit to** analyze failed …` | `analyze failed or suboptimal trajectories and generate …` |
+| `2504.09377` | `we propose **a HOG loss that** supervises gradient orientation and magnitude …` | `supervises gradient orientation and magnitude …` |
+| `2507.22498` | `**SSGformer** decomposes images into high-frequency edge features …` | `decomposes images into high-frequency edge features …` |
+
+### 这解释了 §10 的分歧，也推翻了我上一节的解释
+
+- a03 / a04 的分歧（模型判 `partial`、人工判 `supported`）**不是 rubric 问题**：引文里真的没有主语，
+  模型按「补主语 = 加内容」判 partial 是**对**的；人工判 supported 是因为人从上下文补出了主语。
+- 更要紧的是：**四道防线一直放过这种半句**。它是唯一的子串、够 4 个词、陈述与它有词重叠，三条全过——
+  但读者看不到「谁做了什么」。§7 里那个 25% 的 `partial`，很大一部分是这堵墙漏进来的。
+
+### 修法：引文必须是整句（已试，未合入）
+
+在 `validate_description` 里加一条句界检查：引文前一个字符必须是句末标点（或 chunk 开头），
+引文本身以句末标点结束。**实测会让 4 条既有用例失败**——那些用例的引文本来就是半句
+（`Our method stores each policy as code` 起于句中），也就是说**夹具编码的是旧的弱契约**。
+同时按 5.2% 的完整率推算，直接上线会把 L3 覆盖从 `19/20` 打到接近 0。
+
+所以我撤回了这次改动，主干保持绿（`435 passed`）。这不是「不做」，而是**它需要一个独立小阶段**：
+
+1. 收紧 `_locates` + 更新那 4 条夹具备注（换成整句）；
+2. prompt 明确要求「引文必须是一整句，从主语开始、到句号结束」；
+3. 重录 40 篇（+40 次调用）；
+4. 重测覆盖，并**重做 §7 的盲评**——旧的那 20 条判断作废，因为判的是半句。
+
+在那之前：**§7 的 `15/5/0` 与 §10 的 50% 一致率都不应被引用**，它们度量的是「对残缺引文的判断」。
