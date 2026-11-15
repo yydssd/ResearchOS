@@ -7,8 +7,8 @@
       "aspect": "mechanism",
       "statement": "Splits images into high-frequency edge features via edge detection and low-frequency information through matrix decomposition.",
       "quote": "decomposes images into high-frequency edge features using conventional edge detection and low-frequency information via Singular Value Decomposition",
-      "verdict": "",
-      "note": ""
+      "verdict": "partial",
+      "note": "The quote mentions 'Singular Value Decomposition' but the statement refers to 'matrix decomposition' without specifying the type."
     },
     {
       "id": "a02",
@@ -16,7 +16,7 @@
       "aspect": "mechanism",
       "statement": "The mechanism generates executable code for embodied control.",
       "quote": "generates executable code for embodied control",
-      "verdict": "",
+      "verdict": "supported",
       "note": ""
     },
     {
@@ -25,8 +25,8 @@
       "aspect": "mechanism",
       "statement": "The critic inspects unsuccessful or suboptimal trajectories and produces fresh temporal-logic rules to improve later behavior.",
       "quote": "analyze failed or suboptimal trajectories and generate new temporal logic rules that improve future behavior",
-      "verdict": "",
-      "note": ""
+      "verdict": "supported",
+      "note": "maybe add 'inspects' to match the statement more closely, but the essence is captured."
     },
     {
       "id": "a04",
@@ -34,8 +34,8 @@
       "aspect": "mechanism",
       "statement": "A loss supervises gradient orientation and magnitude to maintain edge and structural integrity.",
       "quote": "supervises gradient orientation and magnitude to preserve edge and structural integrity",
-      "verdict": "",
-      "note": ""
+      "verdict": "supported",
+      "note": "add \"loss\" to match the statement"
     },
     {
       "id": "a05",
@@ -43,7 +43,7 @@
       "aspect": "goal",
       "statement": "A benchmark tests multiple dimensions of embodied and collaborative reasoning.",
       "quote": "a benchmark to test the different dimensions of embodied and collaborative reasoning",
-      "verdict": "",
+      "verdict": "supported",
       "note": ""
     },
     {
@@ -52,8 +52,8 @@
       "aspect": "mechanism",
       "statement": "Patch embedding samples pixels using learned offsets.",
       "quote": "deformable patch embedding samples pixels with learned offsets",
-      "verdict": "",
-      "note": ""
+      "verdict": "partial",
+      "note": "The quote mentions 'deformable patch embedding' but the statement refers to 'patch embedding' without specifying the deformability."
     },
     {
       "id": "a07",
@@ -61,8 +61,8 @@
       "aspect": "why_it_works",
       "statement": "Capabilities are compressed into a single model, making the system simpler to operate.",
       "quote": "By distilling capabilities into a single model",
-      "verdict": "",
-      "note": ""
+      "verdict": "partial",
+      "note": "The quote mentions 'distilling capabilities' but the statement refers to 'compressing capabilities' without specifying the process,making it simpler to operate is implied but not explicitly stated."
     },
     {
       "id": "a08",
@@ -70,8 +70,8 @@
       "aspect": "goal",
       "statement": "Frames restoration as autoregressive generation to model spectral and spatial dependencies progressively instead of reconstructing globally.",
       "quote": "rethinking HSI restoration as an autoregressive generation problem",
-      "verdict": "",
-      "note": ""
+      "verdict": "unsupported",
+      "note": "'an autoregressive generation problem' is unclear,and the quote does not mention modeling spectral and spatial dependencies progressively or reconstructing globally."
     },
     {
       "id": "a09",
@@ -79,7 +79,7 @@
       "aspect": "goal",
       "statement": "Restoration parameters should be assembled dynamically from the input image and applied at the token level.",
       "quote": "the model should dynamically assemble restoration parameters conditioned on the input image and apply them at the token level",
-      "verdict": "",
+      "verdict": "supported",
       "note": ""
     },
     {
@@ -88,8 +88,8 @@
       "aspect": "mechanism",
       "statement": "A shift mechanism captures local context from all directions to improve performance.",
       "quote": "we introduce an omnidirectional token shift mechanism that accurately captures local context to enhance the model performance",
-      "verdict": "",
-      "note": ""
+      "verdict": "partial",
+      "note": "The words is unclear,'token shift mechanism' is not exactly the same as 'shift mechanism'."
     }
   ]
 }

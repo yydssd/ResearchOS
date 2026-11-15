@@ -65,6 +65,8 @@ python scripts/method_acquisition_audit.py --labels tests/fixtures/method_acquis
 
 四道防线只保证「引文能定位」，不保证「陈述说得对」。这一节第一次给后者一个数字。
 
+> ⚠️ 本节的 `15/5/0` **不能**当作描述质量的估计：§10 的人工锚点显示它与人工判断的一致率只有 50%（kappa 0.20）。
+
 **抽样**：`random.seed(20261115)`，从 290 条可定位要点里抽 20 条，**每篇最多 1 条**、两域各 10 条
 （避免集中在少数论文上）。样本与原始响应：`docs/evaluation/2026-11-15-l3-sample.json`。
 
@@ -150,3 +152,45 @@ Decomposition` 被写成 `matrix decomposition`，是上位词降级），可接
 
 **填完之前，本报告不给出任何「LLM judge 与人类一致」的结论。** 现在的 `15/5/0` 只是模型的自评，
 而 p09 那一条已经显示出宽容倾向。
+
+## 10. 人工锚点结果：一致率 50%，分歧集中在两条规则上
+
+10 条分层盲评已填（`2026-11-16-l3-annotation.json`），`scripts/score_l3_annotation.py` 的输出：
+
+```
+n = 10   raw agreement = 50.0%   kappa(binary) = 0.200
+by stratum:  model=partial 2/5 = 40%   model=supported 3/5 = 60%
+```
+
+| id | 人工 | 模型 | 一致 | 分歧点 |
+|---|---|---|---|---|
+| a01 | partial | supported | ✗ | 模型放过了 `Singular Value Decomposition` → `matrix decomposition` 的上位词替换 |
+| a02 | supported | supported | ✓ | |
+| a03 | supported | partial | ✗ | 引文是无主语片段，陈述补了 `The critic` |
+| a04 | supported | partial | ✗ | 同上，补了 `A loss` |
+| a05 | supported | supported | ✓ | |
+| a06 | partial | partial | ✓ | `deformable` 被丢掉 |
+| a07 | partial | partial | ✓ | |
+| a08 | unsupported | partial | ✗ | 陈述补了「spectral/spatial 依赖」「非全局重建」 |
+| a09 | supported | supported | ✓ | |
+| a10 | partial | supported | ✗ | `omnidirectional token shift mechanism` 被压成 `shift mechanism` |
+
+### 这不是「模型不可靠」，是两条规则没定死
+
+把 5 条分歧逐条看，它们**不是随机分布的**，全部落在两个问题上：
+
+1. **片段补主语算不算「添加内容」？** a03 的引文 `analyze failed or suboptimal trajectories and generate new
+   temporal logic rules…` 没有主语，陈述写成「The critic inspects…」。模型判「补了主语 → partial」，
+   人工判「主语是片段自带的 → supported」。a04 完全同形。**两条分歧全部来自这条规则未定义。**
+2. **换成上位词算不算失真？** a01（SVD → matrix decomposition）、a10（omnidirectional token shift →
+   shift）都是把具体术语换成更宽的说法。模型放过，人工判 partial。
+
+方向也是双向的：模型在 a01/a10 更宽，在 a03/a04 更严，在 a08 更宽。所以**「LLM judge 偏宽容」这个假设不成立**——§7 里我根据 p09 一条推断出的倾向，在 10 条上没有得到支持。
+
+### 结论（写给自己和下一个人的）
+
+- **`15/5/0` 不是质量估计**，是两个模型之间的一致性水平；与一个人类读者的一致率是 50%、kappa 0.20（n=10，置信区间很宽，但 0.2 已经低到不能当代理指标）。
+- **不要因为 kappa 低就下「模型判不了」的结论**：5 条分歧全部可由两条规则解释，说明问题在rubric，不在能力。n=10 也分不清这两种解释——这一点必须承认，不能假装分清了。
+- **下一步最小改动**：把 rubric 钉成两条明文规则（片段补主语**不算**添加；上位词替换**算**丢失），
+  二值化（`supported` / `needs-review`），再抽 20 条、两个标注者各自独立填——那时才谈得上一致率。
+  在此之前，L3 的可报告指标只有**覆盖率**（`19/20` / `20/20`），不是支持率。
