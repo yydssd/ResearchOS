@@ -15,8 +15,8 @@
 ## 0. 一句话状态
 
 `method-acquisition-audit` 已**快进合并进 `master`**（本地，未推送），分支已删。
-`master` 现在 `e248067` 之上 **59 个提交**：S1（`protocol` → `unit`）16 个、S2（确定性 L1/L2/L4）11 个、
-S3（L3 接线）9 个，其余是度量与文档。
+`master` 现在 `e248067` 之上 **58 个提交**：S1（`protocol` → `unit`）16 个、S2（确定性 L1/L2/L4）11 个、
+S3（L3 接线）10 个，其余是度量与文档。
 
 **S1 5/5、S2 6/6、S3 8/8 全部收官**（判据见各自计划的验收表）。
 **下一步是 S4 的计划（尚未开写）**：`conditions` 新增 `scale=`/`protocol=` + 按 kind 的 provenance。
