@@ -1,0 +1,185 @@
+{
+  "note": "20 points sampled with random.seed(20261115), max 1 per paper, 10 per domain",
+  "items": [
+    {
+      "paper": "2602.00749",
+      "domain": "image_restoration",
+      "aspect": "goal",
+      "statement": "Frames restoration as autoregressive generation to model spectral and spatial dependencies progressively instead of reconstructing globally.",
+      "quote": "rethinking HSI restoration as an autoregressive generation problem",
+      "section": "Abstract",
+      "id": "p01"
+    },
+    {
+      "paper": "2310.18293",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "The approach uses a single restoration level for the whole image rather than varying it per region.",
+      "quote": "the restoration level is fixed for whole image in our method",
+      "section": "4.2 Comparisons with the State-of-the-art Methods",
+      "id": "p02"
+    },
+    {
+      "paper": "2608.06832",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "Patch embedding samples pixels using learned offsets.",
+      "quote": "deformable patch embedding samples pixels with learned offsets",
+      "section": "1 Introduction",
+      "id": "p03"
+    },
+    {
+      "paper": "2504.09377",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "A loss supervises gradient orientation and magnitude to maintain edge and structural integrity.",
+      "quote": "supervises gradient orientation and magnitude to preserve edge and structural integrity",
+      "section": "1. Introduction",
+      "id": "p04"
+    },
+    {
+      "paper": "2608.06939",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "Attention is refined progressively toward degraded regions using an alignment strategy.",
+      "quote": "progressively refines attention to degraded regions through an alignment strategy",
+      "section": "III Method",
+      "id": "p05"
+    },
+    {
+      "paper": "2404.12495",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "Microwaves are coupled into an edge inductive gap.",
+      "quote": "Microwaves (MWs) are coupled in to an edge inductive gap",
+      "section": "I Introduction",
+      "id": "p06"
+    },
+    {
+      "paper": "2605.06127",
+      "domain": "image_restoration",
+      "aspect": "goal",
+      "statement": "Restoration parameters should be assembled dynamically from the input image and applied at the token level.",
+      "quote": "the model should dynamically assemble restoration parameters conditioned on the input image and apply them at the token level",
+      "section": "1 Introduction",
+      "id": "p07"
+    },
+    {
+      "paper": "2606.19097",
+      "domain": "image_restoration",
+      "aspect": "why_it_works",
+      "statement": "Hierarchical visual priors supply structural and semantic information, complementing missing structure in damaged regions and improving detail recovery.",
+      "quote": "provide structural and semantic information as hierarchical visual priors, thereby complementing the missing structural information in damaged regions and improving detail recovery.",
+      "section": "Abstract",
+      "id": "p08"
+    },
+    {
+      "paper": "2507.22498",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "Splits images into high-frequency edge features via edge detection and low-frequency information through matrix decomposition.",
+      "quote": "decomposes images into high-frequency edge features using conventional edge detection and low-frequency information via Singular Value Decomposition",
+      "section": "Abstract",
+      "id": "p09"
+    },
+    {
+      "paper": "2407.11087",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "A shift mechanism captures local context from all directions to improve performance.",
+      "quote": "we introduce an omnidirectional token shift mechanism that accurately captures local context to enhance the model performance",
+      "section": "3 Method",
+      "id": "p10"
+    },
+    {
+      "paper": "2501.19318",
+      "domain": "agent_in_mc",
+      "aspect": "why_it_works",
+      "statement": "It leverages a language model's structured reasoning and grounds outputs in physical-world dynamics.",
+      "quote": "capitalizes on the LLM’s capacity for structured reasoning while grounding its outputs in the dynamics of the physical world",
+      "section": "1 Introduction",
+      "id": "p11"
+    },
+    {
+      "paper": "2608.22055",
+      "domain": "agent_in_mc",
+      "aspect": "goal",
+      "statement": "The aim is for coordination to expose the task consequence of a private fact: who acts, what crosses the handoff boundary, where it goes, and what follows.",
+      "quote": "Coordination must reveal the task consequence of a private fact: who acts, what crosses the handoff boundary, where it goes, and which suffix follows.",
+      "section": "1. Introduction",
+      "id": "p12"
+    },
+    {
+      "paper": "2405.17424",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "It predicts the next action in an auto-regressive manner.",
+      "quote": "predicts the next action to perform in an auto-regressive manner",
+      "section": "1 Introduction",
+      "id": "p13"
+    },
+    {
+      "paper": "2504.17950",
+      "domain": "agent_in_mc",
+      "aspect": "goal",
+      "statement": "A benchmark tests multiple dimensions of embodied and collaborative reasoning.",
+      "quote": "a benchmark to test the different dimensions of embodied and collaborative reasoning",
+      "section": "Abstract",
+      "id": "p14"
+    },
+    {
+      "paper": "2507.03293",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "The critic inspects unsuccessful or suboptimal trajectories and produces fresh temporal-logic rules to improve later behavior.",
+      "quote": "analyze failed or suboptimal trajectories and generate new temporal logic rules that improve future behavior",
+      "section": "Abstract",
+      "id": "p15"
+    },
+    {
+      "paper": "2406.11247",
+      "domain": "agent_in_mc",
+      "aspect": "why_it_works",
+      "statement": "Capabilities are compressed into a single model, making the system simpler to operate.",
+      "quote": "By distilling capabilities into a single model",
+      "section": "5 Distill Embodied Agent into a Single Model",
+      "id": "p16"
+    },
+    {
+      "paper": "2606.12852",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "It offers fast retrieval of experiences observed recently.",
+      "quote": "provides low-latency retrieval of recently observed experiences",
+      "section": "3 Method",
+      "id": "p17"
+    },
+    {
+      "paper": "2403.08282",
+      "domain": "agent_in_mc",
+      "aspect": "io",
+      "statement": "A multimodal information platform supports perception so a single system can handle navigation tasks.",
+      "quote": "a multi-modal information platform, facilitating multi-modal perception to perform the three navigation tasks with one system",
+      "section": "Abstract",
+      "id": "p18"
+    },
+    {
+      "paper": "2411.06736",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "If memory lacks a relevant resource, the agent explores.",
+      "quote": "When no task-relevant resource exists in the memory, Explore mode is selected",
+      "section": "3 Method",
+      "id": "p19"
+    },
+    {
+      "paper": "2305.16291",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "The mechanism generates executable code for embodied control.",
+      "quote": "generates executable code for embodied control",
+      "section": "Method",
+      "id": "p20"
+    }
+  ]
+}

@@ -47,7 +47,7 @@
 **可定位**的要点；每条要点都能指回原文某一句，且陈述与引文共享至少两个实词。
 
 **不能说明**：要点说得对不对。四道防线是形式判据（`quote` 能定位、`statement` 有词重叠），
-不宣称描述正确率（已知限制 18）。也没有做人工抽查——本轮没有第二人复核，标注仍是 owner-derived。
+不宣称描述正确率（已知限制 18）。§7 给了一个**盲评**的初步数字，但那是 LLM judge，不是人工标注。
 
 ## 6. 复现
 
@@ -60,3 +60,43 @@ python scripts/method_acquisition_audit.py --labels tests/fixtures/method_acquis
 
 40 份录制在 `tests/fixtures/method_descriptions/`（173 KB，已入库）。重放不调模型、不花预算，
 所以上面的数字任何人可复核。录制键是「去掉 chunk id 的 prompt 摘要」，换一次运行仍能命中。
+
+## 7. 陈述是否被引文支持（20 条盲评）
+
+四道防线只保证「引文能定位」，不保证「陈述说得对」。这一节第一次给后者一个数字。
+
+**抽样**：`random.seed(20261115)`，从 290 条可定位要点里抽 20 条，**每篇最多 1 条**、两域各 10 条
+（避免集中在少数论文上）。样本与原始响应：`docs/evaluation/2026-11-15-l3-sample.json`。
+
+**判断者**：一个独立子代理，规则是「只看 `quote`，不读论文、不看产出模型、不评价文笔」，
+判据四档：`supported`（陈述里每个具体内容都能在引文里找到依据）/ `partial`（主干成立但补入了
+引文没有的具体信息，或把弱表述强化）/ `unsupported` / `unclear`。判定：`2026-11-15-l3-judgement.json`。
+
+| verdict | 条数 | 比例 |
+|---|---|---|
+| `supported` | 15 | 75% |
+| `partial` | 5 | 25% |
+| `unsupported` | 0 | 0% |
+| `unclear` | 0 | 0% |
+
+**5 条 `partial` 的失败方式高度同质——都是「复述主干 + 补全」**：
+
+| id | 补了什么 | 引文实际说的 |
+|---|---|---|
+| p01 | 补「spectral/spatial 依赖」「非全局重建」 | 只说「把 HSI 复原重新表述为自回归生成问题」 |
+| p03 | 把 `deformable patch embedding` 泛化成 `patch embedding` | 限定 deformable，陈述把特例说成通例 |
+| p04 | 补主语「a loss」 | 引文是无主语半句 |
+| p15 | 补主语「the critic」 | 同上 |
+| p16 | 补结论「making the system simpler to operate」 | 只有「By distilling capabilities into a single model」 |
+
+我自己复核了 p01 / p03 / p16 / p09：前三条与判断一致；p09 判 `supported` 略宽（`Singular Value
+Decomposition` 被写成 `matrix decomposition`，是上位词降级），可接受但不该当成毫无损失。
+
+**这个数字是什么、不是什么**：
+
+- 是：这 20 条里 75% 的陈述**逐字可核对**，25% 需要读者回去看原文才能确认补全部分。
+- **不是**「描述准确率」：判断者与被评对象都是模型，这是 LLM-as-judge，有已知的宽容倾向
+  （本轮 p09 就是一例），**不能替代人工标注**，也没有做标注者间一致性。
+- 是：一个**可行动的缺陷**——失败不在「引文不可定位」，而在「改写时补全」。下一轮可以试的
+  最小改动：prompt 里禁止引入引文之外的主语/结论，或加一条自动检查（陈述的实词必须都能在
+  引文里找到），后者能测、能回滚。

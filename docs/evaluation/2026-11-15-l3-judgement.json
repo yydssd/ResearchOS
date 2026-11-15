@@ -1,0 +1,25 @@
+{
+  "judge_note": "judged from quote alone, blind to the producing model. 15/20 supported，比例偏高但并不反常：这批 statement 绝大多数是对 quote 的近逐词改写，quote 本身又是摘要/引言里的单句断言，可核对面大。可疑之处不在 supported 的数量，而在 5 条 partial 的失败方式高度同质——都是「在复述主干后补齐引文缺失的主语或作用」：p04 补 a loss、p15 补 the critic、p16 补 simpler to operate、p01 补 spectral/spatial 与 not-globally、p03 丢掉 deformable 把特例说成通例。这正是复述+补全被当成支持的模式，说明上游改写环节存在系统性补全倾向。",
+  "verdicts": [
+    {"id": "p01", "verdict": "partial", "reason": "引文只说作为自回归生成，spectral/spatial依赖与「非全局重建」无依据"},
+    {"id": "p02", "verdict": "supported", "reason": "fixed for whole image 即全图单一等级，「非分区域」为直接反义"},
+    {"id": "p03", "verdict": "partial", "reason": "引文限定 deformable patch embedding，陈述泛化成所有patch embedding"},
+    {"id": "p04", "verdict": "partial", "reason": "引文是无主语半句，「a loss」为补全；其余内容一致"},
+    {"id": "p05", "verdict": "supported", "reason": "渐进细化注意力至退化区域、经对齐策略，逐项对应"},
+    {"id": "p06", "verdict": "supported", "reason": "coupled in to an edge inductive gap 逐词一致"},
+    {"id": "p07", "verdict": "supported", "reason": "以输入图像为条件、在token级施加，均逐词对应"},
+    {"id": "p08", "verdict": "supported", "reason": "层级视觉先验→结构语义→补缺失结构→提升细节，全在引文"},
+    {"id": "p09", "verdict": "supported", "reason": "SVD属矩阵分解，仅弱化未增新信息；边检测与高低频一致"},
+    {"id": "p10", "verdict": "supported", "reason": "omnidirectional即全方向，捕获局部上下文提升性能均对应"},
+    {"id": "p11", "verdict": "supported", "reason": "structured reasoning 与 grounding in physical world 均对应"},
+    {"id": "p12", "verdict": "supported", "reason": "四项后果及 must reveal 对应；suffix→what follows 仅弱化"},
+    {"id": "p13", "verdict": "supported", "reason": "next action 与 auto-regressive 完全对应"},
+    {"id": "p14", "verdict": "supported", "reason": "different dimensions≈multiple，embodied/collaborative 对应"},
+    {"id": "p15", "verdict": "partial", "reason": "引文无主语，「The critic」为补全；其余动作描述一致"},
+    {"id": "p16", "verdict": "partial", "reason": "simpler to operate 在引文中零依据，只有前半句被支持"},
+    {"id": "p17", "verdict": "supported", "reason": "low-latency≈fast，最近观测经验一致"},
+    {"id": "p18", "verdict": "supported", "reason": "three navigation tasks 降为笼统表述，其余逐项对应"},
+    {"id": "p19", "verdict": "supported", "reason": "无相关资源→选Explore模式，「agent explores」为该模式释义"},
+    {"id": "p20", "verdict": "supported", "reason": "generates executable code for embodied control 逐词一致"}
+  ]
+}
