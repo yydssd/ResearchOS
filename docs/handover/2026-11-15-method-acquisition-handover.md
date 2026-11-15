@@ -250,7 +250,7 @@ T5 落地：`architect.md` 加 ADR-033 与已知限制第 13 条、维护记录�
 
 ### S3 起手要做的事
 
-1. **先写计划**：`docs/superpowers/plans/2026-11-16-s3-l3-describer.md`，依据设计 §7：
+1. **先写计划**：`docs/superpowers/plans/2026-11-15-s3-l3-describer.md`，依据设计 §7：
    同步 `MethodDescriber` 协议 + `AsyncProviderDescriber`（`asyncio.run` + 事件循环探测）、
    `config.py` 三个配置项、`Supervisor` 注入、**预算计数点（先查后加）+ 4 个 `FailureType`**、
    四道防线、`recorded fixture provider`。
