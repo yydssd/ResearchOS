@@ -100,15 +100,20 @@ def test_inferred_subject_is_reported_as_a_quality_flag():
     assert all(c.identity_key.split("|")[0].startswith("self@") for c in flagged)
 
 
-def test_condition_provenance_reaches_the_claim():
-    """The cascade has to tell a confirmed setup from an assumed one, but
-    provenance cannot ride in the identity key (it says where a value came from,
-    not what it is). So it travels with the other quality flags, exactly as
-    `subject_inferred` does."""
+def test_conditions_provenance_is_recorded_per_kind():
+    """One flag per kind, `condition_tier=<kind>:<tier>`. A single flag could not
+    say "the backbone was inherited but the protocol was stated"."""
     claims, _ = _build(["paper_conditions.md"])
 
-    tagged = [c for c in claims if any(p.startswith("conditions_from=") for p in c.conditions)]
+    # 原第 110 行：改前缀；原第 112 行：改成带 kind 的具体值断言，不只断言存在
+    tagged = [c for c in claims if any(p.startswith("condition_tier=") for p in c.conditions)]
     assert tagged, "expected the inherited condition to be tagged on the claim"
-    assert "conditions_from=section-first-mention" in tagged[0].conditions
-    # The tag is provenance, not a condition: the merge key must stay clean.
-    assert "conditions_from" not in (tagged[0].identity_key or "")
+    assert "condition_tier=backbone:section-first-mention" in tagged[0].conditions
+    # 旧形态必须真的消失（只断言新形态在，会让「两种都在」的错实现通过）
+    assert all(not p.startswith("conditions_from=") for c in tagged for p in c.conditions)
+    # 原第 114 行：provenance 仍不进 identity_key，只是换了前缀
+    assert "condition_tier" not in (tagged[0].identity_key or "")
+    assert all(
+        p.split("=", 1)[1].count(":") == 1
+        for c in tagged for p in c.conditions if p.startswith("condition_tier=")
+    )

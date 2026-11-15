@@ -98,13 +98,11 @@ class HeuristicClaimBuilder:
                 # Provenance of the subject slot; kept beside the other quality
                 # flags so a reader can weigh a claim that speaks for the paper.
                 flags = [*flags, "subject_inferred"]
-            if identity.conditions_from:
-                # Where the conditions came from. P5 refuses to infer "same setup"
-                # from a condition that was only inherited from the section's
-                # first mention, so the tier has to survive the round trip to the
-                # database. It is provenance, not a condition, and stays out of
-                # the identity key for the same reason `subject_inferred` does.
-                flags = [*flags, f"conditions_from={identity.conditions_from}"]
+            for kind, tier in sorted(identity.condition_tiers.items()):
+                # Provenance per kind, persisted beside the quality flags: the
+                # cascade needs to know which kinds a claim actually stated, and a
+                # single tier for the whole tuple cannot say that (design §8.2).
+                flags = [*flags, f"condition_tier={kind}:{tier}"]
             claim = Claim(
                 text=group["text"],
                 claim_type=(
