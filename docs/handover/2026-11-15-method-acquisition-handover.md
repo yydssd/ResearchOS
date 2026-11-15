@@ -15,13 +15,13 @@
 ## 0. 一句话状态
 
 `method-acquisition-audit` 已**快进合并进 `master`**（本地，未推送），分支已删。
-`master` 现在 `e248067` 之上 **47 个提交**：S1（`protocol` → `unit`）16 个、S2（确定性 L1/L2/L4）11 个，
-其余是度量与文档。
+`master` 现在 `e248067` 之上 **59 个提交**：S1（`protocol` → `unit`）16 个、S2（确定性 L1/L2/L4）11 个、
+S3（L3 接线）9 个，其余是度量与文档。
 
-**S1 五个任务全完成、验收 5/5；S2 十个任务全完成、验收 6/6**（判据见各自计划的验收表）。
-**下一步是 S3 的计划（尚未开写）**：L3 的 LLM 接线。
+**S1 5/5、S2 6/6、S3 8/8 全部收官**（判据见各自计划的验收表）。
+**下一步是 S4 的计划（尚未开写）**：`conditions` 新增 `scale=`/`protocol=` + 按 kind 的 provenance。
 
-本轮实测：**`374 passed, 2 skipped`**、**`376 tests collected`**、工作区干净。
+本轮实测：**`408 passed, 2 skipped`**、**`410 tests collected`**、工作区干净。
 （命令见 §6，跑法有坑见 §10。）
 
 ---
@@ -151,11 +151,11 @@ L1 产出 32 个名字，三条判据（逐字子串 / 独立构式 / 非片段�
 ## 6. 当前基线证据（本轮实测，非推算）
 
 ```
-$ cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" -q --basetemp=.pytest_tmp_s2_final
-374 passed, 2 skipped, 1 warning in 24.46s
+$ cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" -q --basetemp=.pytest_tmp_s3_all
+408 passed, 2 skipped, 1 warning in 11.65s
 
-$ ... --collect-only -q --basetemp=.pytest_tmp_s2_collect
-376 tests collected
+$ ... --collect-only -q --basetemp=.pytest_tmp_s3_collect
+410 tests collected
 ```
 
 基线演进：`326 → 327 → 330 → 331 → 332 → 333 passed`（收集 `328 → 334 → 335`）。S1 内的净增 7 条用例，
@@ -218,7 +218,7 @@ gaps 合计 105
 
 ---
 
-## 9. 下一步：S3 的计划（S1 / S2 已收官）
+## 9. 下一步：S4 的计划（S1 / S2 / S3 已收官）
 
 ### S1 收官记录（实测，可复核）
 
@@ -248,29 +248,40 @@ T5 落地：`architect.md` 加 ADR-033 与已知限制第 13 条、维护记录�
 | 5 不扰动 identity 与主张数 | 通过 | `claims.py`、`contradiction.py`、`scope.py` 零改动；claim 用例一条未改 |
 | 6 既有用例一条不少 | 通过 | `374 passed / 376 collected`（333 + 41） |
 
-### S3 起手要做的事
+### S3 收官记录（实测，可复核）
 
-1. **先写计划**：`docs/superpowers/plans/2026-11-15-s3-l3-describer.md`，依据设计 §7：
-   同步 `MethodDescriber` 协议 + `AsyncProviderDescriber`（`asyncio.run` + 事件循环探测）、
-   `config.py` 三个配置项、`Supervisor` 注入、**预算计数点（先查后加）+ 4 个 `FailureType`**、
-   四道防线、`recorded fixture provider`。
-2. S3 的三条现成接口不必重新设计：`MethodProfile.points`（`MethodPoint` 已有校验：aspect 枚举 /
-   statement ≤200）、`MethodExtraction`、`SqlMethodProfileRepository.upsert` 的 points 替换语义
-   （已测 `test_points_are_replaced_not_appended`）。S3 只需把 points 填进去。
-3. 现成可复用的坑位记录：`budget.llm_calls` 全仓库仍无写入点（设计 §7.3），
-   `_check_budget()` 只读 `exceeded()`——S3 必须补「先查后加」，否则 80/81 off-by-one。
-4. 审计脚本的 L3 判据已经就绪（`side["L3"] = bool(profile.points)`），S3 落地后
-   **不要改判据**，只重跑；改判据等于把「能力生效」和「度量口径变了」混在一起。
+| 判据 | 结果 | 证据 |
+|---|---|---|
+| 1 同步协议 + async 适配器 | 通过 | `test_describe_runs_the_async_provider_synchronously` |
+| 2 事件循环里不嵌套 | 通过 | 构造期与调用期各一条用例 |
+| 3 四道防线各一条路径 | 通过 | `test_method_description.py` 10 条（含「一个坏点不连坐」） |
+| 4 预算先查后加 | 通过 | `max_llm_calls=0` → 0 次 + 1 条 SKIPPED；`=2` + 3 篇 → 恰好 2 次 |
+| 5 落库 + memo 显示 | 通过 | `test_method_description_run.py` 4 条 |
+| 6 无 provider 不伪装 | 通过 | `test_no_describer_leaves_l3_missing_without_any_event`（D20 的锁） |
+| 7 审计不谎报 L3 | 通过 | 两种模式实跑都是 `L3 C=0/20`、原因 `LLM 未启用 20+20` |
+| 8 既有用例一条不少 | 通过 | `408 passed / 410 collected`（376 + 34） |
+
+### S4 起手要做的事
+
+1. **先写计划**：`docs/superpowers/plans/2026-11-16-s4-conditions-scale-protocol.md`，依据设计 §8：
+   `conditions.py` 四类扩六类（`scale=` / `protocol=`）、**按 kind 的 provenance**（`dict[kind] -> (value, tier)`）、
+   `contradiction.py` 的确认判据改为「参与比较的每个 kind 的 tier 都在 `_CONFIRMED_TIERS` 内」、
+   级联安全、三份 before/after 报告。
+2. S4 是**唯一**改主张宇宙的阶段：必须独占一个度量周期，before/after 三份报告并列，不许只报新数字。
+3. 必带的两条对照测试（设计 §8.2/§9）：①一句只含 `protocol=` 的句子仍保留继承的 `training=` 且 tier 不变；
+   ②仅在这两维不同的两句 → `may_merge() == False`（「字段有值」不算通过）。
+4. `identity_key` 段数不变（仍 7 段），只往第 6 段加两种新条件值；新值不得含 `;` 与 `|`（需断言）。
 
 ### 仍未偿的小事
 
 - `memo.py` 的回退键 `fact.metric or fact.unit or "unspecified"` 语义正确，但**仍没有专门用例**，
-  现有覆盖来自间接路径。S3 动 memo 时一并定。
-- 待办 #10：§21（`ResearchOS-Implementation-Plan.md`）仍无方法抽取指标；S2 已经把四层度量跑成
-  报告（`docs/evaluation/2026-11-15-method-acquisition-s2.md`），**登记进 §21 的动作还没做**，
-  与 S3 的指标一起登记更省一次改动。
-- 设计 §13 现在有 D1–D15：D14（scheme-less 仓库 URL）与 D15（L1/L4 缺口原因改记「词表未覆盖」）
-  是实现期实测抓出来的，不在原计划里。
+  现有覆盖来自间接路径。S4 动 `conditions` 时会再碰 memo，那时一并定。
+- 待办 #10：§21（`ResearchOS-Implementation-Plan.md`）仍无方法抽取指标；报告已有四层度量
+  （`docs/evaluation/2026-11-15-method-acquisition-s2.md`），**登记进 §21 的动作还没做**。
+- **L3 未测量**（已知限制 17）：没有 provider 客户端，`tests/fixtures/method_descriptions/` 为空。
+  这不是缺陷，是口径：审计报「LLM 未启用」，不报一个没测过的数字。
+- 设计 §13 现在有 D1–D21：D16–D21 是 S3 的（协议返回类型、draft 模型、配置命名、只做通路不做录制、
+  无 provider 零事件、传输失败与输出被拒共用类型）。
 
 ---
 

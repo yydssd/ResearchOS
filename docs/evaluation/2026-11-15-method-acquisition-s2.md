@@ -186,3 +186,24 @@ L1/L2/L4 都有字段，它们的缺口一律记「词表未覆盖」——把 L
   同 tier 同 chunk 并列时 `name` 留空并记 `METHOD_NAME_AMBIGUOUS`。归属问题没有解决。
 - **本报告的数字依赖本机 `.holdout_cache`**：缓存是 gitignored，换机器需先重下
   （`docs/evaluation/holdout-ids-*.txt` 两份清单），否则复现不出这些数字。
+
+## 6. S3 之后（2026-11-15，协议与防线落地）
+
+S3 把 L3 的通路建好了，**但没有 provider**，因此上面第 1 节的 L3 一格**没有变化**，
+而且以后不该再读成「抽取失败」：
+
+```
+$ python scripts/method_acquisition_audit.py --labels tests/fixtures/method_acquisition/labels.json
+  image_restoration|L3   A=20/20  C=0/20
+  agent_in_mc|L3         A=20/20  C=0/20
+  image_restoration|L3|LLM 未启用   20
+  agent_in_mc|L3|LLM 未启用         20
+```
+
+要让这一格动起来需要两步，都不在本轮范围内：①实现一个 provider 客户端；
+②`python scripts/record_method_descriptions.py --provider <name>` 录 40 篇，
+之后 `--describer recorded` 重跑。那时才第一次有 L3 的 covered 数字，且必须与 before 并列写。
+
+已知的一条边界（已知限制 17/18）：录制键是「去掉 chunk id 的 prompt 摘要」，所以重跑能命中；
+但两篇方法段文本完全相同时会撞键——同文本同答案，按设计不算错。
+

@@ -573,6 +573,12 @@ covered + explained_uncovered == present 且 unexplained_uncovered == 0
 ```
 | D14 | §6.3 的 `repository` 用 `https?://` 正则 | scheme 可选（`github.com/foo/bar` 也收），命中后归一化补 `https://` | 实测留出集 `2507.22498` 只写 scheme-less URL，而它的 L4 标注证据正是那句 "The code is available at github.com"。按 §10.4「每处下降逐篇给理由，否则回滚」，这条下降选择修而不是解释：L4 图像复原从 18/19 回到 19/19，逐篇向量不再有下降（`1fdf95b`） |
 | D15 | §10.1 的「无结构化字段」= 该阶段尚未实现该层 | L1/L2/L4 的缺口改记「词表未覆盖」，只有 L3 记「无结构化字段」 | 旧脚本把 L1/L4 的缺口也记成「无结构化字段」，那是事实错误：字段在，是模式没匹配到。不修这一条，报告会把「模式没覆盖」说成「没有落点」，而后者正是 S2 要消除的那种混淆（`1ee2af4`） |
+| D16 | §7.1 协议是 `describe(...) -> MethodDescriptionResponse \| None` | 返回 `DescriptionAttempt`（response / cost_usd / error） | §7.3 要求「provider 返回用量则回填 cost_usd」，而原签名没有位置放成本与错误。三者同为一次调用的结果，拆成三个返回值只会让调用方拼装状态 |
+| D17 | §4.1 的 `MethodPoint` 直接作为模型输出模型 | 新增 `MethodPointDraft`（宽松）作输出模型，`MethodPoint` 只由校验器产出 | 若直接让 pydantic 校验模型输出，一个越界 aspect 会抛 `ValidationError`，整篇描述连带丢失，且事件只能记成「schema 坏」；而 §7.4 要求「不合 → 丢弃该点」与「schema 坏 → 整篇拒绝」分开 |
+| D18 | §7.2 未给配置项命名 | `llm_provider` / `llm_model` / `llm_api_key` / `llm_fixture_dir`；`none` 表示不装配 describer | `UnavailableProvider` 从未被实例化，与其假装默认是它，不如让默认是「没有 describer」：零调用、零成本、事件明确 |
+| D19 | §7.6 「把 40 篇的 L3 响应录成夹具」 | 只实现录制与回放两条通路，夹具目录留空，审计报「LLM 未启用」 | 本仓库没有 provider 客户端、没有 key；伪造 40 份响应会让「未测量」看起来像「已测量」，正是本项目反复在修的同一类错误。代价写进已知限制 17 |
+| D20 | §7.4.4 「无 provider / 超预算 → `METHOD_DESCRIPTION_SKIPPED` + `missing_layers` 加 `L3`」 | **超预算**走 SKIPPED 事件；**无 provider** 时零事件，L3 只留在 `missing_layers`，审计的「LLM 未启用」由「没装配 describer」这个配置事实推出 | 照设计给每个（run, 论文）记一条 SKIPPED，默认配置下每个 run 都多出 N 条 `EventType.FAILURE`，把「这一轮没配 key」计进失败数，与 §7.5「四项都是**该有描述却**没拿到」的定义相反。代价：§10.1 的这条原因只能追到 `missing_layers`（该条允许「事件**或** missing_layers」），追不到事件。Task 5 的 `test_no_describer_leaves_l3_missing_without_any_event` 是这条的锁 |
+| D21 | §7.5 只给四个 `METHOD_*` 失败类型 | provider 抛错（`attempt.response is None`）也记 `METHOD_DESCRIPTION_REJECTED`，与「模型答了但 schema 不合格」共用一个类型 | 设计把枚举封在四项；加第五项会连带改 §10.1 的原因表与审计的闭合集，超出 S3。区分「传输失败」与「输出被拒」要看 event.message 里的 `attempt.error` |
 
 ## 14. 审验意见处置
 
