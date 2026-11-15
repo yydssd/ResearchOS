@@ -20,7 +20,7 @@ CHUNK_TEXT = (
 CHUNKS = [
     DocumentChunk(id="chunk_0", source_version_id="sv_1", section="Method", chunk_index=0, text=CHUNK_TEXT)
 ]
-GOOD_QUOTE = "Our method stores each policy as code and scores it by execution feedback."
+GOOD_QUOTE = "Our method stores each policy as code"
 
 
 def _draft(**overrides) -> MethodPointDraft:
@@ -72,11 +72,11 @@ def test_a_quote_that_appears_twice_is_dropped():
     repeated = [
         DocumentChunk(
             id="chunk_0", source_version_id="sv_1", section="Method", chunk_index=0,
-            text="The gating mechanism is reused. The gating mechanism is reused.",
+            text="The gating mechanism is reused. The gating mechanism is reused again.",
         )
     ]
     outcome = validate_description(
-        MethodDescriptionResponse(points=[_draft(quote="The gating mechanism is reused.")]), repeated
+        MethodDescriptionResponse(points=[_draft(quote="The gating mechanism is reused")]), repeated
     )
 
     assert outcome.points == []
@@ -142,12 +142,7 @@ def test_a_quote_across_a_line_break_still_locates():
     ]
     outcome = validate_description(
         MethodDescriptionResponse(
-            points=[
-                _draft(
-                    quote="We store each policy as code and score it by execution feedback.",
-                    statement="Stores each policy as code and scores it by execution feedback.",
-                )
-            ]
+            points=[_draft(quote="We store each policy as code", statement="Stores each policy as code.")]
         ),
         wrapped,
     )

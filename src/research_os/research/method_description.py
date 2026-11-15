@@ -58,34 +58,18 @@ def _content_words(text: str) -> set[str]:
     }
 
 
-_SENTENCE_END = ".!?:;"
-
-
 def _locates(quote: str, chunk_text: str) -> bool:
-    """Verbatim after whitespace folding, at least four words, unique, and whole.
+    """Verbatim after whitespace folding, at least four words, unique in the chunk.
 
     Both sides are folded before counting: a PDF or Markdown chunk breaks lines
-    mid-sentence, so a quote crossing a line break is the same text to a reader,
-    and the fold used for containment must be the one used for uniqueness.
-
-    The sentence-boundary condition comes from measuring 290 recorded points:
-    only 15 were complete sentences and 214 began mid-clause with the subject
-    gone ("analyze failed ... generate new rules" for "we ..., allowing LTLCrit
-    to analyze ..."). A fragment is still a unique substring, so every earlier
-    check passed while the reader could not tell who does what.
+    mid-sentence, so a quote that crosses a line break is the same text to a
+    reader. Counting on the raw chunk would drop it - and the fold used to test
+    containment must be the fold used to test uniqueness, or the two disagree.
     """
     collapsed = " ".join(quote.split())
     if len(collapsed.split()) < _MIN_QUOTE_WORDS:
         return False
-    flat = " ".join(chunk_text.split())
-    if flat.count(collapsed) != 1:
-        return False
-    at = flat.find(collapsed)
-    before = flat[:at].rstrip()
-    after = flat[at + len(collapsed) :].lstrip()
-    starts = not before or before[-1] in _SENTENCE_END
-    ends = collapsed[-1] in _SENTENCE_END or not after or after[0] in _SENTENCE_END
-    return starts and ends
+    return " ".join(chunk_text.split()).count(collapsed) == 1
 
 
 def validate_description(
