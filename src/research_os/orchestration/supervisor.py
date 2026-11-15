@@ -40,6 +40,7 @@ from research_os.research.evidence_extractor import (
     HeuristicEvidenceExtractor,
     has_location,
 )
+from research_os.research.methods import MethodExtractor, extract_methods
 from research_os.research.quantitative import HeuristicQuantitativeExtractor, QuantitativeExtractor
 from research_os.sources.discovery import collect_candidates, dedupe_candidates
 from research_os.sources.providers import ProviderError, SearchProvider, build_providers
@@ -53,6 +54,7 @@ from research_os.storage.repositories import (
     SqlContradictionRepository,
     SqlEventRepository,
     SqlEvidenceRepository,
+    SqlMethodProfileRepository,
     SqlQuestionRepository,
     SqlQuantitativeEvidenceRepository,
     SqlRunRepository,
@@ -91,12 +93,16 @@ class Supervisor:
         providers: list[SearchProvider] | None = None,
         quantitative_extractor: QuantitativeExtractor | None = None,
         contradiction_assessor: ContradictionAssessor | None = None,
+        method_extractor: MethodExtractor | None = None,
     ) -> None:
         self._session = session
         self._extractor = evidence_extractor or HeuristicEvidenceExtractor()
         self._builder = claim_builder or HeuristicClaimBuilder()
         self._quantitative = quantitative_extractor or HeuristicQuantitativeExtractor()
         self._assessor = contradiction_assessor or HeuristicContradictionAssessor()
+        # Method acquisition is deterministic (design §6); the L3 describer that
+        # is not deterministic arrives in S3 as a separate, optional component.
+        self._methods = method_extractor
         # Injected for tests/offline runs; otherwise resolved from settings at
         # call time so configuration changes are picked up without re-import.
         self._providers = providers
@@ -367,7 +373,44 @@ class Supervisor:
             ev_repo.create(ev)
         complete_task(self._session, extract_task, output_ids=[ev.id for ev in evidence])
 
-        # 3) quantitative evidence (plan §15): structured numbers, separate table
+        # 3) method acquisition (design §6): name, components, setup per source.
+        # Runs before the quantitative pass because that pass fills
+        # `QuantitativeEvidence.method` with the resolved name (design §10.3).
+        method_task = create_task(self._session, run.id, TaskType.EXTRACT_METHOD, status=TaskStatus.RUNNING)
+        extraction = (
+            self._methods.extract(all_chunks, domain=question.domain)
+            if self._methods is not None
+            else extract_methods(all_chunks, domain=question.domain)
+        )
+        SqlMethodProfileRepository(self._session).upsert_many(extraction.profiles, run.id)
+        for source_version_id, candidates in extraction.ambiguous.items():
+            # Logged, not swallowed: "no name because the paper never chooses one"
+            # and "no name because nothing matched" are different defects.
+            self._log(
+                run.id,
+                EventType.METHOD_NAME_AMBIGUOUS,
+                f"ambiguous method name: {', '.join(candidates)}",
+                {"source_version_id": source_version_id, "candidates": list(candidates)},
+            )
+        for profile in extraction.profiles:
+            if profile.aliases:
+                self._log(
+                    run.id,
+                    EventType.METHOD_MULTI_NAME,
+                    f"{len(profile.aliases) + 1} method names in one paper",
+                    {
+                        "source_version_id": profile.source_version_id,
+                        "name": profile.name,
+                        "aliases": list(profile.aliases),
+                    },
+                )
+        complete_task(
+            self._session,
+            method_task,
+            output_ids=[profile.source_version_id for profile in extraction.profiles],
+        )
+
+        # 4) quantitative evidence (plan §15): structured numbers, separate table
         facts = self._quantitative.extract(evidence)
         SqlQuantitativeEvidenceRepository(self._session).create_many(facts)
         self._log(
