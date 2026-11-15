@@ -9,7 +9,7 @@
 ## 当前状态（2026-11-13 · W3 / P5 完成）
 
 - **阶段**：P0 ✅ · P1 ✅ · P2 ✅ · P3 ✅ · P4 ✅ · **P5 Contradiction ✅**
-- **验收结果**：`pytest` 319 passed（+2 opt-in 真实网络）；主张带七维 `identity_key`，矛盾评估带 run 作用域、唯一约束与可定位证据
+- **验收结果**：`pytest` 326 passed（+2 opt-in 真实网络）；主张带七维 `identity_key`，矛盾评估带 run 作用域、唯一约束与可定位证据
 - **格式覆盖**：PDF · Markdown · README · HTML（含 ar5iv 全文；公式回声已净化）
 - **实测口径**：留出集 20 篇 / 13871 块 / 4814 证据 / 1173 主张（1075 支撑）；P5 候选对 1049 → 判定 30（真矛盾 0，预期）；夹具 26 对全通过
 - **下一步**：P6 Research Memo（结构化 memo 收口），再 P7 Falsification
@@ -173,6 +173,8 @@ CLI（主接口）：`research-os run/status/claims/report/inspect-claim` · **`
 | 2026-11-13 | P5 存储决策落地：`(claim_a_id, claim_b_id)` 唯一索引（不靠 `con_<a[:10]>_<b[:10]>` 主键，截断会撞）、`list_by_run` run 作用域、`replace_for_run` 先删后写使重跑收敛、跨 run 对拒收 |
 | 2026-11-13 | P5 独立代码审查（3 个只读子代理 + 实跑验证）：修 HD-014 门控改白名单、`list_by_run`/`replace_for_run` 双侧 run 约束、COMPLEMENTARY 证据位置、旧库去重迁移、夹具引文回归锁、留出集 P5 harness 入库；测试 239→249。剩余方向词表盲区、FAILURE 事件等 5 项列入审查记录 |
 | 2026-11-14 | P5 补齐（subagent-driven，10 任务）：失败事件四类（`CROSS_RUN_PAIR` / `CONTRADICTION_UNRESOLVED` ×2 / `CITATION_LOCATION_MISSING`）、三组混淆矩阵并拒绝未知 source、幂等内容断言、主张对主键改摘要、评估路径脱离 CWD、四处空断言改值断言、补三个覆盖缺口；测试 249→319。新增 ADR-031/032 |
-| 2026-11-15 | 方法获取能力度量（subagent-driven，6 任务）：新增只读审计脚本、标注夹具（160 格，owner-derived 且先冻结）、回归测试 7 条与评估报告；测试 319→326。标注经三轮独立审验修订（160/160 → 146/1/13 → 158/0/2 → 159/0/1）。HD-016。§2.5 未逐项登记 deviation ADR 列为待办 |
+| 2026-11-15 | 方法获取能力度量（subagent-driven，6 任务）：新增只读审计脚本、标注夹具（160 格，owner-derived 且先冻结）、回归测试 7 条与评估报告；测试 319→326。标注经三轮独立审验修订（160/0/0 → 146/1/13 → 158/0/2 → 159/0/1）。HD-016。§2.5 未逐项登记 deviation ADR 列为待办 |
 
 `ADR-031` 只覆盖 §2.5 的 `contradiction judgment` 一项，其余语义判断场景的确定性实现未逐项登记 deviation ADR，单独立项处理。
+
+本批次标注于 2026-11-14 深夜冻结，最终修订与文档同步发生在 2026-11-15 上午；维护记录取提交日，报告/spec 文件名沿用决策日 11-14。
