@@ -28,6 +28,7 @@ def test_extracts_metric_value_and_comparator():
     assert fact.comparator_value == 39.01
     assert fact.dataset == "SIDD"
     assert fact.unit == "dB"
+    assert fact.protocol is None  # the unit is moved, not copied
 
 
 def test_extracts_one_fact_per_metric_in_the_same_sentence():

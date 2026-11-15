@@ -215,3 +215,16 @@ def test_delta_bucket_label_survives_the_unit_split():
     )
 
     assert identity.value_bucket == ("dB:0.44",)
+
+
+def test_delta_without_a_unit_falls_back_to_the_unit_label():
+    """`_buckets` uses `row.unit or 'unit'`, so a delta row with no unit still gets a
+    stable label. The fallback predates the split - `protocol` was empty in the same
+    case - but pinning it stops a later tidy-up from dropping the branch and
+    collapsing every unit-less delta onto an empty bucket."""
+    identity = _identity(
+        "Our method brings a gain of +0.44 on SIDD.",
+        quantitative=[QuantitativeEvidence(evidence_id="e", delta=0.44)],
+    )
+
+    assert identity.value_bucket == ("unit:0.44",)

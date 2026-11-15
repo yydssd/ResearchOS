@@ -60,6 +60,10 @@ def test_slice_persists_chunks_exact_offsets_and_quantitative_facts(db, tmp_path
         memo = build_memo_from_run(session, run.id)
         assert "# Quantitative Evidence" in memo
         assert "39.18" in memo
+        # The evidence quote inside the memo also contains "39.18 dB", so only the
+        # [quant: ...] segment proves the renderer used `unit`: with `fact.protocol`
+        # that segment degrades to "PSNR 39.18" and this assertion fails.
+        assert "[quant: PSNR 39.18 dB on SIDD]" in memo
         assert "不可直接比较" in memo
 
         # trace chain now exposes chunk-level provenance
