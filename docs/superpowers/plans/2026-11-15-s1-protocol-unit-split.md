@@ -159,7 +159,7 @@ with no writer or reader change, keeps the behaviour identical until the flip."
 
 ---
 
-### Task 2: 一次性回填（只在列刚被创建时执行）
+### Task 2: 按数据幂等的回填
 
 **Files:**
 - Modify: `src/research_os/storage/database.py:56-103`
@@ -214,9 +214,10 @@ def test_unit_backfill_moves_the_old_unit_and_clears_protocol(tmp_path: Path):
 
 
 def test_second_init_db_does_not_destroy_the_backfilled_unit(tmp_path: Path):
-    """The backfill is keyed to the ALTER, not to init_db(). Running it twice
-    would set unit = protocol again - and protocol is NULL by then, so the unit
-    would be wiped. This test is the reason that gate exists."""
+    """The backfill runs on every init_db(), so it must be idempotent by data:
+    an unguarded `unit = protocol` would set unit to NULL on the second pass,
+    because the first pass already cleared protocol. This test is the reason
+    both statements carry WHERE clauses instead of running unconditionally."""
     url = f"sqlite:///{tmp_path / 'twice.db'}"
     _old_database_without_unit(url)
 
@@ -304,11 +305,12 @@ _IDEMPOTENT_BACKFILLS: tuple[str, ...] = (
 
 ```bash
 git add src/research_os/storage/database.py tests/unit/test_database.py
-git commit -m "feat(db): backfill the unit column once, when it is created
+git commit -m "feat(db): move the old unit out of protocol, idempotently
 
-Unconditional backfill would run on every init_db() and null the column on the
-second pass, because protocol is cleared by the same statement. Keying it to the
-ALTER makes it idempotent by construction; the second test proves it."
+An unguarded `unit = protocol` would null the column on the second init_db(),
+because the first pass already cleared protocol. Both statements therefore carry
+data guards, which also keeps the backfill working for databases where an earlier
+start-up already added the column. The second test pins that.""
 ```
 
 ---
