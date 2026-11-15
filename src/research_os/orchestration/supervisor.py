@@ -477,6 +477,9 @@ class Supervisor:
                     )
                 if outcome.points:
                     profile.points = outcome.points
+                    # The layer is no longer missing for this paper: a validated
+                    # point is what "L3 obtained" means (ADR-035).
+                    profile.missing_layers = [layer for layer in profile.missing_layers if layer != "L3"]
                     SqlMethodProfileRepository(self._session).upsert(profile, run.id)
 
         # 4) quantitative evidence (plan §15): structured numbers, separate table
