@@ -354,3 +354,57 @@ def _missing_layers(profile: MethodProfile) -> list[str]:
 def setup_filled(setup: MethodSetup) -> bool:
     """True when the profile carries at least one reproducible setting."""
     return bool(setup.scale or setup.protocol or setup.hyperparameters or setup.repository)
+
+
+@dataclass(frozen=True)
+class Attribution:
+    """How many claims could not be attached to a paper's own method (§4.2).
+
+    Two different failures, counted apart: `multi_source` is one claim carried by
+    several papers, `unattributed_subject` is a subject that is neither the
+    paper's method nor a resolved name. Collapsing them would hide which of the
+    two is growing.
+    """
+
+    multi_source: int = 0
+    unattributed_subject: int = 0
+
+
+def attribute_claims(
+    claims: list[object],
+    support_sources: dict[str, set[str]],
+    profiles: list[MethodProfile],
+) -> Attribution:
+    """Count claims that cannot be attributed to a profile (design §4.2).
+
+    `support_sources` maps claim id -> the source versions its supporting
+    evidence came from; the caller owns that lookup because it already holds the
+    relation graph.
+
+    Only claims with a subject take part: an empty subject is a claim with no
+    subject slot, not a mis-attribution. `self@<svid>` is the paper's own method
+    by construction, so it is never counted - blaming the method layer for it
+    would point at the wrong defect.
+    """
+    known = set()
+    for profile in profiles:
+        if profile.name:
+            known.add(profile.name.lower())
+        known |= {alias.lower() for alias in profile.aliases}
+
+    multi_source = 0
+    unattributed = 0
+    for claim in claims:
+        key = getattr(claim, "identity_key", None) or ""
+        subject = key.split("|")[0]
+        if not subject:
+            continue
+        sources = support_sources.get(getattr(claim, "id", ""), set())
+        if len(sources) > 1:
+            multi_source += 1
+            continue
+        if subject.startswith("self@"):
+            continue
+        if subject.lower() not in known:
+            unattributed += 1
+    return Attribution(multi_source=multi_source, unattributed_subject=unattributed)

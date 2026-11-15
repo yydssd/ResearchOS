@@ -16,15 +16,19 @@ from research_os.domain.models import (
     Claim,
     ContradictionAssessment,
     Evidence,
+    MethodProfile,
     QuantitativeEvidence,
     SourceVersion,
 )
+from research_os.research.methods import Attribution, attribute_claims
 from research_os.storage.repositories import (
+    SqlChunkRepository,
     SqlClaimEvidenceRelationRepository,
     SqlClaimRepository,
     SqlContradictionRepository,
     SqlEventRepository,
     SqlEvidenceRepository,
+    SqlMethodProfileRepository,
     SqlQuestionRepository,
     SqlQuantitativeEvidenceRepository,
     SqlRunRepository,
@@ -44,6 +48,11 @@ class RunGraph:
     quantitative: dict[str, list[QuantitativeEvidence]] = field(default_factory=dict)
     assessments: list[ContradictionAssessment] = field(default_factory=list)
     assessment_stats: dict = field(default_factory=dict)
+    methods: list[MethodProfile] = field(default_factory=list)
+    attribution: Attribution = field(default_factory=Attribution)
+    # source_version_id -> the section the name was found in. Resolved while the
+    # session is open, because the memo only keeps domain objects.
+    method_name_sections: dict[str, str] = field(default_factory=dict)
 
 
 def _assessment_stats(session: Session, run_id: str) -> dict:
@@ -92,6 +101,19 @@ def collect_run_graph(session: Session, run_id: str) -> RunGraph | None:
         if fact.evidence_id in ev_ids:
             quantitative.setdefault(fact.evidence_id, []).append(fact)
 
+    methods = SqlMethodProfileRepository(session).list_by_run(run_id)
+    support_sources: dict[str, set[str]] = {}
+    for claim_id, supporting in supports.items():
+        support_sources[claim_id] = {ev.source_version_id for ev in supporting}
+    attribution = attribute_claims(claims, support_sources, methods)
+    name_sections: dict[str, str] = {}
+    for profile in methods:
+        if not profile.name_chunk_id:
+            continue
+        chunk = SqlChunkRepository(session).get(profile.name_chunk_id)
+        if chunk is not None and chunk.section:
+            name_sections[profile.source_version_id] = chunk.section
+
     return RunGraph(
         run_id=run_id,
         question_text=question_text,
@@ -103,6 +125,9 @@ def collect_run_graph(session: Session, run_id: str) -> RunGraph | None:
         quantitative=quantitative,
         assessments=assessments,
         assessment_stats=_assessment_stats(session, run_id),
+        methods=methods,
+        attribution=attribution,
+        method_name_sections=name_sections,
     )
 
 
@@ -189,6 +214,62 @@ def _render_quantitative_section(graph: RunGraph) -> list[str]:
                 if fact.comparator:
                     comparator += f" ({fact.comparator})"
             lines.append(f"| {dataset} | {metric} | {_format_fact_value(fact, with_metric=False)} | {comparator} | {evidence_id} |")
+    lines.append("")
+    return lines
+
+
+def _render_methods_section(graph: RunGraph) -> list[str]:
+    """What each paper says about its own method, and what it does not (§6.6).
+
+    Every line prints even when empty: "no name" and "we did not look" must not
+    read the same, which is the whole reason `missing_layers` is stored.
+    """
+    lines = ["# Methods", ""]
+    titles = {source.id: source.title for source in graph.sources}
+    for profile in graph.methods:
+        lines.append(f"## {titles.get(profile.source_version_id, profile.source_version_id)}")
+        lines.append("")
+        if profile.name:
+            section = graph.method_name_sections.get(profile.source_version_id)
+            suffix = f" · _{section}_" if section else ""
+            lines.append(f"- Name: {profile.name}{suffix}")
+        else:
+            lines.append("- Name: _not extracted_")
+        if profile.aliases:
+            lines.append(f"- Other names: {', '.join(profile.aliases)}")
+        lines.append(
+            f"- Components: {', '.join(profile.components) if profile.components else '_none_'}"
+        )
+        setup = profile.setup
+        setup_parts = []
+        if setup.scale:
+            setup_parts.append(f"scale={setup.scale}")
+        if setup.protocol:
+            setup_parts.append(f"protocol={setup.protocol}")
+        if setup.hyperparameters:
+            setup_parts.append("hyperparameters=" + ", ".join(setup.hyperparameters))
+        if setup.repository:
+            setup_parts.append(f"repository={setup.repository}")
+        lines.append(f"- Setup: {' · '.join(setup_parts) if setup_parts else '_none_'}")
+        if profile.points:
+            for point in profile.points:
+                lines.append(
+                    f"- {point.aspect}: {point.statement} _[{point.section or point.chunk_id}]_"
+                )
+        else:
+            lines.append("- Description: _not extracted at S2 (the L3 describer arrives in S3)_")
+        lines.append(
+            f"- 未获取：{', '.join(profile.missing_layers) if profile.missing_layers else '无'}"
+        )
+        lines.append("")
+    if not graph.methods:
+        # A run with no profile at all still has to report the two counters: the
+        # design asks for these lines unconditionally (§6.6), and a silent run
+        # would read as "nothing wrong".
+        lines.append("- No method profile was extracted for this run.")
+        lines.append("")
+    lines.append(f"- 多来源主张：{graph.attribution.multi_source}（未归因）")
+    lines.append(f"- 未归因主语：{graph.attribution.unattributed_subject}")
     lines.append("")
     return lines
 
@@ -436,6 +517,7 @@ def render_memo(graph: RunGraph) -> str:
         lines.append("")
     lines.extend(_render_kept_separate(graph.claims))
     lines.extend(_render_quantitative_section(graph))
+    lines.extend(_render_methods_section(graph))
     lines.extend(_render_contradictions(graph))
     lines.append("# Uncertainty")
     lines.append("")
