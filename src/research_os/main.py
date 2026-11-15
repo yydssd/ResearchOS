@@ -16,6 +16,7 @@ from research_os.storage.repositories import (
     SqlClaimRepository,
     SqlRunRepository,
 )
+from research_os.llm.factory import build_describer
 from research_os.orchestration.supervisor import Supervisor
 
 
@@ -62,7 +63,7 @@ def create_research(req: ResearchRequest) -> RunCreated:
     """Create a research run; when local sources are provided, executes the
     Week-1 vertical slice synchronously (question -> evidence -> claims -> memo)."""
     with session_scope() as session:
-        supervisor = Supervisor(session)
+        supervisor = Supervisor(session, method_describer=build_describer(settings))
         run = supervisor.create_run(question_text=req.question, domain=req.domain)
         if req.sources:
             supervisor.run_vertical_slice(

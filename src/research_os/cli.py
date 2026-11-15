@@ -16,6 +16,8 @@ from research_os.storage.repositories import (
     SqlSourceVersionRepository,
     SqlWorkRepository,
 )
+from research_os.config import settings
+from research_os.llm.factory import build_describer
 from research_os.orchestration.supervisor import Supervisor
 from research_os.reporting.memo import build_memo_from_run, inspect_claim
 from research_os.sources.providers import build_providers
@@ -25,7 +27,7 @@ def _cmd_run(args: argparse.Namespace) -> int:
     """Run the Week-1 vertical slice on local sources (or create a run only)."""
     init_db()
     with session_scope() as session:
-        supervisor = Supervisor(session)
+        supervisor = Supervisor(session, method_describer=build_describer(settings))
         run = supervisor.create_run(question_text=args.question, domain=args.domain)
         sources = [(p, None, "auto") for p in args.source]
         if sources:
