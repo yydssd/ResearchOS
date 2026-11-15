@@ -77,6 +77,9 @@ python scripts/method_acquisition_audit.py --labels tests/fixtures/method_acquis
 只读度量 40 篇留出集论文的四层方法信息可获取性与系统覆盖率；标注为 owner-derived、非独立非盲标，不产出质量结论。
 指标定义与三条读法（`A`/`C` 的分母不同格、原因必须闭合、L1 零容忍）见 `ResearchOS-Implementation-Plan.md` §21。
 
+要测 L3 需先录制：`RESEARCHOS_LLM_API_KEY=... python scripts/record_method_descriptions.py --ids-file docs/evaluation/holdout-ids-2026-11-12.txt`，
+然后 `python scripts/method_acquisition_audit.py --labels tests/fixtures/method_acquisition/labels.json --describer recorded`。没有 key 时审计报 `LLM 未启用`。
+
 ## 目录
 
 ```

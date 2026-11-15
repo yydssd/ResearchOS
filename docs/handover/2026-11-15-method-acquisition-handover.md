@@ -15,12 +15,12 @@
 ## 0. 一句话状态
 
 `method-acquisition-audit` 已**快进合并进 `master`**（本地，未推送），分支已删。
-`master` 现在 `e248067` 之上 **68 个提交**（含本条）：S1 16 个、S2 11 个、S3 10 个、S4 8 个，其余是度量与文档。
+`master` 现在 `e248067` 之上 **72 个提交**（含本条）：S1 16 个、S2 11 个、S3 10 个、S4 8 个、L3 provider 4 个，其余是度量与文档。
 
 **S1 5/5、S2 6/6、S3 8/8、S4 7/7 全部收官；方法获取四阶段到此结束**（判据见各自计划的验收表）。
 **下一步不是 S5**：剩下的都是设计 §12 的独立立项（域名词表、架构身份、来源权威层级、§19 源码检查）。
 
-本轮实测：**`418 passed, 2 skipped`**、**`420 tests collected`**、工作区干净。
+本轮实测：**`428 passed, 2 skipped`**、**`430 tests collected`**、工作区干净。
 （命令见 §6，跑法有坑见 §10。）
 
 ---
@@ -150,12 +150,15 @@ L1 产出 32 个名字，三条判据（逐字子串 / 独立构式 / 非片段�
 ## 6. 当前基线证据（本轮实测，非推算）
 
 ```
-$ cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" -q --basetemp=.pytest_tmp_s4_final
-418 passed, 2 skipped, 1 warning in 8.66s
+$ cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" -q --basetemp=.pytest_tmp_p4_final
+428 passed, 2 skipped, 1 warning in 38.53s
 
-$ ... --collect-only -q --basetemp=.pytest_tmp_s4_collect
-420 tests collected
+$ ... --collect-only -q --basetemp=.pytest_tmp_p4_collect
+430 tests collected
 ```
+
+（S4 收官时为 `418 passed / 420 collected`；L3 provider 阶段 +10 条用例 → `428 / 430`，增量全部是
+MockTransport 离线用例：客户端 5、工厂 2、录制脚本 3。）
 
 基线演进：`326 → 327 → 330 → 331 → 332 → 333 passed`（收集 `328 → 334 → 335`）。S1 内的净增 7 条用例，
 全部对应真实缺陷或真实可观察面，没有为凑数写的断言。T4 的 1 条是 S1 的第 7 条（`333 - 332`），
@@ -274,7 +277,9 @@ T5 落地：`architect.md` 加 ADR-033 与已知限制第 13 条、维护记录�
 
 ### 后续待办（都不是 S5）
 
-- **L3 仍未测量**（已知限制 17）：无 provider 客户端、录制夹具为空。要动这一格必须先实现 provider 并录 40 篇。
+- **L3 仍未测量**（已知限制 17）：provider 客户端、工厂 `openai` 分支与录制脚本已就绪（本阶段 4 个提交，
+  `418 → 428 passed` / `420 → 430 collected`），但仍未录任何数据。要动这一格只差一把 key + 一次
+  `scripts/record_method_descriptions.py` 运行。
 - **领域词表**（`lexicon.py` 只有图像复原）、**架构身份**（`components` 仍不进 identity）、**§8 来源权威层级**、**§19 源码检查**：各独立立项，见设计 §12。
 - 待办 #10：§21 / README 无方法抽取指标——报告已有四层度量，登记动作仍未做。
 - 存量库旧 `conditions_from=` 不迁移（已知限制 19）；`identity_key` 唯一数 / 合并组数没有 before（已知限制 21）。
@@ -285,7 +290,8 @@ T5 落地：`architect.md` 加 ADR-033 与已知限制第 13 条、维护记录�
   现有覆盖来自间接路径。S4 动 `conditions` 时会再碰 memo，那时一并定。
 - 待办 #10 **已完成**：`ResearchOS-Implementation-Plan.md` §21 新增 Method acquisition 小节，
   README 同步指标指引与模块清单。
-- **L3 未测量**（已知限制 17）：没有 provider 客户端，`tests/fixtures/method_descriptions/` 为空。
+- **L3 未测量**（已知限制 17）：客户端与录制脚本已在（`llm/openai_compat.py`、`scripts/record_method_descriptions.py`），
+  但 `tests/fixtures/method_descriptions/` 里一个录制文件都没有（目录也还不存在）。
   这不是缺陷，是口径：审计报「LLM 未启用」，不报一个没测过的数字。
 - 设计 §13 现在有 D1–D31：D22–D31 是 S4 的（值/tier 分存、旧标记不迁移、正则不共享、
   `--ids-file`、主张数未上升、禁分隔符断言、两个脚本性质、任务顺序、代码块修正、`may_merge` 对照）。
