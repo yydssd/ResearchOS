@@ -4,7 +4,17 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, JSON, String, Text
+from sqlalchemy import (
+    Boolean,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    JSON,
+    String,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Mapped, mapped_column
 
 from research_os.storage.database import Base
@@ -195,3 +205,38 @@ class EventRow(Base):
     payload: Mapped[dict] = mapped_column(JSON, default=dict)
     failure_type: Mapped[str | None] = mapped_column(String(32), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+
+class MethodProfileRow(Base):
+    """What one paper says about its own method (design §6.5).
+
+    The unique constraint, not the primary key, is what makes the pair identity:
+    ADR-030 showed that a truncated composite id collides on exactly the rows
+    this table must keep apart. `points` live in their own table because they are
+    enumerated and counted; the rest are attributes never queried alone, so JSON
+    keeps them in one row.
+    """
+
+    __tablename__ = "method_profiles"
+    __table_args__ = (UniqueConstraint("run_id", "source_version_id", name="uq_method_profile"),)
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    run_id: Mapped[str] = mapped_column(String(64), ForeignKey("runs.id"), index=True)
+    source_version_id: Mapped[str] = mapped_column(String(64), index=True)
+    name: Mapped[str | None] = mapped_column(Text, nullable=True)
+    name_quote: Mapped[str | None] = mapped_column(Text, nullable=True)
+    name_chunk_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    aliases_json: Mapped[list] = mapped_column(JSON, default=list)
+    components_json: Mapped[list] = mapped_column(JSON, default=list)
+    setup_json: Mapped[dict] = mapped_column(JSON, default=dict)
+    missing_layers_json: Mapped[list] = mapped_column(JSON, default=list)
+
+
+class MethodPointRow(Base):
+    __tablename__ = "method_points"
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    profile_id: Mapped[str] = mapped_column(String(64), ForeignKey("method_profiles.id"), index=True)
+    aspect: Mapped[str] = mapped_column(String(32))
+    statement: Mapped[str] = mapped_column(Text)
+    quote: Mapped[str] = mapped_column(Text)
+    chunk_id: Mapped[str] = mapped_column(String(64))
+    section: Mapped[str | None] = mapped_column(String(255), nullable=True)

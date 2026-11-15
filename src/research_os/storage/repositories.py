@@ -33,6 +33,9 @@ from research_os.domain.models import (
     ContradictionAssessment,
     DocumentChunk,
     Evidence,
+    MethodPoint,
+    MethodProfile,
+    MethodSetup,
     QuantitativeEvidence,
     ResearchEvent,
     ResearchQuestion,
@@ -108,6 +111,16 @@ class QuantitativeEvidenceRepository(Protocol):
     def list_by_evidence(self, evidence_id: str) -> list[QuantitativeEvidence]: ...
 
     def list_all(self) -> list[QuantitativeEvidence]: ...
+
+
+class MethodProfileRepository(Protocol):
+    def upsert(self, profile: MethodProfile, run_id: str) -> MethodProfile: ...
+
+    def get(self, run_id: str, source_version_id: str) -> MethodProfile | None: ...
+
+    def list_by_run(self, run_id: str) -> list[MethodProfile]: ...
+
+    def profiles_for(self, run_id: str, source_version_ids: list[str]) -> dict[str, MethodProfile]: ...
 
 
 class ClaimRepository(Protocol):
@@ -801,3 +814,124 @@ class SqlEventRepository:
     def list_by_run(self, run_id: str) -> list[ResearchEvent]:
         rows = self._s.scalars(select(t.EventRow).where(t.EventRow.run_id == run_id)).all()
         return [self._to_domain(r) for r in rows]
+
+
+def _profile_id(run_id: str, source_version_id: str) -> str:
+    """Deterministic id for the (run, source) pair.
+
+    Digest rather than a truncated pair: ADR-030 recorded two different claim
+    pairs colliding after `[:10]` truncation, and this table has the same shape.
+    """
+    digest = hashlib.sha1(f"{run_id}|{source_version_id}".encode("utf-8")).hexdigest()[:16]
+    return f"mp_{digest}"
+
+
+class SqlMethodProfileRepository:
+    """Per-run method profiles with their points (design §6.5)."""
+
+    def __init__(self, session: Session) -> None:
+        self._s = session
+
+    def upsert(self, profile: MethodProfile, run_id: str) -> MethodProfile:
+        profile_id = _profile_id(run_id, profile.source_version_id)
+        # The stored id is the pair digest, so the object the caller holds must
+        # carry it too - otherwise the value returned here and the value `get()`
+        # reads back disagree, and a second write would look like a new row.
+        profile.id = profile_id
+        row = self._s.get(t.MethodProfileRow, profile_id)
+        if row is None:
+            row = t.MethodProfileRow(
+                id=profile_id, run_id=run_id, source_version_id=profile.source_version_id
+            )
+            self._s.add(row)
+        row.name = profile.name
+        row.name_quote = profile.name_quote
+        row.name_chunk_id = profile.name_chunk_id
+        row.aliases_json = list(profile.aliases)
+        row.components_json = list(profile.components)
+        row.setup_json = profile.setup.model_dump()
+        row.missing_layers_json = list(profile.missing_layers)
+
+        # Points are replaced, never appended: a re-run must converge on one copy
+        # (the same reason `replace_for_run` exists for assessments).
+        self._s.execute(delete(t.MethodPointRow).where(t.MethodPointRow.profile_id == profile_id))
+        self._s.flush()
+        for index, point in enumerate(profile.points):
+            self._s.add(
+                t.MethodPointRow(
+                    id=f"{profile_id}#{index}",
+                    profile_id=profile_id,
+                    aspect=point.aspect,
+                    statement=point.statement,
+                    quote=point.quote,
+                    chunk_id=point.chunk_id,
+                    section=point.section,
+                )
+            )
+        self._s.flush()
+        return profile
+
+    def upsert_many(self, profiles: list[MethodProfile], run_id: str) -> list[MethodProfile]:
+        for profile in profiles:
+            self.upsert(profile, run_id)
+        return profiles
+
+    def _to_domain(self, row: t.MethodProfileRow) -> MethodProfile:
+        points = self._s.scalars(
+            select(t.MethodPointRow)
+            .where(t.MethodPointRow.profile_id == row.id)
+            .order_by(t.MethodPointRow.id)
+        ).all()
+        return MethodProfile(
+            id=row.id,
+            source_version_id=row.source_version_id,
+            name=row.name,
+            name_quote=row.name_quote,
+            name_chunk_id=row.name_chunk_id,
+            aliases=list(row.aliases_json or []),
+            components=list(row.components_json or []),
+            setup=MethodSetup(**(row.setup_json or {})),
+            points=[
+                MethodPoint(
+                    id=point.id,
+                    aspect=point.aspect,
+                    statement=point.statement,
+                    quote=point.quote,
+                    chunk_id=point.chunk_id,
+                    section=point.section,
+                )
+                for point in points
+            ],
+            missing_layers=list(row.missing_layers_json or []),
+        )
+
+    def get(self, run_id: str, source_version_id: str) -> MethodProfile | None:
+        row = self._s.get(t.MethodProfileRow, _profile_id(run_id, source_version_id))
+        return self._to_domain(row) if row else None
+
+    def list_by_run(self, run_id: str) -> list[MethodProfile]:
+        # Ordered, unlike `SqlEventRepository.list_by_run`: the memo renders one
+        # section per profile and its output must not depend on rowid.
+        rows = self._s.scalars(
+            select(t.MethodProfileRow)
+            .where(t.MethodProfileRow.run_id == run_id)
+            .order_by(t.MethodProfileRow.source_version_id)
+        ).all()
+        return [self._to_domain(row) for row in rows]
+
+    def profiles_for(self, run_id: str, source_version_ids: list[str]) -> dict[str, MethodProfile]:
+        """One query for all profiles (design §6.5: no loop over ids).
+
+        `_to_domain` reads the points of each profile it materialises, so the
+        result costs one query plus one per profile; that is the shape the
+        attribution path needs (a handful of papers), not a per-id round trip.
+        """
+        if not source_version_ids:
+            return {}
+        rows = self._s.scalars(
+            select(t.MethodProfileRow).where(
+                t.MethodProfileRow.run_id == run_id,
+                t.MethodProfileRow.source_version_id.in_(source_version_ids),
+            )
+        ).all()
+        return {row.source_version_id: self._to_domain(row) for row in rows}
