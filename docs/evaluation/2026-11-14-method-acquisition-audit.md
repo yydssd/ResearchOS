@@ -10,7 +10,8 @@
 `A = present/20`；`C = covered/present`，分母逐格不同，**不可跨层 / 跨领域比较**；
 `present < 5` 的格子不作趋势解读；`present=0` 记 `N/A`。
 `covered/20` 与 `A` 同分母、可直接比较；`C` 的分母是各格 `present`。
-`present=20` 时两列数值恰好相同但含义不同（见 `image_restoration` L4：`11/19` 与 `11/20`）。
+`present=20` 时两列数值恰好相同但含义不同；`present<20` 时两列数值也随之分开，
+例如 `image_restoration` L4 的 `C=11/19` 与 `covered/20=11/20`。
 标注夹具：159 present / 0 absent / 1 ambiguous（`2404.12495`/L4）。
 
 ## 2. 结果
