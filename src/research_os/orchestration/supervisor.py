@@ -40,6 +40,7 @@ from research_os.research.evidence_extractor import (
     HeuristicEvidenceExtractor,
     has_location,
 )
+from research_os.research.method_description import validate_description
 from research_os.research.methods import MethodExtractor, extract_methods
 from research_os.research.quantitative import HeuristicQuantitativeExtractor, QuantitativeExtractor
 from research_os.sources.discovery import collect_candidates, dedupe_candidates
@@ -94,6 +95,7 @@ class Supervisor:
         quantitative_extractor: QuantitativeExtractor | None = None,
         contradiction_assessor: ContradictionAssessor | None = None,
         method_extractor: MethodExtractor | None = None,
+        method_describer: "MethodDescriber | None" = None,
     ) -> None:
         self._session = session
         self._extractor = evidence_extractor or HeuristicEvidenceExtractor()
@@ -103,6 +105,7 @@ class Supervisor:
         # Method acquisition is deterministic (design §6); the L3 describer that
         # is not deterministic arrives in S3 as a separate, optional component.
         self._methods = method_extractor
+        self._describer = method_describer
         # Injected for tests/offline runs; otherwise resolved from settings at
         # call time so configuration changes are picked up without re-import.
         self._providers = providers
@@ -135,6 +138,26 @@ class Supervisor:
             self._log(run.id, EventType.BUDGET_EXCEEDED, "global budget exceeded", failure_type=FailureType.BUDGET_EXCEEDED)
             run.warnings.append("global budget exceeded")
             SqlRunRepository(self._session).update(run)
+
+    def _llm_budget_exhausted(self, run: ResearchRun) -> bool:
+        """Check only: the caller adds after the call returns (design §7.3).
+
+        `>=` rather than `>` so a budget of 0 means zero calls, and so 80 means 80.
+        Adding first and checking after is how 81-call runs happen.
+        """
+        budget = self._budget(run)
+        return budget.llm_calls >= budget.max_llm_calls or budget.cost_usd >= budget.max_cost_usd
+
+    def _spend_llm(self, run: ResearchRun, cost_usd: float | None) -> None:
+        """Count the call, and the cost when the provider reported one.
+
+        A missing cost stays missing: inventing a number would make the ceiling
+        depend on a guess.
+        """
+        run.budget.llm_calls += 1
+        if cost_usd is not None:
+            run.budget.cost_usd = round(run.budget.cost_usd + cost_usd, 6)
+        SqlRunRepository(self._session).update(run)
 
     # -- public API ---------------------------------------------------------
 
@@ -409,6 +432,52 @@ class Supervisor:
             method_task,
             output_ids=[profile.source_version_id for profile in extraction.profiles],
         )
+
+        # 3c) L3: one description call per paper, through the four defences
+        # (design §7.4). The budget is checked before the call and counted after,
+        # so a ceiling of N means N calls.
+        if self._describer is not None:
+            profiles = SqlMethodProfileRepository(self._session).list_by_run(run.id)
+            by_source: dict[str, list] = {}
+            for chunk in all_chunks:
+                by_source.setdefault(chunk.source_version_id, []).append(chunk)
+            for profile in profiles:
+                if self._llm_budget_exhausted(run):
+                    self._log(
+                        run.id,
+                        EventType.FAILURE,
+                        "L3 description skipped: LLM budget exhausted",
+                        {"source_version_id": profile.source_version_id,
+                         "llm_calls": run.budget.llm_calls,
+                         "max_llm_calls": run.budget.max_llm_calls},
+                        failure_type=FailureType.METHOD_DESCRIPTION_SKIPPED,
+                    )
+                    continue
+                attempt = self._describer.describe(by_source.get(profile.source_version_id, []))
+                self._spend_llm(run, attempt.cost_usd)
+                if attempt.response is None:
+                    self._log(
+                        run.id,
+                        EventType.FAILURE,
+                        f"L3 description failed: {attempt.error}",
+                        {"source_version_id": profile.source_version_id},
+                        failure_type=FailureType.METHOD_DESCRIPTION_REJECTED,
+                    )
+                    continue
+                outcome = validate_description(attempt.response, by_source.get(profile.source_version_id, []))
+                if outcome.reason:
+                    self._log(
+                        run.id,
+                        EventType.FAILURE,
+                        f"L3 description partially refused: {outcome.reason}",
+                        {"source_version_id": profile.source_version_id,
+                         "kept": len(outcome.points),
+                         "reason": outcome.reason},
+                        failure_type=FailureType(outcome.reason),
+                    )
+                if outcome.points:
+                    profile.points = outcome.points
+                    SqlMethodProfileRepository(self._session).upsert(profile, run.id)
 
         # 4) quantitative evidence (plan §15): structured numbers, separate table
         facts = self._quantitative.extract(

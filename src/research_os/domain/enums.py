@@ -143,3 +143,10 @@ class FailureType(StrEnum):
     BUDGET_EXCEEDED = "BUDGET_EXCEEDED"
     CONTRADICTION_UNRESOLVED = "CONTRADICTION_UNRESOLVED"
     CROSS_RUN_PAIR = "CROSS_RUN_PAIR"
+    # L3 (design §7.5). All four are failures in the sense that a paper that
+    # should have a description did not get one; the message and payload say
+    # which step refused it.
+    METHOD_POINT_UNLOCATABLE = "METHOD_POINT_UNLOCATABLE"
+    METHOD_STATEMENT_UNSUPPORTED = "METHOD_STATEMENT_UNSUPPORTED"
+    METHOD_DESCRIPTION_REJECTED = "METHOD_DESCRIPTION_REJECTED"
+    METHOD_DESCRIPTION_SKIPPED = "METHOD_DESCRIPTION_SKIPPED"
