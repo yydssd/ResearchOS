@@ -295,162 +295,6 @@ def test_backfill_normalises_vocabulary_and_never_drops_a_unit(tmp_path: Path, f
 - [ ] **Step 2: 运行测试，确认失败**
 
 ```bash
-"D:/Anaconda/envs/reOS/python.exe" -m pytest tests/unit/test_repositories.py::test_quantitative_evidence_keeps_unit_apart_from_protocol -v
-```
-
-预期：`FAILED`，`TypeError: QuantitativeEvidence.__init__() got an unexpected keyword argument 'unit'`（Pydantic 会报 `unexpected keyword argument 'unit'`）。
-
-- [ ] **Step 3: 加字段与列**
-
-`src/research_os/domain/models.py`，在 `protocol: str | None = None` **之后**加：
-
-```python
-    # The unit attached to this value ("dB"/"percent"). It lives apart from
-    # `protocol` because plan §15 gives that slot to the evaluation protocol
-    # ("zero-shot"), and a field named protocol holding "dB" made every delta
-    # bucket read `dB:0.44` while pretending to be a protocol.
-    unit: str | None = None
-```
-
-`src/research_os/storage/tables.py`，在 `protocol` 列之后加：
-
-```python
-    unit: Mapped[str | None] = mapped_column(String(32), nullable=True)
-```
-
-`src/research_os/storage/database.py` 的 `_ADDED_COLUMNS` 改为：
-
-```python
-_ADDED_COLUMNS: dict[str, dict[str, str]] = {
-    "source_versions": {"source_tier": "VARCHAR(32)"},
-    "quantitative_evidence": {"delta": "FLOAT", "unit": "VARCHAR(32)"},
-    "claims": {"identity_key": "VARCHAR(256)"},
-}
-```
-
-`src/research_os/storage/repositories.py` 的 `create_many` 里，在 `protocol=fact.protocol,` 之后加一行：
-
-```python
-                    unit=fact.unit,
-```
-
-`_to_domain` 里，在 `protocol=row.protocol,` 之后加一行：
-
-```python
-            unit=row.unit,
-```
-
-- [ ] **Step 4: 运行测试，确认通过**
-
-```bash
-"D:/Anaconda/envs/reOS/python.exe" -m pytest tests/unit/test_repositories.py -v
-```
-
-预期：全绿，含新用例。
-
-- [ ] **Step 5: 跑全量，确认没有回归**
-
-```bash
-"D:/Anaconda/envs/reOS/python.exe" -m pytest -q --basetemp=.pytest_tmp_s1_t1
-```
-
-预期：`326 passed, 2 skipped` → 现在应为 `327 passed, 2 skipped`（多 1 条新用例）。若有既有用例变红，**停下**：本步骤不允许任何行为变化。
-
-- [ ] **Step 6: 提交**
-
-```bash
-git add src/research_os/domain/models.py src/research_os/storage/tables.py \
-        src/research_os/storage/database.py src/research_os/storage/repositories.py \
-        tests/unit/test_repositories.py
-git commit -m "feat(quant): add a unit field beside protocol
-
-Plan §15 gives QuantitativeEvidence.protocol to the evaluation protocol, but
-the implementation stored the unit (dB/percent) there. Adding the field first,
-with no writer or reader change, keeps the behaviour identical until the flip."
-```
-
----
-
-### Task 2: 按数据幂等的回填
-
-**Files:**
-- Modify: `src/research_os/storage/database.py:56-103`
-- Test: `tests/unit/test_database.py`（追加）
-
-- [ ] **Step 1: 写会失败的两个测试**
-
-在 `tests/unit/test_database.py` 中追加。文件顶部已有 `from sqlalchemy import inspect, text`，需要补 import：
-
-```python
-from pathlib import Path
-
-from sqlalchemy import create_engine
-
-from research_os.storage.database import init_db
-```
-
-```python
-def _old_database_without_unit(url: str) -> None:
-    """A pre-S1 database: `quantitative_evidence` has protocol but no unit."""
-    engine = create_engine(url)
-    with engine.begin() as conn:
-        conn.exec_driver_sql(
-            "CREATE TABLE quantitative_evidence ("
-            " id VARCHAR(80) PRIMARY KEY, evidence_id VARCHAR(64), seq INTEGER,"
-            " dataset VARCHAR(255), metric VARCHAR(64), method TEXT, value FLOAT,"
-            " comparator TEXT, comparator_value FLOAT, protocol VARCHAR(64), delta FLOAT)"
-        )
-        conn.exec_driver_sql(
-            "INSERT INTO quantitative_evidence (id, evidence_id, seq, protocol, delta) "
-            "VALUES ('e#0','e',0,'dB',0.44)"
-        )
-        conn.exec_driver_sql(
-            "INSERT INTO quantitative_evidence (id, evidence_id, seq, protocol, delta) "
-            "VALUES ('e#1','e',1,'percent',0.5)"
-        )
-
-
-def test_unit_backfill_moves_the_old_unit_and_clears_protocol(tmp_path: Path):
-    """`protocol` used to hold the unit. The backfill must move it, not copy it:
-    leaving "dB" in protocol would make the field lie about being a protocol."""
-    url = f"sqlite:///{tmp_path / 'old.db'}"
-    _old_database_without_unit(url)
-
-    init_db(url=url)
-
-    with session_scope() as session:
-        rows = session.execute(
-            text("SELECT id, unit, protocol FROM quantitative_evidence ORDER BY id")
-        ).all()
-    assert rows == [("e#0", "dB", None), ("e#1", "percent", None)]
-
-
-def test_second_init_db_does_not_destroy_the_backfilled_unit(tmp_path: Path):
-    """The backfill runs on every init_db(), so it must be idempotent by data:
-    an unguarded `unit = protocol` would set unit to NULL on the second pass,
-    because the first pass already cleared protocol. This test is the reason
-    both statements carry WHERE clauses instead of running unconditionally."""
-    url = f"sqlite:///{tmp_path / 'twice.db'}"
-    _old_database_without_unit(url)
-
-    init_db(url=url)
-    with session_scope() as session:
-        session.execute(
-            text("UPDATE quantitative_evidence SET protocol = 'zero-shot' WHERE id = 'e#0'")
-        )
-
-    init_db(url=url)  # second start-up, as every CLI run and every test fixture does
-
-    with session_scope() as session:
-        row = session.execute(
-            text("SELECT unit, protocol FROM quantitative_evidence WHERE id = 'e#0'")
-        ).one()
-    assert row == ("dB", "zero-shot")
-```
-
-- [ ] **Step 2: 运行测试，确认失败**
-
-```bash
 "D:/Anaconda/envs/reOS/python.exe" -m pytest tests/unit/test_database.py -v -k "unit or backfill"
 ```
 
@@ -538,7 +382,7 @@ data guards, which also keeps the backfill working for databases where an earlie
 start-up already added the column. Two more decisions are pinned by tests: the
 guard treats an empty-string unit as "no value" (as the rest of the codebase
 does), and it normalises case and whitespace so a hand-edited legacy row still
-migrates instead of leaving its unit behind in protocol.""
+migrates instead of leaving its unit behind in protocol."
 ```
 
 ---
@@ -827,7 +671,7 @@ git diff --stat master..HEAD -- src/ tests/
 | 1 | `value_bucket` 标签逐字不变 | Task 3 的 `test_delta_bucket_label_survives_the_unit_split` 断言 `("dB:0.44",)` |
 | 2 | memo 渲染输出不变（单位仍显示） | `tests/integration/test_evidence_quality.py` 断言 `"39.18" in memo`；Task 3 Step 6 全量绿 |
 | 3 | `init_db()` 两次幂等 | Task 2 的 `test_second_init_db_does_not_destroy_the_backfilled_unit` |
-| 4 | 既有用例一条不少 | Task 5 Step 4 的收集数 `333` |
+| 4 | 既有用例一条不少 | Task 5 Step 4 的收集数 `334` |
 | 5 | `protocol` 不再被用作单位 | `grep -rn "fact.protocol\|row.protocol" src/` 只应命中 `repositories.py` 的映射 | 
 
 ## 明确不做（S1 边界）
