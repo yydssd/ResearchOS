@@ -13,7 +13,7 @@ from research_os.storage.database import session_scope
 from research_os.storage.repositories import SqlEventRepository, SqlMethodProfileRepository
 
 FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
-QUOTE = "LangProp, our proposed method, stores each policy as code"
+QUOTE = "LangProp, our proposed method, stores each policy as code and scores it by execution feedback."
 
 
 class QuoteDescriber:
@@ -26,7 +26,10 @@ class QuoteDescriber:
         # Abstract): naming chunks[0] for every point is itself the "unlocatable"
         # case the validator must catch, and it would make the two tests below
         # fail for a reason that has nothing to do with what they assert.
-        chunk = next((item for item in chunks if self._quote in item.text), chunks[0])
+        needle = " ".join(self._quote.split())
+        chunk = next(
+            (item for item in chunks if needle in " ".join(item.text.split())), chunks[0]
+        )
         return DescriptionAttempt(
             response=MethodDescriptionResponse(
                 points=[

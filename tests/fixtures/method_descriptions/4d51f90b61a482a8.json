@@ -1,88 +1,67 @@
 {
   "points": [
     {
+      "aspect": "mechanism",
+      "statement": "A shared backbone with heterogeneous expert modules balances commonality and specificity across tasks.",
+      "quote": "LLaRS resolves the core contradiction between multi-task commonality and specificity by embedding heterogeneous expert modules into a shared backbone (46).",
+      "prompt_index": 1,
+      "section": "3 Methodology"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Universal restoration priors come from the shared backbone, while routed experts learn task-specific strategies with limited overhead.",
+      "quote": "The shared backbone captures universal image restoration priors, while the dynamically routed experts learn task-specific strategies without introducing prohibitive computational overhead.",
+      "prompt_index": 1,
+      "section": "3 Methodology"
+    },
+    {
+      "aspect": "io",
+      "statement": "Heterogeneous inputs are padded to a fixed channel count before the backbone to share a common layout and parameters.",
+      "quote": "Here CC is a fixed unified channel count: heterogeneous inputs are padded to CC before the backbone so batches share a common layout and parameters.",
+      "prompt_index": 1,
+      "section": "3 Methodology"
+    },
+    {
       "aspect": "goal",
-      "statement": "It addresses profound differences in degradation mechanisms, feature hierarchies, and restoration strategies across diverse low-level vision tasks.",
-      "quote": "To address the profound differences in degradation mechanisms, feature hierarchies, and restoration strategies across diverse remote sensing low-level vision tasks",
-      "prompt_index": 1,
-      "section": "3 Methodology"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "It resolves the tension between multi-task commonality and specificity by embedding heterogeneous expert modules into a shared backbone.",
-      "quote": "resolves the core contradiction between multi-task commonality and specificity by embedding heterogeneous expert modules into a shared backbone",
-      "prompt_index": 1,
-      "section": "3 Methodology"
-    },
-    {
-      "aspect": "io",
-      "statement": "The input is a degraded remote sensing image.",
-      "quote": "Given a degraded remote sensing image",
-      "prompt_index": 1,
-      "section": "3 Methodology"
-    },
-    {
-      "aspect": "io",
-      "statement": "A task description text accompanies the image as input.",
-      "quote": "and a task description text",
-      "prompt_index": 1,
-      "section": "3 Methodology"
-    },
-    {
-      "aspect": "io",
-      "statement": "The output represents the restored high-quality image.",
-      "quote": "represents the restored high-quality image",
-      "prompt_index": 1,
-      "section": "3 Methodology"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A shared backbone captures universal restoration priors while dynamically routed experts learn task-specific strategies.",
-      "quote": "The shared backbone captures universal image restoration priors, while the dynamically routed experts learn task-specific strategies",
-      "prompt_index": 1,
-      "section": "3 Methodology"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Expert routing avoids prohibitive computational overhead.",
-      "quote": "without introducing prohibitive computational overhead",
-      "prompt_index": 1,
-      "section": "3 Methodology"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Heterogeneous bands are aligned into semantically matched slots.",
-      "quote": "align heterogeneous bands into semantically matched slots",
-      "prompt_index": 3,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Convolutional experts target spatial patterns and channel-mixing experts target spectral fidelity.",
-      "quote": "convolutional experts for spatial patterns, channel-mixing experts for spectral fidelity",
-      "prompt_index": 3,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Joint training is stabilized through dynamic weight adjustment at each step.",
-      "quote": "stabilizes joint training via step-level dynamic weight adjustment",
-      "prompt_index": 3,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Inputs are routed through task-appropriate processing pathways.",
-      "quote": "routes the input through task-appropriate processing pathways",
+      "statement": "A language-conditioned foundation model unifies multiple restoration and enhancement tasks under natural-language guidance.",
+      "quote": "To this end, this paper presents LLaRS (see Fig. 1), a language-conditioned (8) foundation model that unifies eleven restoration and enhancement tasks under natural-language guidance.",
       "prompt_index": 9,
       "section": "1 Introduction"
     },
     {
       "aspect": "io",
-      "statement": "The desired operation is specified by users with intuitive text prompts.",
-      "quote": "Users specify the desired operation through intuitive text prompts",
+      "statement": "Users specify operations through text prompts, and the model routes input through task-appropriate processing pathways.",
+      "quote": "Users specify the desired operation through intuitive text prompts such as remove the blur or enhance resolution, and the model routes the input through task-appropriate processing pathways.",
       "prompt_index": 9,
       "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Heterogeneous sensor inputs with varying channels and spectral meanings are aligned into matched slots through regularized transport to ensure consistent feature semantics.",
+      "quote": "First, heterogeneous sensor inputs with varying channel counts and spectral meanings are aligned into semantically matched slots via entropy-regularized optimal transport solved with Sinkhorn iterations (50; 11), ensuring consistent feature semantics across modalities.",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Complementary expert layers process spatial patterns, spectral fidelity, and global context to enable specialized yet coordinated transformations.",
+      "quote": "Second, three complementary mixture-of-experts layers process spatial patterns, spectral fidelity, and global context, enabling specialized yet coordinated feature transformations.",
+      "prompt_index": 10,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Dynamic weight adjustment at the step level stabilizes joint training across tasks with differing loss scales and convergence rates.",
+      "quote": "Third, step-level dynamic weight adjustment stabilizes joint training across tasks with heterogeneous loss scales and convergence rates.",
+      "prompt_index": 10,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A regularized transport aligns heterogeneous bands into matched slots, complementary expert layers route features by spatial, spectral, and global context, and dynamic weighting stabilizes joint training.",
+      "quote": "LLaRS employs Sinkhorn-Knopp optimal transport to align heterogeneous bands into semantically matched slots, routes features through three complementary mixture-of-experts layers (convolutional experts for spatial patterns, channel-mixing experts for spectral fidelity, and attention experts with low-rank adapters for global context), and stabilizes joint training via step-level dynamic weight adjustment.",
+      "prompt_index": -1,
+      "section": "Abstract"
     }
   ]
 }

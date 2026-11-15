@@ -2,72 +2,44 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "Models degradation awareness throughout the pipeline, spanning patch sampling to pixel reconstruction.",
-      "quote": "explicitly models degradation awareness across the entire pipeline, from patch sampling to pixel reconstruction",
-      "prompt_index": 1,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "The degradation conditions jointly condition patch embedding and unembedding through adaptive deformation.",
-      "quote": "which jointly condition the patch embedding and unembedding through adaptive deformation",
-      "prompt_index": 1,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A task-token dropout strategy regularizes task conditioning during training.",
-      "quote": "introduce a task-token dropout strategy that regularizes task conditioning during training",
-      "prompt_index": 1,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Patch embedding samples pixels using learned offsets.",
-      "quote": "deformable patch embedding samples pixels with learned offsets",
-      "prompt_index": 8,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "The unembedding stage reconstructs pixels via inverse warping.",
-      "quote": "deformable unembedding reconstructs pixels via inverse warping",
-      "prompt_index": 8,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Patch grids are bent to follow local degradation structure.",
-      "quote": "bends patch grids to follow local degradation structure",
-      "prompt_index": 5,
+      "statement": "The method is motivated by making degradation-aware processing cover the whole pipeline, from patch sampling through token transformation to pixel reconstruction.",
+      "quote": "Focusing on these drawbacks, we argue in this paper that degradation-aware processing should span the entire pipeline, from patch sampling, through token transformation, to pixel reconstruction.",
+      "prompt_index": 11,
       "section": "1 Introduction"
     },
     {
       "aspect": "why_it_works",
-      "statement": "This enables spatially adaptive tokenization and artifact-free restoration.",
-      "quote": "enabling spatially adaptive tokenization and artifact-free restoration",
-      "prompt_index": 5,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "goal",
-      "statement": "Degradation-aware processing spans the entire pipeline, from patch sampling through token transformation to pixel reconstruction.",
-      "quote": "degradation-aware processing should span the entire pipeline, from patch sampling, through token transformation, to pixel reconstruction",
+      "statement": "Patch boundaries and reconstruction should be functions of local degradation severity, a simple but under-explored principle.",
+      "quote": "This suggests a simple but under-explored principle: make patch boundaries and reconstruction functions of local degradation severity.",
       "prompt_index": 11,
       "section": "1 Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "Patch boundaries and reconstruction are made functions of local degradation severity.",
-      "quote": "make patch boundaries and reconstruction functions of local degradation severity",
-      "prompt_index": 11,
+      "statement": "A task-token dropout strategy regularizes task conditioning during training to improve robustness across degradation types.",
+      "quote": "Moreover, to improve robustness across degradation types, we introduce a task-token dropout strategy that regularizes task conditioning during training.",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A degradation encoder extracts a global descriptor and a spatial map from a degraded input image.",
+      "quote": "Given a degraded image, the Degradation Encoder extracts a global vector 𝐠\\mathbf{g} and spatial map 𝐌\\mathbf{M}.",
+      "prompt_index": 8,
       "section": "1 Introduction"
     },
     {
-      "aspect": "goal",
-      "statement": "Design a unified architecture that adapts processing locally to heterogeneous degradations.",
-      "quote": "design a unified architecture that can adapt its processing locally to heterogeneous degradations",
-      "prompt_index": 6,
+      "aspect": "mechanism",
+      "statement": "Deformable patch embedding samples pixels with learned offsets, a transformer modulates tokens, and deformable unembedding reconstructs pixels by inverse warping.",
+      "quote": "Conditioned on (𝐠,𝐌)(\\mathbf{g},\\mathbf{M}), deformable patch embedding samples pixels with learned offsets, the AdaLN Transformer processes tokens with 𝐠\\mathbf{g}-modulation, and deformable unembedding reconstructs pixels via inverse warping.",
+      "prompt_index": 8,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "io",
+      "statement": "A lightweight refiner generates the final restored output.",
+      "quote": "A lightweight refiner produces the final output.",
+      "prompt_index": 8,
       "section": "1 Introduction"
     }
   ]

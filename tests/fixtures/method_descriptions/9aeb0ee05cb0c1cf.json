@@ -1,30 +1,16 @@
 {
   "points": [
     {
-      "aspect": "goal",
-      "statement": "Aims to restore degraded images efficiently with a unified model.",
-      "quote": "Restoring any degraded image efficiently via just one model",
+      "aspect": "mechanism",
+      "statement": "The method inspects each input's sub-latent space, identifies key components, and initially reweights them through a gated mechanism.",
+      "quote": "Specifically, we examine the sub-latent space of each input, identifying key components and reweighting them first in a gated manner.",
       "prompt_index": 6,
       "section": "Abstract."
     },
     {
       "aspect": "mechanism",
-      "statement": "Uses shared similarity among degradations to support efficient comprehensive restoration via a joint embedding mechanism.",
-      "quote": "leverages inherent similarity across various degradations to enable both efficient and comprehensive restoration through a joint embedding mechanism",
-      "prompt_index": 6,
-      "section": "Abstract."
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Examines each input's sub-latent space, identifies key components, and reweights them initially in a gated manner.",
-      "quote": "we examine the sub-latent space of each input, identifying key components and reweighting them first in a gated manner.",
-      "prompt_index": 6,
-      "section": "Abstract."
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Proposes a parallel spatial-frequency fusion strategy to enhance spatial-aware local-global interactions and enrich restoration details from the frequency perspective.",
-      "quote": "a spatial-frequency parallel fusion strategy is proposed for enhancing spatial-aware local-global interactions and enriching the restoration details from the frequency perspective.",
+      "statement": "A spatial-frequency parallel fusion strategy combines intrinsic degradation awareness with contextualized attention, enhancing spatial-aware local-global interactions and enriching restoration details from a frequency perspective.",
+      "quote": "To fuse the intrinsic degradation awareness and the contextualized attention, a spatial-frequency parallel fusion strategy is proposed for enhancing spatial-aware local-global interactions and enriching the restoration details from the frequency perspective.",
       "prompt_index": 7,
       "section": "Abstract."
     }

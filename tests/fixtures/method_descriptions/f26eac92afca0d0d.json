@@ -2,30 +2,16 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "Frames restoration as autoregressive generation to model spectral and spatial dependencies progressively instead of reconstructing globally.",
-      "quote": "rethinking HSI restoration as an autoregressive generation problem",
-      "prompt_index": 5,
+      "statement": "Reframes restoration as an autoregressive generation problem so spectral and spatial dependencies are modeled progressively rather than reconstructed globally.",
+      "quote": "We break this impasse by introducing HSI-VAR, rethinking HSI restoration as an autoregressive generation problem, where spectral and spatial dependencies can be progressively modeled rather than globally reconstructed.",
+      "prompt_index": -1,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "Aligns latent priors with conditional embeddings to maintain semantic consistency for precise reconstruction.",
-      "quote": "couples semantic consistency between latent priors and conditional embeddings for precise reconstruction",
-      "prompt_index": 6,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Represents mixed degradations as linear combinations in embedding space to enable automatic control.",
-      "quote": "encodes mixed degradations as linear combinations in the embedding space for automatic control",
-      "prompt_index": 6,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Refines spatial and spectral details during decoding.",
-      "quote": "refines details across both domains in the decoding phase",
-      "prompt_index": 6,
+      "statement": "Couples latent priors with conditional embeddings, encodes mixed degradations as linear combinations for guidance, and refines spatial and spectral details during decoding.",
+      "quote": "HSI-VAR incorporates three key innovations: (1) Latent–condition alignment, which couples semantic consistency between latent priors and conditional embeddings for precise reconstruction; (2) Degradation-aware guidance, which uniquely encodes mixed degradations as linear combinations in the embedding space for automatic control, remarkably achieving a nearly 50% reduction in computational cost at inference; (3) A spatial–spectral adaptation module that refines details across both domains in the decoding phase.",
+      "prompt_index": -1,
       "section": "Abstract"
     }
   ]

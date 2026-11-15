@@ -2,38 +2,31 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The work targets an efficient and effective model for medical image restoration.",
-      "quote": "We aim to build an efficient and effective model for medical image restoration based on the Receptance Weighted Key Value (RWKV)",
+      "statement": "The work seeks to create an efficient and effective model for restoring medical images.",
+      "quote": "We aim to build an efficient and effective model for medical image restoration based on the Receptance Weighted Key Value (RWKV) peng2023rwkv, termed Restore-RWKV.",
       "prompt_index": 0,
       "section": "3 Method"
     },
     {
       "aspect": "mechanism",
-      "statement": "A newly designed block serves as the basic component for extracting features.",
-      "quote": "we present a novel R-RWKV block as its fundamental component for feature extraction",
-      "prompt_index": 0,
-      "section": "3 Method"
+      "statement": "The authors introduce a recurrent attention mechanism that captures global dependencies while maintaining linear computational complexity.",
+      "quote": "First, we present a recurrent WKV (Re-WKV) attention mechanism that captures global dependencies with linear computational complexity.",
+      "prompt_index": 2,
+      "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "Modifications adapt the block to capture global and local dependencies in spatial images.",
-      "quote": "we incorporate two innovations in the R-RWKV block to adapt it for capturing global and local dependencies in 2D images",
-      "prompt_index": 0,
-      "section": "3 Method"
+      "statement": "They develop an omnidirectional token shift layer that improves local dependencies by shifting tokens from every direction across a broad context.",
+      "quote": "Second, we develop an omnidirectional token shift (Omni-Shift) layer that enhances local dependencies by shifting tokens from all directions and across a wide context range.",
+      "prompt_index": 2,
+      "section": "Abstract"
     },
     {
-      "aspect": "mechanism",
-      "statement": "An attention mechanism builds global dependencies across spatial images with linear computational complexity.",
-      "quote": "we introduce a recurrent WKV (Re-WKV) attention mechanism that effectively builds global dependencies in 2D images with linear computational complexity",
-      "prompt_index": 0,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A shift mechanism captures local context from all directions to improve performance.",
-      "quote": "we introduce an omnidirectional token shift mechanism that accurately captures local context to enhance the model performance",
-      "prompt_index": 0,
-      "section": "3 Method"
+      "aspect": "why_it_works",
+      "statement": "The adaptations produce an efficient and effective model for medical image restoration.",
+      "quote": "These adaptations make the proposed Restore-RWKV an efficient and effective model for medical image restoration.",
+      "prompt_index": 3,
+      "section": "Abstract"
     }
   ]
 }

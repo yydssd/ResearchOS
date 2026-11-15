@@ -2,29 +2,8 @@
   "points": [
     {
       "aspect": "mechanism",
-      "statement": "The approach uses a single restoration level for the whole image rather than varying it per region.",
-      "quote": "the restoration level is fixed for whole image in our method",
-      "prompt_index": 0,
-      "section": "4.2 Comparisons with the State-of-the-art Methods"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "A single level is sufficient for global degradation whose severity is consistent across the whole image.",
-      "quote": "which is sufficient for global degradation that degradation level is consistent for whole image",
-      "prompt_index": 0,
-      "section": "4.2 Comparisons with the State-of-the-art Methods"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "The method modulates restoration strength by manipulating the latent space.",
-      "quote": "restoration level modulation using latent space manipulation",
-      "prompt_index": 7,
-      "section": "4.2 Comparisons with the State-of-the-art Methods"
-    },
-    {
-      "aspect": "io",
-      "statement": "A user input parameter allows tuning to achieve that modulation.",
-      "quote": "which can achieve by tuning user input parameter",
+      "statement": "Restoration level modulation is achieved through latent space manipulation by tuning a user input parameter.",
+      "quote": "Visual result of restoration level modulation using latent space manipulation, which can achieve by tuning user input parameter.",
       "prompt_index": 7,
       "section": "4.2 Comparisons with the State-of-the-art Methods"
     }

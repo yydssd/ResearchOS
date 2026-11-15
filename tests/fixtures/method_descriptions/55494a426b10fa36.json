@@ -2,64 +2,36 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "Defines a sequential task setting where the agent repeatedly receives tasks over time.",
-      "quote": "we define a sparse sequential task scenario where the agent is continuously given tasks",
-      "prompt_index": 1,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Relevant resources are rare and spread out, so remembering visited places matters.",
-      "quote": "task-relevant resources (e.g., water, cow) rarely exist and are sparsely distributed in the environment",
-      "prompt_index": 1,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "io",
-      "statement": "At each step the agent receives an observation.",
-      "quote": "the agent is provided with the observation",
-      "prompt_index": 1,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Cannot remember past visited places or relevant resources, which limits solving.",
-      "quote": "it cannot recall visited places or task-relevant resources seen in the past",
+      "statement": "The proposed agent stores novel events from visited locations to efficiently solve sparse sequential tasks.",
+      "quote": "To address this, we propose MrSteve which stores novel events from visited places for efficient sparse sequential task-solving.",
       "prompt_index": 2,
       "section": "3 Method"
     },
     {
       "aspect": "mechanism",
-      "statement": "The memory keeps novel events from locations the agent has visited.",
-      "quote": "stores novel events from visited places",
-      "prompt_index": 3,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "If memory lacks a relevant resource, the agent explores.",
-      "quote": "When no task-relevant resource exists in the memory, Explore mode is selected",
+      "statement": "A selector decides between exploring and executing based on stored place-event information.",
+      "quote": "Based on Place Event Memory, Mode Selector in Solver Module decides between Explore mode and Execute mode.",
       "prompt_index": 6,
       "section": "3 Method"
     },
     {
       "aspect": "mechanism",
-      "statement": "If a relevant resource is remembered, the agent navigates and executes the task.",
-      "quote": "If a task-relevant resource exists in the memory, Execute mode is selected",
+      "statement": "If memory lacks a task-relevant resource, the agent selects exploration and uses a hierarchical exploration method.",
+      "quote": "When no task-relevant resource exists in the memory, Explore mode is selected, and the agent explores with our hierarchical exploration method.",
       "prompt_index": 6,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "io",
+      "statement": "The agent receives its position, first-person view, and text instruction as inputs for following the instruction.",
+      "quote": "MrSteve takes agent’s position, first person view, and text instruction, and utilizes Memory Module and Solver Module to follow the instruction.",
+      "prompt_index": 7,
       "section": "3 Method"
     },
     {
       "aspect": "why_it_works",
-      "statement": "The memory structures spatial and event data to support recall and navigation over long horizons.",
-      "quote": "organizes spatial and event-based data, enabling efficient recall and navigation in long-horizon tasks",
-      "prompt_index": 9,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Agents switch between exploring and solving tasks using remembered events.",
-      "quote": "allowing agents to alternate between exploration and task-solving based on recalled events",
+      "statement": "The memory organizes spatial and event-based data to enable efficient recall and navigation in long-horizon tasks.",
+      "quote": "Unlike previous models that rely on short-term memory, PEM organizes spatial and event-based data, enabling efficient recall and navigation in long-horizon tasks.",
       "prompt_index": 9,
       "section": "Abstract"
     }

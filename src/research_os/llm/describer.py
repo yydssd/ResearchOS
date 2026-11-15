@@ -34,8 +34,9 @@ Answer with JSON only: {"points": [{"aspect": ..., "statement": ..., "quote": ..
 Rules, all mandatory:
 - `chunk_id` is required and must be copied exactly from one of the ids shown in
   the prompt. A point without a `chunk_id` cannot be checked and is discarded.
-- `quote` must be copied verbatim from the chunk named by `chunk_id`, at least 4
-  words, and must appear exactly once in that chunk.
+- `quote` must be ONE COMPLETE SENTENCE copied verbatim from the chunk named by
+  `chunk_id`: begin at the sentence's first word and end at its full stop.
+- It must be at least 4 words and appear exactly once in that chunk.
 - `statement` must be a paraphrase of that quote in at most 200 characters, and
   it must reuse at least two content words from it.
 - `aspect` is one of: goal, mechanism, why_it_works, io.

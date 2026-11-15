@@ -2,42 +2,35 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "Aims to support research on collaborative behavior in embodied agents equipped with Theory of Mind capabilities.",
-      "quote": "support research on collaborative behavior in embodied agents endowed with Theory of Mind capabilities",
-      "prompt_index": 3,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Explicitly represents nested belief states with hierarchical simulators as studied in Theory of Mind.",
-      "quote": "Explicit representation of nested belief states, as studied in Theory of Mind, using hierarchical simulators",
-      "prompt_index": 6,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Uses prompt generation from each belief state to support design and evaluation of agent-control methods.",
-      "quote": "Support for prompt generation based on each belief state",
-      "prompt_index": 8,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Connects to the Minecraft environment.",
-      "quote": "Integration with the Minecraft environment",
-      "prompt_index": 10,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Implements a nested belief structure from Theory of Mind via physical simulators.",
-      "quote": "The nested belief structure derived from Theory of Mind is implemented using multiple physical simulators.",
-      "prompt_index": 2,
+      "statement": "An open-source simulator is designed to let embodied agents perform collaborative tasks by leveraging Theory of Mind.",
+      "quote": "This paper introduces an open-source simulator, BeliefNest, designed to enable embodied agents to perform collaborative tasks by leveraging Theory of Mind.",
+      "prompt_index": 1,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "Agents run mental simulations in their own simulator, account for others' beliefs, and generate belief-reflecting action plans.",
+      "statement": "It dynamically and hierarchically builds simulators in a game environment so agents can explicitly represent nested beliefs about self and others.",
+      "quote": "BeliefNest dynamically and hierarchically constructs simulators within a Minecraft environment, allowing agents to explicitly represent nested belief states about themselves and others.",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "io",
+      "statement": "A prompt generation mechanism based on each belief state supports designing and evaluating control methods that use large language models.",
+      "quote": "The simulator provides a prompt generation mechanism based on each belief state, facilitating the design and evaluation of methods for agent control utilizing large language models (LLMs).",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "io",
+      "statement": "It enables controlling agents in open-domain tasks that require reasoning about mental states.",
+      "quote": "This enables agent control in open-domain tasks that require Theory of Mind reasoning.",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Each agent can mentally simulate in its own simulator, consider others' beliefs, and generate action plans reflecting those beliefs.",
       "quote": "Each agent can perform mental simulations within its own simulator, considering the beliefs of others, to generate action plans that reflect these beliefs.",
       "prompt_index": 2,
       "section": "Abstract"

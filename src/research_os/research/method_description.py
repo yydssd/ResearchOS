@@ -58,18 +58,30 @@ def _content_words(text: str) -> set[str]:
     }
 
 
-def _locates(quote: str, chunk_text: str) -> bool:
-    """Verbatim after whitespace folding, at least four words, unique in the chunk.
+_SENTENCE_END = ".!?:;"
+_HEADING_LINE = re.compile(r"(?m)^#{1,6} .*$")
 
-    Both sides are folded before counting: a PDF or Markdown chunk breaks lines
-    mid-sentence, so a quote that crosses a line break is the same text to a
-    reader. Counting on the raw chunk would drop it - and the fold used to test
-    containment must be the fold used to test uniqueness, or the two disagree.
+
+def _locates(quote: str, chunk_text: str) -> bool:
+    """Verbatim after folding, >=4 words, unique, and a whole sentence (design §7.4, D33).
+
+    Fold both sides: chunks break lines mid-sentence, and the fold used for
+    containment must be the one used for uniqueness. Headings are stripped first,
+    or the first sentence of every section looks like a fragment. Measured on 290
+    recorded points: 15 were complete sentences, 214 began mid-clause.
     """
     collapsed = " ".join(quote.split())
     if len(collapsed.split()) < _MIN_QUOTE_WORDS:
         return False
-    return " ".join(chunk_text.split()).count(collapsed) == 1
+    flat = " ".join(_HEADING_LINE.sub(" ", chunk_text).split())
+    if flat.count(collapsed) != 1:
+        return False
+    at = flat.find(collapsed)
+    before = flat[:at].rstrip()
+    after = flat[at + len(collapsed) :].lstrip()
+    starts = not before or before[-1] in _SENTENCE_END
+    ends = collapsed[-1] in _SENTENCE_END or not after or after[0] in _SENTENCE_END
+    return starts and ends
 
 
 def validate_description(

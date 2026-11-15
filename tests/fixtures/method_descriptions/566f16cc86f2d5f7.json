@@ -2,58 +2,37 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The approach simultaneously maps and spatially correlates key sensor properties.",
-      "quote": "simultaneous mapping and spatial correlation of key properties",
-      "prompt_index": 1,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Optical excitation pathways are exchanged using a flipper mirror between epifluorescent and full-sample options.",
-      "quote": "optical excitation pathways are exchanged by use of a flipper mirror",
-      "prompt_index": 4,
+      "statement": "The paper presents an integrated microscope that images several sensing-relevant parameters across a diamond plate.",
+      "quote": "Here we demonstrate an \"all-in-one QDM\" that can image several parameters relevant to NV ensemble sensing across a millimeter diamond plate, including NV spin resonance lineshift, decoherence, depolarization time scales, stress/strain, and birefringence.",
+      "prompt_index": 3,
       "section": "I Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "Microwaves are coupled into an edge inductive gap.",
-      "quote": "Microwaves (MWs) are coupled in to an edge inductive gap",
-      "prompt_index": 4,
-      "section": "I Introduction"
-    },
-    {
-      "aspect": "io",
-      "statement": "An avalanche photodiode and optical spectrometer connect to the above-sample collection pathway.",
-      "quote": "The avalanche photodiode (APD) and optical spectrometer are coupled to the above-sample collection pathway.",
-      "prompt_index": 4,
-      "section": "I Introduction"
-    },
-    {
-      "aspect": "io",
-      "statement": "A below-sample objective feeds a long-pass filter and camera for spatially resolved imaging.",
-      "quote": "The below-sample objective is coupled to a long-pass filter and camera used to image PL for spatially resolved NV characterization.",
+      "statement": "Excitation can be switched between two optical paths by a movable mirror, offering focused and full-sample illumination.",
+      "quote": "Two optical excitation pathways are exchanged by use of a flipper mirror, with an epifluorescent option and a non-focused full-sample excitation option.",
       "prompt_index": 4,
       "section": "I Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "A transmission measurement of optical birefringence is created using the same below-sample objective and camera.",
-      "quote": "to create a transmission measurement of optical birefringence using the same below-sample objective and camera",
-      "prompt_index": 5,
-      "section": "I Introduction"
-    },
-    {
-      "aspect": "io",
-      "statement": "Photoluminescence is collected by an imaging objective beneath the sample and directed to a camera for wide-field imaging.",
-      "quote": "the PL can be collected by an imaging objective mounted beneath the sample space, which directs light to a camera for wide-field imaging.",
-      "prompt_index": 7,
+      "statement": "The apparatus is configurable among several measurement modalities.",
+      "quote": "The all-in-one QDM is configurable between multiple measurement modalities, as listed in Table 1.",
+      "prompt_index": 6,
       "section": "II Instrument Overview"
     },
     {
       "aspect": "why_it_works",
-      "statement": "Co-registering measurements simplifies analysis of complex features appearing across modalities.",
-      "quote": "Measurements are co-registered to simplify analysis of complex features that appear across modalities.",
-      "prompt_index": 3,
+      "statement": "Combining these options allows both point and imaged measurements to be collected and correlated.",
+      "quote": "This combination of options affords great flexibility: e.g., the all-in-one QDM can collect and correlate confocal and imaged NV measurements.",
+      "prompt_index": 7,
+      "section": "II Instrument Overview"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A light source and polarization filters can be switched into the optical paths to make a transmission measurement of birefringence.",
+      "quote": "An LED with linear polarization control and appropriate circular polarization filter can be switched for the top objective and bottom filters, respectively, to create a transmission measurement of optical birefringence using the same below-sample objective and camera.",
+      "prompt_index": 5,
       "section": "I Introduction"
     }
   ]

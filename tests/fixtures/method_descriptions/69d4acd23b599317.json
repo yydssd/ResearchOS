@@ -1,38 +1,31 @@
 {
   "points": [
     {
-      "aspect": "mechanism",
-      "statement": "Visual information is interpreted and integrated with agent state and task instruction into a language-model component.",
+      "aspect": "io",
+      "statement": "Images or videos are encoded into tokens and merged with agent-state and task tokens as input to the reasoning component.",
+      "quote": "The Vision Perception part takes images or videos, encodes them into tokens, and combines them with Agent State and Task tokens as input.",
+      "prompt_index": -1,
+      "section": "3 Method: STEVE"
+    },
+    {
+      "aspect": "io",
+      "statement": "Visual information from the surroundings is interpreted and then integrated with agent state and task instructions in the language-model component.",
       "quote": "Vision perception involves interpreting visual information in the environment, which is then integrated into the LLMs component with agent state and task instruction.",
-      "prompt_index": 2,
+      "prompt_index": -1,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "A language-instruction part iteratively reasons and decomposes complex tasks into manageable guidelines.",
+      "statement": "The language-instruction component performs iterative reasoning and breaks complex tasks into manageable guidelines.",
       "quote": "Language instruction is responsible for iterative reasoning and decomposing complex tasks into manageable guidelines.",
-      "prompt_index": 2,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Executable skill actions are generated through retrieval from a skill repository.",
-      "quote": "Code action generates executable skill actions based on retrieval in skill database",
-      "prompt_index": 2,
+      "prompt_index": -1,
       "section": "Abstract"
     },
     {
       "aspect": "why_it_works",
-      "statement": "Textual communication struggles to convey certain world concepts, whereas vision communicates them more effectively.",
-      "quote": "textual communication has its limitations in naturally conveying certain concepts of the world, like crafting recipes, which are often more effectively communicated through vision.",
-      "prompt_index": 7,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Combining vision and text inputs provides nuanced understanding of the environment and practical executable skills.",
-      "quote": "combining these two input modes, vision, and text, to offer a more nuanced and comprehensive understanding of the environment and practical and executable skills.",
-      "prompt_index": 8,
+      "statement": "Combining visual and textual inputs yields a richer understanding of the surroundings and practical executable skills.",
+      "quote": "This model represents a leap forward in agent design, combining these two input modes, vision, and text, to offer a more nuanced and comprehensive understanding of the environment and practical and executable skills.",
+      "prompt_index": -1,
       "section": "1 Introduction"
     }
   ]

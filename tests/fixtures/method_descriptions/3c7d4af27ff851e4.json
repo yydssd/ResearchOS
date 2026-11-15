@@ -1,38 +1,24 @@
 {
   "points": [
     {
-      "aspect": "goal",
-      "statement": "The approach aims for robust planning by adaptively learning and revising inaccurate dependencies through analogy.",
-      "quote": "adaptively learning and revising inaccurate dependencies by analogy",
+      "aspect": "mechanism",
+      "statement": "Robust planning is achieved by adaptively learning dependencies and revising inaccurate ones through analogy.",
+      "quote": "Firstly, Section 3.1 details how ADL enables robust planning by adaptively learning and revising inaccurate dependencies by analogy.",
       "prompt_index": 0,
       "section": "3 Methods"
     },
     {
       "aspect": "mechanism",
-      "statement": "Past operation outcomes are remembered to guide reliable step-by-step planning and to trigger revision of inaccurate dependencies.",
-      "quote": "remembering past operation outcomes to guide reliable step-by-step planning and trigger revision of inaccurate dependencies",
+      "statement": "Robustness is enhanced by remembering past operation outcomes to guide reliable step-by-step planning and trigger revision of inaccurate dependencies.",
+      "quote": "Secondly, Section 3.2 explains how FFOM further enhances robustness by remembering past operation outcomes to guide reliable step-by-step planning and trigger revision of inaccurate dependencies.",
       "prompt_index": 0,
       "section": "3 Methods"
     },
     {
       "aspect": "mechanism",
-      "statement": "The agent is guided to strategically select unexperienced items as goals according to difficulty and diversity.",
-      "quote": "guiding the agent to strategically select unexperienced items as goals to pursue, based on difficulty and diversity",
+      "statement": "Dependency learning is accelerated by guiding the agent to strategically choose unexperienced items as goals based on difficulty and diversity.",
+      "quote": "Lastly, Section 3.3 details how DEX accelerates the dependency learning by guiding the agent to strategically select unexperienced items as goals to pursue, based on difficulty and diversity.",
       "prompt_index": 0,
-      "section": "3 Methods"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Selecting unexperienced items as goals according to difficulty and diversity accelerates dependency learning.",
-      "quote": "accelerates the dependency learning by guiding the agent to strategically select unexperienced items as goals to pursue, based on difficulty and diversity",
-      "prompt_index": 0,
-      "section": "3 Methods"
-    },
-    {
-      "aspect": "io",
-      "statement": "An episode starts by obtaining an empty inventory.",
-      "quote": "Get an empty inventory",
-      "prompt_index": 1,
       "section": "3 Methods"
     }
   ]

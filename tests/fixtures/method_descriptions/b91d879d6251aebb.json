@@ -2,58 +2,51 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The aim is for coordination to expose the task consequence of a private fact: who acts, what crosses the handoff boundary, where it goes, and what follows.",
+      "statement": "The approach converts a coordination object into an executable commitment to a skill path.",
+      "quote": "GenCoord turns that object into an executable skill-path commitment.",
+      "prompt_index": 8,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "goal",
+      "statement": "Coordination needs to expose the task consequence of a private fact, including actor, handoff item, destination, and following suffix.",
       "quote": "Coordination must reveal the task consequence of a private fact: who acts, what crosses the handoff boundary, where it goes, and which suffix follows.",
       "prompt_index": 5,
       "section": "1. Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "The task consequence itself becomes the object of coordination.",
-      "quote": "makes the consequence itself the coordination object",
-      "prompt_index": 6,
+      "statement": "The resolved commitment is parsed, checked, canonically materialized, compiled to skills, and verified via handoff and terminal state.",
+      "quote": "The resolved commitment is parsed, checked, canonically materialized, compiled to Mineflayer skills, and verified by handoff and terminal state.",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "io",
+      "statement": "A local model emits a plan and a peer request, while bounded feedback routes revision when the deciding capability belongs to the peer.",
+      "quote": "A local Qwen3.5-0.8B model emits a multi-step SELF plan and peer REQ; bounded feedback conditions route revision when the deciding capability is peer-local.",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "In the main forward route, the receiving agent uses the request and produces its own downstream path.",
+      "quote": "In the main forward route, the receiver conditions on REQ and generates its downstream SELF path.",
+      "prompt_index": 10,
       "section": "1. Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "A consequence local to the sender moves forward in a peer request, and the receiver then generates its downstream skill path.",
-      "quote": "A sender-local consequence travels forward inside a peer request, after which the receiver generates its downstream skill path.",
-      "prompt_index": 7,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A capability consequence local to the peer returns through bounded feedback, and the requester then revises how work is divided.",
+      "statement": "A capability consequence local to the peer returns via bounded feedback, after which the requester changes the division of work.",
       "quote": "A peer-local capability consequence travels back through bounded feedback, after which the requester revises the division of work.",
       "prompt_index": 7,
       "section": "1. Introduction"
     },
     {
       "aspect": "why_it_works",
-      "statement": "An explicit object whose meaning survives communication, resolution, and execution is needed in both directions.",
+      "statement": "Both directions rely on a single explicit object whose meaning survives communication, resolution, and execution.",
       "quote": "Both directions require one explicit object whose semantics survive communication, resolution, and execution.",
       "prompt_index": 7,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "It composes goals, capabilities, objects, history, messages, and shared task structure into role-local paths of varying length.",
-      "quote": "compose goals, capabilities, objects, history, received messages, and shared task structure into variable-length role-local paths.",
-      "prompt_index": 8,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "io",
-      "statement": "Following resolution, the same schema holds the role-local obligations that proceed into execution.",
-      "quote": "after resolution the same schema carries the role-local obligations that enter execution.",
-      "prompt_index": 10,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "The resolved object is parsed, schema-checked, canonically materialized, and compiled into skills.",
-      "quote": "parse, schema check, canonical materialization, skill compilation",
-      "prompt_index": 11,
       "section": "1. Introduction"
     }
   ]

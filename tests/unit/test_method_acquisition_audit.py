@@ -198,7 +198,7 @@ def test_a_describer_with_a_locatable_point_makes_l3_covered(tmp_path):
                         MethodPointDraft(
                             aspect="mechanism",
                             statement="Stores each policy as code.",
-                            quote="stores each policy as code and scores it",
+                            quote="LangProp stores each policy as code and scores it by execution feedback.",
                             chunk_id=chunk.id,
                             section=chunk.section,
                         )

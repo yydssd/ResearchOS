@@ -2,29 +2,29 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The work aims to restore varied degradations within one unified framework.",
-      "quote": "All-in-one image restoration aims to handle diverse degradations within a unified framework.",
+      "statement": "The authors propose a rectification network for all-in-one restoration to address the dual-ambiguity issue.",
+      "quote": "To mitigate this issue, we propose DAR-Net, a Dual-Ambiguity Rectification Network for all-in-one image restoration.",
       "prompt_index": 2,
       "section": "Abstract."
     },
     {
       "aspect": "mechanism",
-      "statement": "It builds a structured degradation state using simplex-constrained archetype mixture modeling.",
-      "quote": "construct a structured degradation state through simplex-constrained archetype mixture modeling",
+      "statement": "It builds a structured degradation state via a module that models an archetype mixture under simplex constraints.",
+      "quote": "DAR-Net first introduces a Degradation Archetype Representation (DAR) module to construct a structured degradation state through simplex-constrained archetype mixture modeling.",
       "prompt_index": 2,
       "section": "Abstract."
     },
     {
       "aspect": "mechanism",
-      "statement": "It generates degradation-aware prompts to better condition decoder channels.",
-      "quote": "generates degradation-aware prompts to improve channel-wise conditioning in the decoder",
+      "statement": "Using that state, a module produces degradation-aware prompts to improve channel-wise conditioning in the decoder.",
+      "quote": "Based on this state, a Semantic Ambiguity Rectification (SeAR) module generates degradation-aware prompts to improve channel-wise conditioning in the decoder.",
       "prompt_index": 2,
       "section": "Abstract."
     },
     {
       "aspect": "mechanism",
-      "statement": "It pushes degradation-aware and complementary features toward orthogonal response subspaces to reduce spatial interference between removal and preservation cues.",
-      "quote": "regularizes degradation-aware and complementary features toward orthogonal response subspaces",
+      "statement": "A module regularizes degradation-aware and complementary features toward orthogonal response subspaces to reduce spatial interference between removal and preservation cues.",
+      "quote": "A Spatial Ambiguity Rectification (SpAR) module further regularizes degradation-aware and complementary features toward orthogonal response subspaces, reducing spatial interference between removal and preservation cues.",
       "prompt_index": 2,
       "section": "Abstract."
     }

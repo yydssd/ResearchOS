@@ -1,60 +1,95 @@
 {
   "points": [
     {
-      "aspect": "mechanism",
-      "statement": "A base model is augmented with a vision encoder and an action code repository trained on high-quality collected data.",
-      "quote": "augmenting it with a vision encoder and an action codebase trained on our collected high-quality",
+      "aspect": "goal",
+      "statement": "The aim is to build an embodied agent system centered on a large language model.",
+      "quote": "Building an embodied agent system with a large language model (LLM) as its core is a promising direction.",
       "prompt_index": 1,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "The model is then augmented with a critic component and memory, turning it into a more complex system.",
+      "statement": "Starting from a basic language model, they add visual processing and an action code library trained on collected high-quality data.",
+      "quote": "We begin our exploration with a vanilla large language model, augmenting it with a vision encoder and an action codebase trained on our collected high-quality dataset STEVE-21K.",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "They then add an evaluation component and memory, turning the model into a more complex system.",
       "quote": "Subsequently, we enhanced it with a Critic and memory to transform it into a complex system.",
       "prompt_index": 1,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "A hierarchical multi-agent system is constructed to organize multiple cooperating agents.",
+      "statement": "They finally build a multi-level system made of multiple cooperating agents.",
       "quote": "Finally, we constructed a hierarchical multi-agent system.",
       "prompt_index": 1,
       "section": "Abstract"
     },
     {
-      "aspect": "why_it_works",
-      "statement": "The architecture combines centralized planning with decentralized execution, letting agents change strategies and improve their interaction with the surroundings.",
-      "quote": "supports centralized planning and decentralized execution, enabling agents to adjust strategies and dynamically improve interaction with the environment.",
+      "aspect": "mechanism",
+      "statement": "Recent work explores how to shrink the agent system by transferring knowledge from a larger model.",
+      "quote": "Our recent work explored how to prune the agent system through knowledge distillation.",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "io",
+      "statement": "Collected data supports training multimodal language models with visual-environment, question-answer, and skill-code pairs to improve interaction and task execution.",
+      "quote": "The STEVE-21K dataset is integral for training the multi-modal Large Language Models (LLMs) in the STEVE Series, containing 600 Vision-Environment pairs, 20,000 Question-Answering pairs, and 210 Skill-Code pairs to enhance agents’ interaction and task execution in Minecraft.",
+      "prompt_index": 4,
+      "section": "2 Data and Environment"
+    },
+    {
+      "aspect": "io",
+      "statement": "The simulation environment uses dedicated interfaces to provide a realistic setting for high-fidelity agent performance.",
+      "quote": "Our simulation environment utilizes MineDojo (fan2022minedojo) and Mineflayer (mineflayer) APIs, providing a realistic setting for high-fidelity agent performance.",
+      "prompt_index": 4,
+      "section": "2 Data and Environment"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Progress comes from integrating multimodal language models, which are essential for improving agent interactions in the environment.",
+      "quote": "The STEVE Series advances through the integration of Multi-Modal Large Language Models (MLMs), essential for enhancing agent interactions within Minecraft.",
+      "prompt_index": 5,
+      "section": "3 Multi-Modal LLMs"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Each version progressively improves the agents’ ability to process multiple modalities by incorporating advanced visual models.",
+      "quote": "From STEVE-1 (steve1), using the fine-tuned STEVE-13B model, to STEVE-2 (steve2) which incorporates advanced visual models like LLaVA (liu2023llava; liu2023improvedllava), each version progressively enhances the agents’ multimodal processing abilities.",
+      "prompt_index": 5,
+      "section": "3 Multi-Modal LLMs"
+    },
+    {
+      "aspect": "goal",
+      "statement": "The hierarchical multi-agent system aims to improve cooperation on complex navigation and creation tasks.",
+      "quote": "Introduced in STEVE-1.5, our Hierarchical Multi-Agent System enhances multi-agent cooperation for complex navigation and creation tasks in Minecraft.",
       "prompt_index": 6,
       "section": "4 Hierarchical Multi-Agent System"
     },
     {
-      "aspect": "why_it_works",
-      "statement": "An additional expert supplies prior knowledge to strengthen the teacher model, which markedly improves training quality on difficult tasks.",
+      "aspect": "mechanism",
+      "statement": "The system combines central planning with decentralized execution, letting agents adapt strategies and improve environmental interaction.",
+      "quote": "This system supports centralized planning and decentralized execution, enabling agents to adjust strategies and dynamically improve interaction with the environment.",
+      "prompt_index": 6,
+      "section": "4 Hierarchical Multi-Agent System"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The process adds an additional expert to give the teacher model prior knowledge, improving training for complex tasks.",
       "quote": "This process incorporates the extra expert to enhance the teacher model with prior knowledge, significantly improving training quality for complex tasks.",
       "prompt_index": 7,
       "section": "5 Distill Embodied Agent into a Single Model"
     },
     {
       "aspect": "why_it_works",
-      "statement": "Capabilities are compressed into a single model, making the system simpler to operate.",
-      "quote": "By distilling capabilities into a single model",
+      "statement": "Distilling abilities into one model yields simpler operation and better performance for autonomous agent capabilities.",
+      "quote": "By distilling capabilities into a single model, STEVE-2 (steve2) achieves operational simplicity and superior performance, setting a new benchmark in autonomous agent capabilities within Minecraft.",
       "prompt_index": 7,
       "section": "5 Distill Embodied Agent into a Single Model"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Successive versions gradually improve the agents’ ability to process multiple modalities.",
-      "quote": "each version progressively enhances the agents’ multimodal processing abilities.",
-      "prompt_index": 5,
-      "section": "3 Multi-Modal LLMs"
-    },
-    {
-      "aspect": "goal",
-      "statement": "The collected examples are meant to enhance agents’ interaction and task execution.",
-      "quote": "to enhance agents’ interaction and task execution in Minecraft",
-      "prompt_index": 4,
-      "section": "2 Data and Environment"
     }
   ]
 }

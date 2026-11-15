@@ -2,22 +2,15 @@
   "points": [
     {
       "aspect": "mechanism",
-      "statement": "The approach fine-tunes an object detection model as part of its operation.",
-      "quote": "we finetune the object detection model",
-      "prompt_index": 2,
-      "section": "4.2 Comparison against other methods"
-    },
-    {
-      "aspect": "io",
-      "statement": "Game videos provide extracted frames used for training.",
-      "quote": "frames extracted from game videos",
+      "statement": "The object detection model is finetuned on a small set of frames pulled from game videos, which keeps data and memory needs low.",
+      "quote": "As shown in Table 1, we finetune the object detection model using only 471 frames extracted from game videos and 24 GB GPU VRAM, whereas other methods typically rely on at least 160M frames with 192 GB VRAM or 990M tokens of text with 64 GB VRAM.",
       "prompt_index": 2,
       "section": "4.2 Comparison against other methods"
     },
     {
       "aspect": "why_it_works",
-      "statement": "The method lowers development costs for data collection and training.",
-      "quote": "reducing development costs related to data collection and training",
+      "statement": "This shows the approach is effective at lowering the development costs tied to collecting data and training.",
+      "quote": "It demonstrates the effectiveness of our approach in reducing development costs related to data collection and training.",
       "prompt_index": 2,
       "section": "4.2 Comparison against other methods"
     }

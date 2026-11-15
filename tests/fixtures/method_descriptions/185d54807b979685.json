@@ -2,66 +2,52 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "Aims to let agents learn via collaborative social interactions.",
-      "quote": "the ability to learn through collaborative social interactions",
+      "statement": "The proposed generative-agent framework aims at cultural lifelong learning by making perspective taking explicit.",
+      "quote": "We propose MindForge, a generative-agent framework for cultural lifelong learning through explicit perspective taking.",
+      "prompt_index": 2,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The approach adds a structured percept-belief-desire-action representation, perspective taking over self and collaborator beliefs, natural-language information sharing, and distinct memory subsystems.",
+      "quote": "To grant MindForge agents the ability to learn through collaborative social interactions, we introduce the following components for communication and perspective-taking: (i) an explicit structured representation linking percepts, beliefs, desires, and actions (Section 4.1), (ii) perspective taking so that the agent can reason over self-beliefs and those about its collaborators (Section 4.2), (iii) a communication medium that the agents can use to share information in natural language (Section 4.3), and (iv) the ability to utilize different types of memory subsystems (Section 4.4).",
       "prompt_index": 0,
       "section": "4 Method"
     },
     {
       "aspect": "mechanism",
-      "statement": "Uses an explicit structured representation linking percepts, beliefs, desires, and actions.",
-      "quote": "an explicit structured representation linking percepts, beliefs, desires, and actions",
-      "prompt_index": 0,
-      "section": "4 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Enables perspective taking so an agent reasons over its own and collaborators' beliefs.",
-      "quote": "perspective taking so that the agent can reason over self-beliefs and those about its collaborators",
-      "prompt_index": 0,
-      "section": "4 Method"
-    },
-    {
-      "aspect": "io",
-      "statement": "Provides a communication medium for agents to share information in natural language.",
-      "quote": "a communication medium that the agents can use to share information in natural language",
-      "prompt_index": 0,
-      "section": "4 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Agents can utilize different types of memory subsystems.",
-      "quote": "the ability to utilize different types of memory subsystems",
-      "prompt_index": 0,
-      "section": "4 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Agents refine beliefs via multi-turn dialogue with expert peers.",
-      "quote": "agents refine their beliefs through multi-turn dialogue with expert peers",
-      "prompt_index": 9,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Belief refinement happens through dialogue with expert peers without gradient updates.",
-      "quote": "dialogue with expert peers, without gradient updates",
+      "statement": "Knowledge transfer is recast as a social inference-time process where agents update beliefs via multi-turn dialogue with expert peers and no gradient updates.",
+      "quote": "Our framework reframes knowledge distillation [22] as a social, test-time process: agents refine their beliefs through multi-turn dialogue with expert peers, without gradient updates.",
       "prompt_index": 9,
       "section": "1 Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "Memory includes semantic task and environment knowledge plus episodic memory.",
-      "quote": "semantic memory of task and environment-related knowledge and episodic memory",
+      "statement": "The agent architecture adds causal perspective-taking over percepts and mental states, an inter-agent natural-language channel, and memory updates with semantic and episodic stores.",
+      "quote": "Concretely, MindForge extends Voyager by incorporating three key improvements: (1) perspective-taking through a causal ToM template [17] linking agent percepts, beliefs, desires, and actions; (2) a natural language communication interface between agents; and (3) memory updates following the Soar cognitive architecture [34], including semantic memory of task and environment-related knowledge and episodic memory.",
       "prompt_index": 10,
       "section": "1 Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "Agents collaborate via structured theory-of-mind representations.",
-      "quote": "collaborate through structured theory-of-mind representations",
-      "prompt_index": 6,
+      "statement": "The method contributes a structured mental-state representation, natural communication between agents, and a memory system with multiple components.",
+      "quote": "We introduce three key innovations: (1) a structured theory of mind representation linking percepts, beliefs, desires, and actions; (2) natural inter-agent communication; and (3) a multi-component memory system.",
+      "prompt_index": 2,
       "section": "Abstract"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Interactive inference-time refinement enables agents to improve via communication, memory retrieval, and perspective taking.",
+      "quote": "This interactive distillation supports test-time compute scaling [54], enabling agents to improve performance via communication, memory retrieval and perspective-taking.",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Organizing communication over multiple turns lets weaker open models match stronger ones through collaboration alone.",
+      "quote": "By structuring communication across turns, MindForge also contributes to multi-turn LLM agent research [67, 13], showing that open models can match GPT-4 through collaboration alone.",
+      "prompt_index": 9,
+      "section": "1 Introduction"
     }
   ]
 }

@@ -1,58 +1,30 @@
 {
   "points": [
     {
-      "aspect": "goal",
-      "statement": "A value function is used to estimate the expected return obtained by following a policy.",
-      "quote": "used to estimate the expected return following a policy",
-      "prompt_index": 0,
-      "section": "2 Value-based methods"
-    },
-    {
-      "aspect": "io",
-      "statement": "The state-value function evaluates expected return beginning from the current state.",
-      "quote": "evaluates the expected return starting from the current state",
+      "aspect": "mechanism",
+      "statement": "Estimating a value for a fixed policy and enhancing that policy to achieve greater return are separate procedures.",
+      "quote": "Computing a value function for a given policy is called policy evaluation, and improving the policy to obtain a better return is called policy improvement.",
       "prompt_index": 0,
       "section": "2 Value-based methods"
     },
     {
       "aspect": "mechanism",
-      "statement": "The approach uses episode returns as target values for a value-function approximator.",
-      "quote": "use the returns of the episode",
+      "statement": "Returns remain unavailable until an episode ends and vary widely across trajectories, which complicates assigning credit to specific actions.",
+      "quote": "While Monte Carlo methods can update all values predicted by the approximator at each time step along a trajectory with actual returns, the returns cannot be computed until the end of each episode, and have high variance due to different trajectories having varying returns as a result of aggregating all rewards along the trajectory, making it difficult to solve the problem of credit assignment (i.e. which specific actions contributed to improving/reducing the rewards).",
       "prompt_index": 1,
       "section": "Monte Carlo methods"
     },
     {
-      "aspect": "goal",
-      "statement": "The objective is the expected return across all completed trajectories.",
-      "quote": "expected return over all completed trajectories",
-      "prompt_index": 3,
-      "section": "3 Policy gradient methods"
-    },
-    {
-      "aspect": "goal",
-      "statement": "The approach directly learns and improves a policy to maximize expected returns.",
-      "quote": "directly learn and improve a policy",
-      "prompt_index": 2,
-      "section": "3 Policy gradient methods"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Actions that led to high returns are reinforced.",
-      "quote": "reinforce actions that resulted in high returns",
-      "prompt_index": 2,
-      "section": "3 Policy gradient methods"
-    },
-    {
       "aspect": "why_it_works",
-      "statement": "Suppressing low-return actions helps improve the policy.",
-      "quote": "while suppressing actions with low returns",
+      "statement": "Actions linked to high returns are reinforced, while actions linked to low returns are suppressed.",
+      "quote": "The key idea is to reinforce actions that resulted in high returns, while suppressing actions with low returns.",
       "prompt_index": 2,
       "section": "3 Policy gradient methods"
     },
     {
       "aspect": "mechanism",
-      "statement": "A value function estimates returns through bootstrapping.",
-      "quote": "a value function used to estimate returns by bootstrapping",
+      "statement": "Jointly learned components include a parameterized policy for action selection and a value function that estimates returns via bootstrapping.",
+      "quote": "Actor-Critic methods have two components that are learnt jointly: an actor – a parameterised policy used to take actions, and a critic – a value function used to estimate returns by bootstrapping.",
       "prompt_index": 11,
       "section": "4 Actor-Critic methods"
     }

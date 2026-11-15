@@ -2,57 +2,36 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The method restores a clean image without knowing the degradation type present in the input.",
-      "quote": "without any prior information of degradation type D present in the input image I",
-      "prompt_index": 0,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "io",
-      "statement": "The method recovers a clean image from a degraded input.",
-      "quote": "recover a clean image",
-      "prompt_index": 0,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "The encoder progressively transforms high-resolution features into a lower-resolution latent representation.",
-      "quote": "progressively transforms them into a lower-resolution latent representation",
-      "prompt_index": 0,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A block adaptively separates degradation content from clean image content in the frequency domain.",
-      "quote": "adaptively segregates the degradation content from the clean image content in the frequency domain",
-      "prompt_index": 1,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Various degradations affect image content at different frequency bands, motivating frequency-aware processing.",
-      "quote": "different types of degradations affect image content at different frequency bands",
-      "prompt_index": 2,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "The block extracts low- and high-frequency components from input features.",
-      "quote": "extracts low- and high-frequency components from the input features",
-      "prompt_index": 2,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Modulated features are merged into the original input for progressively guided restoration.",
-      "quote": "merged into the original input for a progressively guided restoration",
-      "prompt_index": 5,
+      "statement": "Proposes an adaptive all-in-one restoration network that relies on frequency mining and modulation.",
+      "quote": "To address this gap, we propose an adaptive all-in-one image restoration network based on frequency mining and modulation.",
+      "prompt_index": 4,
       "section": "Abstract"
     },
     {
       "aspect": "why_it_works",
-      "statement": "Adaptive reconstruction is achieved by accentuating informative frequency subbands according to input degradations.",
-      "quote": "achieves adaptive reconstruction by accentuating the informative frequency subbands according to different input degradations",
+      "statement": "Motivated by different degradation types affecting distinct frequency subbands, requiring different treatments for each restoration task.",
+      "quote": "Our approach is motivated by the observation that different degradation types impact the image content on different frequency subbands, thereby requiring different treatments for each restoration task.",
+      "prompt_index": 4,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Mines low- and high-frequency information from input features using adaptively decoupled spectra of the degraded image.",
+      "quote": "Specifically, we first mine low- and high-frequency information from the input features, guided by the adaptively decoupled spectra of the degraded image.",
+      "prompt_index": 5,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Modulates extracted features with a bidirectional operator to enable interactions among different frequency components.",
+      "quote": "The extracted features are then modulated by a bidirectional operator to facilitate interactions between different frequency components.",
+      "prompt_index": 5,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "io",
+      "statement": "Merges modulated features into the original input for progressively guided restoration.",
+      "quote": "Finally, the modulated features are merged into the original input for a progressively guided restoration.",
       "prompt_index": 5,
       "section": "Abstract"
     }

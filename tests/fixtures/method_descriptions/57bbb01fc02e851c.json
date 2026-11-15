@@ -1,53 +1,39 @@
 {
   "points": [
     {
-      "aspect": "goal",
-      "statement": "The approach merges the reasoning strengths of language models with formal-logic guarantees.",
-      "quote": "Our setup combines the reasoning strengths of language models with the guarantees of formal logic.",
-      "prompt_index": 2,
-      "section": "Abstract"
-    },
-    {
       "aspect": "mechanism",
-      "statement": "A symbolic verifier tests each action against temporal-logic safety and efficiency limits; accepted actions go to a lower-level planner, and rejected actions trigger replanning.",
+      "statement": "A symbolic verifier validates each chosen action against temporal safety and efficiency constraints, executing valid ones and asking the actor to replan invalid ones.",
       "quote": "A rule-based symbolic verifier checks each action against LTL-based safety and efficiency constraints; valid actions are executed by a low-level planner, while invalid ones prompt the actor to replan.",
       "prompt_index": 0,
       "section": "3 Methods"
     },
     {
       "aspect": "mechanism",
-      "statement": "An offline critic reviews complete trajectories and suggests additional temporal-logic constraints to enhance long-term behavior.",
-      "quote": "reviews trajectories and proposes new LTL constraints to improve long-term behavior",
-      "prompt_index": 0,
-      "section": "3 Methods"
-    },
-    {
-      "aspect": "io",
-      "statement": "The actor takes natural-language observations and selects high-level actions.",
-      "quote": "The actor selects high-level actions from natural language observations",
+      "statement": "An actor chooses high-level actions from observations while a critic examines whole trajectories and proposes temporal constraints to prevent future unsafe or inefficient behavior.",
+      "quote": "The actor selects high-level actions from natural language observations, while the critic analyzes full trajectories and proposes new LTL constraints that shield the actor from future unsafe or inefficient behavior.",
       "prompt_index": 2,
       "section": "Abstract"
     },
     {
       "aspect": "why_it_works",
-      "statement": "The design allows both manually fixed safety limits and learned flexible constraints that encourage efficiency over time.",
+      "statement": "Combining language-model reasoning with formal-logic guarantees is the core advantage.",
+      "quote": "Our setup combines the reasoning strengths of language models with the guarantees of formal logic.",
+      "prompt_index": 2,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "goal",
+      "statement": "The architecture can handle both fixed hand-specified safety constraints and adaptive learned soft constraints that encourage long-term efficiency.",
       "quote": "The architecture supports both fixed, hand-specified safety constraints and adaptive, learned soft constraints that promote long-term efficiency.",
       "prompt_index": 2,
       "section": "Abstract"
     },
     {
-      "aspect": "mechanism",
-      "statement": "Planning is modeled as graph traversal subject to symbolic constraints.",
-      "quote": "We formalize planning as graph traversal under symbolic constraints",
-      "prompt_index": 3,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "The critic inspects unsuccessful or suboptimal trajectories and produces fresh temporal-logic rules to improve later behavior.",
-      "quote": "analyze failed or suboptimal trajectories and generate new temporal logic rules that improve future behavior",
-      "prompt_index": 3,
-      "section": "Abstract"
+      "aspect": "io",
+      "statement": "During online operation, the language-model actor chooses abstract high-level actions based on a complete state description.",
+      "quote": "Online, the LLM actor selects high-level abstract actions from a full state description.",
+      "prompt_index": 0,
+      "section": "3 Methods"
     }
   ]
 }

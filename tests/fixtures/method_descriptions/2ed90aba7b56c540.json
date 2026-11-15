@@ -2,51 +2,37 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The framework treats the restoration scale as a continuous variable that varies spatially and across stages.",
-      "quote": "treats restoration scale as a spatially varying and stage-dependent continuous variable",
-      "prompt_index": 1,
-      "section": "Abstract"
+      "statement": "Restoration scale should be treated as a spatially varying variable rather than a fixed architectural property.",
+      "quote": "We therefore argue that restoration scale itself should be treated as a spatially varying variable.",
+      "prompt_index": 6,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Different samples should access representations at different resolutions based on the spatial support they need.",
+      "quote": "The underlying principle is that different samples should access representations at different resolutions according to the spatial support they require.",
+      "prompt_index": 6,
+      "section": "1 Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "It reuses the encoder hierarchy, aligns multi-scale features into a shared representation space, and predicts a stage-conditioned field per decoder stage.",
-      "quote": "reuses the native encoder hierarchy, aligns its multi-scale features into a shared LOD representation space, and predicts a stage-conditioned LOD field at each decoder stage",
-      "prompt_index": 1,
-      "section": "Abstract"
+      "statement": "A stage-conditioned detail field is predicted at every decoder stage from the current reconstruction state and aligned encoder hierarchy.",
+      "quote": "At each decoder stage, a stage-conditioned LOD field is predicted according to both the current reconstruction state and the aligned encoder hierarchy.",
+      "prompt_index": 7,
+      "section": "1 Introduction"
     },
     {
-      "aspect": "mechanism",
-      "statement": "Each location continuously queries nearby representation levels so the effective restoration scale adapts to local content and reconstruction progress.",
-      "quote": "Each spatial location then continuously queries only two neighboring representation levels, enabling the effective restoration scale to adapt to both local image content and reconstruction progress",
-      "prompt_index": 1,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "The queried representation is injected via a lightweight residual adaptor, leaving the original encoder, decoder, and skip connections unchanged.",
+      "aspect": "io",
+      "statement": "The queried representation is injected via a lightweight residual adaptor while the original encoder, decoder, and skip connections stay unchanged.",
       "quote": "The queried representation is injected through a lightweight residual adaptor, while the original encoder, decoder, and skip connections remain unchanged.",
       "prompt_index": 7,
       "section": "1 Introduction"
     },
     {
-      "aspect": "mechanism",
-      "statement": "It evaluates local restoration utility across representation levels and encourages each location to use the smallest sufficient spatial footprint for accurate reconstruction.",
-      "quote": "evaluates the local restoration utility of different representation levels and encourages each location to use the smallest spatial footprint sufficient for accurate reconstruction",
-      "prompt_index": 8,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A structure-aware regularizer promotes coherent assignments in homogeneous regions while permitting scale transitions around structural boundaries.",
-      "quote": "promotes coherent LOD assignments within homogeneous regions while allowing scale transitions around structural boundaries",
-      "prompt_index": 8,
-      "section": "1 Introduction"
-    },
-    {
       "aspect": "why_it_works",
-      "statement": "The appropriate restoration scale is inferred from the degraded observation and current reconstruction state rather than a known sampling footprint.",
-      "quote": "the appropriate restoration scale must instead be inferred from the degraded observation and the current reconstruction state",
-      "prompt_index": 6,
+      "statement": "The same mechanism improves restoration via spatially and stage-wise adaptive scale selection and lets existing backbones handle heterogeneous requirements and extend toward all-in-one restoration.",
+      "quote": "Under task-specific training, it improves restoration through spatially and stage-wise adaptive scale selection, while under multi-degradation training, the same mechanism enables existing backbones to accommodate heterogeneous restoration requirements and extend toward all-in-one restoration.",
+      "prompt_index": 10,
       "section": "1 Introduction"
     }
   ]

@@ -2,31 +2,17 @@
   "points": [
     {
       "aspect": "mechanism",
-      "statement": "Formulates unified restoration under complex degradations as collaborative unfolding between observation consistency and visual-prior reconstruction.",
-      "quote": "which formulates unified image restoration under complex degradations as a collaborative unfolding process between degradation-aware observation consistency and visual-prior-guided reconstruction.",
-      "prompt_index": 1,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A degradation representation module extracts global degradation attributes and local degradation cues.",
-      "quote": "a degradation representation module is employed to extract global degradation attributes and local degradation cues",
+      "statement": "A degradation representation module extracts global degradation attributes and local cues, while degradation-conditioned mapping improves adaptability to different degradation types.",
+      "quote": "Specifically, in the degradation-aware observation consistency branch, a degradation representation module is employed to extract global degradation attributes and local degradation cues, and degradation-conditioned mapping is used to enhance the model’s adaptability to different degradation types.",
       "prompt_index": 2,
       "section": "Abstract"
     },
     {
       "aspect": "why_it_works",
-      "statement": "Degradation-conditioned mapping enhances the model’s adaptability to different degradation types.",
-      "quote": "degradation-conditioned mapping is used to enhance the model’s adaptability to different degradation types.",
-      "prompt_index": 2,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Hierarchical visual priors supply structural and semantic information, complementing missing structure in damaged regions and improving detail recovery.",
-      "quote": "provide structural and semantic information as hierarchical visual priors, thereby complementing the missing structural information in damaged regions and improving detail recovery.",
-      "prompt_index": 2,
-      "section": "Abstract"
+      "statement": "Jointly modeling observation consistency and visual-prior-guided reconstruction in an interpretable unfolding manner improves degradation adaptability and structural detail recovery.",
+      "quote": "The proposed framework improves degradation adaptability and structural detail recovery by jointly modeling observation consistency and visual-prior-guided reconstruction in an interpretable unfolding manner.",
+      "prompt_index": 6,
+      "section": "I Introduction"
     }
   ]
 }

@@ -2,65 +2,93 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "Combines spectral decomposition with group-wise attention to restore images degraded by multiple weather types.",
-      "quote": "leverages spectral decomposition and group-wise attention for multi-weather image restoration",
-      "prompt_index": 1,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Global filtering cannot handle highly variable and localized distortions, motivating localized spectral treatment.",
-      "quote": "global filtering methods like direct operations on the frequency domain fail to handle highly variable and localized distortions",
+      "statement": "The proposed approach leverages spectral decomposition and group-wise attention to restore images across multiple weather conditions.",
+      "quote": "To address these issue, we propose Spectral-based Spatial Grouping Transformer (SSGformer), a novel approach that leverages spectral decomposition and group-wise attention for multi-weather image restoration.",
       "prompt_index": 1,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "Splits images into high-frequency edge features via edge detection and low-frequency information through matrix decomposition.",
-      "quote": "decomposes images into high-frequency edge features using conventional edge detection and low-frequency information via Singular Value Decomposition",
+      "statement": "The approach separates high-frequency edge features through edge detection and low-frequency information through matrix decomposition.",
+      "quote": "SSGformer decomposes images into high-frequency edge features using conventional edge detection and low-frequency information via Singular Value Decomposition.",
       "prompt_index": 1,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "Uses multi-head linear attention to model relationships among the decomposed spectral features.",
-      "quote": "We utilize multi-head linear attention to effectively model the relationship between these features.",
-      "prompt_index": 1,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Integrates fused features with the input to create a grouping mask that clusters regions by spatial similarity and texture.",
+      "statement": "Fused features combine with the input to produce a mask that clusters regions by spatial similarity and texture.",
       "quote": "The fused features are integrated with the input to generate a grouping-mask that clusters regions based on the spatial similarity and image texture.",
       "prompt_index": 1,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "Introduces group-wise attention to remove adverse weather effects robustly and keep consistent performance across weather conditions.",
-      "quote": "we introduce a group-wise attention mechanism, enabling robust adverse weather removal and ensuring consistent performance across diverse weather conditions.",
+      "statement": "A group-wise attention mechanism uses the mask to remove adverse weather effects and maintain consistent performance across conditions.",
+      "quote": "To fully leverage this mask, we introduce a group-wise attention mechanism, enabling robust adverse weather removal and ensuring consistent performance across diverse weather conditions.",
       "prompt_index": 1,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "Combines channel attention and spatial attention to balance feature-wise relationships with spatial dependencies.",
-      "quote": "uses both channel attention and spatial attention, effectively balancing feature-wise relationships and spatial dependencies",
+      "statement": "A proposed block combines channel attention and spatial attention to balance feature-wise relationships and spatial dependencies.",
+      "quote": "We also propose a Spatial Grouping Transformer Block that uses both channel attention and spatial attention, effectively balancing feature-wise relationships and spatial dependencies.",
       "prompt_index": 2,
       "section": "Abstract"
     },
     {
-      "aspect": "why_it_works",
-      "statement": "Applying group-wise attention spatially and across channels helps the model focus on relevant features.",
-      "quote": "These group-wise attention is applied both spatially and across channels, allowing the model to focus on the most relevant features.",
+      "aspect": "goal",
+      "statement": "The proposed model consists of main components for adverse weather removal.",
+      "quote": "We propose SSGformer, an All-in-One adverse weather removal model with three key components.",
+      "prompt_index": 4,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "goal",
+      "statement": "The proposed approach extracts essential features from image-based priors and integrates them within a unified framework.",
+      "quote": "To conquer this problem, we propose SSGformer, which not only extracts essential features using image-based priors but also ensures their effective integration within a comprehensive framework.",
+      "prompt_index": 10,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Edge detection captures high-frequency edge features, while matrix decomposition analyzes degradation textures in the low-frequency domain.",
+      "quote": "Conventional edge detection captures high-frequency edge features, while Singular Value Decomposition (SVD) analyzes degradation textures in the low-frequency domain.",
+      "prompt_index": 10,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Linear attention with multiple heads models relationships and captures interdependencies within spectral features.",
+      "quote": "To model the relationships between spectral information, we use multi-head linear attention to capture the interdependencies within the spectral features.",
+      "prompt_index": 10,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The approach compares spatially similar areas across the image to broaden degradation-aware feature sharing and grouping.",
+      "quote": "Building on this, we expand the information exchange beyond local spectral regions by identifying and comparing spatially similar areas across the image, facilitating broader degradation-aware feature sharing and more efficient grouping.",
+      "prompt_index": 10,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A mask generator captures spatial similarity from spectral information and creates a grouping mask that clusters relevant features by value.",
+      "quote": "To achieve the grouping, we employ a mask generator to capture spatial similarity from the spectral information and generate a grouping-mask that clusters relevant features based on their values (Fig. 1 (b)).",
+      "prompt_index": 10,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Attention mechanisms operate on mask-based grouped features that share similar spatial characteristics.",
+      "quote": "In this architecture, we propose attention mechanisms that operate on mask-based grouped features exhibiting similar spatial characteristics as shown in Fig. 1 (c).",
       "prompt_index": 11,
       "section": "1 Introduction"
     },
     {
-      "aspect": "io",
-      "statement": "Takes an input image and extracts edge and low-rank information while preserving spatial details.",
-      "quote": "extracts edge and low-rank information from the input image while preserving spatial details",
-      "prompt_index": 10,
+      "aspect": "mechanism",
+      "statement": "Group-wise attention is applied spatially and across channels so the model focuses on relevant features.",
+      "quote": "These group-wise attention is applied both spatially and across channels, allowing the model to focus on the most relevant features.",
+      "prompt_index": 11,
       "section": "1 Introduction"
     }
   ]
