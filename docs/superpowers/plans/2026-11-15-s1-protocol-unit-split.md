@@ -96,7 +96,7 @@ def test_quantitative_evidence_keeps_unit_apart_from_protocol(db):
     # The unit attached to this value ("dB"/"percent"). It lives apart from
     # `protocol` because plan §15 gives that slot to the evaluation protocol
     # ("zero-shot"), and a field named protocol holding "dB" made every delta
-    # bucket read `db:0.44` while pretending to be a protocol.
+    # bucket read `dB:0.44` while pretending to be a protocol.
     unit: str | None = None
 ```
 
@@ -243,33 +243,45 @@ def test_second_init_db_does_not_destroy_the_backfilled_unit(tmp_path: Path):
 
 预期：两条都 `FAILED`。第一条拿到 `("e#0", None, "dB")`——列被加上但没回填；第二条同样拿不到 `("dB", "zero-shot")`。
 
-- [ ] **Step 3: 加一次性回填**
+- [ ] **Step 3: 加按数据幂等的回填**
 
-`src/research_os/storage/database.py`，在 `_ADDED_COLUMNS` **之后**加：
+**不要**把回填挂在 `if name not in existing:` 分支里。`unit` 列一旦被某次 `init_db()`
+建出来（例如两个提交之间跑过一次），后续就再也不会进那个分支，回填被永久跳过，
+而全量测试全绿——只有真实库里静默失去单位。改为语句自带数据守卫、可重复执行，
+与同文件里既有的无条件 `DELETE FROM contradiction_assessments WHERE rowid NOT IN (...)`
+是同一模式。
+
+`src/research_os/storage/database.py`，在 `_ADDED_INDEXES` **之前**加：
 
 ```python
-# Statements that must run exactly once, at the moment their column is created.
-# `protocol` used to hold the unit ("dB"/"percent") because plan §15's protocol
-# slot had no other home. Running this on every init_db() would instead WIPE the
-# column on the second pass: unit = protocol, and protocol is NULL by then.
-_ONE_TIME_BACKFILLS: dict[tuple[str, str], tuple[str, ...]] = {
-    ("quantitative_evidence", "unit"): (
-        "UPDATE quantitative_evidence SET unit = protocol "
-        "WHERE unit IS NULL AND protocol IN ('dB', 'percent')",
-        "UPDATE quantitative_evidence SET protocol = NULL "
-        "WHERE unit IS NOT NULL AND protocol IN ('dB', 'percent')",
-    ),
-}
+# Statements that are safe to run on every start-up because each carries its own
+# data guard. `protocol` used to hold the unit ("dB"/"percent") because plan §15's
+# protocol slot had no other home. Guarding on the data - not on "the column was
+# just created" - keeps the backfill honest even if some earlier init_db() already
+# added the column: a second run finds `unit` populated and `protocol` cleared, so
+# both statements match nothing. Leaving `protocol` as the unit instead would have
+# the field lie about being a protocol.
+_IDEMPOTENT_BACKFILLS: tuple[str, ...] = (
+    "UPDATE quantitative_evidence SET unit = protocol "
+    "WHERE unit IS NULL AND protocol IN ('dB', 'percent')",
+    "UPDATE quantitative_evidence SET protocol = NULL "
+    "WHERE unit IS NOT NULL AND protocol IN ('dB', 'percent')",
+)
 ```
 
-`_apply_sqlite_migrations` 里把加列的循环改为：
+`_apply_sqlite_migrations` 里，在加列的循环**之后**、`_ADDED_INDEXES` 循环之前加：
+
+```python
+        for statement in _IDEMPOTENT_BACKFILLS:
+            conn.exec_driver_sql(statement)
+```
+
+加列循环本身**保持原样**，不挂任何回填：
 
 ```python
             for name, ddl in columns.items():
                 if name not in existing:
                     conn.exec_driver_sql(f"ALTER TABLE {table} ADD COLUMN {name} {ddl}")
-                    for statement in _ONE_TIME_BACKFILLS.get((table, name), ()):
-                        conn.exec_driver_sql(statement)
 ```
 
 - [ ] **Step 4: 运行测试，确认通过**
@@ -312,7 +324,7 @@ ALTER makes it idempotent by construction; the second test proves it."
 - Test: `tests/unit/test_claim_identity.py`（追加 1 条）
 
 **为什么必须一起改**：写完 `unit` 而 `_buckets` 还读 `protocol`，delta 行的 bucket 会从
-`db:0.44` 变成 `unit:0.44`，历史行与新行永不合并；`memo.py` 还读 `protocol` 则所有数值
+`dB:0.44` 变成 `unit:0.44`，历史行与新行永不合并；`memo.py` 还读 `protocol` 则所有数值
 丢掉单位。三者任何一个单独改，测试都会红在别处。
 
 - [ ] **Step 1: 先把既有断言改成新语义（这会红）**
@@ -338,7 +350,7 @@ ALTER makes it idempotent by construction; the second test proves it."
 ```python
 def test_delta_bucket_label_survives_the_unit_split():
     """The bucket label is part of the identity key (ADR-021). Moving the unit out
-    of `protocol` must not rename it: `db:0.44` and `unit:0.44` would never merge,
+    of `protocol` must not rename it: `dB:0.44` and `unit:0.44` would never merge,
     so a re-run after the migration would split every delta claim from its history."""
     identity = _identity(
         "Our method brings a gain of +0.44 dB on SIDD.",
@@ -347,7 +359,7 @@ def test_delta_bucket_label_survives_the_unit_split():
         ],
     )
 
-    assert identity.value_bucket == ("db:0.44",)
+    assert identity.value_bucket == ("dB:0.44",)
 ```
 
 - [ ] **Step 2: 运行，确认失败**
@@ -357,7 +369,7 @@ def test_delta_bucket_label_survives_the_unit_split():
 ```
 
 预期：`test_quantitative.py` 里 4 条红（`fact.unit` 拿到 `None`，值还被写进了 `protocol`），
-`test_claim_identity.py` 的新用例红在 `assert ('unit:0.44',) == ('db:0.44',)`——
+`test_claim_identity.py` 的新用例红在 `assert ('unit:0.44',) == ('dB:0.44',)`——
 因为 `_buckets` 仍在读 `row.protocol`，而它是 `None`，于是走 `or 'unit'` 分支。
 这条红正是我们要防的那件事。
 
@@ -432,7 +444,7 @@ git add src/research_os/research/quantitative.py src/research_os/research/claims
 git commit -m "refactor(quant): write and read the unit through its own field
 
 Writer, bucket reader and memo renderer move together on purpose: flipping any
-one of them alone renames every delta bucket from db:0.44 to unit:0.44, which
+one of them alone renames every delta bucket from dB:0.44 to unit:0.44, which
 would split new claims from their history (ADR-021)."
 ```
 
@@ -532,7 +544,7 @@ grep -n "protocol\|定量\|QuantitativeEvidence" README.md
 `architect.md` 的 ADR 表末尾（ADR-032 之后）加一行：
 
 ```markdown
-| ADR-033 | `QuantitativeEvidence` 的**单位**从 `protocol` 拆出为 `unit`（见维护记录 2026-11-15）。计划 §15 给 `protocol` 的语义是**评测协议**，而实现把 `dB`/`percent` 存在该字段里：`value_bucket` 因此产出 `db:0.44` 这类「伪协议」标签，`inspect_claim` 也把单位当协议报给调用方。拆分**不改变**任何渲染输出与 `value_bucket` 标签（ADR-021 的合并键稳定），`protocol` 在 S4 之前保持为空——空字段比如实标注的错字段更容易被发现 | ACTIVE |
+| ADR-033 | `QuantitativeEvidence` 的**单位**从 `protocol` 拆出为 `unit`（见维护记录 2026-11-15）。计划 §15 给 `protocol` 的语义是**评测协议**，而实现把 `dB`/`percent` 存在该字段里：`value_bucket` 因此产出 `dB:0.44` 这类「伪协议」标签，`inspect_claim` 也把单位当协议报给调用方。拆分**不改变**任何渲染输出与 `value_bucket` 标签（ADR-021 的合并键稳定），`protocol` 在 S4 之前保持为空——空字段比如实标注的错字段更容易被发现 | ACTIVE |
 ```
 
 - [ ] **Step 3: 在「已知限制」里加一条**
@@ -582,7 +594,7 @@ git diff --stat master..HEAD -- src/ tests/
 
 | # | 判据 | 怎么验 |
 |---|---|---|
-| 1 | `value_bucket` 标签逐字不变 | Task 3 的 `test_delta_bucket_label_survives_the_unit_split` 断言 `("db:0.44",)` |
+| 1 | `value_bucket` 标签逐字不变 | Task 3 的 `test_delta_bucket_label_survives_the_unit_split` 断言 `("dB:0.44",)` |
 | 2 | memo 渲染输出不变（单位仍显示） | `tests/integration/test_evidence_quality.py` 断言 `"39.18" in memo`；Task 3 Step 6 全量绿 |
 | 3 | `init_db()` 两次幂等 | Task 2 的 `test_second_init_db_does_not_destroy_the_backfilled_unit` |
 | 4 | 既有用例一条不少 | Task 5 Step 4 的收集数 `333` |

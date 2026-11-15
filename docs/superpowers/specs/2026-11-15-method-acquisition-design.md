@@ -168,7 +168,7 @@ class MethodProfile(BaseModel):
 6. `memo.py:503` `inspect_claim()` 输出字典的 `"protocol"` 键改名为 `"unit"`。
    这是对 CLI `inspect-claim` 可观察输出的变更，需同步 `tests/` 中读该键的断言。
 
-### 5.3 回填必须是「列刚添加时一次性执行」
+### 5.3 回填必须按**数据**幂等，不能挂在建列事件上
 
 `init_db()` 每次 CLI run、每次 FastAPI 启动、每个测试 fixture 都会执行
 `_apply_sqlite_migrations`（`database.py:51`）。若照上一版写的「无条件
@@ -178,25 +178,38 @@ class MethodProfile(BaseModel):
 - 第二次：`SET unit = protocol` 把 `unit` 写成 **NULL**，单位信息全丢；若新抽取已写入
   `protocol='zero-shot'`，则 `unit` 变成 `'zero-shot'`、`protocol` 被清空，两列同时错。
 
-这是数据损坏级，不是「改动量估计偏低」。正确做法：
+这是数据损坏级，不是「改动量估计偏低」。
 
-- 回填只写在 `_ADDED_COLUMNS` 的 `if name not in existing:` 分支内——即**这一列刚刚
-  被加上**时才跑，天然只执行一次。
-- SQL 加白名单：`UPDATE quantitative_evidence SET unit = protocol WHERE unit IS NULL
-  AND protocol IN ('dB','percent')`；随后 `UPDATE ... SET protocol = NULL WHERE unit IS
-  NOT NULL AND protocol IN ('dB','percent')`。
-- 回归测试：`init_db()` → 写一行 `unit='db'`、`protocol='zero-shot'` → 再 `init_db()`
-  → 断言两列都不变。**删除一次性条件后该测试必红。**
+**不能**用「只在 `ALTER TABLE` 分支里执行」来兜底：`unit` 列一旦被某次 `init_db()`
+建出来（例如 S1 的两个提交之间跑过一次），后续就再也不会进入该分支，回填被永久跳过，
+而全量测试全绿——只有真实库里静默失去单位。
+
+正确做法：**语句自身带数据守卫，可重复执行**，与同文件里既有的无条件
+`DELETE FROM contradiction_assessments WHERE rowid NOT IN (...)` 是同一模式。
+
+- `UPDATE quantitative_evidence SET unit = protocol
+  WHERE unit IS NULL AND protocol IN ('dB','percent')`
+- `UPDATE quantitative_evidence SET protocol = NULL
+  WHERE unit IS NOT NULL AND protocol IN ('dB','percent')`
+
+第二次执行时第一条的 `unit IS NULL` 已不成立、第二条的 `protocol IN (...)` 已不成立，
+因此天然幂等，且与「谁先跑过 `init_db()`」无关。`protocol='dB'` 只可能是旧单位——
+S1 之后写入点永不写单位进 `protocol`，S4 才写真实协议，因此该守卫不会误伤。
+- 回归测试两条：旧库回填出 `('dB', None)`；旧库回填后写入 `protocol='zero-shot'`
+  再跑一次 `init_db()`，两列都不变。**删掉任一守卫条件，第二条测试必红。**
 
 ### 5.4 `value_bucket` 的影响要说准
 
-`claims.py:199-207` 里只有 **delta 行**读 `row.protocol`，而 delta 行的 `protocol` 恒为
-`"dB"`/`"percent"`。回填后 `unit` 同值 → 历史行的 bucket **逐字不变**。
+`claims.py:199-207` 里只有 **metric-less 的 delta 行**读 `row.protocol`，而 delta 行的
+`protocol` 恒为 `"dB"`/`"percent"`。实测当前标签是 `('dB:0.44',)`（**大写 B**，
+`_buckets` 不做 `lower()`）。回填后 `unit` 同值 → 历史行的 bucket **逐字不变**。
 上一版说「该改动改写 `value_bucket`」是错的。
 
 真正的风险是漏改：若 `quantitative.py` 的写入点没迁到 `unit`，新行的 `unit` 为 `None`，
-`row.unit or 'unit'` 会把 delta bucket 从 `db:0.44` 变成 `unit:0.44`，历史行与新行永不
-合并。因此 S1 的验收必须包含：**delta 行的 bucket 与迁移前逐字相同**（构造夹具断言）。
+`row.unit or 'unit'` 会把 delta bucket 从 `dB:0.44` 变成 `unit:0.44`，历史行与新行永不
+合并。因此 S1 的验收必须包含：**delta 行的 bucket 与迁移前逐字相同**（构造夹具断言
+`("dB:0.44",)`）。**特别禁止**用 `_buckets` 里加 `.lower()` 来「让两边一致」——那会静默
+改掉 identity key 的第 7 段，把所有历史主张切开（ADR-021）。
 
 ## 6. S2：确定性 L1 / L2 / L4
 
