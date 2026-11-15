@@ -34,25 +34,73 @@ _TRAINING = re.compile(
 )
 
 
-def extract_conditions(text: str) -> tuple[str, ...]:
-    """Return the setup this sentence names, sorted by kind, at most one each."""
-    found: set[str] = set()
+# Two new kinds for P4's last two dimensions (design §8.1). Both vocabularies are
+# closed and both are reused verbatim from the S2 patterns, so a value that enters
+# `conditions` here is the same string a `MethodSetup` would carry - one
+# vocabulary, two readers.
+_SCALE_PARAMS = re.compile(r"(?<![\w.])(\d+(?:\.\d+)?)\s?([BM])\b")
+_SCALE_GPU = re.compile(r"(\d+)\s?[×x]\s?(A100|H100|V100|GPU|TPU)\b", re.IGNORECASE)
+_PROTOCOL = re.compile(r"\b(zero-?shot|few-?shot|\d+-shot|pass@\d+)\b", re.IGNORECASE)
+
+
+def _scale(text: str) -> str | None:
+    """First scale mention, normalised the same way `MethodSetup` does it."""
+    options: list[tuple[int, str]] = []
+    for match in _SCALE_PARAMS.finditer(text):
+        options.append((match.start(), f"{match.group(1)}{match.group(2).lower()}"))
+    for match in _SCALE_GPU.finditer(text):
+        options.append((match.start(), f"{match.group(1)}x{match.group(2).lower()}"))
+    return min(options)[1] if options else None
+
+
+def _protocol(text: str) -> str | None:
+    match = _PROTOCOL.search(text)
+    if match is None:
+        return None
+    return re.sub(r"\s+", "-", match.group(1).lower()).replace("zeroshot", "zero-shot").replace(
+        "fewshot", "few-shot"
+    )
+
+
+def extract_condition_map(text: str) -> dict[str, str]:
+    """The setup this sentence names, one value per kind, no defaults.
+
+    A dict rather than a tuple because S4 needs to know *which kind* came from
+    where: `conditions_from` used to describe the whole tuple, so one new
+    high-frequency pattern would overwrite everything the section had established
+    (design §8.2). Kinds are always the same six; a missing kind is absent, never
+    defaulted.
+    """
+    found: dict[str, str] = {}
 
     match = _BACKBONE.search(text)
     if match:
-        found.add(f"backbone={match.group(1).lower().rstrip('s')}")
+        found["backbone"] = match.group(1).lower().rstrip("s")
 
     match = _DEGRADATION.search(text)
     if match:
-        value = match.group(1) or match.group(2) or match.group(3).lower()
-        found.add(f"degradation={value}")
+        found["degradation"] = match.group(1) or match.group(2) or match.group(3).lower()
 
     match = _BASELINE.search(text)
     if match:
-        found.add(f"baseline={match.group(1).lower()}")
+        found["baseline"] = match.group(1).lower()
 
     match = _TRAINING.search(text)
     if match:
-        found.add("training=" + re.sub(r"\s+", "-", match.group(1).lower()))
+        found["training"] = re.sub(r"\s+", "-", match.group(1).lower())
 
-    return tuple(sorted(found))
+    scale = _scale(text)
+    if scale:
+        found["scale"] = scale
+
+    protocol = _protocol(text)
+    if protocol:
+        found["protocol"] = protocol
+
+    return found
+
+
+def extract_conditions(text: str) -> tuple[str, ...]:
+    """`kind=value` strings, sorted by kind. Kept as the tuple contract every
+    existing caller and test relies on; new code should use the map."""
+    return tuple(f"{kind}={value}" for kind, value in sorted(extract_condition_map(text).items()))
