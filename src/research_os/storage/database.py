@@ -62,6 +62,20 @@ _ADDED_COLUMNS: dict[str, dict[str, str]] = {
     "claims": {"identity_key": "VARCHAR(256)"},
 }
 
+# Statements that are safe to run on every start-up because each carries its own
+# data guard. `protocol` used to hold the unit ("dB"/"percent") because plan §15's
+# protocol slot had no other home. Guarding on the data - not on "the column was
+# just created" - keeps the backfill honest even if some earlier init_db() already
+# added the column: a second run finds `unit` populated and `protocol` cleared, so
+# both statements match nothing. Leaving `protocol` as the unit instead would have
+# the field lie about being a protocol.
+_IDEMPOTENT_BACKFILLS: tuple[str, ...] = (
+    "UPDATE quantitative_evidence SET unit = protocol "
+    "WHERE unit IS NULL AND protocol IN ('dB', 'percent')",
+    "UPDATE quantitative_evidence SET protocol = NULL "
+    "WHERE unit IS NOT NULL AND protocol IN ('dB', 'percent')",
+)
+
 # Indexes added after the first release, for the same reason as the columns:
 # create_all never touches an existing table, so pre-P5 databases would accept
 # the same claim pair twice.
@@ -84,6 +98,9 @@ def _apply_sqlite_migrations(engine) -> None:
             for name, ddl in columns.items():
                 if name not in existing:
                     conn.exec_driver_sql(f"ALTER TABLE {table} ADD COLUMN {name} {ddl}")
+
+        for statement in _IDEMPOTENT_BACKFILLS:
+            conn.exec_driver_sql(statement)
 
         # A UNIQUE INDEX cannot be created over a table that already contains
         # duplicates - and duplicates are exactly what pre-P5 databases were
