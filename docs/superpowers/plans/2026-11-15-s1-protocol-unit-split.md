@@ -510,6 +510,9 @@ def _unit_near(text: str, value_end: int) -> str | None:
 
 预期：`331 passed, 2 skipped`。
 
+> 实施记录：该任务之后还有一次质量修复（`132808f`），又加了 1 条用例，
+> **当前基线是 `332 passed / 2 skipped / 334 collected`**，Task 4 起以此为准。
+
 - [ ] **Step 7: 提交**
 
 ```bash
@@ -585,7 +588,7 @@ def test_inspect_claim_reports_unit_not_protocol(db, tmp_path):
 "D:/Anaconda/envs/reOS/python.exe" -m pytest -q --basetemp=.pytest_tmp_s1_t4
 ```
 
-预期：`332 passed, 2 skipped`。
+预期：`333 passed, 2 skipped`。
 
 - [ ] **Step 6: 提交**
 
@@ -636,13 +639,13 @@ grep -n "protocol\|定量\|QuantitativeEvidence" README.md
 "D:/Anaconda/envs/reOS/python.exe" -m pytest -q --basetemp=.pytest_tmp_s1_t5
 ```
 
-预期：`332 passed, 2 skipped`。同时核对收集数：
+预期：`333 passed, 2 skipped`。同时核对收集数：
 
 ```bash
 "D:/Anaconda/envs/reOS/python.exe" -m pytest --collect-only -q --basetemp=.pytest_tmp_s1_collect | tail -3
 ```
 
-预期：`334 tests collected`（328 + 6 条新用例）。**若收集数少于 334，说明有用例被静默删除或覆盖，停下查。**
+预期：`335 tests collected`（328 + 7 条新用例）。**若收集数少于 335，说明有用例被静默删除或覆盖，停下查。**
 
 - [ ] **Step 5: 提交**
 
@@ -670,9 +673,9 @@ git diff --stat master..HEAD -- src/ tests/
 | # | 判据 | 怎么验 |
 |---|---|---|
 | 1 | `value_bucket` 标签逐字不变 | Task 3 的 `test_delta_bucket_label_survives_the_unit_split` 断言 `("dB:0.44",)` |
-| 2 | memo 渲染输出不变（单位仍显示） | `tests/integration/test_evidence_quality.py` 断言 `"39.18" in memo`；Task 3 Step 6 全量绿 |
+| 2 | memo 渲染输出不变（单位仍显示） | `tests/integration/test_evidence_quality.py` 断言 `"[quant: PSNR 39.18 dB on SIDD]" in memo`——不能只断言 `"39.18" in memo`，memo 里引用的证据原文本身含 `39.18 dB`，渲染器回退成 `protocol` 也照样绿 |
 | 3 | `init_db()` 两次幂等 | Task 2 的 `test_second_init_db_does_not_destroy_the_backfilled_unit` |
-| 4 | 既有用例一条不少 | Task 5 Step 4 的收集数 `334` |
+| 4 | 既有用例一条不少 | Task 5 Step 4 的收集数 `335` |
 | 5 | `protocol` 不再被用作单位 | `grep -rn "fact.protocol\|row.protocol" src/` 只应命中 `repositories.py` 的映射 | 
 
 ## 明确不做（S1 边界）
