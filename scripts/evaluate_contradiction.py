@@ -58,9 +58,14 @@ def evaluate(path: Path) -> list[dict]:
         for side, claim in (("a", a), ("b", b)):
             provenance = entry.get(f"{side}_conditions_from")
             if provenance:
-                # Provenance is not identity: it travels on the claim's conditions
-                # list, the same way the builder stores it (D13).
-                claim.conditions = [f"conditions_from={provenance}"]
+                # S4: one flag per kind. pairs.json keeps one global tier per
+                # side; the kinds come from that side's identity_key 6th segment,
+                # which is exactly what the new per-kind gate reads.
+                segment = (claim.identity_key or "").split("|")[5]
+                kinds = [item.split("=", 1)[0] for item in segment.split(";") if item]
+                claim.conditions = [
+                    f"condition_tier={kind}:{provenance}" for kind in sorted(set(kinds))
+                ]
 
         pairs, _ = pair_candidates([a, b])
         if not pairs:

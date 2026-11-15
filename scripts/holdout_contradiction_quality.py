@@ -31,11 +31,18 @@ def _ids(path: Path) -> list[str]:
     return [line.strip() for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
-def _tier(claim) -> str | None:
-    for item in claim.conditions:
-        if item.startswith("conditions_from="):
-            return item.split("=", 1)[1]
-    return None
+def _tiers(claim) -> set[str]:
+    """Every kind's tier, read off the per-kind flags (S4).
+
+    One claim can now carry several tiers (an inherited backbone beside a
+    sentence-stated protocol), so the report counts the union of both sides'
+    tiers - a single value would silently drop most inherited pairs.
+    """
+    return {
+        item.split("=", 1)[1].split(":", 1)[1]
+        for item in claim.conditions
+        if item.startswith("condition_tier=")
+    }
 
 
 def main() -> None:
@@ -67,10 +74,10 @@ def main() -> None:
     )
 
     assessments, stats = HeuristicContradictionAssessor().assess(claims)
-    tier_by_id = {c.id: _tier(c) for c in claims}
+    tiers_by_id = {c.id: _tiers(c) for c in claims}
     tiers = Counter()
     for item in assessments:
-        pair = {tier_by_id.get(item.claim_a_id), tier_by_id.get(item.claim_b_id)}
+        pair = tiers_by_id.get(item.claim_a_id, set()) | tiers_by_id.get(item.claim_b_id, set())
         if "section-first-mention" in pair:
             tiers["either_side_first_mention"] += 1
         elif pair & {"heading"}:
