@@ -55,7 +55,7 @@ def test_slice_persists_chunks_exact_offsets_and_quantitative_facts(db, tmp_path
         psnr_sidd = next(f for f in facts if f.dataset == "SIDD" and f.metric == "PSNR")
         assert psnr_sidd.value == 39.18
         assert psnr_sidd.comparator_value == 39.01
-        assert psnr_sidd.protocol == "dB"
+        assert psnr_sidd.unit == "dB"
 
         memo = build_memo_from_run(session, run.id)
         assert "# Quantitative Evidence" in memo

@@ -201,3 +201,17 @@ def test_unit_words_are_not_method_names():
     ):
         identity = _identity(text)
         assert identity.subject not in {"db", "psnr", "ssim"}, text
+
+
+def test_delta_bucket_label_survives_the_unit_split():
+    """The bucket label is part of the identity key (ADR-021). Moving the unit out
+    of `protocol` must not rename it: `dB:0.44` and `unit:0.44` would never merge,
+    so a re-run after the migration would split every delta claim from its history."""
+    identity = _identity(
+        "Our method brings a gain of +0.44 dB on SIDD.",
+        quantitative=[
+            QuantitativeEvidence(evidence_id="e", unit="dB", delta=0.44, comparator_value=39.29)
+        ],
+    )
+
+    assert identity.value_bucket == ("dB:0.44",)

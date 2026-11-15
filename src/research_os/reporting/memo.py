@@ -141,7 +141,7 @@ def _format_fact_value(fact: QuantitativeEvidence, *, with_metric: bool = True) 
     A delta row has no metric and often no absolute value: it records "a 0.11 dB
     improvement", which is a gain, not a measurement on a dataset.
     """
-    unit = {"dB": " dB", "percent": "%"}.get(fact.protocol or "", "")
+    unit = {"dB": " dB", "percent": "%"}.get(fact.unit or "", "")
     if fact.metric is not None and fact.value is not None:
         prefix = f"{fact.metric} " if with_metric else ""
         return f"{prefix}{fact.value:g}{unit}"
@@ -166,7 +166,7 @@ def _render_quantitative_section(graph: RunGraph) -> list[str]:
     grouped: dict[tuple[str, str], list[tuple[str, QuantitativeEvidence]]] = {}
     for evidence_id, facts in graph.quantitative.items():
         for fact in facts:
-            key = (fact.dataset or "unspecified", fact.metric or fact.protocol or "unspecified")
+            key = (fact.dataset or "unspecified", fact.metric or fact.unit or "unspecified")
             grouped.setdefault(key, []).append((evidence_id, fact))
 
     if not grouped:

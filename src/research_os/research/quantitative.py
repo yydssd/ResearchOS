@@ -95,7 +95,7 @@ def _unit_near(text: str, value_end: int) -> str | None:
     """Unit attached to *this* value, not to the sentence as a whole.
 
     A sentence can report "PSNR by 0.42 dB and SSIM by 0.013"; giving both the
-    "dB" protocol would silently mislabel the SSIM number.
+    "dB" unit would silently mislabel the SSIM number.
     """
     tail = text[value_end : value_end + 6]
     if re.search(r"\bdB\b", tail, re.IGNORECASE):
@@ -140,7 +140,7 @@ def _delta_fact(
         value=high,
         comparator=comparator,
         comparator_value=low,
-        protocol="dB" if match.group("unit").lower() == "db" else "percent",
+        unit="dB" if match.group("unit").lower() == "db" else "percent",
         delta=float(match.group("value")),
     )
 
@@ -189,7 +189,7 @@ class HeuristicQuantitativeExtractor:
                     value=value,
                     comparator=comparator,
                     comparator_value=comparator_value,
-                    protocol=_unit_near(text, value_end),
+                    unit=_unit_near(text, value_end),
                 )
             )
         if not facts:

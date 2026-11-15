@@ -27,7 +27,7 @@ def test_extracts_metric_value_and_comparator():
     assert fact.value == 39.18
     assert fact.comparator_value == 39.01
     assert fact.dataset == "SIDD"
-    assert fact.protocol == "dB"
+    assert fact.unit == "dB"
 
 
 def test_extracts_one_fact_per_metric_in_the_same_sentence():
@@ -42,20 +42,20 @@ def test_extracts_one_fact_per_metric_in_the_same_sentence():
     psnr = next(f for f in facts if f.metric == "PSNR")
     assert psnr.value == 0.42
     assert psnr.dataset == "Rain100H"
-    assert psnr.protocol == "dB"
+    assert psnr.unit == "dB"
     # SSIM is unitless here even though the sentence also mentions dB.
     ssim = next(f for f in facts if f.metric == "SSIM")
-    assert ssim.protocol is None
+    assert ssim.unit is None
     assert [f.seq for f in facts] == list(range(len(facts)))
 
 
-def test_extracts_percent_protocol():
+def test_extracts_percent_unit():
     facts = EXTRACTOR.extract_from_text(
         "The method improves FID by 12.5% on the COCO dataset.", evidence_id="e3"
     )
     assert facts[0].metric == "FID"
     assert facts[0].value == 12.5
-    assert facts[0].protocol == "percent"
+    assert facts[0].unit == "percent"
 
 
 def test_ignores_text_without_metric_or_value():
@@ -90,7 +90,7 @@ def test_delta_value_without_metric_is_captured():
     row = rows[0]
     assert row.metric is None
     assert row.delta == 0.44
-    assert row.protocol == "dB"
+    assert row.unit == "dB"
     assert row.dataset == "SIDD"
     # the surrounding range is still recorded, as comparator -> value
     assert row.comparator_value == 39.29

@@ -203,7 +203,7 @@ def _buckets(quantitative: list[QuantitativeEvidence]) -> tuple[str, ...]:
             digits = _BUCKET_DIGITS.get(row.metric.upper(), 1)
             buckets.append(f"{row.metric.lower()}={round(row.value, digits)}")
         elif row.delta is not None:
-            buckets.append(f"{row.protocol or 'unit'}:{round(row.delta, 2)}")
+            buckets.append(f"{row.unit or 'unit'}:{round(row.delta, 2)}")
     return tuple(sorted(set(buckets)))
 
 
