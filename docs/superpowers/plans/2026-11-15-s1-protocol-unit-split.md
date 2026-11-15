@@ -418,8 +418,9 @@ migrates instead of leaving its unit behind in protocol."
         assert psnr_sidd.unit == "dB"
 ```
 
-在 `tests/unit/test_claim_identity.py` 末尾追加（先读该文件的 `_identity` 辅助函数签名再写，
-它已接收 `quantitative=`）：
+在 `tests/unit/test_claim_identity.py` 末尾追加。该文件已有辅助函数
+`_identity(text: str, sv: str = "sv_1", scope=None, quantitative=None)` 与
+`QuantitativeEvidence` 的 import，直接用：
 
 ```python
 def test_delta_bucket_label_survives_the_unit_split():
