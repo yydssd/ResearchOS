@@ -1055,6 +1055,47 @@ Track:
 - wall-clock time
 - estimated monetary cost
 
+### Method acquisition (added 2026-11-15, `docs/superpowers/specs/2026-11-15-method-acquisition-design.md` §10)
+
+Four layers per paper: **L1** method identity (the paper's own name), **L2** method
+composition (components), **L3** method description (structured points with a
+locatable quote), **L4** reproducible setup (scale / protocol / hyperparameters /
+repository). Report them **per domain**, never pooled: the two corpora differ in
+size and in what the vocabulary covers.
+
+```text
+A (availability)  = present cells / papers in that domain
+C (coverage)      = covered cells / present cells
+gaps              = present cells that are not covered, keyed by cause
+```
+
+Three rules make the numbers readable, and each exists because violating it
+produced a wrong conclusion at least once:
+
+1. **`C` denominators differ per cell.** Never compare `C` across layers or
+   domains, and never average them; a cell with `present < 5` is not a trend.
+2. **Closed cause set, and it must balance.** Every uncovered cell gets one cause
+   (`无来源定位` / `词表未覆盖` / `无结构化字段` / `命名歧义` / `LLM 未启用` /
+   `LLM 输出被拒`), so `covered + explained == present` and
+   `unexplained_uncovered == 0`. A cell nobody can explain is a defect in the
+   measurement, not a finding.
+3. **L1 has a zero-tolerance precision gate.** Every produced name must be
+   (a) a verbatim substring of its stored `name_quote`, (b) matched by an
+   independent construction list (written by hand, not imported from the
+   extractor), and (c) not a fragment of a longer name. Any paper failing one
+   criterion fails the stage.
+
+Row-level L1 is reported separately and **without a precision claim**:
+`rows whose method equals the resolved name / rows whose sentence names self or a
+named third-party method`, plus the `subject_inferred` share — 476 of 489 self
+subjects are inferred, so a row match is coverage, not correctness.
+
+Current values and their before/after: `docs/evaluation/2026-11-14-method-acquisition-audit.md`,
+`...-2026-11-15-method-acquisition-s2.md`, `...-2026-11-15-s4-method-acquisition.md`.
+Script: `scripts/method_acquisition_audit.py` (read-only; `--describer recorded`
+replays fixtures, and an empty fixture directory is reported as `LLM 未启用`
+rather than as zero coverage).
+
 ---
 
 ## 22. Benchmark Strategy

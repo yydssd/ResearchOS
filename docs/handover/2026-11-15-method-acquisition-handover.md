@@ -283,8 +283,8 @@ T5 落地：`architect.md` 加 ADR-033 与已知限制第 13 条、维护记录�
 
 - `memo.py` 的回退键 `fact.metric or fact.unit or "unspecified"` 语义正确，但**仍没有专门用例**，
   现有覆盖来自间接路径。S4 动 `conditions` 时会再碰 memo，那时一并定。
-- 待办 #10：§21（`ResearchOS-Implementation-Plan.md`）仍无方法抽取指标；三份 S4 报告已有度量，
-  **登记进 §21 的动作还没做**。
+- 待办 #10 **已完成**：`ResearchOS-Implementation-Plan.md` §21 新增 Method acquisition 小节，
+  README 同步指标指引与模块清单。
 - **L3 未测量**（已知限制 17）：没有 provider 客户端，`tests/fixtures/method_descriptions/` 为空。
   这不是缺陷，是口径：审计报「LLM 未启用」，不报一个没测过的数字。
 - 设计 §13 现在有 D1–D31：D22–D31 是 S4 的（值/tier 分存、旧标记不迁移、正则不共享、
@@ -346,7 +346,7 @@ T5 落地：`architect.md` 加 ADR-033 与已知限制第 13 条、维护记录�
 | 7 | `SqlEventRepository.list_by_run` 缺 `ORDER BY`，memo 取 `events[-1]` 靠 SQLite rowid | 技术债 |
 | 8 | `replaced` payload 值断言、`inspect_claim` partner 成员断言 | 技术债 |
 | 9 | §2.5 其余 6 项确定性实现的 deviation ADR 逐项登记 | 文档债 |
-| 10 | §21 指标清单无方法抽取指标，需登记进 §21 / `README.md` | **仍未做**；度量已在 2026-11-15 报告里，等 S3 一起登记 |
+| 10 | §21 指标清单无方法抽取指标，需登记进 §21 / `README.md` | **已做（2026-11-15）**：§21 新增 Method acquisition 小节（`A`/`C`/`gaps` 定义 + 三条读法 + L1 零容忍 + 行级覆盖不宣称精度）；README 补指标指引、六类条件、五个新模块与两个脚本 |
 
 ---
 

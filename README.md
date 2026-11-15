@@ -75,6 +75,7 @@ python scripts/method_acquisition_audit.py --labels tests/fixtures/method_acquis
 ```
 
 只读度量 40 篇留出集论文的四层方法信息可获取性与系统覆盖率；标注为 owner-derived、非独立非盲标，不产出质量结论。
+指标定义与三条读法（`A`/`C` 的分母不同格、原因必须闭合、L1 零容忍）见 `ResearchOS-Implementation-Plan.md` §21。
 
 ## 目录
 
@@ -90,13 +91,18 @@ reports/           生成的 Markdown memo
 - `documents/html.py` — HTML 结构抽取（标准库 `html.parser`）+ ar5iv 公式回声净化
 - `research/evidence_extractor.py` — 句子切分与字符偏移
 - `research/quantitative.py` — 数值 / 单位 / 数据集启发式抽取（含无指标词的 delta）
-- `research/scope.py` — 块级 task / dataset / conditions 继承（带 provenance）
-- `research/conditions.py` — 四类实验条件抽取（backbone / degradation / baseline / training）
+- `research/scope.py` — 块级 task / dataset / conditions 继承（conditions 按 kind 各带 provenance）
+- `research/conditions.py` — 六类实验条件抽取（backbone / degradation / baseline / training / scale / protocol）
+- `research/patterns.py` — 方法获取的命名构式、组件词表与 L4 正则（一处集中，避免读者漂移）
+- `research/methods.py` — L1/L2/L4 确定性抽取与 `missing_layers`
+- `research/method_description.py` — L3 的四道防线（quote 可定位 / 陈述有据 / schema / 预算）
+- `llm/describer.py`、`llm/recorded.py` — 同步描述器与录制回放 provider（键 = 去 id 的 prompt 摘要）
 - `research/claims.py` — 主张 identity、四值方向与支撑性判定
 - `research/contradiction.py` — 候选配对、级联判定、评估器协议
 - `research/claim_builder.py` — 证据 → 主张，并把 provenance 写进质量 flags
 - `sources/resolver.py` — 候选 → canonical work 的合并与消歧
-- `scripts/holdout_claim_quality.py` — 留出集评估（联网）
+- `scripts/holdout_claim_quality.py` — 留出集评估（`--ids-file` 可离线）
+- `scripts/holdout_contradiction_quality.py` — 留出集矛盾统计（provenance 按 kind 聚合）
 - `scripts/evaluate_contradiction.py` — 夹具集分层评估（混淆矩阵、按子集准确率）
 
 ## 文档口径
