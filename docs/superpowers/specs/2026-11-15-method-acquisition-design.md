@@ -154,11 +154,19 @@ class MethodProfile(BaseModel):
 
 ### 5.2 改法
 
+`protocol` 作为「单位」的消费点共 **六处**，全部要迁到 `unit`（上一版只列了四处，
+漏了 `reporting/memo.py` 的三处）：
+
 1. `domain/models.py` 的 `QuantitativeEvidence` **新增 `unit: str | None`**（上一版漏了
    这步，导致 `claims.py` 读不到）。
-2. `storage/tables.py` 新增 `unit` 列；`database.py::_ADDED_COLUMNS` 登记。
+2. `storage/tables.py` 新增 `unit` 列；`database.py::_ADDED_COLUMNS` 登记；
+   `repositories.py:394/411` 双向映射加 `unit`。
 3. `quantitative.py:143` 与 `:192` 的 `protocol=` 改为 `unit=`。
 4. `claims.py:206` 的 `row.protocol or 'unit'` 改为 `row.unit or 'unit'`。
+5. `memo.py:144` 的单位查表 `fact.protocol` 改为 `fact.unit`；
+   `memo.py:169` 的无指标分组回退键同样改为 `fact.unit`。
+6. `memo.py:503` `inspect_claim()` 输出字典的 `"protocol"` 键改名为 `"unit"`。
+   这是对 CLI `inspect-claim` 可观察输出的变更，需同步 `tests/` 中读该键的断言。
 
 ### 5.3 回填必须是「列刚添加时一次性执行」
 
