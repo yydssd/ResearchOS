@@ -124,9 +124,10 @@ def test_event_persistence(db):
 
 
 def test_quantitative_evidence_keeps_unit_apart_from_protocol(db):
-    """plan §15 gives `protocol` to the evaluation protocol. The unit ("dB") is a
-    different fact and used to be stored there; a row that carries both must come
-    back with both, unchanged."""
+    """If `unit` had no column, the write would drop it silently and the read would
+    return None while `protocol` still looked correct — a loss no protocol-only
+    assertion would catch. Both a row carrying a unit and a legacy row without one
+    must therefore come back unchanged."""
     with session_scope() as s:
         work = ResearchWork(canonical_title="W")
         SqlWorkRepository(s).create(work)
@@ -139,11 +140,19 @@ def test_quantitative_evidence_keeps_unit_apart_from_protocol(db):
                 QuantitativeEvidence(
                     evidence_id=ev.id, seq=0, dataset="SIDD", metric="PSNR",
                     value=39.18, unit="dB", protocol="zero-shot",
-                )
+                ),
+                # The shape of a row written before the column existed: no unit.
+                QuantitativeEvidence(
+                    evidence_id=ev.id, seq=1, dataset="SIDD", metric="PSNR",
+                    value=39.50,
+                ),
             ]
         )
     with session_scope() as s:
-        rows = SqlQuantitativeEvidenceRepository(s).list_all()
-        assert len(rows) == 1
-        assert rows[0].unit == "dB"
-        assert rows[0].protocol == "zero-shot"
+        # `list_all` has no ORDER BY, so key on seq instead of trusting row order.
+        by_seq = {r.seq: r for r in SqlQuantitativeEvidenceRepository(s).list_all()}
+        assert len(by_seq) == 2
+        assert by_seq[0].unit == "dB"
+        assert by_seq[0].protocol == "zero-shot"
+        assert by_seq[1].unit is None
+        assert by_seq[1].value == 39.50

@@ -109,6 +109,9 @@ class QuantitativeEvidenceRow(Base):
     comparator: Mapped[str | None] = mapped_column(Text, nullable=True)
     comparator_value: Mapped[float | None] = mapped_column(Float, nullable=True)
     protocol: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    # The unit is a closed vocabulary (dB/percent), so a narrow field doubles as
+    # its documentation; `protocol` keeps 64 because it is free text. SQLite
+    # ignores the width, so this is a hint and not a constraint.
     unit: Mapped[str | None] = mapped_column(String(32), nullable=True)
     delta: Mapped[float | None] = mapped_column(Float, nullable=True)
 
