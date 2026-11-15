@@ -6,6 +6,8 @@ describer at all", so a run with no key does zero calls and says so.
 
 from __future__ import annotations
 
+import pytest
+
 from research_os.config import Settings
 from research_os.llm.describer import AsyncProviderDescriber
 from research_os.llm.factory import build_describer
@@ -17,7 +19,7 @@ def test_no_provider_means_no_describer():
 
 
 def test_an_unknown_provider_name_is_a_configuration_error():
-    settings = Settings(llm_provider="openai")
+    settings = Settings(llm_provider="cohere")
     try:
         build_describer(settings)
     except ValueError as exc:
@@ -29,5 +31,23 @@ def test_an_unknown_provider_name_is_a_configuration_error():
 def test_the_recorded_provider_builds_a_describer():
     settings = Settings(llm_provider="recorded", llm_fixture_dir="tests/fixtures/method_descriptions")
     describer = build_describer(settings)
+    assert isinstance(describer, AsyncProviderDescriber)
+
+
+def test_an_openai_compatible_provider_needs_a_key():
+    settings = Settings(llm_provider="openai", llm_api_key=None)
+    with pytest.raises(ValueError, match="llm_api_key"):
+        build_describer(settings)
+
+
+def test_an_openai_compatible_provider_builds_with_a_key():
+    settings = Settings(
+        llm_provider="openai",
+        llm_api_key="test-key",
+        llm_model="test-model",
+        llm_base_url="https://example.invalid/v1",
+    )
+    describer = build_describer(settings)
+
     assert isinstance(describer, AsyncProviderDescriber)
 

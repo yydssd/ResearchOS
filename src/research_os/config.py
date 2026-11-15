@@ -26,6 +26,10 @@ class Settings(BaseSettings):
     llm_provider: str = "none"  # none | recorded | <provider name>
     llm_model: str | None = None
     llm_api_key: str | None = None
+    # Base URL for the OpenAI-compatible endpoint (design: one client, many
+    # vendors). Kept as configuration rather than a constant so the same code
+    # can point at a gateway, a proxy, or a local server.
+    llm_base_url: str = "https://api.openai.com/v1"
     # Replay directory for `llm_provider="recorded"` (design §7.6).
     llm_fixture_dir: str = "tests/fixtures/method_descriptions"
 
