@@ -13,18 +13,26 @@ import re
 from dataclasses import dataclass, field
 
 from research_os.domain.models import DocumentChunk
-from research_os.research.conditions import extract_conditions
+from research_os.research.conditions import extract_condition_map
 from research_os.research.lexicon import DATASETS, TASKS
 
 
 @dataclass(frozen=True)
 class BlockScope:
-    """Task/dataset/condition context a claim inherits from its section."""
+    """Task/dataset/condition context a claim inherits from its section.
+
+    Conditions are a kind->value map plus a kind->tier map, not one tuple with one
+    tier: S4 added two high-frequency kinds, and a single tier would either
+    over-claim (a `sentence` covering an inherited backbone) or under-claim (an
+    inherited backbone sinking a sentence-stated protocol). Each kind keeps the
+    tier it actually came from.
+    """
 
     task: str | None = None
     datasets: frozenset[str] = frozenset()
     inherited_from: dict[str, str] = field(default_factory=dict)
-    conditions: tuple[str, ...] = ()
+    conditions: dict[str, str] = field(default_factory=dict)
+    condition_tiers: dict[str, str] = field(default_factory=dict)
 
 
 def _task_of(text: str) -> str | None:
@@ -100,16 +108,22 @@ def build_section_scopes(chunks: list[DocumentChunk]) -> dict[str, BlockScope]:
                     provenance["datasets"] = "section-first-mention"
                     break
         task = heading_task or document_tasks.get(source_version)
-        conditions = extract_conditions(section or "")
-        if conditions:
-            provenance["conditions"] = "heading"
-        else:
+        conditions: dict[str, str] = extract_condition_map(section or "")
+        tiers: dict[str, str] = {kind: "heading" for kind in conditions}
+        if not conditions:
             for member in group:
-                found_conditions = extract_conditions(member.text)
-                if found_conditions:
-                    conditions = found_conditions
-                    provenance["conditions"] = "section-first-mention"
+                found = extract_condition_map(member.text)
+                if found:
+                    conditions = dict(found)
+                    tiers = {kind: "section-first-mention" for kind in found}
                     break
+        # Per-kind top-up: a heading that names one kind must not stop the section
+        # from contributing the others (design §8.2).
+        for member in group:
+            for kind, value in extract_condition_map(member.text).items():
+                if kind not in conditions:
+                    conditions[kind] = value
+                    tiers[kind] = "section-first-mention"
         for chunk in group:
-            scopes[chunk.id] = BlockScope(task, inherited, dict(provenance), conditions)
+            scopes[chunk.id] = BlockScope(task, inherited, dict(provenance), conditions, tiers)
     return scopes

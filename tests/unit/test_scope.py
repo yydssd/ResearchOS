@@ -141,8 +141,8 @@ def test_conditions_are_inherited_from_the_section():
 
     scopes = build_section_scopes(chunks)
 
-    assert scopes[chunks[1].id].conditions == ("backbone=transformer",)
-    assert scopes[chunks[1].id].inherited_from["conditions"] == "section-first-mention"
+    assert scopes[chunks[1].id].conditions == {"backbone": "transformer"}
+    assert scopes[chunks[1].id].condition_tiers == {"backbone": "section-first-mention"}
 
 
 def test_first_condition_mention_applies_to_the_rest_of_the_section():
@@ -159,4 +159,44 @@ def test_first_condition_mention_applies_to_the_rest_of_the_section():
 
     scopes = build_section_scopes(chunks)
 
-    assert scopes[chunks[1].id].conditions == ("backbone=cnn",)
+    assert scopes[chunks[1].id].conditions == {"backbone": "cnn"}
+
+
+def test_inheritance_fills_only_the_missing_kinds():
+    """A heading that names the backbone must not erase a `training=` the section
+    established two chunks later: S4 inherits per kind (design §8.2)."""
+    from research_os.domain.models import DocumentChunk
+    from research_os.research.scope import build_section_scopes
+
+    chunks = [
+        DocumentChunk(id="c0", source_version_id="sv", section="4 Method", page_index=0,
+                      chunk_index=0, text="We train a Transformer backbone."),
+        DocumentChunk(id="c1", source_version_id="sv", section="4 Method", page_index=0,
+                      chunk_index=1, text="All models are trained from scratch."),
+    ]
+    scopes = build_section_scopes(chunks)
+
+    assert scopes["c1"].conditions == {"backbone": "transformer", "training": "from-scratch"}
+    assert scopes["c1"].condition_tiers == {
+        "backbone": "section-first-mention",
+        "training": "section-first-mention",
+    }
+
+
+def test_a_heading_condition_keeps_its_own_tier_when_a_sentence_adds_another_kind():
+    from research_os.domain.models import DocumentChunk
+    from research_os.research.scope import build_section_scopes
+
+    chunks = [
+        DocumentChunk(id="c0", source_version_id="sv", section="4.1 Transformer backbone",
+                      page_index=0, chunk_index=0, text="Results follow."),
+        DocumentChunk(id="c1", source_version_id="sv", section="4.1 Transformer backbone",
+                      page_index=0, chunk_index=1, text="We evaluate zero-shot."),
+    ]
+    scopes = build_section_scopes(chunks)
+
+    assert scopes["c1"].conditions == {"backbone": "transformer", "protocol": "zero-shot"}
+    assert scopes["c1"].condition_tiers == {
+        "backbone": "heading",
+        "protocol": "section-first-mention",
+    }
