@@ -187,16 +187,37 @@ class MethodProfile(BaseModel):
 正确做法：**语句自身带数据守卫，可重复执行**，与同文件里既有的无条件
 `DELETE FROM contradiction_assessments WHERE rowid NOT IN (...)` 是同一模式。
 
-- `UPDATE quantitative_evidence SET unit = protocol
-  WHERE unit IS NULL AND protocol IN ('dB','percent')`
-- `UPDATE quantitative_evidence SET protocol = NULL
-  WHERE unit IS NOT NULL AND protocol IN ('dB','percent')`
+判据必须是 `COALESCE(unit, '') = ''` 而不是 `unit IS NULL`：本仓库其它地方
+（`memo.py:144` 的 `fact.protocol or ""`、`claims.py:206` 的 `or 'unit'`）一律把空串
+当作「没有值」。用 `IS NULL` 时，一行 `unit=''` 会被第二条语句判为「已填」而清空
+`protocol`，单位既不复制也不保留——**静默丢数据**。词表比对同样要归一化
+（`lower(trim(...))`），历史库里的写法不受约束，手工修过的行可能有大小写与空白差异；
+漏掉它们不会丢数据，但会把单位留在 `protocol` 里，等 S1 把读取点翻到 `unit` 之后，
+这些行的 `value_bucket` 会从 `dB:0.44` 塌成 `unit:0.44`——正是回填要防的那件事。
 
-第二次执行时第一条的 `unit IS NULL` 已不成立、第二条的 `protocol IN (...)` 已不成立，
-因此天然幂等，且与「谁先跑过 `init_db()`」无关。`protocol='dB'` 只可能是旧单位——
-S1 之后写入点永不写单位进 `protocol`，S4 才写真实协议，因此该守卫不会误伤。
-- 回归测试两条：旧库回填出 `('dB', None)`；旧库回填后写入 `protocol='zero-shot'`
-  再跑一次 `init_db()`，两列都不变。**删掉任一守卫条件，第二条测试必红。**
+三条语句，每条显式对应一个词表项，不用 `CASE ... ELSE`（否则词表增长时会静默把新值
+映射成 `percent`）：
+
+- `UPDATE quantitative_evidence SET unit = 'dB'
+  WHERE COALESCE(unit, '') = '' AND lower(trim(protocol)) = 'db'`
+- `UPDATE quantitative_evidence SET unit = 'percent'
+  WHERE COALESCE(unit, '') = '' AND lower(trim(protocol)) = 'percent'`
+- `UPDATE quantitative_evidence SET protocol = NULL
+  WHERE COALESCE(unit, '') <> '' AND lower(trim(protocol)) IN ('db', 'percent')`
+
+第二次执行时前两条的 `COALESCE(unit,'') = ''` 已不成立、第三条的
+`protocol IN (...)` 已不成立，因此天然幂等，且与「谁先跑过 `init_db()`」无关。
+`protocol` 取值 `'dB'`/`'percent'` 只可能是旧单位——S1 之后写入点永不写单位进
+`protocol`，S4 才写真实协议，因此该守卫不会误伤。
+
+回归测试三条：旧库回填出 `('dB', None)`；旧库回填后写入 `protocol='zero-shot'`
+再跑一次 `init_db()`，两列都不变；**词表变体表驱动** —— `'DB'`、`'dB '` 归一化为
+`'dB'`，`unit=''` 不丢单位，`unit` 已填时取胜且 `protocol` 被清，
+`protocol='zero-shot'` 不被触碰。
+
+**顺序依赖必须记录**：回填要读 `unit`，所以它必须排在加列循环之后；而
+`_ADDED_COLUMNS` 里那条 `unit` **不能因为模型已有该列就删掉**——`create_all` 只建
+缺失的表，不会给既有表补列。
 
 ### 5.4 `value_bucket` 的影响要说准
 

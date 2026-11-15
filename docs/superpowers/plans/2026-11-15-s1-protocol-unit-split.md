@@ -165,6 +165,218 @@ with no writer or reader change, keeps the behaviour identical until the flip."
 - Modify: `src/research_os/storage/database.py:56-103`
 - Test: `tests/unit/test_database.py`（追加）
 
+- [ ] **Step 1: 写会失败的三个测试**
+
+`tests/unit/test_database.py` 顶部已有 `from sqlalchemy import inspect, text` 与
+`from research_os.storage.database import session_scope`，需要补：
+
+```python
+from pathlib import Path
+
+import pytest
+from sqlalchemy import create_engine
+
+from research_os.storage import tables  # noqa: F401  (registers models on Base)
+from research_os.storage.database import Base, init_db
+```
+
+追加：
+
+```python
+@pytest.fixture()
+def file_database():
+    """`init_db(url=...)` replaces the global engine and session factory for the
+    rest of the process. Without restoring them, a later test that does not take
+    the `db` fixture would silently talk to this test's deleted temp file."""
+    yield
+    init_db(url="sqlite:///:memory:")
+
+
+def _old_database_without_unit(url: str) -> None:
+    """A pre-S1 database: today's schema minus the unit column.
+
+    Derived from the model instead of hand-written DDL, so "old database" stays
+    equal to "current schema minus unit" forever. A hand-written table drifts the
+    moment the model gains a column, and the test would keep passing against a
+    table that no real database ever had.
+    """
+    engine = create_engine(url)
+    Base.metadata.create_all(bind=engine)
+    with engine.begin() as conn:
+        conn.exec_driver_sql("ALTER TABLE quantitative_evidence DROP COLUMN unit")
+        conn.exec_driver_sql(
+            "INSERT INTO quantitative_evidence (id, evidence_id, seq, protocol, delta) "
+            "VALUES ('e#0','e',0,'dB',0.44)"
+        )
+        conn.exec_driver_sql(
+            "INSERT INTO quantitative_evidence (id, evidence_id, seq, protocol, delta) "
+            "VALUES ('e#1','e',1,'percent',0.5)"
+        )
+    engine.dispose()
+
+
+def test_unit_backfill_moves_the_old_unit_and_clears_protocol(tmp_path: Path, file_database):
+    """`protocol` used to hold the unit. The backfill must move it, not copy it:
+    leaving "dB" in protocol would make the field lie about being a protocol."""
+    url = f"sqlite:///{tmp_path / 'old.db'}"
+    _old_database_without_unit(url)
+
+    init_db(url=url)
+
+    with session_scope() as session:
+        rows = session.execute(
+            text("SELECT id, unit, protocol FROM quantitative_evidence ORDER BY id")
+        ).all()
+    assert rows == [("e#0", "dB", None), ("e#1", "percent", None)]
+
+
+def test_second_init_db_does_not_destroy_the_backfilled_unit(tmp_path: Path, file_database):
+    """The backfill runs on every init_db(), so it must be idempotent by data:
+    an unguarded `unit = protocol` would set unit to NULL on the second pass,
+    because the first pass already cleared protocol. This test is the reason the
+    statements carry WHERE clauses instead of running unconditionally."""
+    url = f"sqlite:///{tmp_path / 'twice.db'}"
+    _old_database_without_unit(url)
+
+    init_db(url=url)
+    with session_scope() as session:
+        session.execute(
+            text("UPDATE quantitative_evidence SET protocol = 'zero-shot' WHERE id = 'e#0'")
+        )
+
+    init_db(url=url)  # second start-up, as every CLI run and every test fixture does
+
+    with session_scope() as session:
+        row = session.execute(
+            text("SELECT unit, protocol FROM quantitative_evidence WHERE id = 'e#0'")
+        ).one()
+    assert row == ("dB", "zero-shot")
+
+
+def test_backfill_normalises_vocabulary_and_never_drops_a_unit(tmp_path: Path, file_database):
+    """Legacy rows are not constrained by the extractor: a hand-edited database may
+    say 'DB', 'dB ', or carry an empty-string unit. The guards normalise the first
+    two and treat the third as "no value" - with `unit IS NULL` the empty string
+    would count as filled, the protocol would be cleared, and the unit would be
+    gone with no copy left anywhere. A real protocol ('zero-shot') must survive."""
+    url = f"sqlite:///{tmp_path / 'variants.db'}"
+    _old_database_without_unit(url)
+    engine = create_engine(url)
+    with engine.begin() as conn:
+        conn.exec_driver_sql(
+            "ALTER TABLE quantitative_evidence ADD COLUMN unit VARCHAR(32)"
+        )
+        conn.exec_driver_sql(
+            "INSERT INTO quantitative_evidence (id, evidence_id, seq, protocol, unit) VALUES "
+            "('v#0','e',0,'DB',NULL),"
+            "('v#1','e',1,'dB ',NULL),"
+            "('v#2','e',2,'dB',''),"
+            "('v#3','e',3,'percent','dB'),"
+            "('v#4','e',4,'zero-shot',NULL)"
+        )
+    engine.dispose()
+
+    init_db(url=url)
+
+    with session_scope() as session:
+        rows = session.execute(
+            text("SELECT id, unit, protocol FROM quantitative_evidence "
+                 "WHERE id LIKE 'v#%' ORDER BY id")
+        ).all()
+    assert rows == [
+        ("v#0", "dB", None),      # 'DB' normalised
+        ("v#1", "dB", None),      # trailing space normalised
+        ("v#2", "dB", None),      # empty-string unit counts as "no value"
+        ("v#3", "dB", None),      # an existing unit wins, the old copy is cleared
+        ("v#4", None, "zero-shot"),  # a real protocol is not a unit and is untouched
+    ]
+```
+
+- [ ] **Step 2: 运行测试，确认失败**
+
+```bash
+"D:/Anaconda/envs/reOS/python.exe" -m pytest tests/unit/test_repositories.py::test_quantitative_evidence_keeps_unit_apart_from_protocol -v
+```
+
+预期：`FAILED`，`TypeError: QuantitativeEvidence.__init__() got an unexpected keyword argument 'unit'`（Pydantic 会报 `unexpected keyword argument 'unit'`）。
+
+- [ ] **Step 3: 加字段与列**
+
+`src/research_os/domain/models.py`，在 `protocol: str | None = None` **之后**加：
+
+```python
+    # The unit attached to this value ("dB"/"percent"). It lives apart from
+    # `protocol` because plan §15 gives that slot to the evaluation protocol
+    # ("zero-shot"), and a field named protocol holding "dB" made every delta
+    # bucket read `dB:0.44` while pretending to be a protocol.
+    unit: str | None = None
+```
+
+`src/research_os/storage/tables.py`，在 `protocol` 列之后加：
+
+```python
+    unit: Mapped[str | None] = mapped_column(String(32), nullable=True)
+```
+
+`src/research_os/storage/database.py` 的 `_ADDED_COLUMNS` 改为：
+
+```python
+_ADDED_COLUMNS: dict[str, dict[str, str]] = {
+    "source_versions": {"source_tier": "VARCHAR(32)"},
+    "quantitative_evidence": {"delta": "FLOAT", "unit": "VARCHAR(32)"},
+    "claims": {"identity_key": "VARCHAR(256)"},
+}
+```
+
+`src/research_os/storage/repositories.py` 的 `create_many` 里，在 `protocol=fact.protocol,` 之后加一行：
+
+```python
+                    unit=fact.unit,
+```
+
+`_to_domain` 里，在 `protocol=row.protocol,` 之后加一行：
+
+```python
+            unit=row.unit,
+```
+
+- [ ] **Step 4: 运行测试，确认通过**
+
+```bash
+"D:/Anaconda/envs/reOS/python.exe" -m pytest tests/unit/test_repositories.py -v
+```
+
+预期：全绿，含新用例。
+
+- [ ] **Step 5: 跑全量，确认没有回归**
+
+```bash
+"D:/Anaconda/envs/reOS/python.exe" -m pytest -q --basetemp=.pytest_tmp_s1_t1
+```
+
+预期：`326 passed, 2 skipped` → 现在应为 `327 passed, 2 skipped`（多 1 条新用例）。若有既有用例变红，**停下**：本步骤不允许任何行为变化。
+
+- [ ] **Step 6: 提交**
+
+```bash
+git add src/research_os/domain/models.py src/research_os/storage/tables.py \
+        src/research_os/storage/database.py src/research_os/storage/repositories.py \
+        tests/unit/test_repositories.py
+git commit -m "feat(quant): add a unit field beside protocol
+
+Plan §15 gives QuantitativeEvidence.protocol to the evaluation protocol, but
+the implementation stored the unit (dB/percent) there. Adding the field first,
+with no writer or reader change, keeps the behaviour identical until the flip."
+```
+
+---
+
+### Task 2: 按数据幂等的回填
+
+**Files:**
+- Modify: `src/research_os/storage/database.py:56-103`
+- Test: `tests/unit/test_database.py`（追加）
+
 - [ ] **Step 1: 写会失败的两个测试**
 
 在 `tests/unit/test_database.py` 中追加。文件顶部已有 `from sqlalchemy import inspect, text`，需要补 import：
@@ -242,7 +454,7 @@ def test_second_init_db_does_not_destroy_the_backfilled_unit(tmp_path: Path):
 "D:/Anaconda/envs/reOS/python.exe" -m pytest tests/unit/test_database.py -v -k "unit or backfill"
 ```
 
-预期：两条都 `FAILED`。第一条拿到 `("e#0", None, "dB")`——列被加上但没回填；第二条同样拿不到 `("dB", "zero-shot")`。
+预期：三条都 `FAILED`。第一条拿到 `("e#0", None, "dB")`——列被加上但没回填；第二条同样拿不到 `("dB", "zero-shot")`；第三条的变体行（`DB` 大写 / `dB ` 带尾空格 / unit 为空串）全部停在原值。
 
 - [ ] **Step 3: 加按数据幂等的回填**
 
@@ -257,16 +469,29 @@ def test_second_init_db_does_not_destroy_the_backfilled_unit(tmp_path: Path):
 ```python
 # Statements that are safe to run on every start-up because each carries its own
 # data guard. `protocol` used to hold the unit ("dB"/"percent") because plan §15's
-# protocol slot had no other home. Guarding on the data - not on "the column was
-# just created" - keeps the backfill honest even if some earlier init_db() already
-# added the column: a second run finds `unit` populated and `protocol` cleared, so
-# both statements match nothing. Leaving `protocol` as the unit instead would have
-# the field lie about being a protocol.
+# protocol slot had no other home. Two decisions are load-bearing:
+#
+# - The guard is `COALESCE(unit,'') = ''`, not `unit IS NULL`. Everywhere else in
+#   this codebase an empty string means "no value" (memo.py:144, claims.py:206);
+#   with `IS NULL` a row whose unit is '' would be judged "already filled", its
+#   protocol would be cleared, and the unit would vanish without being copied.
+# - The comparison is `lower(trim(...))`. Legacy rows are not constrained by the
+#   extractor - a hand-edited row may say 'DB' or 'dB '. Missing those leaves the
+#   unit in protocol, which then collapses dB:0.44 to unit:0.44 once the reader
+#   flips. One statement per vocabulary item rather than CASE..ELSE, so a future
+#   unit cannot be silently mapped onto 'percent'.
+#
+# Ordering: this must run after the ALTER loop, because it reads `unit` and an old
+# database only gets that column there. Do not drop the "quantitative_evidence"
+# entry from _ADDED_COLUMNS just because the model has the column - create_all
+# never ALTERs an existing table.
 _IDEMPOTENT_BACKFILLS: tuple[str, ...] = (
-    "UPDATE quantitative_evidence SET unit = protocol "
-    "WHERE unit IS NULL AND protocol IN ('dB', 'percent')",
+    "UPDATE quantitative_evidence SET unit = 'dB' "
+    "WHERE COALESCE(unit, '') = '' AND lower(trim(protocol)) = 'db'",
+    "UPDATE quantitative_evidence SET unit = 'percent' "
+    "WHERE COALESCE(unit, '') = '' AND lower(trim(protocol)) = 'percent'",
     "UPDATE quantitative_evidence SET protocol = NULL "
-    "WHERE unit IS NOT NULL AND protocol IN ('dB', 'percent')",
+    "WHERE COALESCE(unit, '') <> '' AND lower(trim(protocol)) IN ('db', 'percent')",
 )
 ```
 
@@ -299,7 +524,7 @@ _IDEMPOTENT_BACKFILLS: tuple[str, ...] = (
 "D:/Anaconda/envs/reOS/python.exe" -m pytest -q --basetemp=.pytest_tmp_s1_t2
 ```
 
-预期：`329 passed, 2 skipped`（326 + Task 1 的 1 条 + 本任务 2 条）。
+预期：`330 passed, 2 skipped`（326 + Task 1 的 1 条 + 本任务 3 条）。
 
 - [ ] **Step 6: 提交**
 
@@ -308,9 +533,12 @@ git add src/research_os/storage/database.py tests/unit/test_database.py
 git commit -m "feat(db): move the old unit out of protocol, idempotently
 
 An unguarded `unit = protocol` would null the column on the second init_db(),
-because the first pass already cleared protocol. Both statements therefore carry
+because the first pass already cleared protocol. The statements therefore carry
 data guards, which also keeps the backfill working for databases where an earlier
-start-up already added the column. The second test pins that.""
+start-up already added the column. Two more decisions are pinned by tests: the
+guard treats an empty-string unit as "no value" (as the rest of the codebase
+does), and it normalises case and whitespace so a hand-edited legacy row still
+migrates instead of leaving its unit behind in protocol.""
 ```
 
 ---
@@ -435,7 +663,7 @@ def _unit_near(text: str, value_end: int) -> str | None:
 "D:/Anaconda/envs/reOS/python.exe" -m pytest -q --basetemp=.pytest_tmp_s1_t3
 ```
 
-预期：`330 passed, 2 skipped`。
+预期：`331 passed, 2 skipped`。
 
 - [ ] **Step 7: 提交**
 
@@ -512,7 +740,7 @@ def test_inspect_claim_reports_unit_not_protocol(db, tmp_path):
 "D:/Anaconda/envs/reOS/python.exe" -m pytest -q --basetemp=.pytest_tmp_s1_t4
 ```
 
-预期：`331 passed, 2 skipped`。
+预期：`332 passed, 2 skipped`。
 
 - [ ] **Step 6: 提交**
 
@@ -563,13 +791,13 @@ grep -n "protocol\|定量\|QuantitativeEvidence" README.md
 "D:/Anaconda/envs/reOS/python.exe" -m pytest -q --basetemp=.pytest_tmp_s1_t5
 ```
 
-预期：`331 passed, 2 skipped`。同时核对收集数：
+预期：`332 passed, 2 skipped`。同时核对收集数：
 
 ```bash
 "D:/Anaconda/envs/reOS/python.exe" -m pytest --collect-only -q --basetemp=.pytest_tmp_s1_collect | tail -3
 ```
 
-预期：`333 tests collected`（328 + 5 条新用例）。**若收集数少于 333，说明有用例被静默删除或覆盖，停下查。**
+预期：`334 tests collected`（328 + 6 条新用例）。**若收集数少于 334，说明有用例被静默删除或覆盖，停下查。**
 
 - [ ] **Step 5: 提交**
 
