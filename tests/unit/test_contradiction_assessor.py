@@ -21,7 +21,7 @@ def _claim(direction: str = "UP", bucket: str = "psnr=39.18", dataset: str = "si
     # would be measuring INSUFFICIENT_EVIDENCE instead.
     return Claim(
         text="x", status=ClaimStatus.SUPPORTED, identity_key=key,
-        conditions=["conditions_from=sentence"],
+        conditions=["condition_tier=backbone:sentence"],
     )
 
 
@@ -113,7 +113,7 @@ def test_pairs_missing_only_a_metric_are_counted_as_such():
             text="x",
             status=ClaimStatus.SUPPORTED,
             identity_key=key,
-            conditions=["conditions_from=sentence"],
+            conditions=["condition_tier=backbone:sentence"],
         )
 
     assessments, stats = HeuristicContradictionAssessor().assess([claim(""), claim("psnr")])
@@ -138,7 +138,7 @@ def test_truncation_is_counted_and_shrinks_the_coverage_denominator(monkeypatch)
             text="x",
             status=ClaimStatus.SUPPORTED,
             identity_key=key,
-            conditions=["conditions_from=sentence"],
+            conditions=["condition_tier=backbone:sentence"],
         )
 
     claims = [claim("UP", "psnr=1"), claim("LEVEL", "psnr=1"), claim("DOWN", "psnr=1")]

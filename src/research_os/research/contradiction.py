@@ -120,18 +120,24 @@ def _conditions(claim: Claim) -> tuple[str, ...]:
     return tuple(filter(None, parts[5].split(";"))) if len(parts) >= 7 else ()
 
 
-def _conditions_from(claim: Claim) -> str | None:
-    """Where the conditions came from, read off the quality flags (D13).
+def _condition_tiers(claim: Claim) -> dict[str, str]:
+    """kind -> tier, read from the per-kind flags (ADR-036).
 
-    `sentence` and `heading` state the setup; `section-first-mention` only says
-    someone earlier in the section did. Only the first two can prove two claims
-    share a setup, so the cascade needs this distinction before it may call a
-    pair a true contradiction.
+    A row written before S4 carries `conditions_from=<tier>` and no per-kind
+    flags; it reads as "no confirmed kinds", which is the safe direction - an old
+    measurement row must not license a TRUE_CONTRADICTION it never supported.
     """
+    tiers: dict[str, str] = {}
     for item in claim.conditions:
-        if item.startswith("conditions_from="):
-            return item.split("=", 1)[1]
-    return None
+        if item.startswith("condition_tier="):
+            kind, _, tier = item.split("=", 1)[1].partition(":")
+            if kind and tier:
+                tiers[kind] = tier
+    return tiers
+
+
+def _kinds(claim: Claim) -> set[str]:
+    return {item.split("=", 1)[0] for item in _conditions(claim)}
 
 
 def _buckets(claim: Claim) -> tuple[str, ...]:
@@ -211,28 +217,22 @@ def assess_pair(a: Claim, b: Claim) -> ContradictionAssessment | None:
         )
 
     if (direction_a, direction_b) in OPPOSITE:
-        # D13 is a whitelist, not a blacklist. Only `sentence` and `heading` were
-        # ever defined as evidence that a claim used the setup it names. A missing
-        # tag, a legacy row, or an unknown tier is silence, not confirmation -
-        # treating any of them as "confirmed" would put a TRUE_CONTRADICTION on a
-        # shared setup nobody established. Inherited conditions may still
-        # *disprove* equality (row 3 does not read provenance); they may not
-        # *prove* it.
+        shared = _kinds(a) & _kinds(b)
+        tiers_a, tiers_b = _condition_tiers(a), _condition_tiers(b)
         unconfirmed = [
-            (side, _conditions_from(claim))
-            for side, claim in (("A", a), ("B", b))
-            if _conditions_from(claim) not in _CONFIRMED_TIERS
+            kind
+            for kind in sorted(shared)
+            if tiers_a.get(kind) not in _CONFIRMED_TIERS or tiers_b.get(kind) not in _CONFIRMED_TIERS
         ]
-        if unconfirmed:
-            inherited = any(tier == "section-first-mention" for _, tier in unconfirmed)
+        if not shared or unconfirmed:
             reason = (
-                "conditions inherited from the section's first mention; setup not confirmed"
-                if inherited
-                else "conditions provenance missing or unknown; setup not confirmed"
+                "no condition kind is shared, so the setup cannot be the same one"
+                if not shared
+                else f"kind(s) {', '.join(unconfirmed)} not confirmed on both sides"
             )
             return _assessment(
                 a, b, ContradictionType.INSUFFICIENT_EVIDENCE,
-                f"opposite direction, but side {'/'.join(side for side, _ in unconfirmed)}: {reason}",
+                f"opposite direction, but {reason}",
                 ConfidenceLabel.LOW,
             )
         return _assessment(
