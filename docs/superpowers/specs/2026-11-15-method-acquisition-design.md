@@ -557,20 +557,21 @@ covered + explained_uncovered == present 且 unexplained_uncovered == 0
 
 | # | 计划/设计 | 实际 | 性质与理由 |
 |---|---|---|---|
+| D1 | 本文只改 §5 列出的六处 | S1 追加改了 `scripts/method_acquisition_audit.py` 的 `system_side` docstring | 该 docstring 的理由行写的是「`protocol` 存的是单位」——S1 之后这句话成了事实错误，结论（不把 `protocol` 观测为覆盖）仍然成立但依据换了人。脚本本身不在 S1 范围内，是 HD-006 要求同批修掉的注释漂移，不改任何行为；重跑审计数字与 `docs/evaluation/2026-11-14-method-acquisition-audit.md` 逐格一致 |
 
 ## 14. 审验意见处置
 
 | 编号 | 级别 | 处置 |
 |---|---|---|
 | B1 LLM 通路不存在 | Blocker | §7 重写：同步协议 + async 适配器 + provider 配置 + 预算计数点 + 事件归 `FailureType` |
-| B2 `unit` 回填损坏数据 | Blocker | §5.3 改为「列刚添加时一次性执行」+ 白名单 WHERE + 幂等测试 |
+| B2 `unit` 回填损坏数据 | Blocker | §5.3 改为**数据守卫式幂等语句**（`COALESCE(unit,'') = ''` + `lower(trim(...))`），不依赖建列事件、不依赖 `init_db()` 调用次序 |
 | B3 新条件触发整体覆盖与 tier 升级 | Blocker | §8.2 改为按 kind 的 provenance，附继承保留对照测试 |
 | B4 验收不可证伪 + 脚本硬编码 L3 | Blocker | §10 换守恒式 + 零容忍 + 行级；§6.7 明确要求扩展脚本与其测试 |
 | M1 归因只看 svid | Major | §4.2 改为 `(subject, svid)`，四情形表 + 单篇第三方/多版本用例 |
 | M2 `name_quote` 不可定位 | Major | §4.1/§4.1 增 `name_chunk_id`，缺一即 `name = None` |
 | M3 `X` 边界未定义 | Major | §6.1 写死 `X` 的正则与谓词排除 |
 | M4 `method` 仍受 `_PROPOSED_RE` 限制 | Major | §10.3 改填充条件 + 行级覆盖率 + 不宣称精度 |
-| M5 `unit` 缺字段、写路径未迁 | Major | §5.2 四步 + §5.4 delta bucket 逐字不变断言 |
+| M5 `unit` 缺字段、写路径未迁 | Major | §5.2 六个消费点逐个迁移 + §5.4 delta bucket 逐字不变断言 |
 | M6 L3 缺第四道防线 | Major | §7.4 增 quote ≥4 词且唯一 + statement/quote 词重叠 |
 | M7 §8 权威层级无落点 | Major | §11 明确不做 + §12.3 登记 |
 | M8 一篇多方法 | Major | §4.1 记 `METHOD_MULTI_NAME` + §12.5 登记 |

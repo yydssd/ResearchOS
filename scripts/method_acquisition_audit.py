@@ -67,8 +67,11 @@ def _named_subject(claim) -> bool:
 def system_side(arxiv_id: str, cache: Path = CACHE) -> dict:
     """Observe (never modify) the current pipeline's output for one paper.
 
-    `QuantitativeEvidence.protocol` deliberately does NOT appear: it stores a
-    unit ("dB"/"percent"), not an evaluation protocol.
+    `QuantitativeEvidence.protocol` deliberately does NOT appear, and after the
+    S1 split the earlier reason for that no longer holds: the unit now lives in
+    `unit`, and `protocol` is empty everywhere because nothing extracts an
+    evaluation protocol yet. It stays out of the observation for the new reason
+    -- an empty field would only be re-observed as empty -- until S4 fills it.
     """
     chunks = chunk_pages(load_html(cache / f"{arxiv_id}.html"), f"sv_{arxiv_id}")
     evidence = HeuristicEvidenceExtractor().extract(chunks)
