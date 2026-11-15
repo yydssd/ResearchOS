@@ -173,3 +173,6 @@ CLI（主接口）：`research-os run/status/claims/report/inspect-claim` · **`
 | 2026-11-13 | P5 存储决策落地：`(claim_a_id, claim_b_id)` 唯一索引（不靠 `con_<a[:10]>_<b[:10]>` 主键，截断会撞）、`list_by_run` run 作用域、`replace_for_run` 先删后写使重跑收敛、跨 run 对拒收 |
 | 2026-11-13 | P5 独立代码审查（3 个只读子代理 + 实跑验证）：修 HD-014 门控改白名单、`list_by_run`/`replace_for_run` 双侧 run 约束、COMPLEMENTARY 证据位置、旧库去重迁移、夹具引文回归锁、留出集 P5 harness 入库；测试 239→249。剩余方向词表盲区、FAILURE 事件等 5 项列入审查记录 |
 | 2026-11-14 | P5 补齐（subagent-driven，10 任务）：失败事件四类（`CROSS_RUN_PAIR` / `CONTRADICTION_UNRESOLVED` ×2 / `CITATION_LOCATION_MISSING`）、三组混淆矩阵并拒绝未知 source、幂等内容断言、主张对主键改摘要、评估路径脱离 CWD、四处空断言改值断言、补三个覆盖缺口；测试 249→319。新增 ADR-031/032 |
+| 2026-11-15 | 方法获取能力度量（subagent-driven，6 任务）：新增只读审计脚本、标注夹具（160 格，owner-derived 且先冻结）、回归测试 7 条与评估报告；测试 319→326。标注经三轮独立审验修订（160/160 → 146/1/13 → 158/0/2 → 159/0/1）。HD-016。§2.5 未逐项登记 deviation ADR 列为待办 |
+
+`ADR-031` 只覆盖 §2.5 的 `contradiction judgment` 一项，其余语义判断场景的确定性实现未逐项登记 deviation ADR，单独立项处理。

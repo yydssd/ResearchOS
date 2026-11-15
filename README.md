@@ -12,7 +12,7 @@
 - Week 2 ✅ P3 Evidence Quality（PDF/Markdown/README/HTML → 分块落库 → 精确偏移证据 → 定量证据）
 - Week 3 ✅ P4 Claim Synthesis（块级 scope 继承 → identity 键 → 按身份合并 → 支撑性标记）
 - Week 3 ✅ P5 Contradiction（四值方向 → 四类条件与章节继承 → 候选配对 → 级联判定 → run 作用域落库）
-- 测试：`pytest` 319 passed（另有 2 个 opt-in 真实网络测试）
+- 测试：`pytest` 326 passed（另有 2 个 opt-in 真实网络测试）
 - 代码审查：`docs/evaluation/2026-11-13-p5-review.md`（6 项已修，5 类未偿项列为待办）
 - 权威计划：`ResearchOS-Implementation-Plan.md`（v1.1）
 - 架构快照：`architect.md` · 人类决策：`human_decision.md` · 设计与计划：`docs/superpowers/`
@@ -67,6 +67,14 @@ $env:RESEARCHOS_NETWORK_TESTS=1; python -m pytest tests/integration/test_live_pr
 
 离线测试用 `httpx.MockTransport` 回放 `tests/fixtures/sources/` 下录制的 arXiv / Crossref / OpenAlex
 真实报文，所以 provider 解析逻辑的回归不依赖网络。
+
+方法获取能力度量（只读）：
+
+```powershell
+python scripts/method_acquisition_audit.py --labels tests/fixtures/method_acquisition/labels.json
+```
+
+只读度量 40 篇留出集论文的四层方法信息可获取性与系统覆盖率；标注为 owner-derived、非独立非盲标，不产出质量结论。
 
 ## 目录
 
