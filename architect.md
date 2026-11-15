@@ -115,6 +115,7 @@ Supervisor 独占预算（`search_calls` / `sources_discovered`）与事件；pr
 | ADR-033 | `QuantitativeEvidence` 的**单位**从 `protocol` 拆出为 `unit`（见维护记录 2026-11-15）。计划 §15 给 `protocol` 的语义是**评测协议**，而实现把 `dB`/`percent` 存在该字段里：`value_bucket` 因此产出 `dB:0.44` 这类「伪协议」标签，`inspect_claim` 也把单位当协议报给调用方。拆分**不改变**任何渲染输出与 `value_bucket` 标签（ADR-021 的合并键稳定），`protocol` 在 S4 之前保持为空——空字段比如实标注的错字段更容易被发现 | ACTIVE |
 | ADR-034 | 方法获取的 L1/L2/L4 走**确定性**模式（设计 §6），L3 描述留给 LLM（S3）。理由：名字/组件/设置是模式匹配，同一篇文档必须得出同一结果，否则 `MethodProfile` 无法作为 `QuantitativeEvidence.method` 的归因依据；而「这段在讲方法机理」是语义判断，正则必然做不好。为了让「没抽到」可观测，`MethodProfile.missing_layers` **落库**：空字段与未抽取在数据里必须不同形。审计脚本同步改为读 `MethodProfile`——否则新字段坏掉也能验收通过 | ACTIVE |
 | ADR-035 | L3 走 LLM，但**只产要点、不产名字/设置**；模型输出先落 `MethodPointDraft`（宽松）、再过 `validate_description` 四道防线成 `MethodPoint`（严格）。理由：一是名字/设置已由确定性路径负责（ADR-034），让模型写名字等于把未经验证的字符串放进归因字段；二是把「宽松解析」与「严格校验」分开，才可能用 fake 输出把四条失败路径各测一遍。预算改为「先查后加」——`llm_calls` 此前全仓库无写入点，上限是装饰 | ACTIVE |
+| ADR-036 | `conditions` 的内部表示改为 `dict[kind] -> value` + `dict[kind] -> tier`，`identity_key` 仍是 7 段、第 6 段仍排序拼接；矛盾判定只对**两侧共有**的 kind 要求 tier 确认。理由：S4 新增的 `scale=` / `protocol=` 是高频模式，整条覆盖会让一句 `5-shot` 抹掉继承来的 `training=`（覆盖率直接下降），并把 tier 升到 `sentence`，从而允许一个没有依据的 `TRUE_CONTRADICTION`。代价：旧库里的 `conditions_from=<tier>` 不再被读（按未确认处理），登记为已知限制 | ACTIVE |
 
 ## 阶段状态
 
@@ -155,6 +156,9 @@ CLI（主接口）：`research-os run/status/claims/report/inspect-claim` · **`
 16. L1 只认命名句式：名字只写在图注/标题里的论文（留出集 `2310.18293`，真名 `UtilityIR` 只出现在 "Overview of proposed UtilityIR"）抽不到，`missing_layers` 记为 `["L1"]`。`QuantitativeEvidence.method` 的第三方名可能是片段（`Liquid-Mamba`、`CEA-IR-S`），按设计 §10.3 只报行级覆盖率，**不宣称精度**。行级实跑：170 行里 100 行有 `method`，其中 36 行等于解析名字。
 17. **L3 的覆盖在本仓库里仍是未测量状态**：S3 落地了协议、四道防线、预算与录制回放，但**没有 provider 客户端**，`tests/fixtures/method_descriptions/` 是空的。审计报 `LLM 未启用`，不报一个没测过的数字。要动这一格，必须先实现 provider 并用 `scripts/record_method_descriptions.py` 录 40 篇。
 18. 四道防线是**形式判据**：`quote` 能定位、`statement` 与它有词重叠，不等于 `statement` 说得对。这一层不宣称描述正确率，只保证「每条要点都能指回原文的一句」。另：录制键是「去掉 chunk id 的 prompt 摘要」，两篇方法段文本完全相同时会撞键——同文本同答案，按设计不算错，但记在这里。
+19. 存量数据库里的 `conditions_from=<tier>` 标记**不迁移**：S4 起读 `condition_tier=<kind>:<tier>`，旧行按「没有已确认 kind」处理。这是安全方向（不会凭空产生矛盾），但意味着**旧 run 的评估结果不能与新 run 直接比矛盾数**。
+20. provenance 按 kind 之后，`identity_key` 第 6 段仍可能出现「同一句在不同 section 下 key 不同」的情况——继承是按 kind 补齐的，但 section 不同则继承值不同。这不是缺陷，是 ADR-027 的「继承即 section 上下文」原样延续。
+21. S4 报告里 `identity_key` 唯一数 / 合并组数**没有 before**：既有报告没有这两个指标，本轮未新增采集脚本，因此只以「主张数 / 合并门槛 / 候选对」三格并列代替，不虚构 before。
 
 ## 维护约定（代码注释规则）
 
@@ -187,6 +191,7 @@ CLI（主接口）：`research-os run/status/claims/report/inspect-claim` · **`
 | 2026-11-15 | S1 `protocol`→`unit` 语义拆分（5 任务）：`unit` 字段与列、数据守卫式幂等回填、写入/读取/渲染三侧同步翻转、`inspect-claim` 输出键改名、ADR-033；测试 326→333（收集 328→335），`value_bucket` 与 memo 渲染逐字未变。审计脚本只改了一处 docstring（依据换成「`protocol` 处处为空」），四层数字逐格与 2026-11-14 报告一致 |
 | 2026-11-15 | S2 方法获取（确定性 L1/L2/L4，10 任务）：`research/patterns.py` + `research/methods.py`（名字/组件/设置 + `missing_layers`）、`MethodProfile`/`MethodSetup`/`MethodPoint` 三模型、`method_profiles`/`method_points` 两表与仓储、竖切第 3 步、行级 `method` 填充、memo `# Methods` 段 + 两个归因计数、审计脚本改读 `MethodProfile`；测试 333→374（收集 335→376）。实测 160 格：L1 0→16/20（两域）、L2 19→20 与 10→20、L4 11→19（19 格）与 14→20，L3 仍 0（S3 未做）；`gaps` 105→48。新增 ADR-034 |
 | 2026-11-15 | S3 L3 接线（8 任务）：`MethodDescriber` 同步协议 + `AsyncProviderDescriber`（事件循环探测）、`MethodPointDraft`/`MethodDescriptionResponse`/`DescriptionAttempt`、四道防线 `validate_description`、预算「先查后加」与 4 个 `METHOD_*` 失败类型、录制回放 provider（键 = 去 id 的 prompt 摘要）+ 拒绝伪造的录制脚本、`llm_provider`/`llm_model`/`llm_api_key`/`llm_fixture_dir`、审计 `--describer` 与 L3 原因；测试 374→408（收集 376→410）。**L3 覆盖仍为 0/20 且报「LLM 未启用」**（无 provider，见已知限制 17）。新增 ADR-035 |
+| 2026-11-15 | S4 方法获取收官（7 任务）：`conditions` 六类（`scale=`/`protocol=`）、按 kind 的 provenance 与继承、`condition_tier=` 落库、矛盾门按共有 kind 确认、两个离线脚本跟随、三份 before/after 报告；测试 408→418（收集 410→420）。实测：主张 1173→1173、门槛 73→73、`TRUE_CONTRADICTION` 0→0、方法四层与 `gaps` 48 逐格不变；455 条 claim 第 6 段带新 kind 但主张数不变。新增 ADR-036 |
 
 `ADR-031` 只覆盖 §2.5 的 `contradiction judgment` 一项，其余语义判断场景的确定性实现未逐项登记 deviation ADR，单独立项处理。
 

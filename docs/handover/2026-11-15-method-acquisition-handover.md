@@ -15,13 +15,12 @@
 ## 0. 一句话状态
 
 `method-acquisition-audit` 已**快进合并进 `master`**（本地，未推送），分支已删。
-`master` 现在 `e248067` 之上 **58 个提交**：S1（`protocol` → `unit`）16 个、S2（确定性 L1/L2/L4）11 个、
-S3（L3 接线）10 个，其余是度量与文档。
+`master` 现在 `e248067` 之上 **68 个提交**（含本条）：S1 16 个、S2 11 个、S3 10 个、S4 8 个，其余是度量与文档。
 
-**S1 5/5、S2 6/6、S3 8/8 全部收官**（判据见各自计划的验收表）。
-**下一步是 S4 的计划（尚未开写）**：`conditions` 新增 `scale=`/`protocol=` + 按 kind 的 provenance。
+**S1 5/5、S2 6/6、S3 8/8、S4 7/7 全部收官；方法获取四阶段到此结束**（判据见各自计划的验收表）。
+**下一步不是 S5**：剩下的都是设计 §12 的独立立项（域名词表、架构身份、来源权威层级、§19 源码检查）。
 
-本轮实测：**`408 passed, 2 skipped`**、**`410 tests collected`**、工作区干净。
+本轮实测：**`418 passed, 2 skipped`**、**`420 tests collected`**、工作区干净。
 （命令见 §6，跑法有坑见 §10。）
 
 ---
@@ -151,11 +150,11 @@ L1 产出 32 个名字，三条判据（逐字子串 / 独立构式 / 非片段�
 ## 6. 当前基线证据（本轮实测，非推算）
 
 ```
-$ cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" -q --basetemp=.pytest_tmp_s3_all
-408 passed, 2 skipped, 1 warning in 11.65s
+$ cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" -q --basetemp=.pytest_tmp_s4_final
+418 passed, 2 skipped, 1 warning in 8.66s
 
-$ ... --collect-only -q --basetemp=.pytest_tmp_s3_collect
-410 tests collected
+$ ... --collect-only -q --basetemp=.pytest_tmp_s4_collect
+420 tests collected
 ```
 
 基线演进：`326 → 327 → 330 → 331 → 332 → 333 passed`（收集 `328 → 334 → 335`）。S1 内的净增 7 条用例，
@@ -218,7 +217,7 @@ gaps 合计 105
 
 ---
 
-## 9. 下一步：S4 的计划（S1 / S2 / S3 已收官）
+## 9. 四阶段收官与后续待办
 
 ### S1 收官记录（实测，可复核）
 
@@ -261,27 +260,35 @@ T5 落地：`architect.md` 加 ADR-033 与已知限制第 13 条、维护记录�
 | 7 审计不谎报 L3 | 通过 | 两种模式实跑都是 `L3 C=0/20`、原因 `LLM 未启用 20+20` |
 | 8 既有用例一条不少 | 通过 | `408 passed / 410 collected`（376 + 34） |
 
-### S4 起手要做的事
+### S4 收官记录（实测，可复核）
 
-1. **先写计划**：`docs/superpowers/plans/2026-11-15-s4-conditions-scale-protocol.md`，依据设计 §8：
-   `conditions.py` 四类扩六类（`scale=` / `protocol=`）、**按 kind 的 provenance**（`dict[kind] -> (value, tier)`）、
-   `contradiction.py` 的确认判据改为「参与比较的每个 kind 的 tier 都在 `_CONFIRMED_TIERS` 内」、
-   级联安全、三份 before/after 报告。
-2. S4 是**唯一**改主张宇宙的阶段：必须独占一个度量周期，before/after 三份报告并列，不许只报新数字。
-3. 必带的两条对照测试（设计 §8.2/§9）：①一句只含 `protocol=` 的句子仍保留继承的 `training=` 且 tier 不变；
-   ②仅在这两维不同的两句 → `may_merge() == False`（「字段有值」不算通过）。
-4. `identity_key` 段数不变（仍 7 段），只往第 6 段加两种新条件值；新值不得含 `;` 与 `|`（需断言）。
+| 判据 | 结果 | 证据 |
+|---|---|---|
+| 1 两维真的改变合并结果 | 通过 | `test_evaluation_protocol_is_a_condition` 的 `may_merge()` 对照 |
+| 2 按 kind 的继承 | 通过 | `test_a_sentence_stating_one_kind_keeps_the_inherited_others` |
+| 3 矛盾门按 kind | 通过 | `test_one_unconfirmed_kind_blocks_a_true_contradiction` |
+| 4 `identity_key` 仍 7 段 | 通过 | 既有 `len(key.split("|")) == 7` 断言全绿 |
+| 5 `TRUE_CONTRADICTION` 未增加 | 通过 | 三份报告：真矛盾 0→0、判定分布逐格相同 |
+| 6 变化可归因 | 通过 | 主张 1173→1173、门槛 73→73、候选对 1049→1049；455 条 claim 第 6 段带新 kind 但主张数不变 |
+| 7 既有用例一条不少 | 通过 | `418 passed / 420 collected`（410 + 10） |
+
+### 后续待办（都不是 S5）
+
+- **L3 仍未测量**（已知限制 17）：无 provider 客户端、录制夹具为空。要动这一格必须先实现 provider 并录 40 篇。
+- **领域词表**（`lexicon.py` 只有图像复原）、**架构身份**（`components` 仍不进 identity）、**§8 来源权威层级**、**§19 源码检查**：各独立立项，见设计 §12。
+- 待办 #10：§21 / README 无方法抽取指标——报告已有四层度量，登记动作仍未做。
+- 存量库旧 `conditions_from=` 不迁移（已知限制 19）；`identity_key` 唯一数 / 合并组数没有 before（已知限制 21）。
 
 ### 仍未偿的小事
 
 - `memo.py` 的回退键 `fact.metric or fact.unit or "unspecified"` 语义正确，但**仍没有专门用例**，
   现有覆盖来自间接路径。S4 动 `conditions` 时会再碰 memo，那时一并定。
-- 待办 #10：§21（`ResearchOS-Implementation-Plan.md`）仍无方法抽取指标；报告已有四层度量
-  （`docs/evaluation/2026-11-15-method-acquisition-s2.md`），**登记进 §21 的动作还没做**。
+- 待办 #10：§21（`ResearchOS-Implementation-Plan.md`）仍无方法抽取指标；三份 S4 报告已有度量，
+  **登记进 §21 的动作还没做**。
 - **L3 未测量**（已知限制 17）：没有 provider 客户端，`tests/fixtures/method_descriptions/` 为空。
   这不是缺陷，是口径：审计报「LLM 未启用」，不报一个没测过的数字。
-- 设计 §13 现在有 D1–D21：D16–D21 是 S3 的（协议返回类型、draft 模型、配置命名、只做通路不做录制、
-  无 provider 零事件、传输失败与输出被拒共用类型）。
+- 设计 §13 现在有 D1–D31：D22–D31 是 S4 的（值/tier 分存、旧标记不迁移、正则不共享、
+  `--ids-file`、主张数未上升、禁分隔符断言、两个脚本性质、任务顺序、代码块修正、`may_merge` 对照）。
 
 ---
 
