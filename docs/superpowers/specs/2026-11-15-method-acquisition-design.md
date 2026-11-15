@@ -558,6 +558,7 @@ covered + explained_uncovered == present 且 unexplained_uncovered == 0
 | # | 计划/设计 | 实际 | 性质与理由 |
 |---|---|---|---|
 | D1 | 本文只改 §5 列出的六处 | S1 追加改了 `scripts/method_acquisition_audit.py` 的 `system_side` docstring | 该 docstring 的理由行写的是「`protocol` 存的是单位」——S1 之后这句话成了事实错误，结论（不把 `protocol` 观测为覆盖）仍然成立但依据换了人。脚本本身不在 S1 范围内，是 HD-006 要求同批修掉的注释漂移，不改任何行为；重跑审计数字与 `docs/evaluation/2026-11-14-method-acquisition-audit.md` 逐格一致 |
+| D2 | T5 只改 `architect.md` 与 `README.md` | T5 追加改了 `domain/models.py:154` 的注释 | HD-006：`protocol` 本身没有注释，解释写在 `unit` 上方，读者读到空的 `protocol` 无从判断是「未实现」还是「抽取失败」。补一行注释说明「ADR-033 起恒为空，空是已知状态」，不改任何行为，全量测试仍 `333 passed` |
 
 ## 14. 审验意见处置
 

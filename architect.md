@@ -112,6 +112,8 @@ Supervisor 独占预算（`search_calls` / `sources_discovered`）与事件；pr
 | ADR-031 | P5 的矛盾判定用**确定性级联**，不走 LLM，尽管计划 §2.5 把 contradiction judgment 列在「LLM 适用场景」里。理由：判定输入是已落库的七维 identity，输出是五选一的关系，取值空间可枚举；确定性实现让同一输入必然得出同一结论，也让「这条为什么被判成矛盾」能在代码里逐行指出。换 LLM 的入口留在 `ContradictionAssessor` 协议上，P8 需要时替换实现，supervisor 不用改 | ACTIVE |
 | ADR-032 | 评估工具放 `scripts/`（`holdout_claim_quality.py`、`holdout_contradiction_quality.py`、`evaluate_contradiction.py`、`compare_annotation_sheet.py`），不建计划 §6 里的 `evaluation/` 包。理由：四者都是离线一次性分析，不被 runtime 引用；建包会把它们变成公开 API，需要版本与稳定性承诺，而当前没有第二个消费者 | ACTIVE |
 
+| ADR-033 | `QuantitativeEvidence` 的**单位**从 `protocol` 拆出为 `unit`（见维护记录 2026-11-15）。计划 §15 给 `protocol` 的语义是**评测协议**，而实现把 `dB`/`percent` 存在该字段里：`value_bucket` 因此产出 `dB:0.44` 这类「伪协议」标签，`inspect_claim` 也把单位当协议报给调用方。拆分**不改变**任何渲染输出与 `value_bucket` 标签（ADR-021 的合并键稳定），`protocol` 在 S4 之前保持为空——空字段比如实标注的错字段更容易被发现 | ACTIVE |
+
 ## 阶段状态
 
 | Phase | 周 | 内容 | 验收 | 状态 |
@@ -145,6 +147,7 @@ CLI（主接口）：`research-os run/status/claims/report/inspect-claim` · **`
 10. 段落级回指只覆盖"段首点名"一种；代词与别名指代抽不到。
 11. **dataset 是主张层的瓶颈**：82% 的主张拿不到 dataset（论文用 "this dataset" / "Table 2" 指代），合并门槛满足率 7%（P5 前置修正后重测；原为 83% / 10%）。补齐需要表格解析或代词消解，不属 P4/P5。
 12. 跨源合并实测不触发：20 篇里 73 个可合并键，跨文档命中 0 组。验收靠构造夹具，不靠真实论文。
+13. `QuantitativeEvidence.protocol` 自 2026-11-15 起为空：单位已迁到 `unit`（ADR-033），评测协议要等 S4。读到空的 `protocol` 是**已知**状态，不是抽取失败。
 
 ## 维护约定（代码注释规则）
 
@@ -174,6 +177,7 @@ CLI（主接口）：`research-os run/status/claims/report/inspect-claim` · **`
 | 2026-11-13 | P5 独立代码审查（3 个只读子代理 + 实跑验证）：修 HD-014 门控改白名单、`list_by_run`/`replace_for_run` 双侧 run 约束、COMPLEMENTARY 证据位置、旧库去重迁移、夹具引文回归锁、留出集 P5 harness 入库；测试 239→249。剩余方向词表盲区、FAILURE 事件等 5 项列入审查记录 |
 | 2026-11-14 | P5 补齐（subagent-driven，10 任务）：失败事件四类（`CROSS_RUN_PAIR` / `CONTRADICTION_UNRESOLVED` ×2 / `CITATION_LOCATION_MISSING`）、三组混淆矩阵并拒绝未知 source、幂等内容断言、主张对主键改摘要、评估路径脱离 CWD、四处空断言改值断言、补三个覆盖缺口；测试 249→319。新增 ADR-031/032 |
 | 2026-11-15 | 方法获取能力度量（subagent-driven，6 任务）：新增只读审计脚本、标注夹具（160 格，owner-derived 且先冻结）、回归测试 7 条与评估报告；测试 319→326。标注经三轮独立审验修订（160/0/0 → 146/1/13 → 158/0/2 → 159/0/1）。HD-016。§2.5 未逐项登记 deviation ADR 列为待办 |
+| 2026-11-15 | S1 `protocol`→`unit` 语义拆分（5 任务）：`unit` 字段与列、数据守卫式幂等回填、写入/读取/渲染三侧同步翻转、`inspect-claim` 输出键改名、ADR-033；测试 326→333（收集 328→335），`value_bucket` 与 memo 渲染逐字未变。审计脚本只改了一处 docstring（依据换成「`protocol` 处处为空」），四层数字逐格与 2026-11-14 报告一致 |
 
 `ADR-031` 只覆盖 §2.5 的 `contradiction judgment` 一项，其余语义判断场景的确定性实现未逐项登记 deviation ADR，单独立项处理。
 

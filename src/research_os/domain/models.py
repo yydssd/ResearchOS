@@ -151,6 +151,9 @@ class QuantitativeEvidence(BaseModel):
     value: float | None = None
     comparator: str | None = None
     comparator_value: float | None = None
+    # Evaluation protocol ("zero-shot"), as plan §15 intends. Constant None from
+    # ADR-033 until S4 extracts one; an empty value here is expected, not a
+    # failed extraction, and it no longer stands in for the unit.
     protocol: str | None = None
     # The unit attached to this value ("dB"/"percent"). Plan §15 gives `protocol`
     # to the evaluation protocol ("zero-shot"), so a field named protocol holding
