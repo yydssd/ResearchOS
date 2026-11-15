@@ -411,7 +411,14 @@ class Supervisor:
         )
 
         # 4) quantitative evidence (plan §15): structured numbers, separate table
-        facts = self._quantitative.extract(evidence)
+        facts = self._quantitative.extract(
+            evidence,
+            method_names={
+                profile.source_version_id: profile.name
+                for profile in extraction.profiles
+                if profile.name
+            },
+        )
         SqlQuantitativeEvidenceRepository(self._session).create_many(facts)
         self._log(
             run.id,
