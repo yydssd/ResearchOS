@@ -1,0 +1,88 @@
+{
+  "points": [
+    {
+      "aspect": "mechanism",
+      "statement": "Tasks come from formative and summative co-play with expert players rather than synthetic prompts.",
+      "quote": "tasks are elicited from formative and summative co-play with expert players",
+      "prompt_index": 2,
+      "section": "Abstract."
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Requests are normalized into parametric templates with explicit preconditions and dependency structure.",
+      "quote": "normalized into parametric templates with explicit preconditions and dependency structure",
+      "prompt_index": 2,
+      "section": "Abstract."
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Tasks are paired with machine-checkable validators, and a bounded-knowledge policy forbids out-of-world shortcuts.",
+      "quote": "paired with machine-checkable validators under a bounded-knowledge policy that forbids out-of-world shortcuts",
+      "prompt_index": 2,
+      "section": "Abstract."
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The harness records plan, action, and memory events such as previews, clarifications, reads/writes, checks, and repairs.",
+      "quote": "The harness captures plan/act/memory events-including plan previews, targeted clarifications, memory reads and writes, precondition checks, and repair attempts",
+      "prompt_index": 2,
+      "section": "Abstract."
+    },
+    {
+      "aspect": "io",
+      "statement": "Judgments are derived from in-world evidence.",
+      "quote": "derived from in-world evidence",
+      "prompt_index": 2,
+      "section": "Abstract."
+    },
+    {
+      "aspect": "io",
+      "statement": "The harness judges only from in-world evidence and uses lightweight memory.",
+      "quote": "judges only from in-world evidence with lightweight memory",
+      "prompt_index": 1,
+      "section": "Figure 1"
+    },
+    {
+      "aspect": "goal",
+      "statement": "The goal is a clean reusable setup others can run and swap different models into.",
+      "quote": "The aim is straightforward: a clean, reusable setup that others can run, swap in different models",
+      "prompt_index": 5,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Perception and action are restricted to public in-game APIs.",
+      "quote": "perception and action are limited to public, in-game APIs",
+      "prompt_index": 5,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A bounded-knowledge policy blocks admin commands, global map introspection, and scans beyond loaded chunks.",
+      "quote": "a bounded-knowledge policy forbids admin commands, global map introspection, and scans beyond loaded chunks",
+      "prompt_index": 5,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The agent gives a brief plan preview that splits the request into a few subtasks.",
+      "quote": "The agent presents a brief plan preview that breaks the request into a handful of subtasks",
+      "prompt_index": 6,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "It asks a targeted clarifying question only when a slot is unbound.",
+      "quote": "asks a targeted clarifying question only when a slot is unbound",
+      "prompt_index": 6,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "io",
+      "statement": "Judging relies solely on in-world evidence such as inventory and equipment deltas.",
+      "quote": "judged solely on in-world evidence drawn from inventory and equipment deltas",
+      "prompt_index": 6,
+      "section": "1. Introduction"
+    }
+  ]
+}

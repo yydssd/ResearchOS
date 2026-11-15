@@ -1,0 +1,46 @@
+{
+  "points": [
+    {
+      "aspect": "mechanism",
+      "statement": "The adaptive module injects input-conditioned multi-timescale liquid discretization into selective state-space modeling.",
+      "quote": "an adaptive state space module that introduces input-conditioned multi-timescale liquid discretization into selective state space modeling",
+      "prompt_index": 2,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "It modulates effective discretization steps across multiple dynamical branches and adaptively fuses responses via degradation-aware gating weights.",
+      "quote": "the proposed module modulates the effective discretization steps of multiple dynamical branches and adaptively fuses their responses according to degradation-aware gating weights",
+      "prompt_index": 2,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "It captures fast-varying local details and slowly evolving global structures while preserving linear scaling.",
+      "quote": "capture both fast-varying local details and slowly evolving global structures while preserving the linear scaling property",
+      "prompt_index": 2,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "It adjusts effective transition dynamics while retaining original selective parameterization and hardware-efficient selective scan mechanism.",
+      "quote": "modulates the effective transition dynamics while preserving the original selective parameterization and hardware-efficient selective scan mechanism",
+      "prompt_index": 3,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Smooth regions need stable gradual state evolution to preserve global structure, while edges and textured areas benefit from faster dynamics to recover fine details.",
+      "quote": "smooth regions generally require stable and gradual state evolution to preserve global structures, whereas edges and textured areas benefit from faster dynamics to recover fine details",
+      "prompt_index": 8,
+      "section": "I Introduction"
+    },
+    {
+      "aspect": "goal",
+      "statement": "Robust restoration needs feature evolution at multiple timescales and adaptive selection of dynamics conditioned on input.",
+      "quote": "robust all-in-one restoration requires a model capable of capturing feature evolution at multiple timescales while adaptively selecting appropriate dynamics conditioned on the input",
+      "prompt_index": 9,
+      "section": "I Introduction"
+    }
+  ]
+}

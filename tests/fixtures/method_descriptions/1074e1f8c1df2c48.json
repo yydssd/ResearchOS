@@ -1,0 +1,95 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "The method seeks to align a language model with environment dynamics so it can serve as a promising world model.",
+      "quote": "aligning an LLM with environment dynamics is both necessary and crucial to make it a promising world model",
+      "prompt_index": 7,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "goal",
+      "statement": "Knowledge gaps are bridged by aligning a language model with the environment where it is deployed.",
+      "quote": "the gaps can be bridged by aligning an LLM with its deployed environment",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A neurosymbolic world model combines a pretrained language model with newly learned rules obtained from interaction trajectories.",
+      "quote": "introduce a neurosymbolic world model that composites a pretrained LLM with a set of newly learned rules from the interaction trajectories with the environment.",
+      "prompt_index": 7,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Rules are induced, updated, and pruned by comparing explored trajectories with world model predictions.",
+      "quote": "inducing, updating, and pruning rules based on comparisons of agent-explored trajectories and world model predictions",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The agent collects a real trajectory through environment interaction and compares it with world model predictions.",
+      "quote": "interacts with the environment to collect a real trajectory and compare it with the world model predictions",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A language model analyzes comparison results to extract new rules or modify existing rules, improving consistency between predicted and real trajectories.",
+      "quote": "The comparison results are then analyzed by an LLM, which extracts new rules or modifies existing ones to improve the consistency between the predicted and real trajectories.",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Rule pruning is treated as a maximum coverage problem that selects a subset of rules covering transitions the language model failed to predict.",
+      "quote": "we prune the rules by solving a maximum coverage problem, which aims to select a subset of rules with the maximal coverage of the transitions failed being predicted by the LLM in the world model",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "The chosen rules complement the language model's predictions.",
+      "quote": "Hence, the selected rules are complementary to the LLM predictions.",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Rules are applied by placing them in the language model prompt, avoiding tedious training or inference.",
+      "quote": "This is achieved by simply including these rules in the LLM’s prompt without tedious training or inference.",
+      "prompt_index": 7,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "A few complementary rules are enough to align a pretrained language model with specific environment dynamics.",
+      "quote": "only a few complementary rules suffice to align a pretrained LLM to specific environment dynamics",
+      "prompt_index": 7,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A language-model agent serves as an optimizer that searches for optimal look-ahead actions.",
+      "quote": "apply the LLM agent as an optimizer searching for the optimal look-ahead actions",
+      "prompt_index": 10,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "An agent model plans actions within a look-ahead window using predictions from the language-model-plus-rules world model.",
+      "quote": "the agent model plans actions in a look-ahead window based on the LLM+rules world model’s predictions",
+      "prompt_index": 4,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "The approach avoids training a policy network and instead optimizes actions over a look-ahead time window at each step.",
+      "quote": "does not require training a policy network but needs to optimize actions for a look-ahead time window in every step",
+      "prompt_index": 10,
+      "section": "1 Introduction"
+    }
+  ]
+}

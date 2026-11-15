@@ -1,0 +1,67 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "The approach lets embodied agents construct and use mental models by interacting naturally with their surroundings.",
+      "quote": "enables embodied agents to build and leverage mental models through natural interaction with their environment",
+      "prompt_index": 3,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "It keeps a database of prior experiences to inform later planning iterations.",
+      "quote": "maintaining a database of past experiences that informs future planning iterations",
+      "prompt_index": 3,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Accumulated experiences are encoded as natural-language embeddings of state, task, plan, and outcome tuples for retrieval and reasoning.",
+      "quote": "representing accumulated experiences as natural language embeddings of (state, task, plan, outcome) tuples",
+      "prompt_index": 3,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A language model retrieves and reasons over stored experiences to derive insights and refine plans for new states and tasks.",
+      "quote": "efficiently retrieved and reasoned over by an LLM planner to generate insights and guide plan refinement for novel states and tasks",
+      "prompt_index": 3,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "io",
+      "statement": "A language model breaks abstract goals into step-by-step plans.",
+      "quote": "the LLM decomposes abstract goals into step-by-step plans",
+      "prompt_index": 7,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "io",
+      "statement": "A low-level controller converts plans into actions specific to the environment.",
+      "quote": "low-level controller translates these plans into environment-specific actions",
+      "prompt_index": 7,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "It leverages a language model's structured reasoning and grounds outputs in physical-world dynamics.",
+      "quote": "capitalizes on the LLM’s capacity for structured reasoning while grounding its outputs in the dynamics of the physical world",
+      "prompt_index": 7,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "It applies learned knowledge better than prior memory-based planners while preserving flexibility and generalization.",
+      "quote": "learns and applies its knowledge significantly better than existing memory-based LLM planners while maintaining the flexibility and generalization benefits of zero-shot approaches",
+      "prompt_index": 4,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Relevant information is stored back into the database for later reference.",
+      "quote": "Store relevant information back into database to refer to later.",
+      "prompt_index": 10,
+      "section": "1 Introduction"
+    }
+  ]
+}

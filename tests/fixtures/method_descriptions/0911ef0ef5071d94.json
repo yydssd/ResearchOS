@@ -1,0 +1,74 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "The work aims to handle diverse degradations within a unified restoration framework for practical applications.",
+      "quote": "All-in-one image restoration, which aims to address diverse degradations within a unified framework, is critical for practical applications.",
+      "prompt_index": 1,
+      "section": "Abstract."
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The framework uses dynamic self-attention to adaptively attend to long-range spatial dependencies.",
+      "quote": "employs a dynamic self-attention mechanism that adaptively attends to long-range spatial dependencies",
+      "prompt_index": 1,
+      "section": "Abstract."
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A convolution component captures long-range degradation similarities while preserving awareness of global structural information.",
+      "quote": "captures long-range degradation similarities while maintaining awareness of global structural information",
+      "prompt_index": 1,
+      "section": "Abstract."
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Model capacity to adapt to different degradations is increased through channel and spatial interactions.",
+      "quote": "efficiently increasing the model capacity to adapt to different degradations through channel–spatial interactions",
+      "prompt_index": 1,
+      "section": "Abstract."
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The attention mechanism combines patch-level and pixel-level gradient-orientation descriptors, emphasizing spatial regions according to perceived degradation.",
+      "quote": "integrates patch-level and pixel-level HOG descriptors, adaptively emphasizing spatial regions based on perceptual degradation",
+      "prompt_index": 10,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "It prioritizes important gradient orientations and magnitudes to enable more robust feature representations for unified restoration.",
+      "quote": "prioritizes critical gradient orientations and magnitudes, enabling more robust feature representation for all-in-one restoration",
+      "prompt_index": 10,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Gradient magnitude and orientation jointly encode local intensity and directional structure, giving discriminative cues.",
+      "quote": "gradient magnitude and orientation, which jointly encode local intensity and directional structure",
+      "prompt_index": 8,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A feed-forward component promotes global information exchange using shuffle and gated mechanisms over spatial and channel dimensions.",
+      "quote": "promotes global information exchange through shuffle and gated mechanisms across spatial and channel dimensions",
+      "prompt_index": 11,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A loss supervises gradient orientation and magnitude to maintain edge and structural integrity.",
+      "quote": "supervises gradient orientation and magnitude to preserve edge and structural integrity",
+      "prompt_index": 11,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "io",
+      "statement": "The unified model restores various degraded images.",
+      "quote": "restore various degraded images in a unified model",
+      "prompt_index": 11,
+      "section": "1. Introduction"
+    }
+  ]
+}

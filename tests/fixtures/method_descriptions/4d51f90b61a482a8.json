@@ -1,0 +1,88 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "It addresses profound differences in degradation mechanisms, feature hierarchies, and restoration strategies across diverse low-level vision tasks.",
+      "quote": "To address the profound differences in degradation mechanisms, feature hierarchies, and restoration strategies across diverse remote sensing low-level vision tasks",
+      "prompt_index": 1,
+      "section": "3 Methodology"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "It resolves the tension between multi-task commonality and specificity by embedding heterogeneous expert modules into a shared backbone.",
+      "quote": "resolves the core contradiction between multi-task commonality and specificity by embedding heterogeneous expert modules into a shared backbone",
+      "prompt_index": 1,
+      "section": "3 Methodology"
+    },
+    {
+      "aspect": "io",
+      "statement": "The input is a degraded remote sensing image.",
+      "quote": "Given a degraded remote sensing image",
+      "prompt_index": 1,
+      "section": "3 Methodology"
+    },
+    {
+      "aspect": "io",
+      "statement": "A task description text accompanies the image as input.",
+      "quote": "and a task description text",
+      "prompt_index": 1,
+      "section": "3 Methodology"
+    },
+    {
+      "aspect": "io",
+      "statement": "The output represents the restored high-quality image.",
+      "quote": "represents the restored high-quality image",
+      "prompt_index": 1,
+      "section": "3 Methodology"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A shared backbone captures universal restoration priors while dynamically routed experts learn task-specific strategies.",
+      "quote": "The shared backbone captures universal image restoration priors, while the dynamically routed experts learn task-specific strategies",
+      "prompt_index": 1,
+      "section": "3 Methodology"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Expert routing avoids prohibitive computational overhead.",
+      "quote": "without introducing prohibitive computational overhead",
+      "prompt_index": 1,
+      "section": "3 Methodology"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Heterogeneous bands are aligned into semantically matched slots.",
+      "quote": "align heterogeneous bands into semantically matched slots",
+      "prompt_index": 3,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Convolutional experts target spatial patterns and channel-mixing experts target spectral fidelity.",
+      "quote": "convolutional experts for spatial patterns, channel-mixing experts for spectral fidelity",
+      "prompt_index": 3,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Joint training is stabilized through dynamic weight adjustment at each step.",
+      "quote": "stabilizes joint training via step-level dynamic weight adjustment",
+      "prompt_index": 3,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Inputs are routed through task-appropriate processing pathways.",
+      "quote": "routes the input through task-appropriate processing pathways",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "io",
+      "statement": "The desired operation is specified by users with intuitive text prompts.",
+      "quote": "Users specify the desired operation through intuitive text prompts",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    }
+  ]
+}

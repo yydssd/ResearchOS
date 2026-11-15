@@ -1,0 +1,53 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "The aim is to balance restoration quality against computational efficiency.",
+      "quote": "designed to bridge the gap between restoration quality and computational efficiency",
+      "prompt_index": 8,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The method splits learned features into separate frequency bands at every level of a hierarchical encoder-decoder.",
+      "quote": "explicitly decomposes feature representations into high- and low-frequency components at each scale of a hierarchical encoder-decoder architecture",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "It merges frequency decomposition with spatial operations via Fourier-based skip links.",
+      "quote": "combining spectral decomposition with spatial processing through Fourier-based skip connections",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "The design retains spatial detail while capturing complementary frequency information.",
+      "quote": "captures complementary frequency information without sacrificing spatial detail",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Features are separated into high and low Fourier components at every scale.",
+      "quote": "decomposes features into high and low Fourier frequency components at each scale",
+      "prompt_index": 8,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Specialized blocks process each band according to its characteristics.",
+      "quote": "processes them through specialized blocks tailored to their characteristics",
+      "prompt_index": 8,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "High and low frequencies are separated and processed with distinct specialized blocks.",
+      "quote": "separate and process high and low frequencies using specialized blocks for each",
+      "prompt_index": 3,
+      "section": "1 Introduction"
+    }
+  ]
+}

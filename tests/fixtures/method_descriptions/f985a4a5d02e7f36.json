@@ -1,0 +1,60 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "The method restores a clean image without knowing the degradation type present in the input.",
+      "quote": "without any prior information of degradation type D present in the input image I",
+      "prompt_index": 0,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "io",
+      "statement": "The method recovers a clean image from a degraded input.",
+      "quote": "recover a clean image",
+      "prompt_index": 0,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The encoder progressively transforms high-resolution features into a lower-resolution latent representation.",
+      "quote": "progressively transforms them into a lower-resolution latent representation",
+      "prompt_index": 0,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A block adaptively separates degradation content from clean image content in the frequency domain.",
+      "quote": "adaptively segregates the degradation content from the clean image content in the frequency domain",
+      "prompt_index": 1,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Various degradations affect image content at different frequency bands, motivating frequency-aware processing.",
+      "quote": "different types of degradations affect image content at different frequency bands",
+      "prompt_index": 2,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The block extracts low- and high-frequency components from input features.",
+      "quote": "extracts low- and high-frequency components from the input features",
+      "prompt_index": 2,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Modulated features are merged into the original input for progressively guided restoration.",
+      "quote": "merged into the original input for a progressively guided restoration",
+      "prompt_index": 5,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Adaptive reconstruction is achieved by accentuating informative frequency subbands according to input degradations.",
+      "quote": "achieves adaptive reconstruction by accentuating the informative frequency subbands according to different input degradations",
+      "prompt_index": 5,
+      "section": "Abstract"
+    }
+  ]
+}

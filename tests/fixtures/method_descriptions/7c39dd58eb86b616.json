@@ -1,0 +1,39 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "The framework aims to let groups of language-model agents self-organize to carry out navigation tasks.",
+      "quote": "auto-organize groups of LLM-based agents to complete navigation tasks",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Organization follows a hierarchy that keeps planning centralized while execution is decentralized across agents.",
+      "quote": "a hierarchical system for multi-agent organization, ensuring centralized planning and decentralized execution",
+      "prompt_index": 2,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "An auto-organizing communication mechanism allows groups to adjust dynamically when subtasks change.",
+      "quote": "an auto-organizing and intra-communication mechanism, enabling dynamic group adjustment under subtasks",
+      "prompt_index": 2,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "io",
+      "statement": "A multimodal information platform supports perception so a single system can handle navigation tasks.",
+      "quote": "a multi-modal information platform, facilitating multi-modal perception to perform the three navigation tasks with one system",
+      "prompt_index": 2,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The system combines centralized planning with decentralized execution to enable navigation in open environments.",
+      "quote": "It utilizes centralized planning with decentralized execution, enabling efficient multi-modal navigation in open-ended environments.",
+      "prompt_index": 11,
+      "section": "1 Introduction"
+    }
+  ]
+}

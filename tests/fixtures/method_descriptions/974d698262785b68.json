@@ -1,0 +1,67 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "Completing tasks requires remembering observations from explored areas.",
+      "quote": "successful task completion requires the agent not only to memorize observations from explored regions",
+      "prompt_index": 3,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A progressive policy systematically explores surroundings during exploration.",
+      "quote": "During exploration, a multi-scale progressive policy systematically explores the environment",
+      "prompt_index": 0,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Recent observations are kept in short-term geometric memory for quick access.",
+      "quote": "a short-term geometric memory for efficient retrieval of recent observations",
+      "prompt_index": 0,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Semantic entities and causal links are stored for later use.",
+      "quote": "storing semantic entities and causal relationships",
+      "prompt_index": 0,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Subtasks are reordered based on memories that are causally relevant.",
+      "quote": "dynamically reorders subtasks according to causally relevant memories",
+      "prompt_index": 0,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "It offers fast retrieval of experiences observed recently.",
+      "quote": "provides low-latency retrieval of recently observed experiences",
+      "prompt_index": 10,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A selector switches between exploration and execution modes based on retrieved contents.",
+      "quote": "dynamically switches between Explore and Execute modes",
+      "prompt_index": 11,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Joint exploration, memorization, and causal reasoning support decision-making.",
+      "quote": "By jointly exploring, memorizing, and reasoning over causal relationships",
+      "prompt_index": 11,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "io",
+      "statement": "The agent gets an observation at each step.",
+      "quote": "the agent receives an observation",
+      "prompt_index": 4,
+      "section": "3 Method"
+    }
+  ]
+}

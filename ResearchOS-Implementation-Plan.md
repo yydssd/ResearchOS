@@ -1093,8 +1093,10 @@ subjects are inferred, so a row match is coverage, not correctness.
 Current values and their before/after: `docs/evaluation/2026-11-14-method-acquisition-audit.md`,
 `...-2026-11-15-method-acquisition-s2.md`, `...-2026-11-15-s4-method-acquisition.md`.
 Script: `scripts/method_acquisition_audit.py` (read-only; `--describer recorded`
-replays fixtures, and an empty fixture directory is reported as `LLM 未启用`
-rather than as zero coverage).
+replays the recordings in `tests/fixtures/method_descriptions/` without calling a
+model). Current L3: `19/20` and `20/20` (`docs/evaluation/2026-11-15-l3-description-coverage.md`);
+a paper the model answered with nothing is reported as `LLM 空答复`, never as zero
+coverage.
 
 ---
 

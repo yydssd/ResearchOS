@@ -1,0 +1,25 @@
+{
+  "points": [
+    {
+      "aspect": "mechanism",
+      "statement": "The approach fine-tunes an object detection model as part of its operation.",
+      "quote": "we finetune the object detection model",
+      "prompt_index": 2,
+      "section": "4.2 Comparison against other methods"
+    },
+    {
+      "aspect": "io",
+      "statement": "Game videos provide extracted frames used for training.",
+      "quote": "frames extracted from game videos",
+      "prompt_index": 2,
+      "section": "4.2 Comparison against other methods"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "The method lowers development costs for data collection and training.",
+      "quote": "reducing development costs related to data collection and training",
+      "prompt_index": 2,
+      "section": "4.2 Comparison against other methods"
+    }
+  ]
+}

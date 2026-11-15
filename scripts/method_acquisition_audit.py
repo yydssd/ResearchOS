@@ -99,8 +99,12 @@ def system_side(arxiv_id: str, cache: Path = CACHE, describer=None) -> dict:
                 l3_cause = "无来源定位"
             elif outcome.reason == "METHOD_DESCRIPTION_REJECTED":
                 l3_cause = "LLM 输出被拒"
+            elif not attempt.response.points:
+                # Asked, answered with nothing. "LLM 未启用" would be a lie: the
+                # describer ran, and this paper simply yielded no point.
+                l3_cause = "LLM 空答复"
             else:
-                l3_cause = "LLM 未启用"
+                l3_cause = "无来源定位"
     else:
         l3_cause = None if points else "LLM 未启用"
 

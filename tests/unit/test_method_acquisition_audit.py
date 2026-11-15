@@ -211,3 +211,20 @@ def test_a_describer_with_a_locatable_point_makes_l3_covered(tmp_path):
     assert side["L3"] is True
     assert side["L3_cause"] is None
 
+
+
+def test_an_empty_model_answer_has_its_own_cause(tmp_path):
+    """Asked and answered with nothing is not "not enabled": the describer ran.
+    Labelling it as disabled would hide a real model failure behind a config
+    story (S4's D15 was the same mistake in the other direction)."""
+    from scripts.method_acquisition_audit import system_side
+    from research_os.llm.base import DescriptionAttempt, MethodDescriptionResponse
+
+    class EmptyDescriber:
+        def describe(self, chunks):
+            return DescriptionAttempt(response=MethodDescriptionResponse(points=[]))
+
+    side = system_side("x", _mini_cache(tmp_path), EmptyDescriber())
+
+    assert side["L3"] is False
+    assert side["L3_cause"] == "LLM 空答复"

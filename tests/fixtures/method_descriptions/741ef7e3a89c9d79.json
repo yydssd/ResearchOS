@@ -1,0 +1,39 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "The goal is to restore the pristine image from a degraded input.",
+      "quote": "our goal is to restore the pristine image",
+      "prompt_index": 0,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "io",
+      "statement": "The input is a degraded image.",
+      "quote": "Given a degraded image",
+      "prompt_index": 0,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Spatial resolution is progressively downsampled while channel capacity expands through encoding.",
+      "quote": "spatial resolution is progressively downsampled while channel capacity expands",
+      "prompt_index": 1,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "An alternating spatial and channel attention mechanism is embedded within transformer blocks.",
+      "quote": "alternating spatial and channel attention mechanism embedded within each transformer block",
+      "prompt_index": 2,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Learnable parameters are generated to guide the restoration process.",
+      "quote": "generate learnable parameters that guide the restoration process",
+      "prompt_index": 1,
+      "section": "3 Method"
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "Aims to let agents learn via collaborative social interactions.",
+      "quote": "the ability to learn through collaborative social interactions",
+      "prompt_index": 0,
+      "section": "4 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Uses an explicit structured representation linking percepts, beliefs, desires, and actions.",
+      "quote": "an explicit structured representation linking percepts, beliefs, desires, and actions",
+      "prompt_index": 0,
+      "section": "4 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Enables perspective taking so an agent reasons over its own and collaborators' beliefs.",
+      "quote": "perspective taking so that the agent can reason over self-beliefs and those about its collaborators",
+      "prompt_index": 0,
+      "section": "4 Method"
+    },
+    {
+      "aspect": "io",
+      "statement": "Provides a communication medium for agents to share information in natural language.",
+      "quote": "a communication medium that the agents can use to share information in natural language",
+      "prompt_index": 0,
+      "section": "4 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Agents can utilize different types of memory subsystems.",
+      "quote": "the ability to utilize different types of memory subsystems",
+      "prompt_index": 0,
+      "section": "4 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Agents refine beliefs via multi-turn dialogue with expert peers.",
+      "quote": "agents refine their beliefs through multi-turn dialogue with expert peers",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Belief refinement happens through dialogue with expert peers without gradient updates.",
+      "quote": "dialogue with expert peers, without gradient updates",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Memory includes semantic task and environment knowledge plus episodic memory.",
+      "quote": "semantic memory of task and environment-related knowledge and episodic memory",
+      "prompt_index": 10,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Agents collaborate via structured theory-of-mind representations.",
+      "quote": "collaborate through structured theory-of-mind representations",
+      "prompt_index": 6,
+      "section": "Abstract"
+    }
+  ]
+}

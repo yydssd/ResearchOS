@@ -1,0 +1,53 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "The aim is to complete varied open-world tasks without human intervention.",
+      "quote": "complete diverse open-world tasks without human intervention",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "io",
+      "statement": "It takes environmental observations as input before deciding.",
+      "quote": "Taking environmental observation as input",
+      "prompt_index": 7,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "It predicts the next action in an auto-regressive manner.",
+      "quote": "predicts the next action to perform in an auto-regressive manner",
+      "prompt_index": 7,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "io",
+      "statement": "It directly outputs the next action to execute instead of text.",
+      "quote": "directly outputs the next action to execute rather than text",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A referee gives immediate feedback on whether the just executed action positively contributes to the final target.",
+      "quote": "provide immediate feedback about whether the just performed action brings positive contribution to realizing the final target",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Feedback vanishes during long-horizon embodied exploration, motivating immediate referee signals.",
+      "quote": "feedbacks vanish in long-horizon embodied exploration",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Training uses online exploration without human supervision.",
+      "quote": "during online exploration without human supervision",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    }
+  ]
+}

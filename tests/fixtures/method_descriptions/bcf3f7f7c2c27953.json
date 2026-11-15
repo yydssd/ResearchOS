@@ -1,0 +1,46 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "Restoration parameters should be assembled dynamically from the input image and applied at the token level.",
+      "quote": "the model should dynamically assemble restoration parameters conditioned on the input image and apply them at the token level",
+      "prompt_index": 5,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "It synthesizes input-conditioned low-rank routing bases and residual directions.",
+      "quote": "synthesize instance-conditioned low-rank routing bases and residual directions",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Every spatial token builds its own residual update from dense signed dot-product affinities over generated rank-wise components.",
+      "quote": "Each spatial token then assembles its own residual update via dense signed dot-product affinities over the generated rank-wise components",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Instead of pooling features into a global descriptor, learnable queries probe spatial contexts and decode routing bases and residual directions.",
+      "quote": "Rather than pooling intermediate features into a single global descriptor, the adapter uses learnable queries to probe condensed spatial contexts and decode them into routing bases and residual directions.",
+      "prompt_index": 8,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Assembled residual updates are injected into the restoration backbone's attention projections.",
+      "quote": "The assembled residual updates are injected into the attention projections of the restoration backbone",
+      "prompt_index": 8,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Spatial tokens act as queries, while generated routing bases and residual directions act like keys and values.",
+      "quote": "spatial tokens serve as queries, while the generated routing bases and residual directions play roles analogous to keys and values",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    }
+  ]
+}

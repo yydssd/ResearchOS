@@ -32,6 +32,8 @@ Answer with JSON only: {"points": [{"aspect": ..., "statement": ..., "quote": ..
 "chunk_id": ..., "section": ...}]}.
 
 Rules, all mandatory:
+- `chunk_id` is required and must be copied exactly from one of the ids shown in
+  the prompt. A point without a `chunk_id` cannot be checked and is discarded.
 - `quote` must be copied verbatim from the chunk named by `chunk_id`, at least 4
   words, and must appear exactly once in that chunk.
 - `statement` must be a paraphrase of that quote in at most 200 characters, and

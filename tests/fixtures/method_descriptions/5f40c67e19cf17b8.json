@@ -1,0 +1,102 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "The curriculum suggests objectives for open-ended exploration.",
+      "quote": "suggests objectives for open-ended exploration",
+      "prompt_index": 0,
+      "section": "Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The mechanism generates executable code for embodied control.",
+      "quote": "generates executable code for embodied control",
+      "prompt_index": 0,
+      "section": "Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The curriculum takes into account exploration progress and the agent’s state.",
+      "quote": "takes into account the exploration progress and the agent’s state",
+      "prompt_index": 9,
+      "section": "Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The library stores action programs that help solve a task successfully.",
+      "quote": "storing the action programs that help solve a task successfully",
+      "prompt_index": 9,
+      "section": "Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Programs are indexed using the embedding of each description.",
+      "quote": "Each program is indexed by the embedding of its description",
+      "prompt_index": 9,
+      "section": "Introduction"
+    },
+    {
+      "aspect": "io",
+      "statement": "Stored programs can be retrieved in similar situations in the future.",
+      "quote": "can be retrieved in similar situations in the future",
+      "prompt_index": 9,
+      "section": "Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The system synthesizes complex skills by composing simpler programs.",
+      "quote": "Complex skills can be synthesized by composing simpler programs",
+      "prompt_index": 9,
+      "section": "Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "This alleviates catastrophic forgetting in other continual learning methods.",
+      "quote": "alleviates catastrophic forgetting in other continual learning methods",
+      "prompt_index": 9,
+      "section": "Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The process repeats until a self-verification module confirms task completion.",
+      "quote": "repeats the process until a self-verification module confirms the task completion",
+      "prompt_index": 10,
+      "section": "Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The program is committed to the skill library after success.",
+      "quote": "commit the program to the skill library",
+      "prompt_index": 10,
+      "section": "Introduction"
+    },
+    {
+      "aspect": "io",
+      "statement": "The automatic curriculum is queried for the next milestone.",
+      "quote": "query the automatic curriculum for the next milestone",
+      "prompt_index": 10,
+      "section": "Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Programs naturally represent temporally extended and compositional actions.",
+      "quote": "programs can naturally represent temporally extended and compositional actions",
+      "prompt_index": 8,
+      "section": "Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "The approach bypasses model parameter access and explicit gradient-based training or finetuning.",
+      "quote": "bypasses the need for model parameter access and explicit gradient-based training or finetuning",
+      "prompt_index": 8,
+      "section": "Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Code serves as the action space instead of low-level motor commands.",
+      "quote": "code as the action space instead of low-level motor commands",
+      "prompt_index": 8,
+      "section": "Introduction"
+    }
+  ]
+}

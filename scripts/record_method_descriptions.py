@@ -53,7 +53,10 @@ async def _record(provider, prompt: str) -> dict:
     ids = prompt_ids(prompt)
     points = []
     for point in response.points:
-        index = ids.index(point.chunk_id) if point.chunk_id in ids else 0
+        # -1, not 0: an id the prompt does not carry is not "the first chunk".
+        # Replay turns -1 into an empty chunk_id, which the schema defence
+        # rejects - a wrong chunk would be worse than none (recorded.py's rule).
+        index = ids.index(point.chunk_id) if point.chunk_id in ids else -1
         points.append(
             {
                 "aspect": point.aspect,

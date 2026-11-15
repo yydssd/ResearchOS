@@ -1,0 +1,60 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "The method aims to recover high-quality images harmed by adverse weather.",
+      "quote": "Our goal is to restore high-quality images degraded by adverse weather conditions.",
+      "prompt_index": 0,
+      "section": "III Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "It creates degradation-aware prompts by combining semantic embeddings.",
+      "quote": "generates degradation-aware cross-modal prompts by integrating semantic embeddings",
+      "prompt_index": 0,
+      "section": "III Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Attention is refined progressively toward degraded regions using an alignment strategy.",
+      "quote": "progressively refines attention to degraded regions through an alignment strategy",
+      "prompt_index": 0,
+      "section": "III Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "It separates degradation artifacts from clean scene content to restore details accurately.",
+      "quote": "disentangles degradation artifacts from clean scene content for accurate detail restoration",
+      "prompt_index": 0,
+      "section": "III Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Textual embeddings and visual features are combined to produce prompts aware of degradation.",
+      "quote": "integrates textual embeddings with visual features to produce degradation-aware prompts",
+      "prompt_index": 3,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Semantic information is adaptively aligned with degraded regions to support context-aware restoration.",
+      "quote": "adaptively aligns semantic information with degraded regions to facilitate context-aware restoration",
+      "prompt_index": 3,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "It separates degradation artifacts from scene structures.",
+      "quote": "disentangles degradation artifacts from scene structures",
+      "prompt_index": 4,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "This improves reconstruction of fine textures and detailed content.",
+      "quote": "improving the reconstruction of fine textures and detailed content",
+      "prompt_index": 4,
+      "section": "Abstract"
+    }
+  ]
+}

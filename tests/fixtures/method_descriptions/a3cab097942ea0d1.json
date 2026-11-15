@@ -1,0 +1,67 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "Combines spectral decomposition with group-wise attention to restore images degraded by multiple weather types.",
+      "quote": "leverages spectral decomposition and group-wise attention for multi-weather image restoration",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Global filtering cannot handle highly variable and localized distortions, motivating localized spectral treatment.",
+      "quote": "global filtering methods like direct operations on the frequency domain fail to handle highly variable and localized distortions",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Splits images into high-frequency edge features via edge detection and low-frequency information through matrix decomposition.",
+      "quote": "decomposes images into high-frequency edge features using conventional edge detection and low-frequency information via Singular Value Decomposition",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Uses multi-head linear attention to model relationships among the decomposed spectral features.",
+      "quote": "We utilize multi-head linear attention to effectively model the relationship between these features.",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Integrates fused features with the input to create a grouping mask that clusters regions by spatial similarity and texture.",
+      "quote": "The fused features are integrated with the input to generate a grouping-mask that clusters regions based on the spatial similarity and image texture.",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Introduces group-wise attention to remove adverse weather effects robustly and keep consistent performance across weather conditions.",
+      "quote": "we introduce a group-wise attention mechanism, enabling robust adverse weather removal and ensuring consistent performance across diverse weather conditions.",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Combines channel attention and spatial attention to balance feature-wise relationships with spatial dependencies.",
+      "quote": "uses both channel attention and spatial attention, effectively balancing feature-wise relationships and spatial dependencies",
+      "prompt_index": 2,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Applying group-wise attention spatially and across channels helps the model focus on relevant features.",
+      "quote": "These group-wise attention is applied both spatially and across channels, allowing the model to focus on the most relevant features.",
+      "prompt_index": 11,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "io",
+      "statement": "Takes an input image and extracts edge and low-rank information while preserving spatial details.",
+      "quote": "extracts edge and low-rank information from the input image while preserving spatial details",
+      "prompt_index": 10,
+      "section": "1 Introduction"
+    }
+  ]
+}

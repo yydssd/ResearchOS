@@ -1,0 +1,60 @@
+{
+  "points": [
+    {
+      "aspect": "mechanism",
+      "statement": "A base model is augmented with a vision encoder and an action code repository trained on high-quality collected data.",
+      "quote": "augmenting it with a vision encoder and an action codebase trained on our collected high-quality",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The model is then augmented with a critic component and memory, turning it into a more complex system.",
+      "quote": "Subsequently, we enhanced it with a Critic and memory to transform it into a complex system.",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A hierarchical multi-agent system is constructed to organize multiple cooperating agents.",
+      "quote": "Finally, we constructed a hierarchical multi-agent system.",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "The architecture combines centralized planning with decentralized execution, letting agents change strategies and improve their interaction with the surroundings.",
+      "quote": "supports centralized planning and decentralized execution, enabling agents to adjust strategies and dynamically improve interaction with the environment.",
+      "prompt_index": 6,
+      "section": "4 Hierarchical Multi-Agent System"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "An additional expert supplies prior knowledge to strengthen the teacher model, which markedly improves training quality on difficult tasks.",
+      "quote": "This process incorporates the extra expert to enhance the teacher model with prior knowledge, significantly improving training quality for complex tasks.",
+      "prompt_index": 7,
+      "section": "5 Distill Embodied Agent into a Single Model"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Capabilities are compressed into a single model, making the system simpler to operate.",
+      "quote": "By distilling capabilities into a single model",
+      "prompt_index": 7,
+      "section": "5 Distill Embodied Agent into a Single Model"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Successive versions gradually improve the agents’ ability to process multiple modalities.",
+      "quote": "each version progressively enhances the agents’ multimodal processing abilities.",
+      "prompt_index": 5,
+      "section": "3 Multi-Modal LLMs"
+    },
+    {
+      "aspect": "goal",
+      "statement": "The collected examples are meant to enhance agents’ interaction and task execution.",
+      "quote": "to enhance agents’ interaction and task execution in Minecraft",
+      "prompt_index": 4,
+      "section": "2 Data and Environment"
+    }
+  ]
+}

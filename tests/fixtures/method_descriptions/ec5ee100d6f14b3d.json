@@ -1,0 +1,53 @@
+{
+  "points": [
+    {
+      "aspect": "mechanism",
+      "statement": "The denoising block produces fine-grained prompt guidance.",
+      "quote": "to generate fine-grained prompt guidance",
+      "prompt_index": 0,
+      "section": "Methodology"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A diffusion method samples in a pyramid resolution style for faster sampling.",
+      "quote": "integrates a diffusion method to perform sampling in a pyramid resolution style to achieve faster sampling",
+      "prompt_index": 1,
+      "section": "Methodology"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Spatial-only prompt approaches miss complementary frequency cues that capture global structural integrity.",
+      "quote": "Prompt-based approaches often rely solely on spatial features, missing the complementary frequency cues that explicitly capture global structural integrity.",
+      "prompt_index": 8,
+      "section": "Methodology"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Complementary cues form richer degradation-aware prompts encoding spatial and spectral corruption characteristics.",
+      "quote": "to form richer degradation-aware prompts that encode both the spatial and the spectral characteristics of corruption",
+      "prompt_index": 8,
+      "section": "Methodology"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "The prompts guide restoration adaptation to diverse degradations without explicit degradation labels.",
+      "quote": "These prompts guide the restoration network to adapt effectively to diverse degradations without requiring explicit degradation labels.",
+      "prompt_index": 8,
+      "section": "Methodology"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Joint representations integrate information from spatial and frequency domains.",
+      "quote": "Then, we extract joint representations by integrating information from the spatial and frequency domains.",
+      "prompt_index": 8,
+      "section": "Methodology"
+    },
+    {
+      "aspect": "io",
+      "statement": "Representations are combined with a learned dictionary and average pooled to produce prompt output.",
+      "quote": "After combining these representations with 𝔻\\mathbb{D}, we apply average pooling to obtain the prompt output.",
+      "prompt_index": 9,
+      "section": "Methodology"
+    }
+  ]
+}

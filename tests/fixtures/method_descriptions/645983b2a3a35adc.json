@@ -1,0 +1,67 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "The agent completes open-ended creative building tasks pragmatically in the open world.",
+      "quote": "complete open-ended creative building tasks pragmatically in the open world",
+      "prompt_index": 0,
+      "section": "4 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A construction stage pairs building actions with pragmatic verification.",
+      "quote": "Construction stage with the pragmatic verification",
+      "prompt_index": 0,
+      "section": "4 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Visual verification assesses building quality using appearance results.",
+      "quote": "visual verification evaluates the quality of buildings through the appearance results",
+      "prompt_index": 1,
+      "section": "4 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The approach generates environment-relevant functionality annotations and action verify programs.",
+      "quote": "generating environment-relevant functionality annotations and action verify programs",
+      "prompt_index": 1,
+      "section": "4 Method"
+    },
+    {
+      "aspect": "io",
+      "statement": "It produces executable construction actions to get the building in the environment.",
+      "quote": "executable construction actions to get the building in the environment",
+      "prompt_index": 1,
+      "section": "4 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "It begins with a building something-like phase before verification.",
+      "quote": "begins with a building ‘something-like’ phase",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "It performs visual verification on the constructed objects.",
+      "quote": "perform visual verification on these objects",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "It generates environment-relevant functionality programs on objects for pragmatic verification.",
+      "quote": "generates environment-relevant functionality programs on these objects for pragmatic verification",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Agents summarize and reflect accordingly to iteratively complete open-ended creative tasks.",
+      "quote": "agents can summarize and reflect accordingly and iteratively complete open-ended creative tasks",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    }
+  ]
+}

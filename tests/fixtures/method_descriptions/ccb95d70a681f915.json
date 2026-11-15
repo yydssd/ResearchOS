@@ -1,0 +1,39 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "The work targets an efficient and effective model for medical image restoration.",
+      "quote": "We aim to build an efficient and effective model for medical image restoration based on the Receptance Weighted Key Value (RWKV)",
+      "prompt_index": 0,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A newly designed block serves as the basic component for extracting features.",
+      "quote": "we present a novel R-RWKV block as its fundamental component for feature extraction",
+      "prompt_index": 0,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Modifications adapt the block to capture global and local dependencies in spatial images.",
+      "quote": "we incorporate two innovations in the R-RWKV block to adapt it for capturing global and local dependencies in 2D images",
+      "prompt_index": 0,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "An attention mechanism builds global dependencies across spatial images with linear computational complexity.",
+      "quote": "we introduce a recurrent WKV (Re-WKV) attention mechanism that effectively builds global dependencies in 2D images with linear computational complexity",
+      "prompt_index": 0,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A shift mechanism captures local context from all directions to improve performance.",
+      "quote": "we introduce an omnidirectional token shift mechanism that accurately captures local context to enhance the model performance",
+      "prompt_index": 0,
+      "section": "3 Method"
+    }
+  ]
+}

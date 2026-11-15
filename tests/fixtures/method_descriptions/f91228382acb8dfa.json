@@ -1,0 +1,32 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "The work provides a simulation platform for studying multi-agent collaboration through natural language in rich, embodied scenarios.",
+      "quote": "a simulation platform for studying multi-agent collaboration through natural language in rich, embodied scenarios",
+      "prompt_index": 6,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The platform is easily extensible and enables language-model agents to control characters in an open-world game.",
+      "quote": "an easily extensible platform built to enable LLM agents to control characters in the open-world game of Minecraft",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "goal",
+      "statement": "A benchmark tests multiple dimensions of embodied and collaborative reasoning.",
+      "quote": "a benchmark to test the different dimensions of embodied and collaborative reasoning",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "goal",
+      "statement": "Collaborative agents need to communicate efficiently and continuously learn and adapt during real-world embodied tasks.",
+      "quote": "ensuring their ability to efficiently and effectively communicate with collaborators and continuously learn and adapt throughout this process in real-world embodied tasks",
+      "prompt_index": 4,
+      "section": "1 Introduction"
+    }
+  ]
+}

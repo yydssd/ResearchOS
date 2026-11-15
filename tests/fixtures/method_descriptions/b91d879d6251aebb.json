@@ -1,0 +1,60 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "The aim is for coordination to expose the task consequence of a private fact: who acts, what crosses the handoff boundary, where it goes, and what follows.",
+      "quote": "Coordination must reveal the task consequence of a private fact: who acts, what crosses the handoff boundary, where it goes, and which suffix follows.",
+      "prompt_index": 5,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The task consequence itself becomes the object of coordination.",
+      "quote": "makes the consequence itself the coordination object",
+      "prompt_index": 6,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A consequence local to the sender moves forward in a peer request, and the receiver then generates its downstream skill path.",
+      "quote": "A sender-local consequence travels forward inside a peer request, after which the receiver generates its downstream skill path.",
+      "prompt_index": 7,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A capability consequence local to the peer returns through bounded feedback, and the requester then revises how work is divided.",
+      "quote": "A peer-local capability consequence travels back through bounded feedback, after which the requester revises the division of work.",
+      "prompt_index": 7,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "An explicit object whose meaning survives communication, resolution, and execution is needed in both directions.",
+      "quote": "Both directions require one explicit object whose semantics survive communication, resolution, and execution.",
+      "prompt_index": 7,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "It composes goals, capabilities, objects, history, messages, and shared task structure into role-local paths of varying length.",
+      "quote": "compose goals, capabilities, objects, history, received messages, and shared task structure into variable-length role-local paths.",
+      "prompt_index": 8,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "io",
+      "statement": "Following resolution, the same schema holds the role-local obligations that proceed into execution.",
+      "quote": "after resolution the same schema carries the role-local obligations that enter execution.",
+      "prompt_index": 10,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The resolved object is parsed, schema-checked, canonically materialized, and compiled into skills.",
+      "quote": "parse, schema check, canonical materialization, skill compilation",
+      "prompt_index": 11,
+      "section": "1. Introduction"
+    }
+  ]
+}

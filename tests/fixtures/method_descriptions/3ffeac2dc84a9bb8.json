@@ -1,0 +1,46 @@
+{
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "Aims to support research on collaborative behavior in embodied agents equipped with Theory of Mind capabilities.",
+      "quote": "support research on collaborative behavior in embodied agents endowed with Theory of Mind capabilities",
+      "prompt_index": 3,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Explicitly represents nested belief states with hierarchical simulators as studied in Theory of Mind.",
+      "quote": "Explicit representation of nested belief states, as studied in Theory of Mind, using hierarchical simulators",
+      "prompt_index": 6,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Uses prompt generation from each belief state to support design and evaluation of agent-control methods.",
+      "quote": "Support for prompt generation based on each belief state",
+      "prompt_index": 8,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Connects to the Minecraft environment.",
+      "quote": "Integration with the Minecraft environment",
+      "prompt_index": 10,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Implements a nested belief structure from Theory of Mind via physical simulators.",
+      "quote": "The nested belief structure derived from Theory of Mind is implemented using multiple physical simulators.",
+      "prompt_index": 2,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Agents run mental simulations in their own simulator, account for others' beliefs, and generate belief-reflecting action plans.",
+      "quote": "Each agent can perform mental simulations within its own simulator, considering the beliefs of others, to generate action plans that reflect these beliefs.",
+      "prompt_index": 2,
+      "section": "Abstract"
+    }
+  ]
+}
