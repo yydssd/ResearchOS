@@ -11,6 +11,8 @@ import hashlib
 import uuid
 from datetime import datetime, timezone
 
+from typing import Literal
+
 from pydantic import BaseModel, Field, field_validator
 
 from research_os.domain.enums import (
@@ -165,6 +167,60 @@ class QuantitativeEvidence(BaseModel):
     # 78% of value-bearing sentences look like this, so without `delta` they would
     # carry no structured fact at all (P4 spec §7).
     delta: float | None = None
+
+
+class MethodPoint(BaseModel):
+    """One structured statement about the method, with its source location.
+
+    Structured points rather than free prose (design §4.1/§0): a statement with
+    no locatable quote is exactly what plan §7.4 forbids storing.
+    """
+
+    id: str = Field(default_factory=lambda: new_id("mpoint"))
+    aspect: Literal["goal", "mechanism", "why_it_works", "io"]
+    statement: str = Field(min_length=1, max_length=200)
+    quote: str = Field(min_length=1)
+    chunk_id: str
+    section: str | None = None
+
+
+class MethodSetup(BaseModel):
+    """Paper-level reproducible setup (plan §15 protocol slot, P4 model scale).
+
+    `scale` and `protocol` are normalised ("8xa100", "zero-shot") and stay out of
+    `identity_key` until S4; `hyperparameters` never enters identity because the
+    seven P4 dimensions have no hyperparameter slot (design §8.3).
+    """
+
+    scale: str | None = None
+    protocol: str | None = None
+    hyperparameters: list[str] = []
+    repository: str | None = None
+
+
+class MethodProfile(BaseModel):
+    """What one paper says about its own method (design §4.1).
+
+    Identity is `(run_id, source_version_id)` at the storage layer: a profile is
+    never merged across papers, and the method name deliberately does not enter
+    `ClaimIdentity` (design §0).
+    """
+
+    id: str = Field(default_factory=lambda: new_id("mp"))
+    source_version_id: str
+    name: str | None = None
+    aliases: list[str] = []
+    # A name without a location is not evidence (plan §2.2): both are written or
+    # neither is, and the extractor drops the name when either is missing.
+    name_quote: str | None = None
+    name_chunk_id: str | None = None
+    components: list[str] = []
+    setup: MethodSetup = Field(default_factory=MethodSetup)
+    points: list[MethodPoint] = []
+    # Subset of {"L1","L2","L3","L4"}: the layers this paper did NOT yield. An
+    # empty list means "everything was obtained", which must stay distinguishable
+    # from "nothing was attempted" (design §4.1).
+    missing_layers: list[str] = []
 
 
 class Claim(BaseModel):
