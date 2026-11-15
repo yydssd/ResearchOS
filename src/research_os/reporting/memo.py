@@ -500,7 +500,7 @@ def inspect_claim(session: Session, run_id: str, claim_id: str) -> dict | None:
                         "value": fact.value,
                         "delta": fact.delta,
                         "comparator_value": fact.comparator_value,
-                        "protocol": fact.protocol,
+                        "unit": fact.unit,
                     }
                     for fact in graph.quantitative.get(ev.id, [])
                 ],

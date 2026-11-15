@@ -87,3 +87,21 @@ def test_inspect_claim_exposes_identity_and_grounding(db, tmp_path):
     assert info is not None
     assert info["identity_key"] == claim.identity_key
     assert "grounding" in info
+
+
+def test_inspect_claim_reports_unit_not_protocol(db, tmp_path):
+    """`inspect_claim` is a public surface (CLI `inspect-claim`). It used to emit
+    a key named "protocol" whose value was a unit ("dB"), so a reader of that
+    payload would conclude the row carried an evaluation protocol."""
+    run_id = _run_fixture_slice(tmp_path)
+
+    facts = []
+    with session_scope() as session:
+        for claim in SqlClaimRepository(session).list_by_run(run_id):
+            info = inspect_claim(session, run_id, claim.id)
+            for entry in info["chain"]:
+                facts.extend(entry["quantitative"])
+
+    assert facts, "the fixture must produce at least one quantitative fact"
+    assert any(fact["unit"] == "dB" for fact in facts)
+    assert all("protocol" not in fact for fact in facts)
