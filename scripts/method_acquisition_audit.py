@@ -118,9 +118,13 @@ def cause_for(layer: str, side: dict) -> str:
         return "无来源定位"
     if layer == "L1" and side.get("L1_ambiguous"):
         return "命名歧义"
-    if layer == "L2":
-        return "词表未覆盖"
-    return "无结构化字段"
+    if layer == "L3":
+        # The one layer with no producer at all: its reason is structural, not a
+        # vocabulary miss (design §10.1).
+        return "无结构化字段"
+    # L1/L2/L4 all have a field; what failed is the pattern vocabulary reaching
+    # this paper's wording.
+    return "词表未覆盖"
 
 
 def summarise(labels: list[dict], sides: dict[str, dict], domain_size: int | None = None) -> dict:

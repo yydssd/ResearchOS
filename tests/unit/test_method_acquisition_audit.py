@@ -97,7 +97,7 @@ def test_gap_causes_are_classified():
     assert report["gaps"]["d0|L3|无结构化字段"] == 1
     assert report["gaps"]["d1|L1|命名歧义"] == 1
     assert report["gaps"]["d1|L3|无结构化字段"] == 1
-    assert report["gaps"]["d1|L4|无结构化字段"] == 1
+    assert report["gaps"]["d1|L4|词表未覆盖"] == 1
     assert sum(report["gaps"].values()) == 4
 
 
@@ -128,6 +128,10 @@ def test_layer_mapping():
     empty_side = {**SIDES["a1"], "empty": True}
     assert cause_for("L4", empty_side) == "无来源定位"
     assert cause_for("L2", SIDES["a2"]) == "词表未覆盖"
+    # "无结构化字段" means the layer has no field yet (S2's L3), not that the
+    # patterns missed: L1 and L4 do have fields, so their cause is the vocabulary.
+    assert cause_for("L1", SIDES["a2"]) == "词表未覆盖"
+    assert cause_for("L4", SIDES["a1"]) == "词表未覆盖"
     # A paper that named two methods gets the ambiguity cause, not "no field".
     assert cause_for("L1", SIDES["b2"]) == "命名歧义"
 
