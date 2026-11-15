@@ -14,10 +14,11 @@
 
 ## 0. 一句话状态
 
-分支 `method-acquisition-audit`，`master`（`e248067`）之上 **32 个提交**，**未合并、未推送、无 PR**。
-其中 S1（`protocol` → `unit` 语义拆分）占 14 个提交：**五个任务完成三个**，T4、T5 未做。
+分支 `method-acquisition-audit`，`master`（`e248067`）之上 **35 个提交**，**未合并、未推送、无 PR**。
+其中 S1（`protocol` → `unit` 语义拆分）占 16 个提交：**五个任务全部完成**，验收判据 5/5 通过。
+**下一步是 S2 的计划（尚未开写）**——按本仓库规则，S2 要先出计划再动代码。
 
-本轮实测：**`332 passed, 2 skipped`**、**`334 tests collected`**、工作区干净。
+本轮实测：**`333 passed, 2 skipped`**、**`335 tests collected`**、工作区干净。
 （命令见 §6，跑法有坑见 §10。）
 
 ---
@@ -26,7 +27,7 @@
 
 ```bash
 cd /d/ResearchOS
-git log --oneline master..HEAD | head -20    # 32 个提交
+git log --oneline master..HEAD | head -20    # 35 个提交
 git status --short                            # 应为空
 "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" -q --basetemp=.pytest_tmp_h1
 ```
@@ -95,8 +96,8 @@ before/after 差异无法归因到具体一项。按依赖排序拆四刀，**�
 | **T1** | 加 `unit` 字段与列（**不改变任何行为**） | 完成 + 1 轮修复 | `bab64ed` `5d94886` `f55945b` |
 | **T2** | 按数据幂等的回填 | 完成 + 2 轮修复 | `3513677` `fb4186e` `239d21d` `558556d`（+ 计划修复 `801b5a0`） |
 | **T3** | 翻转写入点 / 读取点 / 渲染点（**必须一起改**） | 完成 + 1 轮修复 | `29109c5` `132808f`（+ 计划补签名 `b20b55c`） |
-| **T4** | `inspect_claim` 输出键 `"protocol"` → `"unit"` | **未做** | — |
-| **T5** | ADR-033 + 已知限制 + README 核对 + 计数对账 | **未做** | — |
+| **T4** | `inspect_claim` 输出键 `"protocol"` → `"unit"` | 完成 | `05e8f3c` |
+| **T5** | ADR-033 + 已知限制 + README 核对 + 计数对账 | 完成 | `d2f10f4` |
 | — | 计划计数修正 / 注释漂移修正 | 完成 | `938c67a` `2b92bce` |
 
 ### T1–T3 实际落地的代码（七处 + 一处注释）
@@ -113,23 +114,25 @@ src/research_os/reporting/memo.py           ~  :144 单位查表、:169 回退�
 scripts/method_acquisition_audit.py         ~  docstring 依据更新（见 §8）
 ```
 
-**`memo.py:503` 仍是 `"protocol": fact.protocol`** —— 这是 T4 的唯一改动点，
-不是漏改，是 T1–T3 有意留下（一次性改六处可观察面会让回滚无法定位）。
+T1–T3 曾有意把 `memo.py:503` 的 `"protocol": fact.protocol` 留着不动（一次性改六处可观察面会让
+回滚无法定位），T4 已把它翻成 `"unit": fact.unit`。该处的用例同时断言**旧键不存在**——
+只断言新键在，会让「两个键都在」的错实现也通过。
 
 ---
 
 ## 6. 当前基线证据（本轮实测，非推算）
 
 ```
-$ cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" -q --basetemp=.pytest_tmp_handover_c
-332 passed, 2 skipped, 1 warning in 21.46s
+$ cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" -q --basetemp=.pytest_tmp_s1_t5
+333 passed, 2 skipped, 1 warning in 14.17s
 
-$ ... --collect-only -q --basetemp=.pytest_tmp_handover_b
-334 tests collected in 3.78s
+$ ... --collect-only -q --basetemp=.pytest_tmp_s1_collect
+335 tests collected in 2.61s
 ```
 
-基线演进：`326 → 327 → 330 → 331 → 332 passed`（收集 `328 → 334`）。S1 内的净增 7 条用例，
-全部对应真实缺陷或真实可观察面，没有为凑数写的断言。
+基线演进：`326 → 327 → 330 → 331 → 332 → 333 passed`（收集 `328 → 334 → 335`）。S1 内的净增 7 条用例，
+全部对应真实缺陷或真实可观察面，没有为凑数写的断言。T4 的 1 条是 S1 的第 7 条（`333 - 332`），
+T5 只出文档，不改计数——这一点是判据：**T5 之后收集数不是 335 就说明有用例被静默删除**。
 
 **S1 没有扰动已有度量**，证据是重跑审计脚本（只读、`summarise` 为纯函数）：
 
@@ -143,7 +146,8 @@ agent_in_mc|L4   A=20/20 C=14/20   image_restoration|L4 A=19/20 C=11/19
 gaps 合计 105
 ```
 
-与 `docs/evaluation/2026-11-14-method-acquisition-audit.md` **逐格一致**。
+与 `docs/evaluation/2026-11-14-method-acquisition-audit.md` **逐格一致**（T4/T5 之后又重跑一次，
+仍逐格一致；`gaps` 八格合计仍为 105）。
 
 ---
 
@@ -186,33 +190,44 @@ gaps 合计 105
 
 ---
 
-## 9. 下一步：T4 → T5（照 S1 计划逐字执行）
+## 9. 下一步：S2 的计划（S1 已收官）
 
-### T4：`inspect_claim` 输出键改名
+### S1 收官记录（实测，可复核）
 
-- 改 `src/research_os/reporting/memo.py:503`：`"protocol": fact.protocol` → `"unit": fact.unit`
-- 测 `tests/integration/test_claim_synthesis.py` 追加 `test_inspect_claim_reports_unit_not_protocol`
-  （该文件已有 `_run_fixture_slice` / `inspect_claim` / `SqlClaimRepository`，直接复用——**已核实**）
-- 这是对 CLI `inspect-claim` 可观察输出的变更，必须同时断言**旧键不存在**，
-  否则「两个键都在」也能让新键断言通过
-- 预期：`333 passed, 2 skipped`
+| 判据 | 结果 | 证据 |
+|---|---|---|
+| 1 `value_bucket` 逐字不变 | 通过 | `test_delta_bucket_label_survives_the_unit_split` 断言 `("dB:0.44",)` |
+| 2 memo 仍显示单位 | 通过 | `"[quant: PSNR 39.18 dB on SIDD]" in memo`（`test_evidence_quality.py`） |
+| 3 `init_db()` 两次幂等 | 通过 | `test_second_init_db_does_not_destroy_the_backfilled_unit` |
+| 4 既有用例一条不少 | 通过 | `333 passed / 335 collected`（预期值即此） |
+| 5 `protocol` 不再当单位用 | 通过 | `grep -rn "fact.protocol\|row.protocol" src/` 只剩 `repositories.py:394/412` 两行映射 |
 
-### T5：ADR-033 + 文档 + 计数对账
+T4 落地：`memo.py:503` 键改 `"unit"`，用例断言 `any(fact["unit"] == "dB")` +
+`all("protocol" not in fact)`；红→绿过程已核（红因 `KeyError: 'unit'`，即旧键名仍在）。
+T5 落地：`architect.md` 加 ADR-033 与已知限制第 13 条、维护记录加一行；README **无需改**——
+`grep "protocol|定量|QuantitativeEvidence" README.md` 命中的三处（:12 阶段表、:154 定量计数、
+:249「单位只看数值紧邻 6 字符」）都不描述该字段，且第 249 行拆分后依然成立。
+另按 HD-006 补了 `models.py:154` 的注释（设计 §13 D2），只改注释不改行为。
 
-- `architect.md` ADR 表末尾（现行最后一条是 **ADR-032**）加 ADR-033
-- `architect.md`「已知限制」末尾（现行最后一条是 **12**）加第 13 条：
-  `protocol` 自 2026-11-15 起为空是**已知状态**，不是抽取失败
-- 先 `grep -n "protocol\|定量\|QuantitativeEvidence" README.md`；**有则按实际措辞同步，无则跳过，
-  不要为了同步而编内容**
-- 预期：`333 passed, 2 skipped`、`335 tests collected`
-- **若收集数少于 335，说明有用例被静默删除或覆盖，停下查**
+### S2 起手要做的事
 
-### S1 完成后仍未偿的两件小事
+1. **先写计划**：`docs/superpowers/plans/2026-11-15-s2-deterministic-extraction.md`，依据设计 §6
+   （L1 命名构式与 `X` 边界、L2 结构名词表、L4 四子项、`patterns.py` 外置、三个新模型、
+   存储与仓储、memo Methods 段、**审计脚本 §6.7 扩展**）。
+2. S2 的两条硬约束，写在计划里不要忘：
+   - `missing_layers` 必须落库——「空」与「抽到但是空」要能区分。
+   - `scripts/method_acquisition_audit.py:97` 的 `if layer == "L3": return False` 与其测试
+     `test_method_acquisition_audit.py:111` 的 `is False` 必须一起改成「S2 阶段 L3 无落点」的
+     显式表达，否则新的 `components`/`setup` 不进指标、能力坏掉也能验收通过。
+3. 领域词表（`lexicon.py` 只有图像复原）是 S2 前置，但**扩 MC 词表是独立立项**，
+   S2 只铺 `patterns.py` 的 `GENERIC` + 领域组结构，不新增领域组。
 
-- `models.py` 里 `protocol`（:154）自己**没有注释**，解释写在 `unit`（:155-159）上方。
-  HD-006 视角下 `protocol` 该有一句「S4 之前恒为空」，建议写 ADR-033 时一并补。
-- `memo.py:169` 的回退键是 `fact.metric or fact.unit or "unspecified"`——语义正确（无指标时按单位分组），
-  但**没有专门用例**，现有覆盖来自间接路径。是否补由 T4/T5 之后的复查决定。
+### 仍未偿的小事（不算 S1 未完成）
+
+- `memo.py:169` 的回退键 `fact.metric or fact.unit or "unspecified"` 语义正确，但**没有专门用例**，
+  现有覆盖来自间接路径。补不补，在 S2 动 memo 时一并定。
+- 待办 #10（§21 / README 无方法抽取指标）**没做**：S1 没有新增任何抽取能力，
+  现在登记只会写出尚不存在的度量；应与 S2 的 §6.7 脚本扩展同批登记。
 
 ---
 
@@ -270,7 +285,7 @@ gaps 合计 105
 | 7 | `SqlEventRepository.list_by_run` 缺 `ORDER BY`，memo 取 `events[-1]` 靠 SQLite rowid | 技术债 |
 | 8 | `replaced` payload 值断言、`inspect_claim` partner 成员断言 | 技术债 |
 | 9 | §2.5 其余 6 项确定性实现的 deviation ADR 逐项登记 | 文档债 |
-| 10 | §21 指标清单无方法抽取指标，需登记进 §21 / `README.md` | T5 顺带 |
+| 10 | §21 指标清单无方法抽取指标，需登记进 §21 / `README.md` | S2 顺带（S1 无新能力可登记） |
 
 ---
 
