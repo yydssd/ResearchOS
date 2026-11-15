@@ -14,11 +14,14 @@
 
 ## 0. 一句话状态
 
-分支 `method-acquisition-audit`，`master`（`e248067`）之上 **35 个提交**，**未合并、未推送、无 PR**。
-其中 S1（`protocol` → `unit` 语义拆分）占 16 个提交：**五个任务全部完成**，验收判据 5/5 通过。
-**下一步是 S2 的计划（尚未开写）**——按本仓库规则，S2 要先出计划再动代码。
+`method-acquisition-audit` 已**快进合并进 `master`**（本地，未推送），分支已删。
+`master` 现在 `e248067` 之上 **47 个提交**：S1（`protocol` → `unit`）16 个、S2（确定性 L1/L2/L4）11 个，
+其余是度量与文档。
 
-本轮实测：**`333 passed, 2 skipped`**、**`335 tests collected`**、工作区干净。
+**S1 五个任务全完成、验收 5/5；S2 十个任务全完成、验收 6/6**（判据见各自计划的验收表）。
+**下一步是 S3 的计划（尚未开写）**：L3 的 LLM 接线。
+
+本轮实测：**`374 passed, 2 skipped`**、**`376 tests collected`**、工作区干净。
 （命令见 §6，跑法有坑见 §10。）
 
 ---
@@ -120,14 +123,39 @@ T1–T3 曾有意把 `memo.py:503` 的 `"protocol": fact.protocol` 留着不动�
 
 ---
 
+## 5b. S2 逐任务状态（确定性 L1/L2/L4）
+
+计划：`docs/superpowers/plans/2026-11-15-s2-deterministic-extraction.md`；报告：
+`docs/evaluation/2026-11-15-method-acquisition-s2.md`。
+
+| 任务 | 内容 | 提交 |
+|---|---|---|
+| T1 | `research/patterns.py`：命名构式 / 组件词表 / L4 正则 | `be828ad` |
+| T2 | `MethodPoint` / `MethodSetup` / `MethodProfile` | `184f12a` |
+| T3 | L1 名字（层级排序、歧义、可定位） | `0746bf8` |
+| T4 | L2 组件 + L4 设置 + `missing_layers` | `e7ba4db` |
+| T5 | `method_profiles` / `method_points` 两表与仓储 | `e586687` |
+| T6 | 竖切第 3 步：抽取 + 落库 + 两个普通事件 | `bf4cbad` |
+| T7 | 行级 `method` 填充（self 名字 / 第三方名 / 占位） | `c3ddfe8` |
+| T8 | memo `# Methods` 段 + 两个归因计数 | `cd13667` |
+| T9 | 审计脚本改读 `MethodProfile` | `9be9374` |
+| — | 修正：scheme-less 仓库 URL（L4 逐篇下降） | `1fdf95b` |
+| — | 修正：L1/L4 缺口原因改记「词表未覆盖」 | `1ee2af4` |
+
+实测（160 格）：L1 `0/20 → 16/20`（两域）、L2 `19/20 → 20/20` 与 `10/20 → 20/20`、
+L4 `11/19 → 19/19` 与 `14/20 → 20/20`、L3 仍 `0/20`（S3 未做）；`gaps` **105 → 48**。
+L1 产出 32 个名字，三条判据（逐字子串 / 独立构式 / 非片段）**0 失败**。
+
+---
+
 ## 6. 当前基线证据（本轮实测，非推算）
 
 ```
-$ cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" -q --basetemp=.pytest_tmp_s1_t5
-333 passed, 2 skipped, 1 warning in 14.17s
+$ cd /d/ResearchOS && "D:/Anaconda/envs/reOS/python.exe" -m pytest -o addopts="" -q --basetemp=.pytest_tmp_s2_final
+374 passed, 2 skipped, 1 warning in 24.46s
 
-$ ... --collect-only -q --basetemp=.pytest_tmp_s1_collect
-335 tests collected in 2.61s
+$ ... --collect-only -q --basetemp=.pytest_tmp_s2_collect
+376 tests collected
 ```
 
 基线演进：`326 → 327 → 330 → 331 → 332 → 333 passed`（收集 `328 → 334 → 335`）。S1 内的净增 7 条用例，
@@ -190,7 +218,7 @@ gaps 合计 105
 
 ---
 
-## 9. 下一步：S2 的计划（S1 已收官）
+## 9. 下一步：S3 的计划（S1 / S2 已收官）
 
 ### S1 收官记录（实测，可复核）
 
@@ -209,25 +237,40 @@ T5 落地：`architect.md` 加 ADR-033 与已知限制第 13 条、维护记录�
 :249「单位只看数值紧邻 6 字符」）都不描述该字段，且第 249 行拆分后依然成立。
 另按 HD-006 补了 `models.py:154` 的注释（设计 §13 D2），只改注释不改行为。
 
-### S2 起手要做的事
+### S2 收官记录（实测，可复核）
 
-1. **先写计划**：`docs/superpowers/plans/2026-11-15-s2-deterministic-extraction.md`，依据设计 §6
-   （L1 命名构式与 `X` 边界、L2 结构名词表、L4 四子项、`patterns.py` 外置、三个新模型、
-   存储与仓储、memo Methods 段、**审计脚本 §6.7 扩展**）。
-2. S2 的两条硬约束，写在计划里不要忘：
-   - `missing_layers` 必须落库——「空」与「抽到但是空」要能区分。
-   - `scripts/method_acquisition_audit.py:97` 的 `if layer == "L3": return False` 与其测试
-     `test_method_acquisition_audit.py:111` 的 `is False` 必须一起改成「S2 阶段 L3 无落点」的
-     显式表达，否则新的 `components`/`setup` 不进指标、能力坏掉也能验收通过。
-3. 领域词表（`lexicon.py` 只有图像复原）是 S2 前置，但**扩 MC 词表是独立立项**，
-   S2 只铺 `patterns.py` 的 `GENERIC` + 领域组结构，不新增领域组。
+| 判据 | 结果 | 证据 |
+|---|---|---|
+| 1 三层各有落点 | 通过 | `test_method_run.py` 从库里读回 name + `name_chunk_id`、components、scale/protocol |
+| 2 「没抽到」与「抽到为空」可区分 | 通过 | `missing_layers` 落库；`sample_paper` 逐篇记 `L1` |
+| 3 L1 精度零容忍 | 通过 | 32 个名字，逐字子串 / 独立构式 / 非片段三条判据 **0 失败**（报告 §4） |
+| 4 审计脚本能观测新能力 | 通过 | `system_side` 改读 `MethodProfile`；L3 判据读 `points` 不再是常量 |
+| 5 不扰动 identity 与主张数 | 通过 | `claims.py`、`contradiction.py`、`scope.py` 零改动；claim 用例一条未改 |
+| 6 既有用例一条不少 | 通过 | `374 passed / 376 collected`（333 + 41） |
 
-### 仍未偿的小事（不算 S1 未完成）
+### S3 起手要做的事
 
-- `memo.py:169` 的回退键 `fact.metric or fact.unit or "unspecified"` 语义正确，但**没有专门用例**，
-  现有覆盖来自间接路径。补不补，在 S2 动 memo 时一并定。
-- 待办 #10（§21 / README 无方法抽取指标）**没做**：S1 没有新增任何抽取能力，
-  现在登记只会写出尚不存在的度量；应与 S2 的 §6.7 脚本扩展同批登记。
+1. **先写计划**：`docs/superpowers/plans/2026-11-16-s3-l3-describer.md`，依据设计 §7：
+   同步 `MethodDescriber` 协议 + `AsyncProviderDescriber`（`asyncio.run` + 事件循环探测）、
+   `config.py` 三个配置项、`Supervisor` 注入、**预算计数点（先查后加）+ 4 个 `FailureType`**、
+   四道防线、`recorded fixture provider`。
+2. S3 的三条现成接口不必重新设计：`MethodProfile.points`（`MethodPoint` 已有校验：aspect 枚举 /
+   statement ≤200）、`MethodExtraction`、`SqlMethodProfileRepository.upsert` 的 points 替换语义
+   （已测 `test_points_are_replaced_not_appended`）。S3 只需把 points 填进去。
+3. 现成可复用的坑位记录：`budget.llm_calls` 全仓库仍无写入点（设计 §7.3），
+   `_check_budget()` 只读 `exceeded()`——S3 必须补「先查后加」，否则 80/81 off-by-one。
+4. 审计脚本的 L3 判据已经就绪（`side["L3"] = bool(profile.points)`），S3 落地后
+   **不要改判据**，只重跑；改判据等于把「能力生效」和「度量口径变了」混在一起。
+
+### 仍未偿的小事
+
+- `memo.py` 的回退键 `fact.metric or fact.unit or "unspecified"` 语义正确，但**仍没有专门用例**，
+  现有覆盖来自间接路径。S3 动 memo 时一并定。
+- 待办 #10：§21（`ResearchOS-Implementation-Plan.md`）仍无方法抽取指标；S2 已经把四层度量跑成
+  报告（`docs/evaluation/2026-11-15-method-acquisition-s2.md`），**登记进 §21 的动作还没做**，
+  与 S3 的指标一起登记更省一次改动。
+- 设计 §13 现在有 D1–D15：D14（scheme-less 仓库 URL）与 D15（L1/L4 缺口原因改记「词表未覆盖」）
+  是实现期实测抓出来的，不在原计划里。
 
 ---
 
@@ -285,7 +328,7 @@ T5 落地：`architect.md` 加 ADR-033 与已知限制第 13 条、维护记录�
 | 7 | `SqlEventRepository.list_by_run` 缺 `ORDER BY`，memo 取 `events[-1]` 靠 SQLite rowid | 技术债 |
 | 8 | `replaced` payload 值断言、`inspect_claim` partner 成员断言 | 技术债 |
 | 9 | §2.5 其余 6 项确定性实现的 deviation ADR 逐项登记 | 文档债 |
-| 10 | §21 指标清单无方法抽取指标，需登记进 §21 / `README.md` | S2 顺带（S1 无新能力可登记） |
+| 10 | §21 指标清单无方法抽取指标，需登记进 §21 / `README.md` | **仍未做**；度量已在 2026-11-15 报告里，等 S3 一起登记 |
 
 ---
 

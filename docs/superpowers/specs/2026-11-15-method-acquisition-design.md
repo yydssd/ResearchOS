@@ -559,6 +559,20 @@ covered + explained_uncovered == present 且 unexplained_uncovered == 0
 |---|---|---|---|
 | D1 | 本文只改 §5 列出的六处 | S1 追加改了 `scripts/method_acquisition_audit.py` 的 `system_side` docstring | 该 docstring 的理由行写的是「`protocol` 存的是单位」——S1 之后这句话成了事实错误，结论（不把 `protocol` 观测为覆盖）仍然成立但依据换了人。脚本本身不在 S1 范围内，是 HD-006 要求同批修掉的注释漂移，不改任何行为；重跑审计数字与 `docs/evaluation/2026-11-14-method-acquisition-audit.md` 逐格一致 |
 | D2 | T5 只改 `architect.md` 与 `README.md` | T5 追加改了 `domain/models.py:154` 的注释 | HD-006：`protocol` 本身没有注释，解释写在 `unit` 上方，读者读到空的 `protocol` 无从判断是「未实现」还是「抽取失败」。补一行注释说明「ADR-033 起恒为空，空是已知状态」，不改任何行为，全量测试仍 `333 passed` |
+| D3 | §6.1 的排除项是「谓词 + COMMON_CAPS + DATASETS + METRICS + NOT_A_SUBJECT」 | 再加一组 `GENERIC_NOUNS`（transformer/cnn/unet/gan/diffusion/baseline/method/…） | 谓词排除本来就是设计原文的要求，不在偏差之列；通用名词不在设计要求里，但 "We introduce Transformer" / "We propose the baseline" 对任何正则都像名字，而 §10.2 是**零容忍**精度：一个假名字就把整个阶段判失败。加的是同类排除（不是新机制），负例在 `test_method_name.py` 的 `test_predicates_datasets_metrics_and_generic_nouns_are_never_names` |
+| D4 | §6.1 四处命名构式 | `patterns.py` 实现三条 | "this work presents X" 与 "we present X" 同形，第一条的 `we\|this paper\|this work` 交替已覆盖；两条并写会把同一个名字数两遍（候选重复会污染歧义判定） |
+| D5 | §6.1 句首大写词不能单独作为命名证据（沿用 claims.py:169） | 同位语式 `X, our method` 例外 | 该构式里 X **必然**是句首，且构式本身就是命名证据；不例外就等于删掉这一整条构式。其余构式严格照 169 行判据执行，正反例都在 `test_method_name.py` |
+| D6 | §6.1 只说「歧义记 METHOD_NAME_AMBIGUOUS」 | 判定为「同 tier、同 chunk、不同名」 | 纯按 (tier, 位置) 并列在实际文本里不可能发生，那条事件会成死代码；按 chunk 判定的触发点正是 §4.1 点名的一篇多方法论文 |
+| D7 | §4.1 的 `MethodProfile` 没有 `id` | 模型加 `id`（`new_id("mp")`），存储用 `(run_id, source_version_id)` 摘要做主键 | 与其它领域模型一致（`Evidence`/`Claim` 都有 id），且 §6.5 的仓储签名 `get(run_id, svid)` 需要主键；摘要而非截断，因为 ADR-030 记录过截断撞键 |
+| D8 | §6 未提编排任务 | `TaskType` 加 `EXTRACT_METHOD`，`EventType` 加 `METHOD_NAME_AMBIGUOUS` / `METHOD_MULTI_NAME` | 竖切里每个抽取步骤都有 task（EVIDENCE/CLAIM/CONTRADICTION），方法档案不建 task 会让「这一步没跑」不可观测；两个事件按 §7.5 的归类**不**进 `FailureType` |
+| D9 | §6.7 只说 `system_side` 改读 `MethodProfile` | 顺带删掉 `system_side` 的 `structured` 键 | L1 判据改成 `profile.name` 之后该键无人读，留着会让下一个人以为 L1 还看定量行；设计 §10.3 的行级覆盖另由 `QuantitativeEvidence.method` 承担 |
+| D10 | §6.1 的 `X` 边界是 `[A-Z][A-Za-z0-9\-]{2,}` + 四道排除 | 再加三条**结构**拒绝：名字末字符必须是字母或数字（否掉 `Multi-`）、名字后紧跟大写词或 `and + 大写词` 则弃（否掉 `Spectral-based Spatial…`、`Robust and Efficient…`）、同位语构式要求闭合逗号（否掉 `Then, the framework is applied`） | §10.2 是**零容忍**精度，而设计给的边界在真实摘要上会抓虚词和片段。实测（40 篇留出集，只读）：原样 36 个名字、9 个不是该篇方法名；三条加上后 32 个名字、剩 1 个假名（`Robust`）；再加 `and` 那一条归零。代价是 L1 覆盖从 19+17 降到 16+16，降的 4 篇全是假名（其中 `2310.18293` 原判 `MQRL` 是损失函数名）。**收紧，不是放宽**；三条各有负例在 `test_method_patterns.py` / `test_method_name.py` |
+| D11 | §6.7 的 L2 判据是「`components` 非空**或** conditions 命中」 | `system_side` 的 L2 只读 `profile.components`，不再接受 `conditions` 的 `backbone=`/`baseline=` 兜底 | 设计允许并存，但保留旧兜底会让「组件抽取彻底坏掉」被 `conditions` 掩盖——那正是 §6.7 要修的缺陷本身。实测（同一 40 篇，旧判据与新判据逐篇对比）：图像 19/20 → 20/20、MC 10/20 → 20/20，**没有任何一篇下降**，所以这不是靠放宽换来的上升 |
+| D12 | §10.3 的填充条件是 `_PROPOSED_RE` | 改为 `SELF_REFERENCE.search(text) or _PROPOSED_RE.search(text)`，并取谓词前**最近**的具名 token 作第三方方法名 | §10.3 自己要求「句子点名了 self 或具名第三方方法时就填」，而 `SELF_REFERENCE` 才是本仓库对 self 的定义（含 `the method`）。两处必带：①行级分母必须用同一谓词（报告 §4b），否则分子分母不同源；②取最近 token，否则句首动名词会被当成方法名（实测 `Introducing`/`Replacing`/`Starting`/`Further`/`Following`/`Increasing`/`Multi-` 共 7 类 14 行）。代价是 `method` 非空行从 106 降到 100（共 170 行），换来的是假名字消失；§10.3 已声明不宣称 `method` 精度 |
+| D13 | §10.2 要求第二套命名构式清单「写在测试里，不复用 `patterns.py`」 | 写在评测报告 `docs/evaluation/2026-11-15-method-acquisition-s2.md` 的 §4，随每次实测留痕；`tests/` 只放抽取器的回归锁 | 第二套构式要跑在 40 篇留出集上，而 `.holdout_cache` 是 gitignored 的，`test_fixture_provenance.py` 因此只能 opt-in skip——把门禁放进会被 skip 的测试等于没有门禁。报告里的清单仍然独立于 `patterns.py`（手写、来源是设计 §6.1 的四行），并且强制逐篇留结论 |
+```
+| D14 | §6.3 的 `repository` 用 `https?://` 正则 | scheme 可选（`github.com/foo/bar` 也收），命中后归一化补 `https://` | 实测留出集 `2507.22498` 只写 scheme-less URL，而它的 L4 标注证据正是那句 "The code is available at github.com"。按 §10.4「每处下降逐篇给理由，否则回滚」，这条下降选择修而不是解释：L4 图像复原从 18/19 回到 19/19，逐篇向量不再有下降（`1fdf95b`） |
+| D15 | §10.1 的「无结构化字段」= 该阶段尚未实现该层 | L1/L2/L4 的缺口改记「词表未覆盖」，只有 L3 记「无结构化字段」 | 旧脚本把 L1/L4 的缺口也记成「无结构化字段」，那是事实错误：字段在，是模式没匹配到。不修这一条，报告会把「模式没覆盖」说成「没有落点」，而后者正是 S2 要消除的那种混淆（`1ee2af4`） |
 
 ## 14. 审验意见处置
 
