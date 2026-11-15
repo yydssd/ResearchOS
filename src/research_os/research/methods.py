@@ -222,6 +222,8 @@ def _profile_for(source_version_id: str, chunks: list[DocumentChunk], domain: st
         profile.name_quote = chosen.quote
         profile.name_chunk_id = chosen.chunk_id
     profile.aliases = list(aliases)
+    profile.components = _components(chunks, domain)
+    profile.setup = _setup(chunks)
     return profile, competing
 
 
@@ -241,6 +243,98 @@ def extract_methods(chunks: list[DocumentChunk], domain: str | None = None) -> M
         profile.missing_layers = _missing_layers(profile)
         profiles.append(profile)
     return MethodExtraction(profiles=profiles, ambiguous=ambiguous)
+
+
+_COMPONENT_WORD_RE = re.compile(
+    r"\b(" + "|".join(sorted(COMPONENT_WORDS)) + r")\b", re.IGNORECASE
+)
+
+
+def _component_phrases(text: str, tails: tuple[str, ...]) -> set[str]:
+    """Qualified noun phrases ending in a structural tail ("gated attention block").
+
+    Up to two modifiers, and a stopword ends the phrase: "a lightweight
+    conditioning module" yields "lightweight conditioning module", while "the
+    module" yields nothing because `the` is not a modifier.
+    """
+    tail_re = re.compile(r"\b(?P<tail>" + "|".join(tails) + r")\b", re.IGNORECASE)
+    found: set[str] = set()
+    for match in tail_re.finditer(text):
+        modifiers: list[str] = []
+        for token in reversed(list(_TOKEN.finditer(text[: match.start()]))):
+            if len(modifiers) >= _MAX_MODIFIERS:
+                break
+            word = token.group(0).lower()
+            if word in _STOPWORDS:
+                break
+            modifiers.append(word)
+        if modifiers:
+            found.add(" ".join([*reversed(modifiers), match.group("tail").lower()]))
+    return found
+
+
+def _components(chunks: list[DocumentChunk], domain: str | None) -> list[str]:
+    extra = domain_patterns(domain)
+    tails = COMPONENT_TAILS + extra.component_tails
+    words = COMPONENT_WORDS | extra.component_words
+    word_re = _COMPONENT_WORD_RE if words == COMPONENT_WORDS else re.compile(
+        r"\b(" + "|".join(sorted(words)) + r")\b", re.IGNORECASE
+    )
+    found: set[str] = set()
+    for chunk in chunks:
+        text = chunk.text
+        found |= {match.group(1).lower() for match in word_re.finditer(text)}
+        found |= {phrase for phrase in COMPONENT_PHRASES if phrase in text.lower()}
+        found |= _component_phrases(text, tails)
+    return sorted(found)
+
+
+def _scale(text: str) -> str | None:
+    """First scale mention in this chunk, normalised ("8xa100" / "7b").
+
+    Parameters and device counts are different facts sharing one slot (design
+    §4.1); first occurrence wins, which is the only rule that stays stable when a
+    paper mentions both.
+    """
+    options: list[tuple[int, str]] = []
+    for match in SCALE_PARAMS.finditer(text):
+        options.append((match.start(), f"{match.group(1)}{match.group(2).lower()}"))
+    for match in SCALE_GPU.finditer(text):
+        options.append((match.start(), f"{match.group(1)}x{match.group(2).lower()}"))
+    return min(options)[1] if options else None
+
+
+def _protocol(text: str) -> str | None:
+    match = EVAL_PROTOCOL.search(text)
+    if match is None:
+        return None
+    return re.sub(r"\s+", "", match.group(1).lower()).replace("zeroshot", "zero-shot").replace(
+        "fewshot", "few-shot"
+    )
+
+
+def _setup(chunks: list[DocumentChunk]) -> MethodSetup:
+    """First occurrence per field, in reading order: a setup is paper-level."""
+    setup = MethodSetup()
+    for chunk in chunks:
+        text = chunk.text
+        if setup.repository is None:
+            match = REPOSITORY_URL.search(text)
+            if match:
+                # Trailing punctuation belongs to the sentence, not the URL.
+                setup.repository = match.group(0).rstrip(".,;:")
+        if setup.scale is None:
+            setup.scale = _scale(text)
+        if setup.protocol is None:
+            setup.protocol = _protocol(text)
+        for name, pattern in HYPERPARAMETERS:
+            match = pattern.search(text)
+            if match is None:
+                continue
+            value = f"{name}={match.group(1).lower()}"
+            if value not in setup.hyperparameters:
+                setup.hyperparameters.append(value)
+    return setup
 
 
 def _missing_layers(profile: MethodProfile) -> list[str]:
