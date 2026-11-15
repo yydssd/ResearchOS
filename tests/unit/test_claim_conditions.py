@@ -51,15 +51,15 @@ def test_conditions_carry_their_provenance():
     )
 
     assert identity.conditions == ("backbone=transformer",)
-    assert identity.conditions_from == "sentence"
+    assert identity.condition_tiers == {"backbone": "sentence"}
 
 
 def test_inherited_conditions_are_tagged_with_where_they_came_from():
     scope = BlockScope(
         task="denoising",
         datasets=frozenset({"SIDD"}),
-        inherited_from={"conditions": "section-first-mention"},
-        conditions=("backbone=transformer",),
+        conditions={"backbone": "transformer"},
+        condition_tiers={"backbone": "section-first-mention"},
     )
 
     identity = extract_identity(
@@ -70,7 +70,7 @@ def test_inherited_conditions_are_tagged_with_where_they_came_from():
     )
 
     assert identity.conditions == ("backbone=transformer",)
-    assert identity.conditions_from == "section-first-mention"
+    assert identity.condition_tiers == {"backbone": "section-first-mention"}
 
 
 def test_no_conditions_means_no_provenance():
@@ -82,7 +82,7 @@ def test_no_conditions_means_no_provenance():
     )
 
     assert identity.conditions == ()
-    assert identity.conditions_from is None
+    assert identity.condition_tiers == {}
 
 
 def test_condition_map_is_the_primitive_and_the_tuple_is_derived():
@@ -161,3 +161,41 @@ def test_a_metric_is_not_a_protocol_and_a_unit_is_not_a_scale():
     look like they share a setup."""
     assert extract_condition_map("It improves PSNR by 0.42 dB.") == {}
     assert extract_condition_map("It reaches a 70% success rate.") == {}
+
+
+def test_a_sentence_stating_one_kind_keeps_the_inherited_others():
+    """The core of design §8.2: "ours reaches 70% with 5-shot" states a protocol
+    and nothing else, so the section's backbone and training must survive, each
+    with its own tier."""
+    scope = BlockScope(
+        task="denoising",
+        datasets=frozenset({"SIDD"}),
+        inherited_from={"conditions": "section-first-mention"},
+        conditions={"backbone": "transformer", "training": "from-scratch"},
+        condition_tiers={"backbone": "section-first-mention", "training": "section-first-mention"},
+    )
+    identity = extract_identity(
+        "Our method reaches 70% with 5-shot on SIDD.",
+        source_version_id="sv_1", scope=scope, quantitative=[],
+    )
+
+    assert identity.conditions == ("backbone=transformer", "protocol=5-shot", "training=from-scratch")
+    assert identity.condition_tiers == {
+        "protocol": "sentence",
+        "backbone": "section-first-mention",
+        "training": "section-first-mention",
+    }
+
+
+def test_a_sentence_kind_overrides_the_inherited_value_for_that_kind_only():
+    scope = BlockScope(
+        conditions={"backbone": "cnn"},
+        condition_tiers={"backbone": "section-first-mention"},
+    )
+    identity = extract_identity(
+        "The Transformer backbone improves PSNR on SIDD.",
+        source_version_id="sv_1", scope=scope, quantitative=[],
+    )
+
+    assert identity.conditions == ("backbone=transformer",)
+    assert identity.condition_tiers == {"backbone": "sentence"}

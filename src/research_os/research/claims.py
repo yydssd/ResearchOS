@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 
 from research_os.domain.enums import ClaimStatus, ConfidenceLabel
 from research_os.domain.models import QuantitativeEvidence
-from research_os.research.conditions import extract_conditions
+from research_os.research.conditions import extract_condition_map
 from research_os.research.lexicon import DATASETS, METRICS, THIRD_PARTY
 from research_os.research.scope import BlockScope
 
@@ -98,10 +98,11 @@ class ClaimIdentity:
     # self-reference ("our method") or defaulted from the surrounding scope.
     # Downstream needs the difference; the merge key must not see it.
     subject_inferred: bool = field(default=False, compare=False)
-    # Provenance of the conditions tuple: "sentence", "heading",
-    # "section-first-mention", or None. Excluded from the key for the same reason
-    # as subject_inferred: it says where the value came from, not what it is.
-    conditions_from: str | None = field(default=None, compare=False)
+    # Provenance, not identity: which tier each kind's value came from. Excluded
+    # from the key for the same reason `subject_inferred` is - it says where a
+    # value came from, not what it is. S4 made this per kind because one tier for
+    # the whole tuple either over- or under-claims (design §8.2).
+    condition_tiers: dict[str, str] = field(default_factory=dict, compare=False)
 
     def key(self) -> str:
         """Stable, parseable identity string: missing fields render as empty.
@@ -174,14 +175,26 @@ def _subject(text: str) -> tuple[str | None, bool]:
     return None, False
 
 
-def _conditions(text: str, scope: BlockScope | None) -> tuple[tuple[str, ...], str | None]:
-    """Sentence conditions win; otherwise inherit the section's, with provenance."""
-    own = extract_conditions(text)
-    if own:
-        return own, "sentence"
-    if scope is not None and scope.conditions:
-        return scope.conditions, scope.inherited_from.get("conditions")
-    return (), None
+def _conditions(text: str, scope: BlockScope | None) -> tuple[tuple[str, ...], dict[str, str]]:
+    """Sentence kinds win per kind; inherited kinds fill the rest, each keeping
+    its own tier.
+
+    Per kind, not per tuple: a sentence that states only a protocol must not drop
+    the section's backbone, and its own tier must not leak onto the inherited
+    values (design §8.2's counter-example).
+    """
+    own = extract_condition_map(text)
+    merged: dict[str, str] = {}
+    tiers: dict[str, str] = {}
+    if scope is not None:
+        for kind, value in scope.conditions.items():
+            merged[kind] = value
+            tiers[kind] = scope.condition_tiers.get(kind, "section-first-mention")
+    for kind, value in own.items():
+        merged[kind] = value  # a sentence value supersedes the inherited one
+        tiers[kind] = "sentence"
+    ordered = tuple(f"{kind}={merged[kind]}" for kind in sorted(merged))
+    return ordered, tiers
 
 
 def _direction(text: str) -> str | None:
@@ -229,7 +242,7 @@ def extract_identity(
     if subject == "self":
         subject = f"self@{source_version_id}"
     direction = _direction(text)
-    conditions, conditions_from = _conditions(text, scope)
+    conditions, condition_tiers = _conditions(text, scope)
     return ClaimIdentity(
         subject=subject,
         task=task,
@@ -239,7 +252,7 @@ def extract_identity(
         conditions=conditions,
         value_bucket=_buckets(quantitative),
         subject_inferred=inferred,
-        conditions_from=conditions_from,
+        condition_tiers=condition_tiers,
     )
 
 
