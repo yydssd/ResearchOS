@@ -99,6 +99,35 @@ def test_a_point_links_out_to_its_full_text():
     assert "chars 10-20]_([source](https://arxiv.org/abs/2401.00001))" in section
 
 
+def test_a_char_range_read_back_from_sql_still_renders(db):
+    """The memo renders profiles loaded from SQL, not the extractor's in-memory
+    output, so a range that only survives in memory never reaches the reader."""
+    from research_os.domain.models import MethodPoint, MethodProfile
+    from research_os.reporting.memo import RunGraph, _render_methods_section
+    from research_os.storage.repositories import SqlMethodProfileRepository
+
+    with session_scope() as session:
+        SqlMethodProfileRepository(session).upsert(
+            MethodProfile(
+                source_version_id="sv_1", name="LangProp",
+                points=[MethodPoint(aspect="io", statement="s", quote="q", chunk_id="c",
+                                    section="4.2", char_start=10, char_end=42)],
+            ),
+            run_id="run_1",
+        )
+
+    with session_scope() as session:
+        stored = SqlMethodProfileRepository(session).list_by_run("run_1")
+
+    graph = RunGraph(
+        run_id="run_1", question_text="q", sources=[], evidence=[], claims=[],
+        methods=stored,
+    )
+    section = "\n".join(_render_methods_section(graph))
+
+    assert "chars 10-42" in section
+
+
 def test_a_point_without_a_link_stays_unlinked():
     """No address means no link: an empty `[source]()` would look like a link."""
     section = _methods_section(_point())

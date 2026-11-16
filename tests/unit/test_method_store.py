@@ -116,3 +116,24 @@ def test_a_point_source_link_survives_the_database(db):
         stored = SqlMethodProfileRepository(session).get("run_1", "sv_1")
 
     assert stored.points[0].source_url == "https://arxiv.org/abs/2401.00001"
+
+
+def test_a_point_char_range_survives_the_database(db):
+    """An offset held only on the in-memory object is lost on the first read:
+    the memo loads profiles from SQL, so "locatable" has to mean stored."""
+    from research_os.domain.models import MethodPoint
+
+    profile = _profile()
+    profile.points = [
+        MethodPoint(aspect="io", statement="Fuse maps by gating.", quote="q1",
+                    chunk_id="chunk_1", section="4.2", char_start=10, char_end=42)
+    ]
+    with session_scope() as session:
+        SqlMethodProfileRepository(session).upsert(profile, run_id="run_1")
+    with session_scope() as session:
+        got = SqlMethodProfileRepository(session).get("run_1", "sv_1")
+        listed = SqlMethodProfileRepository(session).list_by_run("run_1")
+
+    assert got is not None
+    assert (got.points[0].char_start, got.points[0].char_end) == (10, 42)
+    assert (listed[0].points[0].char_start, listed[0].points[0].char_end) == (10, 42)
