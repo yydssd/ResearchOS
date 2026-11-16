@@ -130,3 +130,16 @@ def make_source_version(
         verified=verified,
     )
     return sv
+
+
+def full_text_link(source) -> str | None:
+    """The address a stored method point should link to.
+
+    The canonical URL is preferred; a locally loaded paper has none, so its path
+    is the only address a reader can check. A missing version yields None rather
+    than a guess: a wrong link is worse than no link, because nothing marks it as
+    wrong once it is rendered.
+    """
+    if source is None:
+        return None
+    return source.url or source.local_path or None

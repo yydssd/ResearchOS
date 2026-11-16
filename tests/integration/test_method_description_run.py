@@ -119,3 +119,21 @@ def test_no_describer_leaves_l3_missing_without_any_event(db, tmp_path):
     assert events == []
     assert "L3" in profile.missing_layers
 
+
+def test_a_written_point_carries_the_address_of_its_source(db, tmp_path):
+    """The point is what survives; the link has to be written with it. This paper
+    was loaded from disk, so its URL is empty and the stored path is the only
+    address a reader can follow."""
+    from research_os.storage.repositories import SqlSourceVersionRepository
+
+    run_id = _run(tmp_path, QuoteDescriber())
+
+    with session_scope() as session:
+        profile = SqlMethodProfileRepository(session).list_by_run(run_id)[0]
+        source = SqlSourceVersionRepository(session).get(profile.source_version_id)
+
+    assert profile.points, "the fixture quote must yield a point"
+    assert source is not None and source.url is None
+    assert profile.points[0].source_url == source.local_path
+    assert profile.points[0].source_url
+

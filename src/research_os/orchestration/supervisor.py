@@ -14,7 +14,12 @@ from sqlalchemy.orm import Session
 
 from research_os.config import settings
 from research_os.documents.chunks import chunk_pages
-from research_os.documents.loader import DocumentLoadError, load_document, make_source_version
+from research_os.documents.loader import (
+    DocumentLoadError,
+    full_text_link,
+    load_document,
+    make_source_version,
+)
 from research_os.domain.enums import (
     EventType,
     EvidenceRelation,
@@ -438,6 +443,13 @@ class Supervisor:
         # so a ceiling of N means N calls.
         if self._describer is not None:
             profiles = SqlMethodProfileRepository(self._session).list_by_run(run.id)
+            # Resolved in one query, from the versions this run registered. A
+            # per-id lookup could come back None and turn "source unknown" into a
+            # point with no link that looks exactly like one with no address.
+            links = {
+                version.id: full_text_link(version)
+                for version in SqlSourceVersionRepository(self._session).list_by_run(run.id)
+            }
             by_source: dict[str, list] = {}
             for chunk in all_chunks:
                 by_source.setdefault(chunk.source_version_id, []).append(chunk)
@@ -476,7 +488,12 @@ class Supervisor:
                         failure_type=FailureType(outcome.reason),
                     )
                 if outcome.points:
-                    profile.points = outcome.points
+                    link = links.get(profile.source_version_id)
+                    # Stamped with the address, not joined later: the URL belongs
+                    # to the point once it is written (design §7.4).
+                    profile.points = [
+                        point.model_copy(update={"source_url": link}) for point in outcome.points
+                    ]
                     # The layer is no longer missing for this paper: a validated
                     # point is what "L3 obtained" means (ADR-035).
                     profile.missing_layers = [layer for layer in profile.missing_layers if layer != "L3"]
