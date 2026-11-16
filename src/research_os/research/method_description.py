@@ -84,6 +84,18 @@ def _locates(quote: str, chunk_text: str) -> bool:
     return starts and ends
 
 
+def _span(quote: str, text: str) -> tuple[int, int] | None:
+    """Character range of the quote in the RAW chunk text.
+
+    Whitespace-tolerant on purpose: the quote is folded for comparison, the raw
+    text still holds the line breaks, and a plain find() would miss those. The
+    returned range is an envelope in the original text, which is what a reader
+    needs to jump to.
+    """
+    pattern = r"\s+".join(re.escape(word) for word in quote.split())
+    match = re.search(pattern, text)
+    return (match.start(), match.end()) if match else None
+
 def validate_description(
     response: MethodDescriptionResponse, chunks: list[DocumentChunk]
 ) -> DescriptionOutcome:
@@ -113,6 +125,7 @@ def validate_description(
         if len(shared) < _MIN_SHARED_WORDS:
             reason = reason or "METHOD_STATEMENT_UNSUPPORTED"
             continue
+        span = _span(draft.quote, chunk.text)
         points.append(
             MethodPoint(
                 aspect=draft.aspect,
@@ -120,6 +133,8 @@ def validate_description(
                 quote=" ".join(draft.quote.split()),
                 chunk_id=draft.chunk_id,
                 section=draft.section or sections.get(draft.chunk_id),
+                char_start=span[0] if span else None,
+                char_end=span[1] if span else None,
             )
         )
     return DescriptionOutcome(points, reason)

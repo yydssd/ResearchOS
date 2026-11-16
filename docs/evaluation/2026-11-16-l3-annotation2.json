@@ -7,8 +7,8 @@
       "aspect": "mechanism",
       "statement": "A mode selector in the solver module switches between exploration and execution modes based on retrieved memory contents.",
       "quote": "Based on retrieved memory contents, a mode selector within the solver module dynamically switches between Explore and Execute modes.",
-      "verdict": "",
-      "note": ""
+      "verdict": "partial",
+      "note": "in and within is different, the quote does not mention 'in the solver module', so it is partial."
     },
     {
       "id": "e02",
@@ -16,7 +16,7 @@
       "aspect": "mechanism",
       "statement": "A spatial-frequency parallel fusion strategy is proposed to fuse intrinsic degradation awareness and contextualized attention, enhancing spatial-aware local-global interactions and enriching restoration details from the frequency perspective.",
       "quote": "To fuse the intrinsic degradation awareness and the contextualized attention, a spatial-frequency parallel fusion strategy is proposed for enhancing spatial-aware local-global interactions and enriching the restoration details from the frequency perspective.",
-      "verdict": "",
+      "verdict": "supported",
       "note": ""
     },
     {
@@ -25,7 +25,7 @@
       "aspect": "mechanism",
       "statement": "Every program is indexed by its description embedding so that it can be retrieved in similar future situations.",
       "quote": "Each program is indexed by the embedding of its description, which can be retrieved in similar situations in the future.",
-      "verdict": "",
+      "verdict": "supported",
       "note": ""
     },
     {
@@ -34,8 +34,8 @@
       "aspect": "mechanism",
       "statement": "An attention mechanism effectively builds global dependencies with linear computational complexity.",
       "quote": "First, in Section 3.3, we introduce a recurrent WKV (Re-WKV) attention mechanism that effectively builds global dependencies in 2D images with linear computational complexity.",
-      "verdict": "",
-      "note": ""
+      "verdict": "supported",
+      "note": "the statement is supported by the quote, which mentions' the Re-WKV attention mechanism that builds global dependencies with linear computational complexity.'may be chunked"
     },
     {
       "id": "e05",
@@ -43,8 +43,8 @@
       "aspect": "goal",
       "statement": "The proposed rectification network targets all-in-one image restoration to mitigate the characterized dual-ambiguity issue.",
       "quote": "To mitigate this issue, we propose DAR-Net, a Dual-Ambiguity Rectification Network for all-in-one image restoration.",
-      "verdict": "",
-      "note": ""
+      "verdict": "supported",
+      "note": "the context is chunked , the statement is supported by the quote, which mentions 'DAR-Net, a Dual-Ambiguity Rectification Network for all-in-one image restoration.'"
     },
     {
       "id": "e06",
@@ -52,7 +52,7 @@
       "aspect": "mechanism",
       "statement": "Actions that led to high returns are reinforced, while actions that led to low returns are suppressed.",
       "quote": "The key idea is to reinforce actions that resulted in high returns, while suppressing actions with low returns.",
-      "verdict": "",
+      "verdict": "supported",
       "note": ""
     },
     {
@@ -61,7 +61,7 @@
       "aspect": "mechanism",
       "statement": "A lightweight residual adaptor injects the queried representation while the original encoder, decoder, and skip connections stay unchanged.",
       "quote": "The queried representation is injected through a lightweight residual adaptor, while the original encoder, decoder, and skip connections remain unchanged.",
-      "verdict": "",
+      "verdict": "supported",
       "note": ""
     },
     {
@@ -70,7 +70,7 @@
       "aspect": "goal",
       "statement": "The proposed method is the first designed for the fusion of degraded and misaligned medical images, so no directly comparable methods exist.",
       "quote": "Since the method proposed is the first designed for the fusion of degraded and misaligned medical images, there are no directly comparable methods.",
-      "verdict": "",
+      "verdict": "supported",
       "note": ""
     },
     {

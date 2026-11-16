@@ -254,7 +254,10 @@ def _render_methods_section(graph: RunGraph) -> list[str]:
         if profile.points:
             for point in profile.points:
                 lines.append(
-                    f"- {point.aspect}: {point.statement} _[{point.section or point.chunk_id}]_"
+                    f"- {point.aspect}: {point.statement} "
+                    f"_[{point.section or point.chunk_id}"
+                    + (f" · chars {point.char_start}-{point.char_end}" if point.char_start is not None else "")
+                    + "]_"
                 )
         else:
             lines.append("- Description: _not extracted at S2 (the L3 describer arrives in S3)_")

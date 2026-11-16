@@ -182,6 +182,12 @@ class MethodPoint(BaseModel):
     quote: str = Field(min_length=1)
     chunk_id: str
     section: str | None = None
+    # Where the quote sits in its chunk's raw text. Stored because "locatable"
+    # without an offset only holds for the chunk object in memory: after the run
+    # neither we nor a reader can find the sentence again (measured 2026-11-16:
+    # 183 of 183 points could carry an offset, 0 did).
+    char_start: int | None = None
+    char_end: int | None = None
 
 
 class MethodSetup(BaseModel):

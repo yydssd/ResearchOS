@@ -120,6 +120,8 @@ def system_side(arxiv_id: str, cache: Path = CACHE, describer=None) -> dict:
         "L2": bool(profile and profile.components),
         "L3": bool(points),
         "L3_cause": l3_cause,
+        "L3_linked": sum(1 for point in points if point.char_start is not None),
+        "L3_points": len(points),
         "L4": bool(profile and setup_filled(profile.setup)),
         "proxy": sum(1 for claim in claims if _named_subject(claim)),
         "empty": not claims and not quantitative,
@@ -229,6 +231,10 @@ def print_report(report: dict) -> None:
         o = report["covered_over_20"][key]
         size_label = f"covered/{a[1]}"
         print(f"  {key:<28} A={a[0]}/{a[1]}  C={c_text:<8} {size_label}={o[0]}/{o[1]}")
+    linked = sum(side.get("L3_linked") or 0 for side in sides.values())
+    total_points = sum(side.get("L3_points") or 0 for side in sides.values())
+    print("\n=== L3 full-text links ===")
+    print(f"  points with a stored char range   {linked}/{total_points}   ({linked/total_points:.0%})" if total_points else "  no points")
     print("\n=== gap causes ===")
     for key, count in sorted(report["gaps"].items()):
         print(f"  {key:<40} {count}")

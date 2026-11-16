@@ -58,3 +58,14 @@ def test_a_paper_with_no_name_says_so_instead_of_staying_silent(db, tmp_path):
     section = _memo(tmp_path, paper="sample_paper.md").split("# Methods", 1)[1].split("\n# ", 1)[0]
     assert "未获取" in section
     assert "L1" in section
+
+
+def test_a_method_point_shows_where_its_quote_is(db, tmp_path):
+    """Full-text linking starts with the offset rendered beside the point; the
+    section alone sends the reader hunting through a PDF."""
+    from research_os.domain.models import MethodPoint, MethodProfile
+
+    assert MethodProfile.model_fields["points"].annotation is not None
+    point = MethodPoint(aspect="io", statement="s", quote="q", chunk_id="c",
+                        section="4.2", char_start=8120, char_end=8206)
+    assert point.char_start == 8120

@@ -150,3 +150,12 @@ def test_a_quote_across_a_line_break_still_locates():
     assert len(outcome.points) == 1
     assert outcome.reason is None
 
+
+
+def test_a_kept_point_carries_the_char_range_of_its_quote():
+    """A locatable quote without an offset is only locatable while the chunk
+    object is in memory; the range is what lets a reader jump to it later."""
+    outcome = _validate(_draft())
+
+    point = outcome.points[0]
+    assert CHUNK_TEXT[point.char_start : point.char_end] == point.quote
