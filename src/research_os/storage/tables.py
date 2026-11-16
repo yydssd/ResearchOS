@@ -243,3 +243,7 @@ class MethodPointRow(Base):
     # Also in `_ADDED_COLUMNS`: `create_all` never ALTERs an existing table, so
     # databases written before L3 linking would lose the URL on read.
     source_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # Same reason as `source_url`, and the same one the domain model gives:
+    # "locatable" must still hold after the point leaves memory.
+    char_start: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    char_end: Mapped[int | None] = mapped_column(Integer, nullable=True)
