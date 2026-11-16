@@ -1,0 +1,23 @@
+{"judge_note": "judged from quote alone, blind to the producing model",
+ "verdicts": [
+  {"id": "d01", "verdict": "supported", "reason": "与引文近乎逐字一致，未引入额外信息"},
+  {"id": "d02", "verdict": "supported", "reason": "仅省略 image 一词，其余与引文一致"},
+  {"id": "d03", "verdict": "supported", "reason": "与引文逐字一致"},
+  {"id": "d04", "verdict": "partial", "reason": "把 raindrop/snow 特例放宽为泛指局部退化，并删去推测语气"},
+  {"id": "d05", "verdict": "supported", "reason": "省略 instead of 对比句，未增内容"},
+  {"id": "d06", "verdict": "partial", "reason": "引文只说 this issue，未称是已刻画的 dual-ambiguity"},
+  {"id": "d07", "verdict": "partial", "reason": "把 Re-WKV 泛化为泛指注意力机制，并略去 2D 图像限定"},
+  {"id": "d08", "verdict": "supported", "reason": "语义一致，仅改被动为主动"},
+  {"id": "d09", "verdict": "supported", "reason": "与引文逐字一致"},
+  {"id": "d10", "verdict": "supported", "reason": "与引文一致，因果表述保留"},
+  {"id": "d11", "verdict": "supported", "reason": "each→every 等价，so that 对应可检索义"},
+  {"id": "d12", "verdict": "supported", "reason": "仅省略 pragmatically in the open world"},
+  {"id": "d13", "verdict": "supported", "reason": "与引文一致，仅调整时态"},
+  {"id": "d14", "verdict": "supported", "reason": "composites→combines，其余对应"},
+  {"id": "d15", "verdict": "supported", "reason": "DEX 改称 the method，其余一致"},
+  {"id": "d16", "verdict": "supported", "reason": "based on→using，内容对应"},
+  {"id": "d17", "verdict": "supported", "reason": "删去 such，其余与引文对应"},
+  {"id": "d18", "verdict": "supported", "reason": "leverage→use，其余一致"},
+  {"id": "d19", "verdict": "supported", "reason": "仅调整语序，内容与引文一致"},
+  {"id": "d20", "verdict": "supported", "reason": "We ask 改述为 the work asks，其余逐字对应"}
+ ]}

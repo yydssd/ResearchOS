@@ -1,23 +1,9 @@
 {
   "points": [
     {
-      "aspect": "goal",
-      "statement": "The lightweight all-in-one weather restoration is designed to bridge the gap between restoration quality and computational efficiency.",
-      "quote": "In this work, we present FReSH-IR (Frequency Reconstruction via Spectral Harmonization), a lightweight all-in-one (AIO) weather restoration designed to bridge the gap between restoration quality and computational efficiency.",
-      "prompt_index": -1,
-      "section": "1 Introduction"
-    },
-    {
       "aspect": "mechanism",
-      "statement": "The lightweight all-in-one restoration method explicitly decomposes feature representations into high- and low-frequency components at each scale of a hierarchical encoder-decoder architecture.",
+      "statement": "A lightweight all-in-one restoration method explicitly decomposes feature representations into high- and low-frequency components at each scale of a hierarchical encoder-decoder architecture.",
       "quote": "In this paper, we present Frequency Reconstruction via Spectral Harmonization, a novel lightweight all-in-one restoration method that explicitly decomposes feature representations into high- and low-frequency components at each scale of a hierarchical encoder-decoder architecture.",
-      "prompt_index": -1,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Combining spectral decomposition with spatial processing via Fourier-based skip connections captures complementary frequency information without sacrificing spatial detail.",
-      "quote": "By combining spectral decomposition with spatial processing through Fourier-based skip connections, FReSH-IR captures complementary frequency information without sacrificing spatial detail.",
       "prompt_index": -1,
       "section": "Abstract"
     },
@@ -27,6 +13,13 @@
       "quote": "FReSH-IR employs an asymmetric UNet [38] architecture that decomposes features into high and low Fourier frequency components at each scale and processes them through specialized blocks tailored to their characteristics.",
       "prompt_index": -1,
       "section": "1 Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Combining spectral decomposition with spatial processing through Fourier-based skip connections captures complementary frequency information without sacrificing spatial detail.",
+      "quote": "By combining spectral decomposition with spatial processing through Fourier-based skip connections, FReSH-IR captures complementary frequency information without sacrificing spatial detail.",
+      "prompt_index": -1,
+      "section": "Abstract"
     }
   ]
 }

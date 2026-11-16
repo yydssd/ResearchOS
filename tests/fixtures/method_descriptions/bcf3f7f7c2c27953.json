@@ -2,51 +2,58 @@
   "points": [
     {
       "aspect": "goal",
+      "statement": "All-in-one restoration requires a more flexible form of parameter adaptation.",
+      "quote": "We argue that AiO restoration requires a more flexible form of parameter adaptation.",
+      "prompt_index": -1,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "goal",
       "statement": "The model should dynamically assemble restoration parameters conditioned on the input image and apply them at the token level.",
       "quote": "Instead of selecting from a static set of experts or modulating the network with a single global condition, the model should dynamically assemble restoration parameters conditioned on the input image and apply them at the token level.",
-      "prompt_index": 5,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "The formulation is well suited to compositional degradations, where different spatial tokens can receive different residual updates while sharing a compact, efficient input-conditioned parameter space.",
-      "quote": "This formulation is particularly suitable for compositional degradations, where different spatial tokens can receive different residual updates while sharing a compact and efficient input-conditioned parameter space.",
-      "prompt_index": 5,
+      "prompt_index": -1,
       "section": "1 Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "Instead of pooling intermediate features into one global descriptor, the adapter uses learnable queries to probe condensed spatial contexts and decode them into routing bases and residual directions.",
+      "statement": "Each spatial token assembles its own residual update via dense signed dot-product affinities over generated rank-wise components.",
+      "quote": "Each spatial token then assembles its own residual update via dense signed dot-product affinities over the generated rank-wise components, avoiding external prompts, static expert banks, and discrete Top-KK selection.",
+      "prompt_index": -1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The adapter uses learnable queries to probe condensed spatial contexts and decode them into routing bases and residual directions.",
       "quote": "Rather than pooling intermediate features into a single global descriptor, the adapter uses learnable queries to probe condensed spatial contexts and decode them into routing bases and residual directions.",
-      "prompt_index": 8,
+      "prompt_index": -1,
       "section": "1 Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "Assembled residual updates are injected into the restoration backbone's attention projections, allowing spatial feature interactions to adapt to each image's degradation structure.",
+      "statement": "Assembled residual updates are injected into attention projections of the restoration backbone, allowing spatial feature interactions to adapt to each image's degradation structure.",
       "quote": "The assembled residual updates are injected into the attention projections of the restoration backbone, allowing spatial feature interactions to adapt to the degradation structure of each image.",
-      "prompt_index": 8,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Every spatial token assembles its own additive residual update via dense signed dot-product affinities over the generated rank-wise components.",
-      "quote": "Each spatial token then assembles its own additive residual update through dense signed dot-product affinities over these generated rank-wise components.",
-      "prompt_index": 7,
+      "prompt_index": -1,
       "section": "1 Introduction"
     },
     {
       "aspect": "why_it_works",
-      "statement": "The token-wise residual can be expressed as a dot-product interaction between spatial tokens and dynamically synthesized routing bases, then a weighted combination of synthesized residual directions.",
+      "statement": "The formulation particularly suits compositional degradations, where different spatial tokens can receive different residual updates while sharing a compact, efficient input-conditioned parameter space.",
+      "quote": "This formulation is particularly suitable for compositional degradations, where different spatial tokens can receive different residual updates while sharing a compact and efficient input-conditioned parameter space.",
+      "prompt_index": -1,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "The token-wise residual can be expressed as a dot-product interaction between spatial tokens and dynamically synthesized routing bases, followed by a weighted combination of synthesized residual directions.",
       "quote": "The token-wise residual can be written as a dot-product interaction between spatial tokens and dynamically synthesized routing bases, followed by a weighted combination of synthesized residual directions.",
-      "prompt_index": 9,
+      "prompt_index": -1,
       "section": "1 Introduction"
     },
     {
       "aspect": "why_it_works",
-      "statement": "Spatial tokens act as queries, while generated routing bases and residual directions play roles analogous to keys and values.",
+      "statement": "Spatial tokens serve as queries, while generated routing bases and residual directions play roles analogous to keys and values.",
       "quote": "In this form, spatial tokens serve as queries, while the generated routing bases and residual directions play roles analogous to keys and values.",
-      "prompt_index": 9,
+      "prompt_index": -1,
       "section": "1 Introduction"
     }
   ]

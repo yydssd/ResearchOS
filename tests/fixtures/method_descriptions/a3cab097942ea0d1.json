@@ -1,87 +1,73 @@
 {
   "points": [
     {
-      "aspect": "goal",
-      "statement": "A novel approach leverages spectral decomposition and group-wise attention for multi-weather image restoration.",
-      "quote": "To address these issue, we propose Spectral-based Spatial Grouping Transformer (SSGformer), a novel approach that leverages spectral decomposition and group-wise attention for multi-weather image restoration.",
-      "prompt_index": 1,
-      "section": "Abstract"
-    },
-    {
       "aspect": "mechanism",
-      "statement": "Images are decomposed into high-frequency edge features and low-frequency information.",
-      "quote": "SSGformer decomposes images into high-frequency edge features using conventional edge detection and low-frequency information via Singular Value Decomposition.",
-      "prompt_index": 1,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "An attention mechanism models relationships between these features.",
+      "statement": "Multi-head linear attention is used to model the relationship between these features.",
       "quote": "We utilize multi-head linear attention to effectively model the relationship between these features.",
       "prompt_index": 1,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "Fused features are combined with input to create a mask that clusters regions by spatial similarity and image texture.",
+      "statement": "Fused features are combined with the input to create a grouping-mask that clusters regions by spatial similarity and image texture.",
       "quote": "The fused features are integrated with the input to generate a grouping-mask that clusters regions based on the spatial similarity and image texture.",
       "prompt_index": 1,
       "section": "Abstract"
     },
     {
       "aspect": "why_it_works",
-      "statement": "A group-wise attention mechanism leverages the mask to enable robust adverse weather removal and consistent performance across diverse weather conditions.",
+      "statement": "A group-wise attention mechanism is introduced to use the mask for robust adverse weather removal and consistent performance across diverse weather conditions.",
       "quote": "To fully leverage this mask, we introduce a group-wise attention mechanism, enabling robust adverse weather removal and ensuring consistent performance across diverse weather conditions.",
       "prompt_index": 1,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "A block uses channel attention and spatial attention to balance feature-wise relationships and spatial dependencies.",
-      "quote": "We also propose a Spatial Grouping Transformer Block that uses both channel attention and spatial attention, effectively balancing feature-wise relationships and spatial dependencies.",
-      "prompt_index": 2,
-      "section": "Abstract"
+      "statement": "Fused features detect degradation patterns and create a grouping-mask for spatial grouping.",
+      "quote": "The fused features identify degradation patterns and generate a “grouping-mask” for spatial grouping.",
+      "prompt_index": 4,
+      "section": "1 Introduction"
     },
     {
-      "aspect": "io",
-      "statement": "Initially, edge and low-rank information is extracted from the input image while spatial details are preserved.",
-      "quote": "As shown in Fig. 1 (a), the first step extracts edge and low-rank information from the input image while preserving spatial details.",
+      "aspect": "mechanism",
+      "statement": "The mask groups features for group-wise spatial and channel attention.",
+      "quote": "Features are grouped by the mask for group-wise spatial/channel attention.",
+      "prompt_index": 4,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Information exchange is expanded beyond local spectral regions by comparing spatially similar areas, enabling broader degradation-aware feature sharing and efficient grouping.",
+      "quote": "Building on this, we expand the information exchange beyond local spectral regions by identifying and comparing spatially similar areas across the image, facilitating broader degradation-aware feature sharing and more efficient grouping.",
       "prompt_index": 10,
       "section": "1 Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "Edge detection captures high-frequency edge features while a decomposition analyzes degradation textures in the low-frequency domain.",
-      "quote": "Conventional edge detection captures high-frequency edge features, while Singular Value Decomposition (SVD) analyzes degradation textures in the low-frequency domain.",
-      "prompt_index": 10,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "An attention mechanism models relationships between spectral information and captures interdependencies within spectral features.",
-      "quote": "To model the relationships between spectral information, we use multi-head linear attention to capture the interdependencies within the spectral features.",
-      "prompt_index": 10,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A mask generator captures spatial similarity from spectral information and creates a grouping-mask that clusters relevant features by their values.",
-      "quote": "To achieve the grouping, we employ a mask generator to capture spatial similarity from the spectral information and generate a grouping-mask that clusters relevant features based on their values (Fig. 1 (b)).",
-      "prompt_index": 10,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Group-wise attention is applied spatially and across channels, allowing focus on the most relevant features.",
+      "statement": "Group-wise attention is applied spatially and across channels, allowing the model to focus on relevant features.",
       "quote": "These group-wise attention is applied both spatially and across channels, allowing the model to focus on the most relevant features.",
       "prompt_index": 11,
       "section": "1 Introduction"
     },
     {
       "aspect": "why_it_works",
-      "statement": "The architecture enables robust degradation removal across diverse adverse weather conditions.",
+      "statement": "The proposed architecture enables robust degradation removal across diverse adverse weather conditions.",
       "quote": "Consequently, our proposed architecture enables robust degradation removal across diverse adverse weather conditions.",
       "prompt_index": 11,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A specialized architecture is designed to use grouped features and facilitate global information exchange by optimizing their integration.",
+      "quote": "To effectively utilize these grouped features and facilitate global information exchange, we design a specialized architecture tailored to optimize their integration.",
+      "prompt_index": 11,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "goal",
+      "statement": "An effective solution is required that extracts valuable spectral information for frequency-based image restoration while preserving spatial details to avoid losing contextual information.",
+      "quote": "Therefore, an effective solution is required that extracts valuable spectral information for frequency-based image restoration, while preserving spatial details to prevent the loss of crucial contextual information.",
+      "prompt_index": 9,
       "section": "1 Introduction"
     }
   ]

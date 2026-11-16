@@ -2,30 +2,44 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "Restoration scale itself should be treated as a spatially varying variable.",
+      "statement": "The restoration scale should itself be treated as a variable that varies spatially.",
       "quote": "We therefore argue that restoration scale itself should be treated as a spatially varying variable.",
-      "prompt_index": -1,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "At each decoder stage, a stage-conditioned LOD field is predicted from current reconstruction state and aligned encoder hierarchy.",
-      "quote": "At each decoder stage, a stage-conditioned LOD field is predicted according to both the current reconstruction state and the aligned encoder hierarchy.",
-      "prompt_index": -1,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "The queried representation is injected via a lightweight residual adaptor; original encoder, decoder, and skip connections stay unchanged.",
-      "quote": "The queried representation is injected through a lightweight residual adaptor, while the original encoder, decoder, and skip connections remain unchanged.",
-      "prompt_index": -1,
+      "prompt_index": 6,
       "section": "1 Introduction"
     },
     {
       "aspect": "why_it_works",
-      "statement": "Different samples should access representations at different resolutions according to the spatial support they require.",
+      "statement": "Representations at different resolutions should be accessed by different samples according to their required spatial support.",
       "quote": "The underlying principle is that different samples should access representations at different resolutions according to the spatial support they require.",
-      "prompt_index": -1,
+      "prompt_index": 6,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "At each decoder stage, a stage-conditioned level field is predicted from the current reconstruction state and the aligned encoder hierarchy.",
+      "quote": "At each decoder stage, a stage-conditioned LOD field is predicted according to both the current reconstruction state and the aligned encoder hierarchy.",
+      "prompt_index": 7,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Each spatial location continuously queries a pair of neighboring levels, allowing the effective restoration scale to adapt across image regions and throughout the coarse-to-fine reconstruction process.",
+      "quote": "Each spatial location then continuously queries only two neighboring LOD levels, allowing the effective restoration scale to adapt not only across image regions but also throughout the coarse-to-fine reconstruction process.",
+      "prompt_index": 7,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A lightweight residual adaptor injects the queried representation while the original encoder, decoder, and skip connections stay unchanged.",
+      "quote": "The queried representation is injected through a lightweight residual adaptor, while the original encoder, decoder, and skip connections remain unchanged.",
+      "prompt_index": 7,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Image restoration does not have an explicitly known sampling footprint; the appropriate restoration scale must be inferred from the degraded observation and the current reconstruction state.",
+      "quote": "Unlike rendering, however, image restoration does not have an explicitly known sampling footprint, the appropriate restoration scale must instead be inferred from the degraded observation and the current reconstruction state.",
+      "prompt_index": 6,
       "section": "1 Introduction"
     }
   ]

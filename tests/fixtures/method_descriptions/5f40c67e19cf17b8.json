@@ -2,43 +2,22 @@
   "points": [
     {
       "aspect": "mechanism",
-      "statement": "Components include an automatic curriculum suggesting objectives for open-ended exploration, a skill library for complex behaviors, and iterative prompting generating executable code.",
-      "quote": "Voyager consists of three novel components: (1) an automatic curriculum (Sec. 2.1) that suggests objectives for open-ended exploration, (2) a skill library (Sec. 2.2) for developing increasingly complex behaviors, and (3) an iterative prompting mechanism (Sec. 2.3) that generates executable code for embodied control.",
-      "prompt_index": 0,
-      "section": "2 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Iterative prompting executes generated programs to gather observations and errors, feeds feedback into refinement, and repeats until self-verification confirms completion before storing the program.",
-      "quote": "To address this challenge, we propose an iterative prompting mechanism that: (1) executes the generated program to obtain observations from the Minecraft simulation (such as inventory listing and nearby creatures) and error trace from the code interpreter (if any); (2) incorporates the feedback into GPT-4’s prompt for another round of code refinement; and (3) repeats the process until a self-verification module confirms the task completion, at which point we commit the program to the skill library (e.g., craftStoneShovel() and combatZombieWithSword()) and query the automatic curriculum for the next milestone (Fig. 2).",
-      "prompt_index": 10,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Synthesizing complex skills by composing simpler programs compounds capabilities over time and alleviates catastrophic forgetting.",
-      "quote": "Complex skills can be synthesized by composing simpler programs, which compounds Voyager’s capabilities rapidly over time and alleviates catastrophic forgetting in other continual learning methods [31, 32].",
-      "prompt_index": 9,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Each program is indexed by its description embedding and can be retrieved in similar future situations.",
+      "statement": "Every program is indexed by its description embedding so that it can be retrieved in similar future situations.",
       "quote": "Each program is indexed by the embedding of its description, which can be retrieved in similar situations in the future.",
       "prompt_index": 9,
       "section": "1 Introduction"
     },
     {
-      "aspect": "mechanism",
-      "statement": "Key components are an automatic curriculum maximizing exploration, a skill library of executable code for storing complex behaviors, and iterative prompting with feedback, errors, self-verification.",
-      "quote": "Voyager consists of three key components: 1) an automatic curriculum that maximizes exploration, 2) an ever-growing skill library of executable code for storing and retrieving complex behaviors, and 3) a new iterative prompting mechanism that incorporates environment feedback, execution errors, and self-verification for program improvement.",
-      "prompt_index": 2,
-      "section": "Abstract"
+      "aspect": "why_it_works",
+      "statement": "Action programs in an ever-growing skill library are reusable, interpretable, and generalizable to novel tasks.",
+      "quote": "It can construct an ever-growing skill library of action programs that are reusable, interpretable, and generalizable to novel tasks.",
+      "prompt_index": 11,
+      "section": "1 Introduction"
     },
     {
-      "aspect": "why_it_works",
-      "statement": "Code serves as the action space instead of low-level motor commands because programs can naturally represent temporally extended and compositional actions essential for many long-horizon tasks.",
-      "quote": "We opt to use code as the action space instead of low-level motor commands because programs can naturally represent temporally extended and compositional actions [16, 22], which are essential for many long-horizon tasks in Minecraft.",
+      "aspect": "mechanism",
+      "statement": "The approach avoids requiring model parameter access and explicit gradient-based training or finetuning.",
+      "quote": "Our approach bypasses the need for model parameter access and explicit gradient-based training or finetuning.",
       "prompt_index": 8,
       "section": "1 Introduction"
     }

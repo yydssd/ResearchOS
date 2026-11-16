@@ -2,28 +2,35 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "A framework is designed to auto-organize groups of LLM-based agents so they complete navigation tasks.",
+      "statement": "The framework is designed to auto-organize groups of agents based on large language models to complete navigation tasks.",
       "quote": "To address this issue, we design the HAS framework to auto-organize groups of LLM-based agents to complete navigation tasks.",
       "prompt_index": 1,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "The structure utilizes centralized planning with decentralized execution, enabling efficient multi-modal navigation in open-ended environments.",
+      "statement": "The structure uses centralized planning with decentralized execution to enable efficient multi-modal navigation in open-ended environments.",
       "quote": "It utilizes centralized planning with decentralized execution, enabling efficient multi-modal navigation in open-ended environments.",
       "prompt_index": 11,
       "section": "1 Introduction"
     },
     {
       "aspect": "io",
-      "statement": "Given a navigation goal in the form of images, objects, or audio, collectives of agents autonomously self-organize for collaborative navigation endeavors.",
+      "statement": "Given a navigation goal as images, objects, or audio, groups of agents self-organize to undertake collaborative navigation such as searching and exploring.",
       "quote": "Given a navigation goal in the form of images, objects, or audio, collectives of agents autonomously self-organize to undertake collaborative endeavors of navigation like searching and exploring.",
       "prompt_index": 4,
       "section": "Abstract"
     },
     {
       "aspect": "why_it_works",
-      "statement": "By harnessing LLMs' zero-shot learning capabilities and nuanced decision-making abilities, agents can navigate these spaces with efficiency and adaptability akin to human intuition.",
+      "statement": "Integrating multi-modal language models into embodied agents enhances navigational efficiency.",
+      "quote": "Integrating Multi-modal Language Models (MLMs) into embodied agents enhances navigational efficiency.",
+      "prompt_index": 8,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "By harnessing zero-shot learning and nuanced decision-making abilities of large language models, agents can navigate spaces with efficiency and adaptability akin to human intuition.",
       "quote": "By harnessing the zero-shot learning capabilities and the nuanced decision-making abilities of LLMs, our agents can navigate these spaces with efficiency and adaptability akin to human intuition.",
       "prompt_index": 9,
       "section": "1 Introduction"

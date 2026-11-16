@@ -2,30 +2,86 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The work aims to handle diverse degradations inside a unified framework, which is critical for practical applications.",
+      "statement": "All-in-one image restoration aims to address diverse degradations within a unified framework and is critical for practical applications.",
       "quote": "All-in-one image restoration, which aims to address diverse degradations within a unified framework, is critical for practical applications.",
-      "prompt_index": -1,
+      "prompt_index": 1,
       "section": "Abstract."
     },
     {
       "aspect": "mechanism",
-      "statement": "The attention mechanism focuses on key gradient orientations and magnitudes to enable more robust feature representation for unified restoration.",
+      "statement": "A dynamic self-attention mechanism adaptively attends to long-range spatial dependencies based on degradation-aware cues from descriptors.",
+      "quote": "By leveraging the degradation-discriminative capability of HOG descriptors, HOGformer employs a dynamic self-attention mechanism that adaptively attends to long-range spatial dependencies based on degradation-aware HOG cues.",
+      "prompt_index": 1,
+      "section": "Abstract."
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A guided convolution module captures long-range degradation similarities while maintaining awareness of global structural information.",
+      "quote": "To enhance the degradation sensitivity of attention inputs, we design a HOG-guided local dynamic-range convolution module that captures long-range degradation similarities while maintaining awareness of global structural information.",
+      "prompt_index": 1,
+      "section": "Abstract."
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A feed-forward module increases model capacity to adapt to different degradations through channel–spatial interactions.",
+      "quote": "Furthermore, we propose a dynamic interaction feed-forward module, efficiently increasing the model capacity to adapt to different degradations through channel–spatial interactions.",
+      "prompt_index": 1,
+      "section": "Abstract."
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "The histogram of oriented gradients feature descriptor inherently characterizes and distinguishes different degradations.",
+      "quote": "In this work, we observe that the Histogram of Oriented Gradients (HOG) feature descriptor (Dalal and Triggs 2005) inherently characterizes and distinguishes different degradations.",
+      "prompt_index": 8,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "The descriptive power of the descriptor arises from gradient magnitude and orientation, which jointly encode local intensity and directional structure.",
+      "quote": "The descriptive power of HOG arises from its core components, gradient magnitude and orientation, which jointly encode local intensity and directional structure.",
+      "prompt_index": 8,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A dynamic self-attention mechanism reformulates standard self-attention by incorporating descriptors and enhances restoration performance across diverse degradations.",
+      "quote": "The core innovation is a Dynamic HOG-aware Self-Attention (DHOGSA) mechanism that reformulates standard self-attention by incorporating HOG descriptors, significantly enhancing restoration performance across diverse degradations.",
+      "prompt_index": 10,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The attention mechanism integrates patch-level and pixel-level descriptors, adaptively emphasizing spatial regions based on perceptual degradation.",
+      "quote": "DHOGSA integrates patch-level and pixel-level HOG descriptors, adaptively emphasizing spatial regions based on perceptual degradation.",
+      "prompt_index": 10,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The attention mechanism prioritizes critical gradient orientations and magnitudes, enabling more robust feature representation for all-in-one restoration.",
       "quote": "This attention mechanism prioritizes critical gradient orientations and magnitudes, enabling more robust feature representation for all-in-one restoration.",
-      "prompt_index": -1,
+      "prompt_index": 10,
       "section": "1. Introduction"
     },
     {
-      "aspect": "why_it_works",
-      "statement": "Gradient properties provide discriminative cues that are sensitive to patterns specific to degradation.",
-      "quote": "These gradient properties offer discriminative cues that are sensitive to degradation-specific patterns.",
-      "prompt_index": -1,
+      "aspect": "mechanism",
+      "statement": "A local dynamic-range convolution uses pixel-level descriptors to capture degradation-related dependencies, with reshaping methods for global context and local detail preservation.",
+      "quote": "To capture degradation-related dependencies and enable efficient feature extraction in this attention mechanism, we propose a local dynamic-range convolution using pixel-level HOG descriptors, along with two HOG reshaping methods: bin-wise HOG reshaping (BHOGR) for global context and frequency-wise HOG reshaping (FHOGR) for local detail preservation.",
+      "prompt_index": 10,
       "section": "1. Introduction"
     },
     {
-      "aspect": "why_it_works",
-      "statement": "The observed phenomena suggest that each degradation has unique and quantifiable effects in the gradient domain.",
-      "quote": "These phenomena suggest that each degradation exerts unique and quantifiable effects in the gradient domain.",
-      "prompt_index": -1,
+      "aspect": "mechanism",
+      "statement": "An efficient feed-forward module promotes global information exchange through shuffle and gated mechanisms across spatial and channel dimensions to adapt to various degradations.",
+      "quote": "Besides, to make the feed-forward module in the transformer capable of adapting to various degradations, we propose an efficient Dynamic Interaction Feed-Forward (DIFF) module, which promotes global information exchange through shuffle and gated mechanisms across spatial and channel dimensions.",
+      "prompt_index": 11,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A loss supervises gradient orientation and magnitude to preserve edge and structural integrity.",
+      "quote": "Moreover, we propose a HOG loss that supervises gradient orientation and magnitude to preserve edge and structural integrity.",
+      "prompt_index": 11,
       "section": "1. Introduction"
     }
   ]

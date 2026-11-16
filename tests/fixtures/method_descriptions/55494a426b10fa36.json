@@ -4,42 +4,84 @@
       "aspect": "goal",
       "statement": "The proposed agent stores novel events from visited places to support efficient solving of sparse sequential tasks.",
       "quote": "To address this, we propose MrSteve which stores novel events from visited places for efficient sparse sequential task-solving.",
-      "prompt_index": -1,
+      "prompt_index": 2,
       "section": "3 Method"
     },
     {
       "aspect": "mechanism",
-      "statement": "If memory has no task-relevant resource, exploration mode is chosen and the agent uses hierarchical exploration.",
-      "quote": "When no task-relevant resource exists in the memory, Explore mode is selected, and the agent explores with our hierarchical exploration method.",
-      "prompt_index": -1,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "When memory contains a task-relevant resource, execution mode is chosen; the agent navigates to the resource position and executes the policy to solve the task.",
-      "quote": "If a task-relevant resource exists in the memory, Execute mode is selected, then the agent navigates to the resource’s position and executes πInst (i.e., Steve-1) to solve the task.",
-      "prompt_index": -1,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "The policy is memory-augmented and includes a memory module and a solver module.",
+      "statement": "The policy is memory-augmented for instruction following and comprises a memory component and a solver component.",
       "quote": "MrSteve is a memory-augmented instruction following policy that consists of Memory Module and Solver Module, as shown in Figure 2(a).",
-      "prompt_index": -1,
+      "prompt_index": 3,
       "section": "3 Method"
     },
     {
-      "aspect": "io",
-      "statement": "The agent takes position, first-person view, and text instruction and uses memory and solver modules to follow the instruction.",
-      "quote": "MrSteve takes agent’s position, first person view, and text instruction, and utilizes Memory Module and Solver Module to follow the instruction.",
-      "prompt_index": -1,
+      "aspect": "mechanism",
+      "statement": "A memory component stores novel events from visited places.",
+      "quote": "In Memory Module, we use the memory called Place Event Memory MtM_{t} that stores novel events from visited places (Figure 2(b)).",
+      "prompt_index": 3,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A mode selector in the solver component chooses between exploring and executing based on stored memory.",
+      "quote": "Based on Place Event Memory, Mode Selector in Solver Module decides between Explore mode and Execute mode.",
+      "prompt_index": 6,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "If memory lacks a task-relevant resource, the agent explores using a hierarchical exploration method.",
+      "quote": "When no task-relevant resource exists in the memory, Explore mode is selected, and the agent explores with our hierarchical exploration method.",
+      "prompt_index": 6,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "When a task-relevant resource is in memory, the agent navigates to its position and executes the instruction policy to solve the task.",
+      "quote": "If a task-relevant resource exists in the memory, Execute mode is selected, then the agent navigates to the resource’s position and executes πInst\\pi_{\\text{Inst}} (i.e., Steve-1) to solve the task.",
+      "prompt_index": 6,
       "section": "3 Method"
     },
     {
       "aspect": "why_it_works",
       "statement": "Task-relevant resources are assumed rare and sparsely distributed, so memorizing novel events from visited places is essential for future tasks.",
       "quote": "Additionally, we assume that task-relevant resources (e.g., water, cow) rarely exist and are sparsely distributed in the environment, making it essential to memorize novel events from visited places for future tasks as shown in Figure 1.",
-      "prompt_index": -1,
+      "prompt_index": 1,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "It is poorly suited to sparse sequential tasks because it cannot recall visited places or task-relevant resources seen in the past.",
+      "quote": "This makes Steve-1 poorly suited for sparse sequential task, as it cannot recall visited places or task-relevant resources seen in the past.",
+      "prompt_index": 2,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "The paper argues that many low-level controllers fail primarily because they lack an episodic memory system.",
+      "quote": "In this paper, we argue that the primary cause of failure in many low-level controllers is the absence of an episodic memory system.",
+      "prompt_index": 9,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The introduced low-level controller is equipped with an episodic memory form that captures what, where, and when information from episodes.",
+      "quote": "To address this, we introduce MrSteve (Memory Recall Steve), a novel low-level controller equipped with Place Event Memory (PEM), a form of episodic memory that captures what, where, and when information from episodes.",
+      "prompt_index": 9,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The work proposes an exploration strategy and a task-solving framework that lets agents alternate between exploration and task-solving based on recalled events.",
+      "quote": "Additionally, we propose an Exploration Strategy and a Memory-Augmented Task Solving Framework, allowing agents to alternate between exploration and task-solving based on recalled events.",
+      "prompt_index": 9,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "With these modules, the agent can efficiently explore and recall task-relevant resources from memory to solve sparse sequential tasks.",
+      "quote": "With these modules, MrSteve can efficiently explore and recall task-relevant resources from the memory to solve sparse sequential task in Figure 1.",
+      "prompt_index": 6,
       "section": "3 Method"
     }
   ]

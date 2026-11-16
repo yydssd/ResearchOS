@@ -2,45 +2,31 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "Studies how LLMs can adaptively collaborate to perform complex embodied reasoning tasks.",
+      "statement": "The work studies how LLMs can adaptively collaborate to perform complex embodied reasoning tasks.",
       "quote": "This work studies how LLMs can adaptively collaborate to perform complex embodied reasoning tasks.",
       "prompt_index": 1,
       "section": "Abstract"
     },
     {
+      "aspect": "goal",
+      "statement": "Creating collaborative AI agents requires ensuring they can efficiently and effectively communicate with collaborators and continuously learn and adapt in real-world embodied tasks.",
+      "quote": "Creating such collaborative AI agents requires ensuring their ability to efficiently and effectively communicate with collaborators and continuously learn and adapt throughout this process in real-world embodied tasks.",
+      "prompt_index": 4,
+      "section": "1 Introduction"
+    },
+    {
       "aspect": "mechanism",
-      "statement": "Introduces a simulation platform for studying multi-agent collaboration through natural language in rich, embodied scenarios.",
+      "statement": "A simulation platform is introduced to study multi-agent collaboration through natural language in rich, embodied scenarios.",
       "quote": "To facilitate research in this area of multi-agent collaboration for embodied reasoning, we introduce mindcraft, a simulation platform for studying multi-agent collaboration through natural language in rich, embodied scenarios.",
       "prompt_index": 6,
       "section": "1 Introduction"
     },
     {
-      "aspect": "io",
-      "statement": "Creates a benchmark comprising practical cooking, crafting, and construction tasks, including meal preparation, tool assembly, and building from blueprints.",
-      "quote": "We further create MineCollab, a benchmark comprising three practical tasks: cooking, which involves preparing a meal while coordinating ingredient collection; crafting, where agents assemble a pickaxe from mined materials; and construction, which requires building houses from detailed blueprints as can be seen in Figure 1.",
+      "aspect": "mechanism",
+      "statement": "Additional data can be easily produced because many task variations can be quickly created via procedural generation by changing attributes such as recipe or blueprint complexity.",
+      "quote": "Additional data can be easily produced, as a large number of variations of the task can be quickly created via procedural generation—e.g. by changing attributes such as the complexity of the types of recipes an agent would have to cook, the complexity of the blueprint, etc.",
       "prompt_index": 6,
       "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Systematically evaluates state-of-the-art LLM agents on task suites, testing collaborative and embodied reasoning abilities.",
-      "quote": "We systematically evaluate state-of-the-art LLM agents on these three task suites, testing their collaborative and embodied reasoning abilities.",
-      "prompt_index": 7,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Experimental study finds efficient natural language communication is the primary bottleneck, with performance dropping when agents must communicate detailed task completion plans.",
-      "quote": "An experimental study finds that the primary bottleneck in collaborating effectively for current state-of-the-art agents is efficient natural language communication, with agent performance dropping as much as 15% when they are required to communicate detailed task completion plans.",
-      "prompt_index": 1,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "io",
-      "statement": "In construction tasks, agents need to navigate and coordinate in space to build toward the objective without undoing other agents' progress.",
-      "quote": "In the construction tasks, the agents need to navigate and coordinate in the space to ensure they consistently build towards their objective without undoing any progress the other agents have made.",
-      "prompt_index": 2,
-      "section": "Abstract"
     }
   ]
 }

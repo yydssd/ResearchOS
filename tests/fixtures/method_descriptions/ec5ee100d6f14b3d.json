@@ -2,30 +2,23 @@
   "points": [
     {
       "aspect": "why_it_works",
-      "statement": "Prompt-based approaches often rely solely on spatial features and miss complementary frequency cues that capture global structural integrity.",
+      "statement": "Prompt-based approaches often rely only on spatial features and miss frequency cues that capture global structural integrity.",
       "quote": "Prompt-based approaches often rely solely on spatial features, missing the complementary frequency cues that explicitly capture global structural integrity.",
-      "prompt_index": 8,
+      "prompt_index": -1,
       "section": "Methodology"
     },
     {
       "aspect": "mechanism",
-      "statement": "Prompts guide the restoration network to adapt to diverse degradations without explicit degradation labels.",
+      "statement": "Prompts guide the restoration network to adapt to diverse degradations without requiring explicit degradation labels.",
       "quote": "These prompts guide the restoration network to adapt effectively to diverse degradations without requiring explicit degradation labels.",
-      "prompt_index": 8,
+      "prompt_index": -1,
       "section": "Methodology"
     },
     {
       "aspect": "mechanism",
-      "statement": "Joint representations are extracted by integrating information from the spatial and frequency domains.",
+      "statement": "Joint representations are extracted by integrating information from spatial and frequency domains.",
       "quote": "Then, we extract joint representations by integrating information from the spatial and frequency domains.",
-      "prompt_index": 8,
-      "section": "Methodology"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Average pooling is applied after combining these representations to obtain the prompt output.",
-      "quote": "After combining these representations with 𝔻, we apply average pooling to obtain the prompt output.",
-      "prompt_index": 9,
+      "prompt_index": -1,
       "section": "Methodology"
     }
   ]

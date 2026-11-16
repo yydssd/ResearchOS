@@ -2,38 +2,52 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The goal is to build an efficient and effective model for medical image restoration.",
+      "statement": "The aim is an efficient and effective model for medical image restoration.",
       "quote": "We aim to build an efficient and effective model for medical image restoration based on the Receptance Weighted Key Value (RWKV) peng2023rwkv, termed Restore-RWKV.",
       "prompt_index": 0,
       "section": "3 Method"
     },
     {
       "aspect": "mechanism",
-      "statement": "A network architecture is introduced, and a novel block is presented as its fundamental component for feature extraction.",
-      "quote": "In Section 3.1, we introduce the network architecture of Restore-RWKV, and in Section 3.2, we present a novel R-RWKV block as its fundamental component for feature extraction.",
-      "prompt_index": 0,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Since the original design handles sequences, innovations in a block adapt it to capture global and local dependencies in images.",
-      "quote": "Since the original RWKV peng2023rwkv is designed for processing 1D sequences, we incorporate two innovations in the R-RWKV block to adapt it for capturing global and local dependencies in 2D images.",
-      "prompt_index": 0,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "An attention mechanism is introduced to effectively build global dependencies in images with linear computational complexity.",
+      "statement": "An attention mechanism effectively builds global dependencies with linear computational complexity.",
       "quote": "First, in Section 3.3, we introduce a recurrent WKV (Re-WKV) attention mechanism that effectively builds global dependencies in 2D images with linear computational complexity.",
       "prompt_index": 0,
       "section": "3 Method"
     },
     {
       "aspect": "mechanism",
-      "statement": "A shift mechanism is introduced to accurately capture local context to enhance model performance.",
+      "statement": "A shift mechanism accurately captures local context to enhance model performance.",
       "quote": "Second, in Section 3.4, we introduce an omnidirectional token shift mechanism that accurately captures local context to enhance the model performance.",
       "prompt_index": 0,
       "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Bidirectional attention is basic for a global receptive field, and recurrent attention effectively models dependencies from various scan directions.",
+      "quote": "Re-WKV incorporates bidirectional attention as basic for a global receptive field and recurrent attention to effectively model 2D dependencies from various scan directions.",
+      "prompt_index": 2,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A token shift layer enhances local dependencies by shifting tokens from all directions and across a wide context range.",
+      "quote": "Second, we develop an omnidirectional token shift (Omni-Shift) layer that enhances local dependencies by shifting tokens from all directions and across a wide context range.",
+      "prompt_index": 2,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "A larger receptive field lets the model capture information from a wider region and reference more pixels to improve recovery of degraded areas.",
+      "quote": "On one hand, a larger receptive field enables the model to capture information from a wider region, allowing it to reference more pixels to improve the recovery of the degraded areas.",
+      "prompt_index": 6,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "A larger receptive field allows capturing high-level patterns and structures that are essential for effective medical image restoration.",
+      "quote": "On the other hand, a larger receptive field allows the model to capture high-level patterns and structures, which are essential for effective medical image restoration guo2025mambair.",
+      "prompt_index": 6,
+      "section": "1 Introduction"
     }
   ]
 }

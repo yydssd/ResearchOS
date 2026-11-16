@@ -2,14 +2,14 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The aim is to restore high-quality images degraded by adverse weather conditions.",
+      "statement": "The goal is to restore high-quality images degraded by adverse weather conditions.",
       "quote": "Our goal is to restore high-quality images degraded by adverse weather conditions.",
       "prompt_index": 0,
       "section": "III Method"
     },
     {
       "aspect": "mechanism",
-      "statement": "Textual embeddings and visual features are integrated to produce degradation-aware prompts encoding degradation-related semantic and contextual cues.",
+      "statement": "Textual embeddings are integrated with visual features to produce degradation-aware prompts that encode degradation-related semantic and contextual cues.",
       "quote": "The CMPG integrates textual embeddings with visual features to produce degradation-aware prompts that encode degradation-related semantic and contextual cues.",
       "prompt_index": 3,
       "section": "Abstract"
@@ -22,8 +22,8 @@
       "section": "Abstract"
     },
     {
-      "aspect": "mechanism",
-      "statement": "A module disentangles degradation artifacts from scene structures to further enhance structural fidelity and improve reconstruction of fine textures and detailed content.",
+      "aspect": "why_it_works",
+      "statement": "Structural fidelity is further enhanced by disentangling degradation artifacts from scene structures, thereby improving reconstruction of fine textures and detailed content.",
       "quote": "To further enhance structural fidelity, DFCM is introduced that disentangles degradation artifacts from scene structures, thereby improving the reconstruction of fine textures and detailed content.",
       "prompt_index": 4,
       "section": "Abstract"

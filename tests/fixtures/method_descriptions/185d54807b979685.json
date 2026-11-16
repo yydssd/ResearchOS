@@ -1,38 +1,24 @@
 {
   "points": [
     {
+      "aspect": "goal",
+      "statement": "The work asks whether an agent powered by an open language model that struggles with basic tasks can improve through collaboration with others.",
+      "quote": "We ask: can an open LLM-powered agent, which struggles with basic tasks, improve through collaboration with others?",
+      "prompt_index": 8,
+      "section": "1 Introduction"
+    },
+    {
       "aspect": "mechanism",
-      "statement": "The framework introduces components for communication and perspective-taking: structured representation, perspective taking, natural-language communication, and memory subsystems.",
+      "statement": "The approach adds communication and perspective taking through a structured representation of percepts, beliefs, desires, and actions, with natural-language sharing.",
       "quote": "To grant MindForge agents the ability to learn through collaborative social interactions, we introduce the following components for communication and perspective-taking: (i) an explicit structured representation linking percepts, beliefs, desires, and actions (Section 4.1), (ii) perspective taking so that the agent can reason over self-beliefs and those about its collaborators (Section 4.2), (iii) a communication medium that the agents can use to share information in natural language (Section 4.3), and (iv) the ability to utilize different types of memory subsystems (Section 4.4).",
       "prompt_index": 0,
       "section": "4 Method"
     },
     {
-      "aspect": "mechanism",
-      "statement": "The agents incorporate perspective-taking through a causal template linking percepts, beliefs, desires, and actions, a natural-language communication interface, and memory updates with semantic and episodic memory.",
-      "quote": "Concretely, MindForge extends Voyager by incorporating three key improvements: (1) perspective-taking through a causal ToM template [17] linking agent percepts, beliefs, desires, and actions; (2) a natural language communication interface between agents; and (3) memory updates following the Soar cognitive architecture [34], including semantic memory of task and environment-related knowledge and episodic memory.",
-      "prompt_index": 10,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Agents refine their beliefs through multi-turn dialogue with expert peers, without gradient updates.",
-      "quote": "Our framework reframes knowledge distillation [22] as a social, test-time process: agents refine their beliefs through multi-turn dialogue with expert peers, without gradient updates.",
-      "prompt_index": 9,
-      "section": "1 Introduction"
-    },
-    {
       "aspect": "why_it_works",
-      "statement": "Interactive distillation supports test-time compute scaling, enabling agents to improve performance via communication, memory retrieval and perspective-taking.",
+      "statement": "Interactive refinement supports computation scaling at test time, letting agents improve performance through communication, memory retrieval, and perspective taking.",
       "quote": "This interactive distillation supports test-time compute scaling [54], enabling agents to improve performance via communication, memory retrieval and perspective-taking.",
       "prompt_index": 9,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "The method overcomes false beliefs and code generation through communication and perspective-taking.",
-      "quote": "We identify Voyager’s specific failure cases: (1) false beliefs and (2) code generation, and show how our method overcomes them through communication and perspective-taking.",
-      "prompt_index": 11,
       "section": "1 Introduction"
     }
   ]

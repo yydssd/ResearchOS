@@ -2,44 +2,44 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The aim is to combine the advantages of two method families while avoiding their drawbacks.",
+      "statement": "The aim is to combine the advantages of both method families while avoiding their drawbacks.",
       "quote": "As illustrated in Fig. 1, we aim to combine the advantages of both RL methods and LLM methods while avoiding their drawbacks.",
-      "prompt_index": 7,
+      "prompt_index": -1,
       "section": "1 Introduction"
     },
     {
       "aspect": "io",
-      "statement": "It receives environmental observation as input and predicts the next action to perform in an auto-regressive manner.",
+      "statement": "The model takes environmental observation as input and predicts the next action in an auto-regressive manner.",
       "quote": "Taking environmental observation as input, LARM predicts the next action to perform in an auto-regressive manner.",
-      "prompt_index": 7,
+      "prompt_index": -1,
       "section": "1 Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "It directly emits a token to choose the next action instead of a descriptive sentence, which makes responses swifter.",
-      "quote": "Instead of generating a descriptive sentence composed of multiple tokens, LARM directly produces a single token to select the next action, which makes LARM respond more swiftly than common LLMs.",
-      "prompt_index": 7,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "The choice allows pre-training on numerous webpage data to provide basic general knowledge.",
-      "quote": "This choice enables us to first pre-train it utilizing numerous webpage data to provide it with basic general knowledge.",
-      "prompt_index": 7,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A referee gives immediate feedback on whether the just performed action brings a positive contribution to realizing the final target.",
-      "quote": "Its core idea is that we employ a referee (like a giant LLM) to provide immediate feedback about whether the just performed action brings positive contribution to realizing the final target.",
-      "prompt_index": 9,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "This efficiently distills generalizable knowledge from very large models into a lightweight end-to-end policy during online exploration without human supervision.",
+      "statement": "Generalizable knowledge from giant models is distilled into a lightweight end-to-end policy during online exploration without human supervision.",
       "quote": "In this way, we efficiently distill the concerned generalizable knowledge of giant LLMs into our lightweight end-to-end LARM policy during online exploration without human supervision.",
-      "prompt_index": 9,
+      "prompt_index": -1,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A referee provides immediate feedback on whether the just performed action positively contributes to realizing the final target.",
+      "quote": "Its core idea is that we employ a referee (like a giant LLM) to provide immediate feedback about whether the just performed action brings positive contribution to realizing the final target.",
+      "prompt_index": -1,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "io",
+      "statement": "The model is built on a lightweight language model and directly outputs the next action to execute instead of text.",
+      "quote": "Specifically, LARM is built upon a lightweight LLM (fewer than 5B parameters) and directly outputs the next action to execute rather than text.",
+      "prompt_index": -1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "An embodied policy is optimized by directly interacting with the environment online.",
+      "quote": "This marks the first attempt that optimizes an LLM-style embodied policy through making it directly interact with the environment online.",
+      "prompt_index": -1,
       "section": "1 Introduction"
     }
   ]

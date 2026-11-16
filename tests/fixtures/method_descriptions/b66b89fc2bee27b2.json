@@ -2,6 +2,20 @@
   "points": [
     {
       "aspect": "goal",
+      "statement": "A single model aims to recover images degraded by diverse and spatially non-uniform corruptions.",
+      "quote": "All-in-one image restoration seeks a single model that can recover images degraded by diverse and spatially non-uniform corruptions.",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "goal",
+      "statement": "A unified architecture can adapt its processing locally to heterogeneous degradations rather than applying a spatially homogeneous operation everywhere.",
+      "quote": "The key difficulty is to design a unified architecture that can adapt its processing locally to heterogeneous degradations, rather than applying a spatially homogeneous operation everywhere.",
+      "prompt_index": 6,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
       "statement": "Degradation-aware processing should span the entire pipeline from patch sampling through token transformation to pixel reconstruction.",
       "quote": "Focusing on these drawbacks, we argue in this paper that degradation-aware processing should span the entire pipeline, from patch sampling, through token transformation, to pixel reconstruction.",
       "prompt_index": 11,
@@ -9,30 +23,9 @@
     },
     {
       "aspect": "mechanism",
-      "statement": "The principle is to make patch boundaries and reconstruction functions depend on local degradation severity.",
+      "statement": "The principle is to make patch boundaries and reconstruction functions of local degradation severity.",
       "quote": "This suggests a simple but under-explored principle: make patch boundaries and reconstruction functions of local degradation severity.",
       "prompt_index": 11,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A lightweight degradation encoder predicts a global degradation vector and a spatial degradation map from local degradation severity, which jointly condition patch embedding and unembedding through adaptive deformation.",
-      "quote": "Specifically, FIT employs a lightweight Degradation Encoder to predict a global degradation vector 𝐠\\mathbf{g} and a spatial degradation map 𝐌\\mathbf{M} from local degradation severity, which jointly condition the patch embedding and unembedding through adaptive deformation.",
-      "prompt_index": 1,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A task-token dropout strategy regularizes task conditioning during training to improve robustness across degradation types.",
-      "quote": "Moreover, to improve robustness across degradation types, we introduce a task-token dropout strategy that regularizes task conditioning during training.",
-      "prompt_index": 1,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "io",
-      "statement": "A degradation encoder extracts a global vector and a spatial map from a degraded image.",
-      "quote": "Given a degraded image, the Degradation Encoder extracts a global vector 𝐠\\mathbf{g} and spatial map 𝐌\\mathbf{M}.",
-      "prompt_index": 8,
       "section": "1 Introduction"
     }
   ]

@@ -43,8 +43,9 @@ Rules, all mandatory:
   the quote does not draw ("rather than ..."), no widening or narrowing of the
   object ("object" for "building 3D object"), no conclusion the quote does not
   state, and no promotion of a possibility ("can", "may", "should") into a fact
-  ("does", "is"). Re-state only what is there; if the quote is a figure caption or
-  a fragment, prefer fewer points over a stronger claim.
+  ("does", "is"). Re-state only what is there. If a chunk does not support a point
+  under these rules, skip that point - but do not skip the paper: another chunk
+  may well support one.
 - `aspect` is one of: goal, mechanism, why_it_works, io.
 - Never write a method name, a dataset, a metric or a number here.
 - If the chunks do not describe the method, answer {"points": []}.

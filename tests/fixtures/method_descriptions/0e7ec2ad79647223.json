@@ -1,31 +1,38 @@
 {
   "points": [
     {
-      "aspect": "mechanism",
-      "statement": "A deep unfolding network inspired by half-quadratic splitting formulates unified image restoration under complex degradations as a collaborative unfolding process between degradation-aware observation consistency and visual-prior-guided reconstruction.",
-      "quote": "To address these issues, this paper proposes DVANet, a deep unfolding network inspired by the half-quadratic splitting optimization algorithm, which formulates unified image restoration under complex degradations as a collaborative unfolding process between degradation-aware observation consistency and visual-prior-guided reconstruction.",
+      "aspect": "goal",
+      "statement": "The work targets a unified restoration framework that handles diverse degradation types.",
+      "quote": "All-in-One image restoration aims to develop a unified restoration framework for handling diverse degradation types.",
       "prompt_index": 1,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "A degradation representation module is employed to extract global degradation attributes and local degradation cues, and degradation-conditioned mapping is used to enhance adaptability to different degradation types.",
+      "statement": "A degradation representation module extracts global degradation attributes and local degradation cues, and degradation-conditioned mapping enhances adaptability to different degradation types.",
       "quote": "Specifically, in the degradation-aware observation consistency branch, a degradation representation module is employed to extract global degradation attributes and local degradation cues, and degradation-conditioned mapping is used to enhance the model’s adaptability to different degradation types.",
       "prompt_index": 2,
       "section": "Abstract"
     },
     {
-      "aspect": "mechanism",
-      "statement": "A model is introduced to provide structural and semantic information as hierarchical visual priors, complementing missing structural information in damaged regions and improving detail recovery.",
-      "quote": "In the visual-prior-guided reconstruction branch, DINOv3 is introduced to provide structural and semantic information as hierarchical visual priors, thereby complementing the missing structural information in damaged regions and improving detail recovery.",
-      "prompt_index": 2,
-      "section": "Abstract"
+      "aspect": "why_it_works",
+      "statement": "Jointly modeling observation consistency and visual-prior-guided reconstruction in an interpretable unfolding manner improves degradation adaptability and structural detail recovery.",
+      "quote": "The proposed framework improves degradation adaptability and structural detail recovery by jointly modeling observation consistency and visual-prior-guided reconstruction in an interpretable unfolding manner.",
+      "prompt_index": 6,
+      "section": "I Introduction"
     },
     {
       "aspect": "why_it_works",
-      "statement": "The framework improves degradation adaptability and structural detail recovery by jointly modeling observation consistency and visual-prior-guided reconstruction in an interpretable unfolding manner.",
-      "quote": "The proposed framework improves degradation adaptability and structural detail recovery by jointly modeling observation consistency and visual-prior-guided reconstruction in an interpretable unfolding manner.",
-      "prompt_index": 6,
+      "statement": "Because degradation involves information loss, noise perturbation, and structural corruption, relying only on the observed image makes stable and plausible recovery difficult.",
+      "quote": "Since the degradation process is usually accompanied by information loss, noise perturbation, and structural corruption, relying solely on the observed image makes it difficult to recover stable and plausible results.",
+      "prompt_index": 10,
+      "section": "I Introduction"
+    },
+    {
+      "aspect": "io",
+      "statement": "Restoration estimates a latent clean image from a degraded observation.",
+      "quote": "From a modeling perspective, image restoration can generally be formulated as an ill-posed inverse problem, which aims to estimate the latent clean image from a degraded observation.",
+      "prompt_index": 7,
       "section": "I Introduction"
     }
   ]

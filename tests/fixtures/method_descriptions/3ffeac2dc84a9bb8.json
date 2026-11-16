@@ -2,38 +2,38 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "Agent control is enabled in open-domain tasks that require Theory of Mind reasoning.",
-      "quote": "This enables agent control in open-domain tasks that require Theory of Mind reasoning.",
-      "prompt_index": -1,
+      "statement": "Introduces an open-source simulator designed to enable embodied agents to perform collaborative tasks by leveraging Theory of Mind.",
+      "quote": "This paper introduces an open-source simulator, BeliefNest, designed to enable embodied agents to perform collaborative tasks by leveraging Theory of Mind.",
+      "prompt_index": 1,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "A prompt generation mechanism based on each belief state facilitates designing and evaluating methods for agent control using large language models.",
+      "statement": "Dynamically and hierarchically constructs simulators within a Minecraft environment, letting agents explicitly represent nested belief states about themselves and others.",
+      "quote": "BeliefNest dynamically and hierarchically constructs simulators within a Minecraft environment, allowing agents to explicitly represent nested belief states about themselves and others.",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The simulator provides a prompt generation mechanism based on each belief state, facilitating design and evaluation of methods for agent control utilizing LLMs.",
       "quote": "The simulator provides a prompt generation mechanism based on each belief state, facilitating the design and evaluation of methods for agent control utilizing large language models (LLMs).",
-      "prompt_index": -1,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Agents can infer others’ beliefs and predict belief-based actions in false-belief tasks.",
-      "quote": "We demonstrate through experiments that agents can infer others’ beliefs and predict their belief-based actions in false-belief tasks.",
-      "prompt_index": -1,
+      "prompt_index": 1,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "A nested belief structure derived from Theory of Mind is implemented using multiple physical simulators.",
-      "quote": "The nested belief structure derived from Theory of Mind is implemented using multiple physical simulators.",
-      "prompt_index": -1,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Each agent can perform mental simulations within its own simulator, considering others’ beliefs, to generate action plans that reflect those beliefs.",
+      "statement": "Each agent can perform mental simulations within its own simulator, considering the beliefs of others, to generate action plans reflecting those beliefs.",
       "quote": "Each agent can perform mental simulations within its own simulator, considering the beliefs of others, to generate action plans that reflect these beliefs.",
-      "prompt_index": -1,
+      "prompt_index": 2,
       "section": "Abstract"
+    },
+    {
+      "aspect": "goal",
+      "statement": "Proposes an open-source simulator designed to support research on collaborative behavior in embodied agents endowed with Theory of Mind capabilities.",
+      "quote": "In this paper, we propose BeliefNest, an open-source simulator designed to support research on collaborative behavior in embodied agents endowed with Theory of Mind capabilities.",
+      "prompt_index": 3,
+      "section": "1 Introduction"
     }
   ]
 }

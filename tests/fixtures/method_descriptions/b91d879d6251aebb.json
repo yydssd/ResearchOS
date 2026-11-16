@@ -2,44 +2,65 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "Coordination must reveal the task consequence of a private fact: who acts, what crosses the handoff boundary, where it goes, and the suffix that follows.",
+      "statement": "Coordination needs to reveal a private fact's task consequence: who acts, what crosses the handoff boundary, where it goes, and which suffix follows.",
       "quote": "Coordination must reveal the task consequence of a private fact: who acts, what crosses the handoff boundary, where it goes, and which suffix follows.",
-      "prompt_index": -1,
+      "prompt_index": 5,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "goal",
+      "statement": "With the same local input, the correct actor, handoff item, and continuation all change.",
+      "quote": "Agent AA receives the same local input in both cases, yet the correct actor, handoff item, and continuation all change.",
+      "prompt_index": 4,
       "section": "1. Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "The resolved commitment is parsed, checked, materialized, compiled into skills, and verified by handoff and terminal state.",
-      "quote": "The resolved commitment is parsed, checked, canonically materialized, compiled to Mineflayer skills, and verified by handoff and terminal state.",
-      "prompt_index": -1,
+      "statement": "A sender-local consequence moves forward in a peer request; afterward the receiver generates its downstream skill path.",
+      "quote": "A sender-local consequence travels forward inside a peer request, after which the receiver generates its downstream skill path.",
+      "prompt_index": 7,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A peer-local capability consequence returns through bounded feedback; afterward the requester revises the work division.",
+      "quote": "A peer-local capability consequence travels back through bounded feedback, after which the requester revises the division of work.",
+      "prompt_index": 7,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Both directions need one explicit object with semantics that survive communication, resolution, and execution.",
+      "quote": "Both directions require one explicit object whose semantics survive communication, resolution, and execution.",
+      "prompt_index": 7,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Before resolution the schema carries a proposed SELF+REQ route; after resolution it carries role-local obligations entering execution.",
+      "quote": "Before resolution it carries a proposed SELF+REQ route; after resolution the same schema carries the role-local obligations that enter execution.",
+      "prompt_index": 10,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "On the main forward route, the receiver uses REQ as condition and generates its downstream SELF path.",
+      "quote": "In the main forward route, the receiver conditions on REQ and generates its downstream SELF path.",
+      "prompt_index": 10,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Counterfactual interventions holding world, call schedule, and executor unchanged make requester revision and receiver execution follow injected task consequence in both directions.",
+      "quote": "Counterfactual interventions that hold the world, call schedule, and executor unchanged make requester revision and receiver execution follow the injected task consequence in both directions.",
+      "prompt_index": 1,
       "section": "Abstract."
     },
     {
       "aspect": "mechanism",
-      "statement": "A sender-local consequence moves forward in a peer request, after which the receiver generates its downstream skill path.",
-      "quote": "A sender-local consequence travels forward inside a peer request, after which the receiver generates its downstream skill path.",
-      "prompt_index": -1,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A peer-local capability consequence returns through bounded feedback, after which the requester revises the division of work.",
-      "quote": "A peer-local capability consequence travels back through bounded feedback, after which the requester revises the division of work.",
-      "prompt_index": -1,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Both directions require one explicit object whose semantics persist through communication, resolution, and execution.",
-      "quote": "Both directions require one explicit object whose semantics survive communication, resolution, and execution.",
-      "prompt_index": -1,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Results identify executable task consequences as the coordination unit linking distributed local reasoning to verified joint action.",
+      "statement": "Executable task consequences serve as the coordination unit linking distributed local reasoning to verified joint action.",
       "quote": "These results identify executable task consequences as the coordination unit connecting distributed local reasoning to verified joint action.",
-      "prompt_index": -1,
+      "prompt_index": 2,
       "section": "Abstract."
     }
   ]

@@ -2,52 +2,31 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "All-in-one image restoration seeks to handle diverse degradations within a unified framework.",
-      "quote": "All-in-one image restoration aims to handle diverse degradations within a unified framework.",
+      "statement": "The proposed rectification network targets all-in-one image restoration to mitigate the characterized dual-ambiguity issue.",
+      "quote": "To mitigate this issue, we propose DAR-Net, a Dual-Ambiguity Rectification Network for all-in-one image restoration.",
       "prompt_index": 2,
       "section": "Abstract."
     },
     {
-      "aspect": "io",
-      "statement": "Image restoration seeks to recover clean visual content from degraded observations affected by noise, haze, and rain conditions.",
-      "quote": "Image restoration aims to recover clean visual content from degraded observations affected by factors such as noise, haze, and rain conditions.",
-      "prompt_index": 5,
-      "section": "1. Introduction"
+      "aspect": "mechanism",
+      "statement": "A representation module constructs a structured degradation state through simplex-constrained archetype mixture modeling.",
+      "quote": "DAR-Net first introduces a Degradation Archetype Representation (DAR) module to construct a structured degradation state through simplex-constrained archetype mixture modeling.",
+      "prompt_index": 2,
+      "section": "Abstract."
     },
     {
       "aspect": "mechanism",
-      "statement": "Current methods often encode heterogeneous degradation conditions in a shared latent space where degradation-related cues and scene content can remain entangled.",
-      "quote": "Existing methods commonly encode heterogeneous degradation conditions in a shared latent space, where degradation-related cues and scene content can remain entangled.",
+      "statement": "A rectification module uses that state to generate degradation-aware prompts that improve channel-wise conditioning in the decoder.",
+      "quote": "Based on this state, a Semantic Ambiguity Rectification (SeAR) module generates degradation-aware prompts to improve channel-wise conditioning in the decoder.",
       "prompt_index": 2,
       "section": "Abstract."
     },
     {
       "aspect": "why_it_works",
-      "statement": "The challenge is dual ambiguity: semantic ambiguity in channel-wise modulation and spatial ambiguity in restoration responses, which can lead to content corruption and residual artifacts.",
-      "quote": "We characterize the resulting challenge as dual ambiguity: semantic ambiguity in channel-wise modulation and spatial ambiguity in restoration responses, which can lead to content corruption and residual artifacts.",
+      "statement": "A rectification module regularizes degradation-aware and complementary features toward orthogonal response subspaces, reducing spatial interference between removal and preservation cues.",
+      "quote": "A Spatial Ambiguity Rectification (SpAR) module further regularizes degradation-aware and complementary features toward orthogonal response subspaces, reducing spatial interference between removal and preservation cues.",
       "prompt_index": 2,
       "section": "Abstract."
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "These methods differ in introducing degradation-aware conditioning but still predominantly rely on shared latent representations within a unified restoration pipeline.",
-      "quote": "However, although these methods differ in how they introduce degradation-aware conditioning, they still predominantly rely on shared latent representations within a unified restoration pipeline.",
-      "prompt_index": 10,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A common difficulty remains insufficiently addressed: degradation-related cues and content-related representations are often encoded entangled in the shared latent space.",
-      "quote": "As a result, a common difficulty remains insufficiently addressed: degradation-related cues and content-related representations are often encoded in an entangled manner within the shared latent space.",
-      "prompt_index": 10,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "goal",
-      "statement": "Existing unified restoration models still face difficulty distinguishing what should be removed from what should be preserved.",
-      "quote": "Therefore, existing unified restoration models still face difficulty in distinguishing what should be removed from what should be preserved.",
-      "prompt_index": 11,
-      "section": "1. Introduction"
     }
   ]
 }

@@ -1,24 +1,38 @@
 {
   "points": [
     {
-      "aspect": "goal",
-      "statement": "Robust all-in-one restoration requires a model that can capture feature evolution at multiple timescales and adaptively select dynamics conditioned on the input.",
-      "quote": "From a dynamical systems perspective, robust all-in-one restoration requires a model capable of capturing feature evolution at multiple timescales while adaptively selecting appropriate dynamics conditioned on the input.",
-      "prompt_index": 9,
-      "section": "I Introduction"
+      "aspect": "mechanism",
+      "statement": "An adaptive state space module introduces input-conditioned multi-timescale liquid discretization into selective state space modeling.",
+      "quote": "In this paper, we propose Multi-τ\\tau Liquid-Mamba, an adaptive state space module that introduces input-conditioned multi-timescale liquid discretization into selective state space modeling.",
+      "prompt_index": 2,
+      "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "The module modulates effective discretization steps of multiple dynamical branches and adaptively fuses their responses using degradation-aware gating weights.",
+      "statement": "The proposed module modulates the effective discretization steps of multiple dynamical branches and adaptively fuses their responses according to degradation-aware gating weights.",
       "quote": "Instead of changing the overall selective scan pipeline, the proposed module modulates the effective discretization steps of multiple dynamical branches and adaptively fuses their responses according to degradation-aware gating weights.",
       "prompt_index": 2,
       "section": "Abstract"
     },
     {
       "aspect": "why_it_works",
-      "statement": "Smooth regions generally require stable gradual state evolution to preserve global structures, while edges and textured areas benefit from faster dynamics to recover fine details.",
-      "quote": "For instance, smooth regions generally require stable and gradual state evolution to preserve global structures, whereas edges and textured areas benefit from faster dynamics to recover fine details.",
-      "prompt_index": 8,
+      "statement": "This design allows the model to capture fast-varying local details and slowly evolving global structures while preserving linear scaling with respect to sequence length.",
+      "quote": "This design allows the model to capture both fast-varying local details and slowly evolving global structures while preserving the linear scaling property of Mamba with respect to sequence length.",
+      "prompt_index": 2,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The module modulates the effective transition dynamics while preserving the original selective parameterization and hardware-efficient selective scan mechanism, making it plug-and-play.",
+      "quote": "Importantly, Multi-τ\\tau Liquid-Mamba modulates the effective transition dynamics while preserving the original selective parameterization and hardware-efficient selective scan mechanism, making it a plug-and-play module that can be seamlessly integrated into existing Mamba-based architectures.",
+      "prompt_index": 3,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "goal",
+      "statement": "A robust all-in-one restoration model is required to capture feature evolution at multiple timescales and adaptively select dynamics conditioned on the input.",
+      "quote": "From a dynamical systems perspective, robust all-in-one restoration requires a model capable of capturing feature evolution at multiple timescales while adaptively selecting appropriate dynamics conditioned on the input.",
+      "prompt_index": 9,
       "section": "I Introduction"
     }
   ]

@@ -1,15 +1,8 @@
 {
   "points": [
     {
-      "aspect": "io",
-      "statement": "Vision perception takes images or videos, encodes them into tokens, and combines them with agent state and task tokens as input.",
-      "quote": "The Vision Perception part takes images or videos, encodes them into tokens, and combines them with Agent State and Task tokens as input.",
-      "prompt_index": 0,
-      "section": "3 Method: STEVE"
-    },
-    {
       "aspect": "mechanism",
-      "statement": "Vision perception interprets visual information in the environment and integrates it into the language model component with agent state and task instruction.",
+      "statement": "Vision perception interprets visual information in the environment and integrates it into the LLMs component together with agent state and task instruction.",
       "quote": "Vision perception involves interpreting visual information in the environment, which is then integrated into the LLMs component with agent state and task instruction.",
       "prompt_index": 2,
       "section": "Abstract"
@@ -23,10 +16,31 @@
     },
     {
       "aspect": "mechanism",
-      "statement": "Code action generates executable skill actions by retrieval in a skill database, enabling effective interaction within the environment.",
+      "statement": "Code action generates executable skill actions based on retrieval in a skill database, enabling the agent to interact effectively within the Minecraft environment.",
       "quote": "Code action generates executable skill actions based on retrieval in skill database, enabling the agent to interact effectively within the Minecraft environment.",
       "prompt_index": 2,
       "section": "Abstract"
+    },
+    {
+      "aspect": "goal",
+      "statement": "The proposed framework builds an embodied agent using a vision model and LLMs in an open world.",
+      "quote": "It is our proposed framework to build an embodied agent based on the vision model and LLMs within an open world, as illustrated in Fig. 1.",
+      "prompt_index": 8,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "io",
+      "statement": "Vision Perception takes images or videos, encodes them into tokens, and combines them with Agent State and Task tokens as input.",
+      "quote": "The Vision Perception part takes images or videos, encodes them into tokens, and combines them with Agent State and Task tokens as input.",
+      "prompt_index": 0,
+      "section": "3 Method: STEVE"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Textual communication is limited in naturally conveying certain world concepts, like crafting recipes, which vision often communicates more effectively.",
+      "quote": "Furthermore, textual communication has its limitations in naturally conveying certain concepts of the world, like crafting recipes, which are often more effectively communicated through vision.",
+      "prompt_index": 7,
+      "section": "1 Introduction"
     }
   ]
 }

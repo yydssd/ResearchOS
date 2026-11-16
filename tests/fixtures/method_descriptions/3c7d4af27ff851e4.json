@@ -2,35 +2,42 @@
   "points": [
     {
       "aspect": "mechanism",
-      "statement": "It enables robust planning by adaptively learning and revising inaccurate dependencies by analogy.",
+      "statement": "The framework has three main components: learning and revising dependencies, a failure-aware memory of operations, and exploration guided by difficulty.",
+      "quote": "In this section, we introduce REPOA, which consists of three main components: Adaptive Dependency Learning (ADL), Fine-grained Failure-aware Operation Memory (FFOM), and Difficulty-based Exploration (DEX).",
+      "prompt_index": 0,
+      "section": "3 Methods"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "One component enables robust planning by adaptively learning and revising inaccurate dependencies through analogy.",
       "quote": "Firstly, Section 3.1 details how ADL enables robust planning by adaptively learning and revising inaccurate dependencies by analogy.",
       "prompt_index": 0,
       "section": "3 Methods"
     },
     {
       "aspect": "mechanism",
-      "statement": "It further enhances robustness by remembering past operation outcomes to guide reliable step-by-step planning and trigger revision of inaccurate dependencies.",
+      "statement": "Another component enhances robustness by remembering past operation outcomes to guide reliable step-by-step planning and trigger revision of inaccurate dependencies.",
       "quote": "Secondly, Section 3.2 explains how FFOM further enhances robustness by remembering past operation outcomes to guide reliable step-by-step planning and trigger revision of inaccurate dependencies.",
       "prompt_index": 0,
       "section": "3 Methods"
     },
     {
       "aspect": "mechanism",
-      "statement": "It accelerates dependency learning by guiding the agent to strategically select unexperienced items as goals to pursue, based on difficulty and diversity.",
+      "statement": "The method accelerates dependency learning by guiding the agent to strategically select unexperienced items as goals based on difficulty and diversity.",
       "quote": "Lastly, Section 3.3 details how DEX accelerates the dependency learning by guiding the agent to strategically select unexperienced items as goals to pursue, based on difficulty and diversity.",
       "prompt_index": 0,
       "section": "3 Methods"
     },
     {
-      "aspect": "mechanism",
-      "statement": "It dynamically revises learned dependencies through exploration when inaccuracies are detected, and prevents repeated failures by recording and utilizing past plan outcomes to improve robustness.",
+      "aspect": "why_it_works",
+      "statement": "Dynamic revision of learned dependencies through exploration and recording and utilizing past plan outcomes together improve robustness to incorrect knowledge.",
       "quote": "ADL enables dynamic revision of learned dependencies through exploration when inaccuracies are detected (Section 3.1), while FFOM prevents repeated failures by recording and utilizing past plan outcomes (Section 3.2), together improving robustness to incorrect knowledge.",
       "prompt_index": 10,
       "section": "1 Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "To enhance learning efficiency, it strategically selects items that appear easier to obtain, prioritizing under-explored items for diversity and those with shorter paths from known items.",
+      "statement": "To enhance learning efficiency, the method strategically selects items that appear easier to obtain, prioritizing under-explored items for diversity and items with shorter paths from known items.",
       "quote": "To further enhance learning efficiency, DEX strategically selects items that appear easier to obtain, prioritizing those under-explored for diversity and those with shorter paths from known items (Section 3.3).",
       "prompt_index": 10,
       "section": "1 Introduction"

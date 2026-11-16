@@ -1,10 +1,10 @@
 {
   "points": [
     {
-      "aspect": "mechanism",
-      "statement": "Restoration level modulation using latent space manipulation can be achieved by tuning a user input parameter.",
-      "quote": "Visual result of restoration level modulation using latent space manipulation, which can achieve by tuning user input parameter.",
-      "prompt_index": 7,
+      "aspect": "why_it_works",
+      "statement": "The restoration level is fixed for the whole image, which is sufficient for global degradation consistent across the image; local degradation might require different per-patch levels.",
+      "quote": "The model also achieve state-of-the-art performance compared with other type methods on raindrop and snow removal, and significantly better than all comparison models on challenging rain+fog dataset, the reason might be that the restoration level is fixed for whole image in our method, which is sufficient for global degradation that degradation level is consistent for whole image, but raindrop and snow images are more on local degradation, that might require different restoration level for each patch to further boost the performance.",
+      "prompt_index": 0,
       "section": "4.2 Comparisons with the State-of-the-art Methods"
     }
   ]

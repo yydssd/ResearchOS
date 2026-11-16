@@ -2,7 +2,7 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The authors propose an adaptive all-in-one restoration network based on frequency mining and modulation.",
+      "statement": "An adaptive all-in-one image restoration network based on frequency mining and modulation is proposed to address this gap.",
       "quote": "To address this gap, we propose an adaptive all-in-one image restoration network based on frequency mining and modulation.",
       "prompt_index": 4,
       "section": "Abstract"
@@ -23,14 +23,14 @@
     },
     {
       "aspect": "mechanism",
-      "statement": "A bidirectional operator then modulates extracted features to facilitate interactions among different frequency components.",
+      "statement": "Extracted features are then modulated by a bidirectional operator to facilitate interactions between different frequency components.",
       "quote": "The extracted features are then modulated by a bidirectional operator to facilitate interactions between different frequency components.",
       "prompt_index": 5,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "Finally, modulated features are merged into the original input for progressively guided restoration.",
+      "statement": "Modulated features are merged into the original input for progressively guided restoration.",
       "quote": "Finally, the modulated features are merged into the original input for a progressively guided restoration.",
       "prompt_index": 5,
       "section": "Abstract"

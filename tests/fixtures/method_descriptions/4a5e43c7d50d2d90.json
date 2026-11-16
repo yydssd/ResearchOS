@@ -2,37 +2,37 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "Building an embodied agent system with a large language model at its core is a promising direction.",
+      "statement": "Constructing an embodied agent system with a large language model at its core is a promising direction.",
       "quote": "Building an embodied agent system with a large language model (LLM) as its core is a promising direction.",
-      "prompt_index": 1,
+      "prompt_index": -1,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "They enhanced it with a critic and memory to transform it into a complex system.",
+      "statement": "It was enhanced with a critic and memory to become a complex system.",
       "quote": "Subsequently, we enhanced it with a Critic and memory to transform it into a complex system.",
-      "prompt_index": 1,
+      "prompt_index": -1,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "The authors constructed a hierarchical multi-agent system.",
+      "statement": "A hierarchical multi-agent system was constructed.",
       "quote": "Finally, we constructed a hierarchical multi-agent system.",
-      "prompt_index": 1,
+      "prompt_index": -1,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "The system supports centralized planning and decentralized execution, letting agents adjust strategies and dynamically improve environment interaction.",
+      "statement": "The system supports centralized planning and decentralized execution, enabling agents to adjust strategies and improve interaction with the environment.",
       "quote": "This system supports centralized planning and decentralized execution, enabling agents to adjust strategies and dynamically improve interaction with the environment.",
-      "prompt_index": 6,
+      "prompt_index": -1,
       "section": "4 Hierarchical Multi-Agent System"
     },
     {
       "aspect": "mechanism",
-      "statement": "The process adds an extra expert to give the teacher model prior knowledge, significantly improving training quality for complex tasks.",
+      "statement": "The process adds an extra expert to enhance the teacher model with prior knowledge, improving training quality for complex tasks.",
       "quote": "This process incorporates the extra expert to enhance the teacher model with prior knowledge, significantly improving training quality for complex tasks.",
-      "prompt_index": 7,
+      "prompt_index": -1,
       "section": "5 Distill Embodied Agent into a Single Model"
     }
   ]

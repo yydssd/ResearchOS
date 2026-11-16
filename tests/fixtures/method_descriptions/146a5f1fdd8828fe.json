@@ -2,31 +2,66 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The authors frame the gap as a missing consolidation pathway: external memory supports recall but does not itself specify how selected experience becomes parametric competence.",
+      "statement": "Agent memory is transformed from inference-time retrieval into parameter-resident skills internalized through experience.",
+      "quote": "We present PEAM, a Parametric Embodied Agent Memory framework in Minecraft that transforms agent memory from inference-time retrieval into parameter-resident skills internalized through experience.",
+      "prompt_index": -1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A slow deliberative model for open-ended reasoning is paired with a fast parametric module that reflexively executes consolidated skills.",
+      "quote": "PEAM pairs a slow deliberative LLM for open-ended reasoning with a fast parametric module for reflexive execution of consolidated skills.",
+      "prompt_index": -1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The fast module is a multimodal mixture-of-experts adapter architecture with physically isolated per-category adapters, enabling parameter-level continual learning without catastrophic forgetting.",
+      "quote": "The fast module is a multimodal Mixture-of-Experts LoRA architecture with per-category physically isolated adapters, enabling parameter-level continual learning without catastrophic forgetting.",
+      "prompt_index": -1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Failure is treated as a training signal: failure–correction trajectory pairs are internalized through a joint behavioral-cloning and contrastive objective.",
+      "quote": "We treat failure as a first-class training signal: failure–correction trajectory pairs are internalized through a joint behavioral-cloning and contrastive objective, so the agent learns not only what succeeds but also how corrected actions differ from failed ones.",
+      "prompt_index": -1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A parameterization-worthiness score decides which experience to internalize, and a scale-free self-triggered consolidation decides when, without task-specific hand-tuned thresholds.",
+      "quote": "To govern consolidation, PEAM introduces a parameterization-worthiness score for deciding which experience should be internalized, and a scale-free self-triggered consolidation mechanism for deciding when to internalize without task-specific hand-tuned thresholds, making the agent self-evolving as the trigger transfers across task distributions without re-tuning.",
+      "prompt_index": -1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "io",
+      "statement": "A slow deliberative model explores, verifies, and produces corrected trajectories, which are staged in episodic memory.",
+      "quote": "A slow deliberative LLM explores, verifies, and produces corrected trajectories, which are staged in episodic memory.",
+      "prompt_index": -1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "goal",
+      "statement": "The gap is a missing consolidation pathway: external memory supports recall but does not specify how selected experience becomes parametric competence.",
       "quote": "We view this as a missing consolidation pathway rather than a failure of retrieval-augmented memory itself: external memory supports recall, but it does not by itself specify how selected experience becomes part of the agent’s parametric competence.",
-      "prompt_index": 10,
+      "prompt_index": -1,
       "section": "1 Introduction"
     },
     {
-      "aspect": "mechanism",
-      "statement": "A slow deliberative LLM explores, verifies, and produces corrected trajectories that are staged in episodic memory.",
-      "quote": "A slow deliberative LLM explores, verifies, and produces corrected trajectories, which are staged in episodic memory.",
-      "prompt_index": 8,
-      "section": "Abstract"
+      "aspect": "why_it_works",
+      "statement": "Contrastive parametric consolidation is suggested to be best suited to action-space failures with code-level corrections.",
+      "quote": "This suggests that contrastive parametric consolidation is best suited to action-space failures with code-level corrections.",
+      "prompt_index": -1,
+      "section": "4.5 Additional Methodology Findings"
     },
     {
       "aspect": "mechanism",
-      "statement": "Failure–correction trajectory pairs are internalized through a joint behavioral-cloning and contrastive objective, so the agent learns how corrected actions differ from failed ones.",
-      "quote": "We treat failure as a first-class training signal: failure–correction trajectory pairs are internalized through a joint behavioral-cloning and contrastive objective, so the agent learns not only what succeeds but also how corrected actions differ from failed ones.",
-      "prompt_index": 6,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A parameterization-worthiness score decides which experience should be internalized, and a scale-free self-triggered consolidation mechanism decides when to internalize without hand-tuned thresholds.",
-      "quote": "To govern consolidation, PEAM introduces a parameterization-worthiness score for deciding which experience should be internalized, and a scale-free self-triggered consolidation mechanism for deciding when to internalize without task-specific hand-tuned thresholds, making the agent self-evolving as the trigger transfers across task distributions without re-tuning.",
-      "prompt_index": 6,
-      "section": "Abstract"
+      "statement": "When paired real-environment collection is bounded by exploration ceilings, re-slicing an existing trajectory pool along categorical axes substitutes for cross-distribution stability evaluation.",
+      "quote": "When paired real-environment collection is bounded by exploration ceilings, re-slicing an existing trajectory pool along categorical axes provides a tractable substitute for cross-distribution stability evaluation, with explicit acknowledgment of the synthetic-versus-real gap.",
+      "prompt_index": -1,
+      "section": "4.5 Additional Methodology Findings"
     }
   ]
 }

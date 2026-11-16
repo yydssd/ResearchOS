@@ -2,28 +2,35 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "Capable AI companions for open-world games need agents that can plan, clarify, and remember to operate effectively in dynamic, long-horizon environments.",
-      "quote": "Building truly capable AI companions for open-world games requires more than one-shot instruction following, it requires agents that can plan, clarify, and remember in order to operate effectively in dynamic, long-horizon environments.",
-      "prompt_index": 4,
+      "statement": "The work introduces a practical benchmark for evaluating memory-aware, mixed-initiative agents in Minecraft.",
+      "quote": "We introduce MineNPC-Task, a practical benchmark for evaluating memory-aware, mixed-initiative LLM agents in Minecraft.",
+      "prompt_index": 5,
       "section": "1. Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "Tasks are elicited from expert co-play, normalized into parametric templates with explicit preconditions and dependency structure, and paired with machine-checkable validators under a bounded-knowledge policy.",
-      "quote": "Rather than relying on synthetic prompts, tasks are elicited from formative and summative co-play with expert players, normalized into parametric templates with explicit preconditions and dependency structure, and paired with machine-checkable validators under a bounded-knowledge policy that forbids out-of-world shortcuts.",
-      "prompt_index": 2,
-      "section": "Abstract."
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Tasks are elicited from expert co-play: experienced players' real requests were normalized into compact templates with explicit preconditions and slot parameters, and paired with simple machine-checkable validators.",
+      "statement": "Tasks are elicited from expert co-play: experienced players issue real requests, normalized into compact templates with explicit preconditions and slot parameters, paired with machine-checkable validators.",
       "quote": "Rather than synthetic prompts, tasks are elicited from expert co-play: during our formative and evaluation sessions, experienced players issued real requests, which we normalized into compact templates with explicit preconditions and a small set of slot parameters, and paired with simple machine-checkable validators.",
       "prompt_index": 5,
       "section": "1. Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "The harness records plan, act, and memory events such as plan previews, targeted clarifications, memory reads/writes, precondition checks, and repair attempts, and reports outcomes based on in-world evidence.",
+      "statement": "The benchmark limits perception and action to public in-game APIs, and a bounded-knowledge policy forbids admin commands, global map introspection, and scans beyond loaded chunks.",
+      "quote": "The benchmark runs inside a Mineflayer envelope so perception and action are limited to public, in-game APIs; a bounded-knowledge policy forbids admin commands, global map introspection, and scans beyond loaded chunks.",
+      "prompt_index": 5,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The agent presents a plan preview splitting the request into subtasks, asks a targeted clarifying question only when a slot is unbound, acts through skills, and is judged solely on in-world evidence.",
+      "quote": "The agent presents a brief plan preview that breaks the request into a handful of subtasks, asks a targeted clarifying question only when a slot is unbound (for example, a tool variant or a search radius), acts through Mineflayer skills, and is judged solely on in-world evidence drawn from inventory and equipment deltas, position changes, nearby entities and blocks within loaded chunks, and recent chat.",
+      "prompt_index": 6,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "io",
+      "statement": "The harness records plan/act/memory events including plan previews, targeted clarifications, memory reads/writes, precondition checks, and repairs, and reports outcomes from in-world evidence.",
       "quote": "The harness captures plan/act/memory events-including plan previews, targeted clarifications, memory reads and writes, precondition checks, and repair attempts and reports outcomes relative to the total number of attempted subtasks, derived from in-world evidence.",
       "prompt_index": 2,
       "section": "Abstract."

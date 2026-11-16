@@ -2,37 +2,79 @@
   "points": [
     {
       "aspect": "mechanism",
-      "statement": "A multi-scale progressive policy explores the environment and stores observations in memory systems for recent observations and for semantic entities and causal relationships.",
+      "statement": "A progressive policy explores the environment and stores observations in a short-term geometric memory and a graph for semantic causal relationships.",
       "quote": "During exploration, a multi-scale progressive policy systematically explores the environment and stores observations in two memory systems: a short-term geometric memory for efficient retrieval of recent observations and a Causal Event Graph for storing semantic entities and causal relationships.",
       "prompt_index": 0,
       "section": "3 Method"
     },
     {
       "aspect": "mechanism",
-      "statement": "A scheduler dynamically reorders subtasks according to causally relevant memories retrieved from the graph.",
+      "statement": "During execution, the agent performs goal-directed navigation and low-level task execution.",
+      "quote": "During execution, the agent uses VPT-Nav for goal-directed navigation and Steve-1 for low-level task execution.",
+      "prompt_index": 0,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Subtasks are dynamically reordered according to causally relevant memories retrieved from the graph.",
       "quote": "The Opportunistic Task Scheduler dynamically reorders subtasks according to causally relevant memories retrieved from the graph.",
       "prompt_index": 0,
       "section": "3 Method"
     },
     {
-      "aspect": "why_it_works",
-      "statement": "Successful task completion requires the agent to memorize observations from explored regions and semantically understand their relevance to future tasks.",
-      "quote": "Consequently, successful task completion requires the agent not only to memorize observations from explored regions but also to semantically understand their relevance to future tasks.",
-      "prompt_index": 3,
+      "aspect": "mechanism",
+      "statement": "The framework is memory-augmented and includes a memory module, a solver module, and a task scheduler.",
+      "quote": "WISE is a memory-augmented agent framework consisting of three major components: a Memory Module, a Solver Module, and an Opportunistic Task Scheduler.",
+      "prompt_index": 10,
       "section": "3 Method"
     },
     {
       "aspect": "mechanism",
-      "statement": "A mode selector in the solver module dynamically switches between explore and execute modes based on retrieved memory contents.",
+      "statement": "The memory module contains complementary memory structures.",
+      "quote": "The memory module MtM_{t} contains two complementary memory structures.",
+      "prompt_index": 10,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The causal event graph extends conventional episodic memory with semantic and causal knowledge.",
+      "quote": "First, a Causal Event Graph, denoted as MgraphM_{\\text{graph}}, extends conventional episodic memory with semantic and causal knowledge.",
+      "prompt_index": 10,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Short-term geometric memory provides low-latency retrieval of recently observed experiences.",
+      "quote": "Second, a short-term geometric memory, MshortM_{\\text{short}}, provides low-latency retrieval of recently observed experiences.",
+      "prompt_index": 10,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A mode selector in the solver module switches between exploration and execution modes based on retrieved memory contents.",
       "quote": "Based on retrieved memory contents, a mode selector within the solver module dynamically switches between Explore and Execute modes.",
       "prompt_index": 11,
       "section": "3 Method"
     },
     {
       "aspect": "mechanism",
-      "statement": "An agent alternates among exploration, reasoning, and execution phases given a text instruction.",
-      "quote": "Given a text instruction (e.g., “A →\\rightarrow B →\\rightarrow C”), the agent alternates among three phases: Explore, Reason, and Execute.",
-      "prompt_index": 0,
+      "statement": "These modules with a multi-scale progressive exploration policy form the framework.",
+      "quote": "Together with a multi-scale progressive exploration policy, these modules form the complete WISE framework.",
+      "prompt_index": 11,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Jointly exploring, memorizing, and reasoning over causal relationships enables efficient decision-making for sparse long-horizon tasks.",
+      "quote": "By jointly exploring, memorizing, and reasoning over causal relationships, WISE enables efficient decision-making for sparse long-horizon tasks.",
+      "prompt_index": 11,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "io",
+      "statement": "An embodied agent receives tasks as textual instructions from the environment or from a language model.",
+      "quote": "We consider sparse long-horizon task scenarios in which an embodied agent continuously receives a sequence of tasks {τn}n=1∞\\{\\tau_{n}\\}_{n=1}^{\\infty} via textual instructions (e.g., “Obtain beef”) generated either directly by the environment or decomposed by a large language model (LLM).",
+      "prompt_index": 3,
       "section": "3 Method"
     }
   ]

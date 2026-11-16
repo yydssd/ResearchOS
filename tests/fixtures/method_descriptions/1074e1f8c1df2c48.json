@@ -2,43 +2,50 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The paper shows that aligning an LLM with environment dynamics is necessary and crucial for a promising world model and more powerful embodied agents.",
+      "statement": "Aligning an LLM with environment dynamics is necessary and crucial for it to serve as a promising world model and enable more powerful embodied agents.",
       "quote": "In this paper, we show that aligning an LLM with environment dynamics is both necessary and crucial to make it a promising world model, which enables us to build more powerful embodied agents.",
       "prompt_index": 7,
       "section": "1 Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "The method introduces a neurosymbolic world model combining a pretrained LLM with newly learned rules from interaction trajectories.",
+      "statement": "A neurosymbolic world model combines a pretrained LLM with newly learned rules from interaction trajectories with the environment.",
       "quote": "In particular, we introduce a neurosymbolic world model that composites a pretrained LLM with a set of newly learned rules from the interaction trajectories with the environment.",
       "prompt_index": 7,
       "section": "1 Introduction"
     },
     {
-      "aspect": "mechanism",
-      "statement": "An LLM analyzes the comparison results to extract new rules or modify existing rules, improving consistency between predicted and real trajectories.",
-      "quote": "The comparison results are then analyzed by an LLM, which extracts new rules or modifies existing ones to improve the consistency between the predicted and real trajectories.",
-      "prompt_index": 9,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "The rule learning procedure repeats until the LLM plus rules performs as an accurate world model.",
-      "quote": "The above rule learning procedure repeats for multiple iterations until the LLM+rules performs as an accurate world model.",
-      "prompt_index": 9,
+      "aspect": "why_it_works",
+      "statement": "The world model combines LLM prior knowledge and reasoning with hard constraints and rigorous guarantees enforced by rules.",
+      "quote": "This specific form of world model combines the strengths of both in modeling the environment dynamics, i.e., (1) the rich prior knowledge, probabilistic, and deductive reasoning capability of LLMs (Hu & Shu 2023); and (2) the hard constraints and rigorous guarantees enforced by rules (Li et al. 2024a).",
+      "prompt_index": 7,
       "section": "1 Introduction"
     },
     {
       "aspect": "why_it_works",
-      "statement": "The selected rules complement the LLM predictions.",
-      "quote": "Hence, the selected rules are complementary to the LLM predictions.",
-      "prompt_index": 9,
+      "statement": "In the method, only a few complementary rules suffice to align a pretrained LLM to specific environment dynamics.",
+      "quote": "While creating a rule-only world model for a complex environment is challenging due to the massive amount of rules and uncertainty (Xiao et al. 2021), in our method, only a few complementary rules suffice to align a pretrained LLM to specific environment dynamics.",
+      "prompt_index": 7,
       "section": "1 Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "The method learns rules gradient-free through LLMs by inducing, updating, and pruning them based on comparisons of explored trajectories and world model predictions.",
+      "statement": "Including these rules in the LLM prompt achieves alignment without tedious training or inference.",
+      "quote": "This is achieved by simply including these rules in the LLM’s prompt without tedious training or inference.",
+      "prompt_index": 7,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A neurosymbolic approach learns rules gradient-free through LLMs by inducing, updating, and pruning rules from comparisons of explored trajectories and world model predictions.",
       "quote": "To this end, we propose a neurosymbolic approach to learn these rules gradient-free through LLMs, by inducing, updating, and pruning rules based on comparisons of agent-explored trajectories and world model predictions.",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "With rich prior knowledge in LLMs, only a few additional rules suffice to align LLM predictions with specified environment dynamics.",
+      "quote": "Given the rich prior knowledge of LLMs, only a few additional rules suffice to align LLM predictions with the specified environment dynamics.",
       "prompt_index": 1,
       "section": "Abstract"
     },
@@ -48,6 +55,34 @@
       "quote": "The resulting world model is composed of the LLM and the learned rules.",
       "prompt_index": 1,
       "section": "Abstract"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "An LLM analyzes comparison results to extract new rules or modify existing ones, improving consistency between predicted and real trajectories.",
+      "quote": "The comparison results are then analyzed by an LLM, which extracts new rules or modifies existing ones to improve the consistency between the predicted and real trajectories.",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "At each iteration end, rules are pruned by selecting a subset with maximal coverage of transitions the LLM failed to predict.",
+      "quote": "To keep the rule set minimal necessarily, at the end of each iteration, we prune the rules by solving a maximum coverage problem, which aims to select a subset of rules with the maximal coverage of the transitions failed being predicted by the LLM in the world model (without applying any rules).",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The selected rules are complementary to the LLM predictions.",
+      "quote": "Hence, the selected rules are complementary to the LLM predictions.",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The rule learning procedure repeats for multiple iterations until the LLM plus rules performs as an accurate world model.",
+      "quote": "The above rule learning procedure repeats for multiple iterations until the LLM+rules performs as an accurate world model.",
+      "prompt_index": 9,
+      "section": "1 Introduction"
     }
   ]
 }

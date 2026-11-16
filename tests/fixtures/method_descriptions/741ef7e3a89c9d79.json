@@ -2,14 +2,14 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The unified approach addresses the challenge of achieving high restoration quality across multiple degradation types while maintaining computational efficiency.",
+      "statement": "A unified approach targets high restoration quality across multiple degradation types while keeping computational efficiency.",
       "quote": "This unified approach addresses the challenge of achieving high restoration quality across multiple degradation types while maintaining computational efficiency.",
       "prompt_index": 0,
       "section": "3 Method"
     },
     {
       "aspect": "mechanism",
-      "statement": "The approach centers on alternating spatial and channel attention inside transformer blocks at both encoder and decoder levels.",
+      "statement": "An alternating spatial and channel attention mechanism is embedded in each transformer block at both encoder and decoder levels.",
       "quote": "At the core of our approach lies an alternating spatial and channel attention mechanism embedded within each transformer block across both encoder and decoder levels.",
       "prompt_index": 2,
       "section": "3 Method"

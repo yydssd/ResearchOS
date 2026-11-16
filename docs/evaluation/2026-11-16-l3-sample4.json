@@ -1,0 +1,185 @@
+{
+  "note": "softer statement rules, seed 20261118",
+  "items": [
+    {
+      "paper": "2504.14249",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "A spatial-frequency parallel fusion strategy is proposed to fuse intrinsic degradation awareness and contextualized attention, enhancing spatial-aware local-global interactions and enriching restoration details from the frequency perspective.",
+      "quote": "To fuse the intrinsic degradation awareness and the contextualized attention, a spatial-frequency parallel fusion strategy is proposed for enhancing spatial-aware local-global interactions and enriching the restoration details from the frequency perspective.",
+      "section": "Abstract.",
+      "id": "d01"
+    },
+    {
+      "paper": "2604.05629",
+      "domain": "image_restoration",
+      "aspect": "why_it_works",
+      "statement": "A shared backbone captures universal restoration priors, while dynamically routed experts learn task-specific strategies without prohibitive computational overhead.",
+      "quote": "The shared backbone captures universal image restoration priors, while the dynamically routed experts learn task-specific strategies without introducing prohibitive computational overhead.",
+      "section": "3 Methodology",
+      "id": "d02"
+    },
+    {
+      "paper": "2403.14614",
+      "domain": "image_restoration",
+      "aspect": "why_it_works",
+      "statement": "The model achieves adaptive reconstruction by accentuating informative frequency subbands according to different input degradations.",
+      "quote": "With this approach, the model achieves adaptive reconstruction by accentuating the informative frequency subbands according to different input degradations.",
+      "section": "Abstract",
+      "id": "d03"
+    },
+    {
+      "paper": "2310.18293",
+      "domain": "image_restoration",
+      "aspect": "why_it_works",
+      "statement": "The restoration level is fixed for the whole image, which is sufficient for global degradation consistent across the image; local degradation might require different per-patch levels.",
+      "quote": "The model also achieve state-of-the-art performance compared with other type methods on raindrop and snow removal, and significantly better than all comparison models on challenging rain+fog dataset, the reason might be that the restoration level is fixed for whole image in our method, which is sufficient for global degradation that degradation level is consistent for whole image, but raindrop and snow images are more on local degradation, that might require different restoration level for each patch to further boost the performance.",
+      "section": "4.2 Comparisons with the State-of-the-art Methods",
+      "id": "d04"
+    },
+    {
+      "paper": "2606.22801",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "The proposed module modulates the effective discretization steps of multiple dynamical branches and adaptively fuses their responses according to degradation-aware gating weights.",
+      "quote": "Instead of changing the overall selective scan pipeline, the proposed module modulates the effective discretization steps of multiple dynamical branches and adaptively fuses their responses according to degradation-aware gating weights.",
+      "section": "Abstract",
+      "id": "d05"
+    },
+    {
+      "paper": "2607.28526",
+      "domain": "image_restoration",
+      "aspect": "goal",
+      "statement": "The proposed rectification network targets all-in-one image restoration to mitigate the characterized dual-ambiguity issue.",
+      "quote": "To mitigate this issue, we propose DAR-Net, a Dual-Ambiguity Rectification Network for all-in-one image restoration.",
+      "section": "Abstract.",
+      "id": "d06"
+    },
+    {
+      "paper": "2407.11087",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "An attention mechanism effectively builds global dependencies with linear computational complexity.",
+      "quote": "First, in Section 3.3, we introduce a recurrent WKV (Re-WKV) attention mechanism that effectively builds global dependencies in 2D images with linear computational complexity.",
+      "section": "3 Method",
+      "id": "d07"
+    },
+    {
+      "paper": "2609.16578",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "A lightweight residual adaptor injects the queried representation while the original encoder, decoder, and skip connections stay unchanged.",
+      "quote": "The queried representation is injected through a lightweight residual adaptor, while the original encoder, decoder, and skip connections remain unchanged.",
+      "section": "1 Introduction",
+      "id": "d08"
+    },
+    {
+      "paper": "2504.09377",
+      "domain": "image_restoration",
+      "aspect": "goal",
+      "statement": "All-in-one image restoration aims to address diverse degradations within a unified framework and is critical for practical applications.",
+      "quote": "All-in-one image restoration, which aims to address diverse degradations within a unified framework, is critical for practical applications.",
+      "section": "Abstract.",
+      "id": "d09"
+    },
+    {
+      "paper": "2506.22736",
+      "domain": "image_restoration",
+      "aspect": "goal",
+      "statement": "The proposed method is the first designed for the fusion of degraded and misaligned medical images, so no directly comparable methods exist.",
+      "quote": "Since the method proposed is the first designed for the fusion of degraded and misaligned medical images, there are no directly comparable methods.",
+      "section": "4.3 Comparison Methods and Evaluation Metrics",
+      "id": "d10"
+    },
+    {
+      "paper": "2305.16291",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "Every program is indexed by its description embedding so that it can be retrieved in similar future situations.",
+      "quote": "Each program is indexed by the embedding of its description, which can be retrieved in similar situations in the future.",
+      "section": "1 Introduction",
+      "id": "d11"
+    },
+    {
+      "paper": "2405.15414",
+      "domain": "agent_in_mc",
+      "aspect": "goal",
+      "statement": "An agent can complete open-ended creative building tasks via two-level autonomous embodied verification: structural speculation with visual verification and construction with pragmatic verification.",
+      "quote": "In this section, we introduce the Luban agent, which can complete open-ended creative building tasks pragmatically in the open world with the help of the two-level autonomous embodied verification: (1) 3D structural speculation stage with the visual verification (Sec. 4.1); (2) Construction stage with the pragmatic verification (Sec. 4.2).",
+      "section": "4 Method",
+      "id": "d12"
+    },
+    {
+      "paper": "2409.19479",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "Actions that led to high returns are reinforced, while actions that led to low returns are suppressed.",
+      "quote": "The key idea is to reinforce actions that resulted in high returns, while suppressing actions with low returns.",
+      "section": "3 Policy gradient methods",
+      "id": "d13"
+    },
+    {
+      "paper": "2410.07484",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "A neurosymbolic world model combines a pretrained LLM with newly learned rules from interaction trajectories with the environment.",
+      "quote": "In particular, we introduce a neurosymbolic world model that composites a pretrained LLM with a set of newly learned rules from the interaction trajectories with the environment.",
+      "section": "1 Introduction",
+      "id": "d14"
+    },
+    {
+      "paper": "2505.24157",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "The method accelerates dependency learning by guiding the agent to strategically select unexperienced items as goals based on difficulty and diversity.",
+      "quote": "Lastly, Section 3.3 details how DEX accelerates the dependency learning by guiding the agent to strategically select unexperienced items as goals to pursue, based on difficulty and diversity.",
+      "section": "3 Methods",
+      "id": "d15"
+    },
+    {
+      "paper": "2311.15209",
+      "domain": "agent_in_mc",
+      "aspect": "goal",
+      "statement": "The proposed framework builds an embodied agent using a vision model and LLMs in an open world.",
+      "quote": "It is our proposed framework to build an embodied agent based on the vision model and LLMs within an open world, as illustrated in Fig. 1.",
+      "section": "1 Introduction",
+      "id": "d16"
+    },
+    {
+      "paper": "2504.17950",
+      "domain": "agent_in_mc",
+      "aspect": "goal",
+      "statement": "Creating collaborative AI agents requires ensuring they can efficiently and effectively communicate with collaborators and continuously learn and adapt in real-world embodied tasks.",
+      "quote": "Creating such collaborative AI agents requires ensuring their ability to efficiently and effectively communicate with collaborators and continuously learn and adapt throughout this process in real-world embodied tasks.",
+      "section": "1 Introduction",
+      "id": "d17"
+    },
+    {
+      "paper": "2501.19318",
+      "domain": "agent_in_mc",
+      "aspect": "goal",
+      "statement": "The experience-augmented planning framework lets embodied agents build and use mental models through natural interaction with their environment.",
+      "quote": "We introduce MINDSTORES, an experience-augmented planning framework that enables embodied agents to build and leverage mental models through natural interaction with their environment.",
+      "section": "Abstract",
+      "id": "d18"
+    },
+    {
+      "paper": "2606.12852",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "A mode selector in the solver module switches between exploration and execution modes based on retrieved memory contents.",
+      "quote": "Based on retrieved memory contents, a mode selector within the solver module dynamically switches between Explore and Execute modes.",
+      "section": "3 Method",
+      "id": "d19"
+    },
+    {
+      "paper": "2411.12977",
+      "domain": "agent_in_mc",
+      "aspect": "goal",
+      "statement": "The work asks whether an agent powered by an open language model that struggles with basic tasks can improve through collaboration with others.",
+      "quote": "We ask: can an open LLM-powered agent, which struggles with basic tasks, improve through collaboration with others?",
+      "section": "1 Introduction",
+      "id": "d20"
+    }
+  ]
+}

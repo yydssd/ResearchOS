@@ -2,21 +2,14 @@
   "points": [
     {
       "aspect": "mechanism",
-      "statement": "HSI restoration is framed as autoregressive generation, in which spectral and spatial dependencies can be progressively modeled instead of globally reconstructed.",
+      "statement": "Hyperspectral restoration is reframed as an autoregressive generation problem in which spectral and spatial dependencies can be progressively modeled instead of globally reconstructed.",
       "quote": "We break this impasse by introducing HSI-VAR, rethinking HSI restoration as an autoregressive generation problem, where spectral and spatial dependencies can be progressively modeled rather than globally reconstructed.",
       "prompt_index": 5,
       "section": "Abstract"
     },
     {
-      "aspect": "goal",
-      "statement": "The method treats HSI restoration as scale-wise autoregressive generation that progressively models structure dependencies.",
-      "quote": "Our HSI-VAR rethinks HSI restoration as scale-wise autoregressive generation, progressively modeling the structure dependencies.",
-      "prompt_index": 8,
-      "section": "1 Introduction"
-    },
-    {
       "aspect": "mechanism",
-      "statement": "Three components: latent-condition alignment for semantic consistency, degradation-aware guidance encoding mixed degradations as linear combinations, and spatial-spectral adaptation refining details.",
+      "statement": "The approach aligns latent priors with conditional embeddings for semantic consistency, encodes mixed degradations as linear combinations for automatic control, and refines details in both domains during decoding.",
       "quote": "HSI-VAR incorporates three key innovations: (1) Latent–condition alignment, which couples semantic consistency between latent priors and conditional embeddings for precise reconstruction; (2) Degradation-aware guidance, which uniquely encodes mixed degradations as linear combinations in the embedding space for automatic control, remarkably achieving a nearly 50% reduction in computational cost at inference; (3) A spatial–spectral adaptation module that refines details across both domains in the decoding phase.",
       "prompt_index": 6,
       "section": "Abstract"
