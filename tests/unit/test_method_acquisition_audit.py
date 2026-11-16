@@ -228,3 +228,29 @@ def test_an_empty_model_answer_has_its_own_cause(tmp_path):
 
     assert side["L3"] is False
     assert side["L3_cause"] == "LLM 空答复"
+
+
+def _sides_with_links(linked: int, total: int) -> dict[str, dict]:
+    sides = {key: {**value, "L3_linked": 0, "L3_points": 0} for key, value in SIDES.items()}
+    sides["a1"].update({"L3_linked": linked, "L3_points": total})
+    return sides
+
+
+def test_the_report_carries_the_linkable_counts():
+    """`system_side` already counts them; the summary is where they were lost, so
+    `print_report` had no `sides` to read and crashed instead of printing."""
+    from scripts.method_acquisition_audit import summarise
+
+    report = summarise(LABELS, _sides_with_links(2, 3), domain_size=2)
+
+    assert report["L3_linked"] == 2
+    assert report["L3_points"] == 3
+
+
+def test_the_report_prints_the_linkable_rate(capsys):
+    from scripts.method_acquisition_audit import print_report, summarise
+
+    print_report(summarise(LABELS, _sides_with_links(2, 3), domain_size=2))
+
+    out = capsys.readouterr().out
+    assert "points with a stored char range   2/3   (67%)" in out

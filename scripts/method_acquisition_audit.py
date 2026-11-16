@@ -212,10 +212,15 @@ def summarise(labels: list[dict], sides: dict[str, dict], domain_size: int | Non
     proxy_out["total"] = sum(proxy.values())
     ambiguous_out = dict(ambiguous)
     ambiguous_out["total"] = sum(ambiguous.values())
+    # The linkable counts are observations of the same sides, so they belong in
+    # the summary beside the other totals: `print_report` receives only this
+    # dict, and reading `sides` there was a NameError, not a missing print.
     return {
         "A": A, "C": C, "covered_over_20": over,
         "gaps": dict(gaps), "proxy": proxy_out,
         "ambiguous": ambiguous_out, "cells": cells,
+        "L3_linked": sum(side.get("L3_linked") or 0 for side in sides.values()),
+        "L3_points": sum(side.get("L3_points") or 0 for side in sides.values()),
     }
 
 
@@ -231,8 +236,8 @@ def print_report(report: dict) -> None:
         o = report["covered_over_20"][key]
         size_label = f"covered/{a[1]}"
         print(f"  {key:<28} A={a[0]}/{a[1]}  C={c_text:<8} {size_label}={o[0]}/{o[1]}")
-    linked = sum(side.get("L3_linked") or 0 for side in sides.values())
-    total_points = sum(side.get("L3_points") or 0 for side in sides.values())
+    linked = report["L3_linked"]
+    total_points = report["L3_points"]
     print("\n=== L3 full-text links ===")
     print(f"  points with a stored char range   {linked}/{total_points}   ({linked/total_points:.0%})" if total_points else "  no points")
     print("\n=== gap causes ===")
