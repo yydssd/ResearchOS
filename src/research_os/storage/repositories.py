@@ -867,6 +867,8 @@ class SqlMethodProfileRepository:
                     chunk_id=point.chunk_id,
                     section=point.section,
                     source_url=point.source_url,
+                    char_start=point.char_start,
+                    char_end=point.char_end,
                 )
             )
         self._s.flush()
@@ -901,6 +903,8 @@ class SqlMethodProfileRepository:
                     chunk_id=point.chunk_id,
                     section=point.section,
                     source_url=point.source_url,
+                    char_start=point.char_start,
+                    char_end=point.char_end,
                 )
                 for point in points
             ],
