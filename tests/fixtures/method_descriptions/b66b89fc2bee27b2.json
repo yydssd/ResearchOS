@@ -2,17 +2,24 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The method is motivated by making degradation-aware processing cover the whole pipeline, from patch sampling through token transformation to pixel reconstruction.",
+      "statement": "Degradation-aware processing should span the entire pipeline from patch sampling through token transformation to pixel reconstruction.",
       "quote": "Focusing on these drawbacks, we argue in this paper that degradation-aware processing should span the entire pipeline, from patch sampling, through token transformation, to pixel reconstruction.",
       "prompt_index": 11,
       "section": "1 Introduction"
     },
     {
-      "aspect": "why_it_works",
-      "statement": "Patch boundaries and reconstruction should be functions of local degradation severity, a simple but under-explored principle.",
+      "aspect": "mechanism",
+      "statement": "The principle is to make patch boundaries and reconstruction functions depend on local degradation severity.",
       "quote": "This suggests a simple but under-explored principle: make patch boundaries and reconstruction functions of local degradation severity.",
       "prompt_index": 11,
       "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A lightweight degradation encoder predicts a global degradation vector and a spatial degradation map from local degradation severity, which jointly condition patch embedding and unembedding through adaptive deformation.",
+      "quote": "Specifically, FIT employs a lightweight Degradation Encoder to predict a global degradation vector 𝐠\\mathbf{g} and a spatial degradation map 𝐌\\mathbf{M} from local degradation severity, which jointly condition the patch embedding and unembedding through adaptive deformation.",
+      "prompt_index": 1,
+      "section": "Abstract"
     },
     {
       "aspect": "mechanism",
@@ -22,23 +29,9 @@
       "section": "Abstract"
     },
     {
-      "aspect": "mechanism",
-      "statement": "A degradation encoder extracts a global descriptor and a spatial map from a degraded input image.",
-      "quote": "Given a degraded image, the Degradation Encoder extracts a global vector 𝐠\\mathbf{g} and spatial map 𝐌\\mathbf{M}.",
-      "prompt_index": 8,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Deformable patch embedding samples pixels with learned offsets, a transformer modulates tokens, and deformable unembedding reconstructs pixels by inverse warping.",
-      "quote": "Conditioned on (𝐠,𝐌)(\\mathbf{g},\\mathbf{M}), deformable patch embedding samples pixels with learned offsets, the AdaLN Transformer processes tokens with 𝐠\\mathbf{g}-modulation, and deformable unembedding reconstructs pixels via inverse warping.",
-      "prompt_index": 8,
-      "section": "1 Introduction"
-    },
-    {
       "aspect": "io",
-      "statement": "A lightweight refiner generates the final restored output.",
-      "quote": "A lightweight refiner produces the final output.",
+      "statement": "A degradation encoder extracts a global vector and a spatial map from a degraded image.",
+      "quote": "Given a degraded image, the Degradation Encoder extracts a global vector 𝐠\\mathbf{g} and spatial map 𝐌\\mathbf{M}.",
       "prompt_index": 8,
       "section": "1 Introduction"
     }

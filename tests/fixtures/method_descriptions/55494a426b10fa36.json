@@ -2,38 +2,45 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The proposed agent stores novel events from visited locations to efficiently solve sparse sequential tasks.",
+      "statement": "The proposed agent stores novel events from visited places to support efficient solving of sparse sequential tasks.",
       "quote": "To address this, we propose MrSteve which stores novel events from visited places for efficient sparse sequential task-solving.",
-      "prompt_index": 2,
+      "prompt_index": -1,
       "section": "3 Method"
     },
     {
       "aspect": "mechanism",
-      "statement": "A selector decides between exploring and executing based on stored place-event information.",
-      "quote": "Based on Place Event Memory, Mode Selector in Solver Module decides between Explore mode and Execute mode.",
-      "prompt_index": 6,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "If memory lacks a task-relevant resource, the agent selects exploration and uses a hierarchical exploration method.",
+      "statement": "If memory has no task-relevant resource, exploration mode is chosen and the agent uses hierarchical exploration.",
       "quote": "When no task-relevant resource exists in the memory, Explore mode is selected, and the agent explores with our hierarchical exploration method.",
-      "prompt_index": 6,
+      "prompt_index": -1,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "When memory contains a task-relevant resource, execution mode is chosen; the agent navigates to the resource position and executes the policy to solve the task.",
+      "quote": "If a task-relevant resource exists in the memory, Execute mode is selected, then the agent navigates to the resource’s position and executes πInst (i.e., Steve-1) to solve the task.",
+      "prompt_index": -1,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The policy is memory-augmented and includes a memory module and a solver module.",
+      "quote": "MrSteve is a memory-augmented instruction following policy that consists of Memory Module and Solver Module, as shown in Figure 2(a).",
+      "prompt_index": -1,
       "section": "3 Method"
     },
     {
       "aspect": "io",
-      "statement": "The agent receives its position, first-person view, and text instruction as inputs for following the instruction.",
+      "statement": "The agent takes position, first-person view, and text instruction and uses memory and solver modules to follow the instruction.",
       "quote": "MrSteve takes agent’s position, first person view, and text instruction, and utilizes Memory Module and Solver Module to follow the instruction.",
-      "prompt_index": 7,
+      "prompt_index": -1,
       "section": "3 Method"
     },
     {
       "aspect": "why_it_works",
-      "statement": "The memory organizes spatial and event-based data to enable efficient recall and navigation in long-horizon tasks.",
-      "quote": "Unlike previous models that rely on short-term memory, PEM organizes spatial and event-based data, enabling efficient recall and navigation in long-horizon tasks.",
-      "prompt_index": 9,
-      "section": "Abstract"
+      "statement": "Task-relevant resources are assumed rare and sparsely distributed, so memorizing novel events from visited places is essential for future tasks.",
+      "quote": "Additionally, we assume that task-relevant resources (e.g., water, cow) rarely exist and are sparsely distributed in the environment, making it essential to memorize novel events from visited places for future tasks as shown in Figure 1.",
+      "prompt_index": -1,
+      "section": "3 Method"
     }
   ]
 }

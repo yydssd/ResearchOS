@@ -2,52 +2,45 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The approach converts a coordination object into an executable commitment to a skill path.",
-      "quote": "GenCoord turns that object into an executable skill-path commitment.",
-      "prompt_index": 8,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "goal",
-      "statement": "Coordination needs to expose the task consequence of a private fact, including actor, handoff item, destination, and following suffix.",
+      "statement": "Coordination must reveal the task consequence of a private fact: who acts, what crosses the handoff boundary, where it goes, and the suffix that follows.",
       "quote": "Coordination must reveal the task consequence of a private fact: who acts, what crosses the handoff boundary, where it goes, and which suffix follows.",
-      "prompt_index": 5,
+      "prompt_index": -1,
       "section": "1. Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "The resolved commitment is parsed, checked, canonically materialized, compiled to skills, and verified via handoff and terminal state.",
+      "statement": "The resolved commitment is parsed, checked, materialized, compiled into skills, and verified by handoff and terminal state.",
       "quote": "The resolved commitment is parsed, checked, canonically materialized, compiled to Mineflayer skills, and verified by handoff and terminal state.",
-      "prompt_index": 1,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "io",
-      "statement": "A local model emits a plan and a peer request, while bounded feedback routes revision when the deciding capability belongs to the peer.",
-      "quote": "A local Qwen3.5-0.8B model emits a multi-step SELF plan and peer REQ; bounded feedback conditions route revision when the deciding capability is peer-local.",
-      "prompt_index": 1,
-      "section": "Abstract"
+      "prompt_index": -1,
+      "section": "Abstract."
     },
     {
       "aspect": "mechanism",
-      "statement": "In the main forward route, the receiving agent uses the request and produces its own downstream path.",
-      "quote": "In the main forward route, the receiver conditions on REQ and generates its downstream SELF path.",
-      "prompt_index": 10,
+      "statement": "A sender-local consequence moves forward in a peer request, after which the receiver generates its downstream skill path.",
+      "quote": "A sender-local consequence travels forward inside a peer request, after which the receiver generates its downstream skill path.",
+      "prompt_index": -1,
       "section": "1. Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "A capability consequence local to the peer returns via bounded feedback, after which the requester changes the division of work.",
+      "statement": "A peer-local capability consequence returns through bounded feedback, after which the requester revises the division of work.",
       "quote": "A peer-local capability consequence travels back through bounded feedback, after which the requester revises the division of work.",
-      "prompt_index": 7,
+      "prompt_index": -1,
       "section": "1. Introduction"
     },
     {
       "aspect": "why_it_works",
-      "statement": "Both directions rely on a single explicit object whose meaning survives communication, resolution, and execution.",
+      "statement": "Both directions require one explicit object whose semantics persist through communication, resolution, and execution.",
       "quote": "Both directions require one explicit object whose semantics survive communication, resolution, and execution.",
-      "prompt_index": 7,
+      "prompt_index": -1,
       "section": "1. Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Results identify executable task consequences as the coordination unit linking distributed local reasoning to verified joint action.",
+      "quote": "These results identify executable task consequences as the coordination unit connecting distributed local reasoning to verified joint action.",
+      "prompt_index": -1,
+      "section": "Abstract."
     }
   ]
 }

@@ -2,7 +2,7 @@
   "points": [
     {
       "aspect": "mechanism",
-      "statement": "Restoration level modulation is achieved through latent space manipulation by tuning a user input parameter.",
+      "statement": "Restoration level modulation using latent space manipulation can be achieved by tuning a user input parameter.",
       "quote": "Visual result of restoration level modulation using latent space manipulation, which can achieve by tuning user input parameter.",
       "prompt_index": 7,
       "section": "4.2 Comparisons with the State-of-the-art Methods"

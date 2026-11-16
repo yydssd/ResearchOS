@@ -39,6 +39,12 @@ Rules, all mandatory:
 - It must be at least 4 words and appear exactly once in that chunk.
 - `statement` must be a paraphrase of that quote in at most 200 characters, and
   it must reuse at least two content words from it.
+- `statement` may add NOTHING the quote does not say. In particular: no contrast
+  the quote does not draw ("rather than ..."), no widening or narrowing of the
+  object ("object" for "building 3D object"), no conclusion the quote does not
+  state, and no promotion of a possibility ("can", "may", "should") into a fact
+  ("does", "is"). Re-state only what is there; if the quote is a figure caption or
+  a fragment, prefer fewer points over a stronger claim.
 - `aspect` is one of: goal, mechanism, why_it_works, io.
 - Never write a method name, a dataset, a metric or a number here.
 - If the chunks do not describe the method, answer {"points": []}.

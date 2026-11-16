@@ -2,28 +2,14 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "A unified approach aims for high restoration quality across multiple degradation types while remaining computationally efficient.",
+      "statement": "The unified approach addresses the challenge of achieving high restoration quality across multiple degradation types while maintaining computational efficiency.",
       "quote": "This unified approach addresses the challenge of achieving high restoration quality across multiple degradation types while maintaining computational efficiency.",
       "prompt_index": 0,
       "section": "3 Method"
     },
     {
       "aspect": "mechanism",
-      "statement": "The framework uses a U-shaped asymmetric transformer encoder-decoder design.",
-      "quote": "Our framework builds upon a U-shaped architecture [39, 47, 62] with an asymmetric transformer-based encoder-decoder design, as illustrated in Fig. 3.",
-      "prompt_index": 1,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Decoder levels include prompt blocks that produce learnable parameters guiding the restoration process.",
-      "quote": "In the decoder path, we incorporate prompt blocks [37] between successive levels to generate learnable parameters that guide the restoration process.",
-      "prompt_index": 1,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "An alternating spatial and channel attention mechanism is embedded in transformer blocks across encoder and decoder levels.",
+      "statement": "The approach centers on alternating spatial and channel attention inside transformer blocks at both encoder and decoder levels.",
       "quote": "At the core of our approach lies an alternating spatial and channel attention mechanism embedded within each transformer block across both encoder and decoder levels.",
       "prompt_index": 2,
       "section": "3 Method"

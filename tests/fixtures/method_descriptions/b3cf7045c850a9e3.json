@@ -1,3 +1,11 @@
 {
-  "points": []
+  "points": [
+    {
+      "aspect": "goal",
+      "statement": "The proposed method is the first designed to fuse degraded and misaligned medical images, so no directly comparable methods exist.",
+      "quote": "Since the method proposed is the first designed for the fusion of degraded and misaligned medical images, there are no directly comparable methods.",
+      "prompt_index": 0,
+      "section": "4.3 Comparison Methods and Evaluation Metrics"
+    }
+  ]
 }

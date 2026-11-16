@@ -2,37 +2,30 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "Restoration scale should be treated as a spatially varying variable rather than a fixed architectural property.",
+      "statement": "Restoration scale itself should be treated as a spatially varying variable.",
       "quote": "We therefore argue that restoration scale itself should be treated as a spatially varying variable.",
-      "prompt_index": 6,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Different samples should access representations at different resolutions based on the spatial support they need.",
-      "quote": "The underlying principle is that different samples should access representations at different resolutions according to the spatial support they require.",
-      "prompt_index": 6,
+      "prompt_index": -1,
       "section": "1 Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "A stage-conditioned detail field is predicted at every decoder stage from the current reconstruction state and aligned encoder hierarchy.",
+      "statement": "At each decoder stage, a stage-conditioned LOD field is predicted from current reconstruction state and aligned encoder hierarchy.",
       "quote": "At each decoder stage, a stage-conditioned LOD field is predicted according to both the current reconstruction state and the aligned encoder hierarchy.",
-      "prompt_index": 7,
+      "prompt_index": -1,
       "section": "1 Introduction"
     },
     {
-      "aspect": "io",
-      "statement": "The queried representation is injected via a lightweight residual adaptor while the original encoder, decoder, and skip connections stay unchanged.",
+      "aspect": "mechanism",
+      "statement": "The queried representation is injected via a lightweight residual adaptor; original encoder, decoder, and skip connections stay unchanged.",
       "quote": "The queried representation is injected through a lightweight residual adaptor, while the original encoder, decoder, and skip connections remain unchanged.",
-      "prompt_index": 7,
+      "prompt_index": -1,
       "section": "1 Introduction"
     },
     {
       "aspect": "why_it_works",
-      "statement": "The same mechanism improves restoration via spatially and stage-wise adaptive scale selection and lets existing backbones handle heterogeneous requirements and extend toward all-in-one restoration.",
-      "quote": "Under task-specific training, it improves restoration through spatially and stage-wise adaptive scale selection, while under multi-degradation training, the same mechanism enables existing backbones to accommodate heterogeneous restoration requirements and extend toward all-in-one restoration.",
-      "prompt_index": 10,
+      "statement": "Different samples should access representations at different resolutions according to the spatial support they require.",
+      "quote": "The underlying principle is that different samples should access representations at different resolutions according to the spatial support they require.",
+      "prompt_index": -1,
       "section": "1 Introduction"
     }
   ]

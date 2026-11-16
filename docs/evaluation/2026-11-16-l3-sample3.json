@@ -1,0 +1,185 @@
+{
+  "note": "statement-constrained recordings, seed 20261117",
+  "items": [
+    {
+      "paper": "2503.17915",
+      "domain": "image_restoration",
+      "aspect": "goal",
+      "statement": "The unified approach addresses the challenge of achieving high restoration quality across multiple degradation types while maintaining computational efficiency.",
+      "quote": "This unified approach addresses the challenge of achieving high restoration quality across multiple degradation types while maintaining computational efficiency.",
+      "section": "3 Method",
+      "id": "c01"
+    },
+    {
+      "paper": "2310.18293",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "Restoration level modulation using latent space manipulation can be achieved by tuning a user input parameter.",
+      "quote": "Visual result of restoration level modulation using latent space manipulation, which can achieve by tuning user input parameter.",
+      "section": "4.2 Comparisons with the State-of-the-art Methods",
+      "id": "c02"
+    },
+    {
+      "paper": "2407.11087",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "Since the original design handles sequences, innovations in a block adapt it to capture global and local dependencies in images.",
+      "quote": "Since the original RWKV peng2023rwkv is designed for processing 1D sequences, we incorporate two innovations in the R-RWKV block to adapt it for capturing global and local dependencies in 2D images.",
+      "section": "3 Method",
+      "id": "c03"
+    },
+    {
+      "paper": "2607.28526",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "Current methods often encode heterogeneous degradation conditions in a shared latent space where degradation-related cues and scene content can remain entangled.",
+      "quote": "Existing methods commonly encode heterogeneous degradation conditions in a shared latent space, where degradation-related cues and scene content can remain entangled.",
+      "section": "Abstract.",
+      "id": "c04"
+    },
+    {
+      "paper": "2606.22801",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "The module modulates effective discretization steps of multiple dynamical branches and adaptively fuses their responses using degradation-aware gating weights.",
+      "quote": "Instead of changing the overall selective scan pipeline, the proposed module modulates the effective discretization steps of multiple dynamical branches and adaptively fuses their responses according to degradation-aware gating weights.",
+      "section": "Abstract",
+      "id": "c05"
+    },
+    {
+      "paper": "2504.14249",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "A spatial-frequency parallel fusion strategy is proposed to fuse intrinsic degradation awareness and contextualized attention, enhancing spatial-aware local-global interactions and enriching restoration details from the frequency perspective.",
+      "quote": "To fuse the intrinsic degradation awareness and the contextualized attention, a spatial-frequency parallel fusion strategy is proposed for enhancing spatial-aware local-global interactions and enriching the restoration details from the frequency perspective.",
+      "section": "Abstract.",
+      "id": "c06"
+    },
+    {
+      "paper": "2608.06939",
+      "domain": "image_restoration",
+      "aspect": "goal",
+      "statement": "The aim is to restore high-quality images degraded by adverse weather conditions.",
+      "quote": "Our goal is to restore high-quality images degraded by adverse weather conditions.",
+      "section": "III Method",
+      "id": "c07"
+    },
+    {
+      "paper": "2606.19097",
+      "domain": "image_restoration",
+      "aspect": "why_it_works",
+      "statement": "The framework improves degradation adaptability and structural detail recovery by jointly modeling observation consistency and visual-prior-guided reconstruction in an interpretable unfolding manner.",
+      "quote": "The proposed framework improves degradation adaptability and structural detail recovery by jointly modeling observation consistency and visual-prior-guided reconstruction in an interpretable unfolding manner.",
+      "section": "I Introduction",
+      "id": "c08"
+    },
+    {
+      "paper": "2605.06127",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "Assembled residual updates are injected into the restoration backbone's attention projections, allowing spatial feature interactions to adapt to each image's degradation structure.",
+      "quote": "The assembled residual updates are injected into the attention projections of the restoration backbone, allowing spatial feature interactions to adapt to the degradation structure of each image.",
+      "section": "1 Introduction",
+      "id": "c09"
+    },
+    {
+      "paper": "2507.22498",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "An attention mechanism models relationships between these features.",
+      "quote": "We utilize multi-head linear attention to effectively model the relationship between these features.",
+      "section": "Abstract",
+      "id": "c10"
+    },
+    {
+      "paper": "2405.17424",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "A referee gives immediate feedback on whether the just performed action brings a positive contribution to realizing the final target.",
+      "quote": "Its core idea is that we employ a referee (like a giant LLM) to provide immediate feedback about whether the just performed action brings positive contribution to realizing the final target.",
+      "section": "1 Introduction",
+      "id": "c11"
+    },
+    {
+      "paper": "2501.19318",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "The plan is then updated to include creating a stone pickaxe, leading to successful iron ore mining.",
+      "quote": "It then updates the plan to include creating a stone pickaxe first, leading to successful iron ore mining.",
+      "section": "3 Methods",
+      "id": "c12"
+    },
+    {
+      "paper": "2504.17950",
+      "domain": "agent_in_mc",
+      "aspect": "io",
+      "statement": "In construction tasks, agents need to navigate and coordinate in space to build toward the objective without undoing other agents' progress.",
+      "quote": "In the construction tasks, the agents need to navigate and coordinate in the space to ensure they consistently build towards their objective without undoing any progress the other agents have made.",
+      "section": "Abstract",
+      "id": "c13"
+    },
+    {
+      "paper": "2601.05215",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "Tasks are elicited from expert co-play, normalized into parametric templates with explicit preconditions and dependency structure, and paired with machine-checkable validators under a bounded-knowledge policy.",
+      "quote": "Rather than relying on synthetic prompts, tasks are elicited from formative and summative co-play with expert players, normalized into parametric templates with explicit preconditions and dependency structure, and paired with machine-checkable validators under a bounded-knowledge policy that forbids out-of-world shortcuts.",
+      "section": "Abstract.",
+      "id": "c14"
+    },
+    {
+      "paper": "2411.12977",
+      "domain": "agent_in_mc",
+      "aspect": "why_it_works",
+      "statement": "The method overcomes false beliefs and code generation through communication and perspective-taking.",
+      "quote": "We identify Voyager’s specific failure cases: (1) false beliefs and (2) code generation, and show how our method overcomes them through communication and perspective-taking.",
+      "section": "1 Introduction",
+      "id": "c15"
+    },
+    {
+      "paper": "2605.27762",
+      "domain": "agent_in_mc",
+      "aspect": "goal",
+      "statement": "The authors frame the gap as a missing consolidation pathway: external memory supports recall but does not itself specify how selected experience becomes parametric competence.",
+      "quote": "We view this as a missing consolidation pathway rather than a failure of retrieval-augmented memory itself: external memory supports recall, but it does not by itself specify how selected experience becomes part of the agent’s parametric competence.",
+      "section": "1 Introduction",
+      "id": "c16"
+    },
+    {
+      "paper": "2507.03293",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "The architecture is model-agnostic: any language-model-based planner can serve as the actor, and the critic serves as a logic-generating wrapper.",
+      "quote": "Our architecture is model-agnostic: any LLM-based planner can serve as the actor, and LTLCrit serves as a logic-generating wrapper.",
+      "section": "Abstract",
+      "id": "c17"
+    },
+    {
+      "paper": "2403.08282",
+      "domain": "agent_in_mc",
+      "aspect": "goal",
+      "statement": "A framework is designed to auto-organize groups of LLM-based agents so they complete navigation tasks.",
+      "quote": "To address this issue, we design the HAS framework to auto-organize groups of LLM-based agents to complete navigation tasks.",
+      "section": "Abstract",
+      "id": "c18"
+    },
+    {
+      "paper": "2405.15414",
+      "domain": "agent_in_mc",
+      "aspect": "why_it_works",
+      "statement": "With visual and pragmatic verification, agents can summarize and reflect accordingly and iteratively complete open-ended creative tasks.",
+      "quote": "With such visual and pragmatic verification, agents can summarize and reflect accordingly and iteratively complete open-ended creative tasks.",
+      "section": "1 Introduction",
+      "id": "c19"
+    },
+    {
+      "paper": "2505.24157",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "It enables robust planning by adaptively learning and revising inaccurate dependencies by analogy.",
+      "quote": "Firstly, Section 3.1 details how ADL enables robust planning by adaptively learning and revising inaccurate dependencies by analogy.",
+      "section": "3 Methods",
+      "id": "c20"
+    }
+  ]
+}

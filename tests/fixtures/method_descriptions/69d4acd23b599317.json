@@ -2,31 +2,31 @@
   "points": [
     {
       "aspect": "io",
-      "statement": "Images or videos are encoded into tokens and merged with agent-state and task tokens as input to the reasoning component.",
+      "statement": "Vision perception takes images or videos, encodes them into tokens, and combines them with agent state and task tokens as input.",
       "quote": "The Vision Perception part takes images or videos, encodes them into tokens, and combines them with Agent State and Task tokens as input.",
-      "prompt_index": -1,
+      "prompt_index": 0,
       "section": "3 Method: STEVE"
     },
     {
-      "aspect": "io",
-      "statement": "Visual information from the surroundings is interpreted and then integrated with agent state and task instructions in the language-model component.",
+      "aspect": "mechanism",
+      "statement": "Vision perception interprets visual information in the environment and integrates it into the language model component with agent state and task instruction.",
       "quote": "Vision perception involves interpreting visual information in the environment, which is then integrated into the LLMs component with agent state and task instruction.",
-      "prompt_index": -1,
+      "prompt_index": 2,
       "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "The language-instruction component performs iterative reasoning and breaks complex tasks into manageable guidelines.",
+      "statement": "Language instruction performs iterative reasoning and decomposes complex tasks into manageable guidelines.",
       "quote": "Language instruction is responsible for iterative reasoning and decomposing complex tasks into manageable guidelines.",
-      "prompt_index": -1,
+      "prompt_index": 2,
       "section": "Abstract"
     },
     {
-      "aspect": "why_it_works",
-      "statement": "Combining visual and textual inputs yields a richer understanding of the surroundings and practical executable skills.",
-      "quote": "This model represents a leap forward in agent design, combining these two input modes, vision, and text, to offer a more nuanced and comprehensive understanding of the environment and practical and executable skills.",
-      "prompt_index": -1,
-      "section": "1 Introduction"
+      "aspect": "mechanism",
+      "statement": "Code action generates executable skill actions by retrieval in a skill database, enabling effective interaction within the environment.",
+      "quote": "Code action generates executable skill actions based on retrieval in skill database, enabling the agent to interact effectively within the Minecraft environment.",
+      "prompt_index": 2,
+      "section": "Abstract"
     }
   ]
 }

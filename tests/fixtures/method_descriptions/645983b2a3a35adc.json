@@ -2,38 +2,38 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "Autonomous embodied verification techniques help agents bridge the gap and support creative tasks.",
-      "quote": "In this work, we introduce autonomous embodied verification techniques for agents to fill the gap, laying the groundwork for creative tasks.",
-      "prompt_index": 3,
-      "section": "Abstract"
+      "statement": "This lays the groundwork for agents to autonomously tackle open-ended creative tasks without well-defined goals.",
+      "quote": "This lays the groundwork for agents to autonomously tackle open-ended creative tasks without well-defined goals.",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "The method draws inspiration from human design practices that progressively design and verify from visual appearance to functionality.",
+      "quote": "We draw inspiration from human design practices that usually progressively design and verify from the visual appearance to functionality.",
+      "prompt_index": 9,
+      "section": "1 Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "A structural speculation stage synthesizes instructions into a program representing building objects through decomposition, subcomponent generation, and assembly.",
-      "quote": "The 3D structural speculation stage uses VLM to synthesize Instructions II into a CAD program representing the building 3D objects, which further includes decomposing, subcomponents generation, and assembling.",
-      "prompt_index": 1,
-      "section": "4 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Visual verification judges building quality using appearance results from constructing a program.",
+      "statement": "Visual verification evaluates building quality through appearance results from constructing the CAD program.",
       "quote": "The visual verification evaluates the quality of buildings through the appearance results of the CAD program construction.",
       "prompt_index": 1,
       "section": "4 Method"
     },
     {
       "aspect": "mechanism",
-      "statement": "A construction stage converts an object program into executable construction actions to realize the building in the environment.",
-      "quote": "The construction stage uses VLM to synthesize the building’s 3D object program into executable construction actions to get the building in the environment.",
-      "prompt_index": 1,
-      "section": "4 Method"
+      "statement": "After passing visual verification, it subsequently transitions to the building ‘something-work’ phase.",
+      "quote": "After passing the visual verification, it subsequently transits to the building ‘something-work’ phase.",
+      "prompt_index": 9,
+      "section": "1 Introduction"
     },
     {
-      "aspect": "mechanism",
-      "statement": "Pragmatic verification assesses object pragmatism by generating environment-relevant functionality annotations and action verify programs.",
-      "quote": "The pragmatic verification evaluates the building 3D object’s pragmatism by generating environment-relevant functionality annotations and action verify programs.",
-      "prompt_index": 1,
-      "section": "4 Method"
+      "aspect": "why_it_works",
+      "statement": "With visual and pragmatic verification, agents can summarize and reflect accordingly and iteratively complete open-ended creative tasks.",
+      "quote": "With such visual and pragmatic verification, agents can summarize and reflect accordingly and iteratively complete open-ended creative tasks.",
+      "prompt_index": 9,
+      "section": "1 Introduction"
     }
   ]
 }

@@ -2,58 +2,37 @@
   "points": [
     {
       "aspect": "mechanism",
-      "statement": "The agent cycles through exploration, reasoning, and execution phases after a textual instruction.",
-      "quote": "Given a text instruction (e.g., “A →\\rightarrow B →\\rightarrow C”), the agent alternates among three phases: Explore, Reason, and Execute.",
+      "statement": "A multi-scale progressive policy explores the environment and stores observations in memory systems for recent observations and for semantic entities and causal relationships.",
+      "quote": "During exploration, a multi-scale progressive policy systematically explores the environment and stores observations in two memory systems: a short-term geometric memory for efficient retrieval of recent observations and a Causal Event Graph for storing semantic entities and causal relationships.",
       "prompt_index": 0,
       "section": "3 Method"
     },
     {
       "aspect": "mechanism",
-      "statement": "The framework is a memory-augmented agent composed of memory, decision, and scheduling components.",
-      "quote": "WISE is a memory-augmented agent framework consisting of three major components: a Memory Module, a Solver Module, and an Opportunistic Task Scheduler.",
-      "prompt_index": 10,
+      "statement": "A scheduler dynamically reorders subtasks according to causally relevant memories retrieved from the graph.",
+      "quote": "The Opportunistic Task Scheduler dynamically reorders subtasks according to causally relevant memories retrieved from the graph.",
+      "prompt_index": 0,
+      "section": "3 Method"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "Successful task completion requires the agent to memorize observations from explored regions and semantically understand their relevance to future tasks.",
+      "quote": "Consequently, successful task completion requires the agent not only to memorize observations from explored regions but also to semantically understand their relevance to future tasks.",
+      "prompt_index": 3,
       "section": "3 Method"
     },
     {
       "aspect": "mechanism",
-      "statement": "The memory component contains two complementary structures.",
-      "quote": "The memory module MtM_{t} contains two complementary memory structures.",
-      "prompt_index": 10,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "One structure extends conventional episodic memory with semantic and causal knowledge.",
-      "quote": "First, a Causal Event Graph, denoted as MgraphM_{\\text{graph}}, extends conventional episodic memory with semantic and causal knowledge.",
-      "prompt_index": 10,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "Another structure provides low-latency retrieval of recently observed experiences.",
-      "quote": "Second, a short-term geometric memory, MshortM_{\\text{short}}, provides low-latency retrieval of recently observed experiences.",
-      "prompt_index": 10,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A selector in the solving component switches dynamically between exploring and executing based on retrieved memories.",
+      "statement": "A mode selector in the solver module dynamically switches between explore and execute modes based on retrieved memory contents.",
       "quote": "Based on retrieved memory contents, a mode selector within the solver module dynamically switches between Explore and Execute modes.",
       "prompt_index": 11,
       "section": "3 Method"
     },
     {
-      "aspect": "why_it_works",
-      "statement": "Jointly exploring, memorizing, and reasoning over causal relations supports efficient decisions in sparse long-horizon tasks.",
-      "quote": "By jointly exploring, memorizing, and reasoning over causal relationships, WISE enables efficient decision-making for sparse long-horizon tasks.",
-      "prompt_index": 11,
-      "section": "3 Method"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Successful completion requires memorizing observations and semantically understanding their relevance to future tasks.",
-      "quote": "Consequently, successful task completion requires the agent not only to memorize observations from explored regions but also to semantically understand their relevance to future tasks.",
-      "prompt_index": 3,
+      "aspect": "mechanism",
+      "statement": "An agent alternates among exploration, reasoning, and execution phases given a text instruction.",
+      "quote": "Given a text instruction (e.g., “A →\\rightarrow B →\\rightarrow C”), the agent alternates among three phases: Explore, Reason, and Execute.",
+      "prompt_index": 0,
       "section": "3 Method"
     }
   ]

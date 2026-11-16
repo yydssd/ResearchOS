@@ -1,29 +1,29 @@
 {
   "points": [
     {
-      "aspect": "mechanism",
-      "statement": "Estimating a value for a fixed policy and enhancing that policy to achieve greater return are separate procedures.",
-      "quote": "Computing a value function for a given policy is called policy evaluation, and improving the policy to obtain a better return is called policy improvement.",
-      "prompt_index": 0,
-      "section": "2 Value-based methods"
+      "aspect": "goal",
+      "statement": "A policy is directly learnt and improved to maximise expected returns.",
+      "quote": "Policy gradient methods [williams_reinforce_1988, Williams2004SimpleSG, sutton_policy_gradient_2000] directly learn and improve a policy π(a|s)\\pi(a|s) to maximise the expected returns.",
+      "prompt_index": 2,
+      "section": "3 Policy gradient methods"
     },
     {
       "aspect": "mechanism",
-      "statement": "Returns remain unavailable until an episode ends and vary widely across trajectories, which complicates assigning credit to specific actions.",
-      "quote": "While Monte Carlo methods can update all values predicted by the approximator at each time step along a trajectory with actual returns, the returns cannot be computed until the end of each episode, and have high variance due to different trajectories having varying returns as a result of aggregating all rewards along the trajectory, making it difficult to solve the problem of credit assignment (i.e. which specific actions contributed to improving/reducing the rewards).",
-      "prompt_index": 1,
-      "section": "Monte Carlo methods"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Actions linked to high returns are reinforced, while actions linked to low returns are suppressed.",
+      "statement": "Actions yielding high returns are reinforced, while actions with low returns are suppressed.",
       "quote": "The key idea is to reinforce actions that resulted in high returns, while suppressing actions with low returns.",
       "prompt_index": 2,
       "section": "3 Policy gradient methods"
     },
     {
       "aspect": "mechanism",
-      "statement": "Jointly learned components include a parameterized policy for action selection and a value function that estimates returns via bootstrapping.",
+      "statement": "Computing a value function for a policy is called evaluation, and improving the policy for a better return is called improvement.",
+      "quote": "Computing a value function for a given policy is called policy evaluation, and improving the policy to obtain a better return is called policy improvement.",
+      "prompt_index": 0,
+      "section": "2 Value-based methods"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Two jointly learnt components are an actor, a parameterised policy used to take actions, and a critic, a value function used to estimate returns by bootstrapping.",
       "quote": "Actor-Critic methods have two components that are learnt jointly: an actor – a parameterised policy used to take actions, and a critic – a value function used to estimate returns by bootstrapping.",
       "prompt_index": 11,
       "section": "4 Actor-Critic methods"

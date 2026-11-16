@@ -2,17 +2,24 @@
   "points": [
     {
       "aspect": "mechanism",
-      "statement": "The method inspects each input's sub-latent space, identifies key components, and initially reweights them through a gated mechanism.",
+      "statement": "The method examines each input's sub-latent space, identifies key components, and initially reweights them in a gated manner.",
       "quote": "Specifically, we examine the sub-latent space of each input, identifying key components and reweighting them first in a gated manner.",
       "prompt_index": 6,
       "section": "Abstract."
     },
     {
       "aspect": "mechanism",
-      "statement": "A spatial-frequency parallel fusion strategy combines intrinsic degradation awareness with contextualized attention, enhancing spatial-aware local-global interactions and enriching restoration details from a frequency perspective.",
+      "statement": "A spatial-frequency parallel fusion strategy is proposed to fuse intrinsic degradation awareness and contextualized attention, enhancing spatial-aware local-global interactions and enriching restoration details from the frequency perspective.",
       "quote": "To fuse the intrinsic degradation awareness and the contextualized attention, a spatial-frequency parallel fusion strategy is proposed for enhancing spatial-aware local-global interactions and enriching the restoration details from the frequency perspective.",
       "prompt_index": 7,
       "section": "Abstract."
+    },
+    {
+      "aspect": "goal",
+      "statement": "There is a strong demand for an efficient model that handles any type of image degradation.",
+      "quote": "Thus, there is a strong demand for an efficient model to handle any type of image degradation.",
+      "prompt_index": 10,
+      "section": "1. Introduction"
     }
   ]
 }

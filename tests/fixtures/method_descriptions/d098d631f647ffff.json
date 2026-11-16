@@ -1,22 +1,22 @@
 {
   "points": [
     {
-      "aspect": "mechanism",
-      "statement": "Rather than altering the selective scan pipeline, the module adjusts effective discretization steps across dynamical branches and fuses responses using degradation-aware gating weights.",
-      "quote": "Instead of changing the overall selective scan pipeline, the proposed module modulates the effective discretization steps of multiple dynamical branches and adaptively fuses their responses according to degradation-aware gating weights.",
-      "prompt_index": 2,
-      "section": "Abstract"
-    },
-    {
       "aspect": "goal",
-      "statement": "The method aims to capture feature evolution across multiple timescales and adaptively select dynamics conditioned on the input for robust all-in-one restoration.",
+      "statement": "Robust all-in-one restoration requires a model that can capture feature evolution at multiple timescales and adaptively select dynamics conditioned on the input.",
       "quote": "From a dynamical systems perspective, robust all-in-one restoration requires a model capable of capturing feature evolution at multiple timescales while adaptively selecting appropriate dynamics conditioned on the input.",
       "prompt_index": 9,
       "section": "I Introduction"
     },
     {
+      "aspect": "mechanism",
+      "statement": "The module modulates effective discretization steps of multiple dynamical branches and adaptively fuses their responses using degradation-aware gating weights.",
+      "quote": "Instead of changing the overall selective scan pipeline, the proposed module modulates the effective discretization steps of multiple dynamical branches and adaptively fuses their responses according to degradation-aware gating weights.",
+      "prompt_index": 2,
+      "section": "Abstract"
+    },
+    {
       "aspect": "why_it_works",
-      "statement": "Smooth regions need stable gradual state evolution for global structures, while edges and textured areas benefit from faster dynamics for fine details.",
+      "statement": "Smooth regions generally require stable gradual state evolution to preserve global structures, while edges and textured areas benefit from faster dynamics to recover fine details.",
       "quote": "For instance, smooth regions generally require stable and gradual state evolution to preserve global structures, whereas edges and textured areas benefit from faster dynamics to recover fine details.",
       "prompt_index": 8,
       "section": "I Introduction"

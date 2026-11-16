@@ -2,63 +2,49 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The work argues that aligning a language model with environment dynamics is necessary and crucial for making it a promising world model and enabling stronger embodied agents.",
+      "statement": "The paper shows that aligning an LLM with environment dynamics is necessary and crucial for a promising world model and more powerful embodied agents.",
       "quote": "In this paper, we show that aligning an LLM with environment dynamics is both necessary and crucial to make it a promising world model, which enables us to build more powerful embodied agents.",
       "prompt_index": 7,
       "section": "1 Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "The approach forms a neurosymbolic world model by combining a pretrained language model with newly learned rules derived from interaction trajectories.",
+      "statement": "The method introduces a neurosymbolic world model combining a pretrained LLM with newly learned rules from interaction trajectories.",
       "quote": "In particular, we introduce a neurosymbolic world model that composites a pretrained LLM with a set of newly learned rules from the interaction trajectories with the environment.",
       "prompt_index": 7,
       "section": "1 Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "The approach learns rules without gradients via language models, inducing, updating, and pruning them from comparisons of explored trajectories and world model predictions.",
-      "quote": "To this end, we propose a neurosymbolic approach to learn these rules gradient-free through LLMs, by inducing, updating, and pruning rules based on comparisons of agent-explored trajectories and world model predictions.",
-      "prompt_index": 1,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Because language models have rich prior knowledge, a small number of added rules is enough to align their predictions with environment dynamics.",
-      "quote": "Given the rich prior knowledge of LLMs, only a few additional rules suffice to align LLM predictions with the specified environment dynamics.",
-      "prompt_index": 1,
-      "section": "Abstract"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A language model analyzes comparison results to extract new rules or revise existing ones, improving agreement between predicted and real trajectories.",
+      "statement": "An LLM analyzes the comparison results to extract new rules or modify existing rules, improving consistency between predicted and real trajectories.",
       "quote": "The comparison results are then analyzed by an LLM, which extracts new rules or modifies existing ones to improve the consistency between the predicted and real trajectories.",
       "prompt_index": 9,
       "section": "1 Introduction"
     },
     {
+      "aspect": "mechanism",
+      "statement": "The rule learning procedure repeats until the LLM plus rules performs as an accurate world model.",
+      "quote": "The above rule learning procedure repeats for multiple iterations until the LLM+rules performs as an accurate world model.",
+      "prompt_index": 9,
+      "section": "1 Introduction"
+    },
+    {
       "aspect": "why_it_works",
-      "statement": "Thus, chosen rules complement the predictions made by the language model.",
+      "statement": "The selected rules complement the LLM predictions.",
       "quote": "Hence, the selected rules are complementary to the LLM predictions.",
       "prompt_index": 9,
       "section": "1 Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "Rule learning repeats over iterations until the combined language model and rules act as an accurate world model.",
-      "quote": "The above rule learning procedure repeats for multiple iterations until the LLM+rules performs as an accurate world model.",
-      "prompt_index": 9,
-      "section": "1 Introduction"
+      "statement": "The method learns rules gradient-free through LLMs by inducing, updating, and pruning them based on comparisons of explored trajectories and world model predictions.",
+      "quote": "To this end, we propose a neurosymbolic approach to learn these rules gradient-free through LLMs, by inducing, updating, and pruning rules based on comparisons of agent-explored trajectories and world model predictions.",
+      "prompt_index": 1,
+      "section": "Abstract"
     },
     {
       "aspect": "mechanism",
-      "statement": "This alignment is accomplished by inserting the learned rules into the language model prompt, avoiding costly training or inference.",
-      "quote": "This is achieved by simply including these rules in the LLM’s prompt without tedious training or inference.",
-      "prompt_index": 7,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "The learned rules and the language model together form the resulting world model.",
+      "statement": "The resulting world model consists of the LLM and the learned rules.",
       "quote": "The resulting world model is composed of the LLM and the learned rules.",
       "prompt_index": 1,
       "section": "Abstract"

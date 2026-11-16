@@ -2,38 +2,80 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The paper presents an integrated microscope that images several sensing-relevant parameters across a diamond plate.",
+      "statement": "This work demonstrates an instrument for simultaneous mapping and spatial correlation of key properties of a sensor chip.",
+      "quote": "This work demonstrates a quantum diamond microscope (QDM) for the simultaneous mapping and spatial correlation of key properties of a millimeter-scale NV-diamond sensor chip, including: NV ensemble photoluminescence (PL) amplitude, spin-lattice relaxation time (T1), and homogeneous and inhomogeneous spin coherence lifetimes (T2 and T∗2{}_{2}^{*}), as well as lattice stress/strain, birefringence magnitude, and birefringence angle of the diamond crystal.",
+      "prompt_index": 1,
+      "section": "Abstract"
+    },
+    {
+      "aspect": "goal",
+      "statement": "The authors demonstrate an instrument that can image several parameters relevant to ensemble sensing across a diamond plate.",
       "quote": "Here we demonstrate an \"all-in-one QDM\" that can image several parameters relevant to NV ensemble sensing across a millimeter diamond plate, including NV spin resonance lineshift, decoherence, depolarization time scales, stress/strain, and birefringence.",
       "prompt_index": 3,
       "section": "I Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "Excitation can be switched between two optical paths by a movable mirror, offering focused and full-sample illumination.",
+      "statement": "Measurements are co-registered to simplify analysis of complex features appearing across modalities.",
+      "quote": "Measurements are co-registered to simplify analysis of complex features that appear across modalities.",
+      "prompt_index": 3,
+      "section": "I Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Optical excitation pathways are exchanged using a flipper mirror, offering epifluorescent and non-focused full-sample excitation options.",
       "quote": "Two optical excitation pathways are exchanged by use of a flipper mirror, with an epifluorescent option and a non-focused full-sample excitation option.",
       "prompt_index": 4,
       "section": "I Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "The apparatus is configurable among several measurement modalities.",
-      "quote": "The all-in-one QDM is configurable between multiple measurement modalities, as listed in Table 1.",
-      "prompt_index": 6,
+      "statement": "Microwaves are coupled into an edge inductive gap of a resonator, creating a strong, homogeneous microwave field across the sample.",
+      "quote": "Microwaves (MWs) are coupled in to an edge inductive gap of the loop gap resonator (LGR), creating a strong, homogeneous MW field across the full NV-diamond sample.",
+      "prompt_index": 4,
+      "section": "I Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Permanent magnets create a uniform bias magnetic field that shifts spin resonances to isolate or overlap resonance frequencies as needed.",
+      "quote": "Permanent magnets create a uniform bias magnetic field that Zeeman shifts NV spin resonances in order to isolate or overlap resonance frequencies as needed.",
+      "prompt_index": 4,
+      "section": "I Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "A light source with linear polarization control and a circular polarization filter can be switched to create a transmission measurement of optical birefringence using the same objective and camera.",
+      "quote": "An LED with linear polarization control and appropriate circular polarization filter can be switched for the top objective and bottom filters, respectively, to create a transmission measurement of optical birefringence using the same below-sample objective and camera.",
+      "prompt_index": 5,
+      "section": "I Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "Laser light for excitation can be sent through a top objective for point excitation or to a periscope that illuminates a region of the diamond along a shallow angle.",
+      "quote": "Laser light for NV excitation can be sent through a top objective for point-excitation, or to a periscope that illuminates a mm-scale region of the diamond along a shallow angle.",
+      "prompt_index": 7,
+      "section": "II Instrument Overview"
+    },
+    {
+      "aspect": "io",
+      "statement": "Photoluminescence collection pathways exist: a top objective can collect and filter epifluorescence for a photodiode or spectrometer, or an imaging objective beneath the sample can direct light to a camera for wide-field imaging.",
+      "quote": "Similarly there are two collection pathways for NV photoluminescence (PL), the top objective can be used to collect epifluorescence and spatially filter it before being sent to either a photodiode for time resolved confocal measurement or a fiber-coupled spectrometer for spectroscopy; or the PL can be collected by an imaging objective mounted beneath the sample space, which directs light to a camera for wide-field imaging.",
+      "prompt_index": 7,
       "section": "II Instrument Overview"
     },
     {
       "aspect": "why_it_works",
-      "statement": "Combining these options allows both point and imaged measurements to be collected and correlated.",
+      "statement": "The combination of options affords flexibility, allowing collection and correlation of confocal and imaged measurements.",
       "quote": "This combination of options affords great flexibility: e.g., the all-in-one QDM can collect and correlate confocal and imaged NV measurements.",
       "prompt_index": 7,
       "section": "II Instrument Overview"
     },
     {
       "aspect": "mechanism",
-      "statement": "A light source and polarization filters can be switched into the optical paths to make a transmission measurement of birefringence.",
-      "quote": "An LED with linear polarization control and appropriate circular polarization filter can be switched for the top objective and bottom filters, respectively, to create a transmission measurement of optical birefringence using the same below-sample objective and camera.",
-      "prompt_index": 5,
-      "section": "I Introduction"
+      "statement": "This microwave capability is enabled by using a metallic loop gap resonator.",
+      "quote": "This MW capability is enabled by the use of a metallic loop gap resonator (LGR) innovated at MIT-LL.",
+      "prompt_index": 8,
+      "section": "II Instrument Overview"
     }
   ]
 }

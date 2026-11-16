@@ -2,66 +2,45 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The aim is to combine the advantages of reinforcement learning and language-model methods while avoiding their drawbacks.",
+      "statement": "The aim is to combine the advantages of two method families while avoiding their drawbacks.",
       "quote": "As illustrated in Fig. 1, we aim to combine the advantages of both RL methods and LLM methods while avoiding their drawbacks.",
       "prompt_index": 7,
       "section": "1 Introduction"
     },
     {
-      "aspect": "mechanism",
-      "statement": "This choice allows initial pre-training on abundant webpage data to give the model basic general knowledge.",
-      "quote": "This choice enables us to first pre-train it utilizing numerous webpage data to provide it with basic general knowledge.",
-      "prompt_index": 7,
-      "section": "1 Introduction"
-    },
-    {
       "aspect": "io",
-      "statement": "It takes an environmental observation as input and auto-regressively predicts the next action to perform.",
+      "statement": "It receives environmental observation as input and predicts the next action to perform in an auto-regressive manner.",
       "quote": "Taking environmental observation as input, LARM predicts the next action to perform in an auto-regressive manner.",
       "prompt_index": 7,
       "section": "1 Introduction"
     },
     {
-      "aspect": "why_it_works",
-      "statement": "Rather than generating a descriptive multi-token sentence, it directly produces a token to choose the next action, enabling swifter responses than common language models.",
+      "aspect": "mechanism",
+      "statement": "It directly emits a token to choose the next action instead of a descriptive sentence, which makes responses swifter.",
       "quote": "Instead of generating a descriptive sentence composed of multiple tokens, LARM directly produces a single token to select the next action, which makes LARM respond more swiftly than common LLMs.",
       "prompt_index": 7,
       "section": "1 Introduction"
     },
     {
-      "aspect": "why_it_works",
-      "statement": "Classic reinforcement-learning algorithms cannot train the model effectively because reward feedback gradually vanishes in long-horizon embodied exploration.",
-      "quote": "We find that classic RL algorithms cannot train LARM effectively and mathematically reveal this is because the reward feedback gradually vanishes in long-horizon embodied exploration.",
-      "prompt_index": 9,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "A policy may choose the correct action yet receive positive feedback only after task completion, so many iterations of delay occur.",
-      "quote": "This phenomenon can be empirically understood as even though a policy selects the correct action, it obtains positive feedback only after the target task is completed, meaning many iterations of delay.",
-      "prompt_index": 9,
+      "aspect": "mechanism",
+      "statement": "The choice allows pre-training on numerous webpage data to provide basic general knowledge.",
+      "quote": "This choice enables us to first pre-train it utilizing numerous webpage data to provide it with basic general knowledge.",
+      "prompt_index": 7,
       "section": "1 Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "A referee, such as a giant language model, supplies immediate feedback on whether the just-performed action positively contributes to the final target.",
+      "statement": "A referee gives immediate feedback on whether the just performed action brings a positive contribution to realizing the final target.",
       "quote": "Its core idea is that we employ a referee (like a giant LLM) to provide immediate feedback about whether the just performed action brings positive contribution to realizing the final target.",
       "prompt_index": 9,
       "section": "1 Introduction"
     },
     {
       "aspect": "mechanism",
-      "statement": "This efficiently distills generalizable knowledge from giant language models into a lightweight end-to-end policy during online exploration without human supervision.",
+      "statement": "This efficiently distills generalizable knowledge from very large models into a lightweight end-to-end policy during online exploration without human supervision.",
       "quote": "In this way, we efficiently distill the concerned generalizable knowledge of giant LLMs into our lightweight end-to-end LARM policy during online exploration without human supervision.",
       "prompt_index": 9,
       "section": "1 Introduction"
-    },
-    {
-      "aspect": "io",
-      "statement": "The model is built on a lightweight language model and directly outputs the next action to execute instead of text.",
-      "quote": "Specifically, LARM is built upon a lightweight LLM (fewer than 5B parameters) and directly outputs the next action to execute rather than text.",
-      "prompt_index": 1,
-      "section": "Abstract"
     }
   ]
 }

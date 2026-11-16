@@ -1,43 +1,29 @@
 {
   "points": [
     {
-      "aspect": "mechanism",
-      "statement": "The approach uses hierarchical organization with centralized planning and decentralized execution, dynamic group adjustment, and multi-modal perception.",
-      "quote": "In our approach, we devise a hierarchical auto-organizing navigation system, which is characterized by 1) a hierarchical system for multi-agent organization, ensuring centralized planning and decentralized execution; 2) an auto-organizing and intra-communication mechanism, enabling dynamic group adjustment under subtasks; 3) a multi-modal information platform, facilitating multi-modal perception to perform the three navigation tasks with one system.",
-      "prompt_index": 2,
+      "aspect": "goal",
+      "statement": "A framework is designed to auto-organize groups of LLM-based agents so they complete navigation tasks.",
+      "quote": "To address this issue, we design the HAS framework to auto-organize groups of LLM-based agents to complete navigation tasks.",
+      "prompt_index": 1,
       "section": "Abstract"
     },
     {
+      "aspect": "mechanism",
+      "statement": "The structure utilizes centralized planning with decentralized execution, enabling efficient multi-modal navigation in open-ended environments.",
+      "quote": "It utilizes centralized planning with decentralized execution, enabling efficient multi-modal navigation in open-ended environments.",
+      "prompt_index": 11,
+      "section": "1 Introduction"
+    },
+    {
       "aspect": "io",
-      "statement": "Agents self-organize to collaboratively navigate toward goals given as images, objects, or audio.",
+      "statement": "Given a navigation goal in the form of images, objects, or audio, collectives of agents autonomously self-organize for collaborative navigation endeavors.",
       "quote": "Given a navigation goal in the form of images, objects, or audio, collectives of agents autonomously self-organize to undertake collaborative endeavors of navigation like searching and exploring.",
       "prompt_index": 4,
       "section": "Abstract"
     },
     {
       "aspect": "why_it_works",
-      "statement": "Centralized planning with decentralized execution enables efficient multi-modal navigation in open environments.",
-      "quote": "It utilizes centralized planning with decentralized execution, enabling efficient multi-modal navigation in open-ended environments.",
-      "prompt_index": 11,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Integrating multi-modal language models into embodied agents improves navigation efficiency.",
-      "quote": "Integrating Multi-modal Language Models (MLMs) into embodied agents enhances navigational efficiency.",
-      "prompt_index": 8,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "goal",
-      "statement": "The vision is to use embodied agents to transform navigation in complex landscapes.",
-      "quote": "Our vision is centered on employing MLM-based embodied agents to revolutionize navigation within the intricate landscapes of Minecraft.",
-      "prompt_index": 9,
-      "section": "1 Introduction"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Agents use nuanced decision-making and learning capabilities to navigate efficiently and adaptably.",
+      "statement": "By harnessing LLMs' zero-shot learning capabilities and nuanced decision-making abilities, agents can navigate these spaces with efficiency and adaptability akin to human intuition.",
       "quote": "By harnessing the zero-shot learning capabilities and the nuanced decision-making abilities of LLMs, our agents can navigate these spaces with efficiency and adaptability akin to human intuition.",
       "prompt_index": 9,
       "section": "1 Introduction"

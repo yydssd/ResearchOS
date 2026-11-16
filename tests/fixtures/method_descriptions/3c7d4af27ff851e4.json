@@ -2,24 +2,38 @@
   "points": [
     {
       "aspect": "mechanism",
-      "statement": "Robust planning is achieved by adaptively learning dependencies and revising inaccurate ones through analogy.",
+      "statement": "It enables robust planning by adaptively learning and revising inaccurate dependencies by analogy.",
       "quote": "Firstly, Section 3.1 details how ADL enables robust planning by adaptively learning and revising inaccurate dependencies by analogy.",
       "prompt_index": 0,
       "section": "3 Methods"
     },
     {
       "aspect": "mechanism",
-      "statement": "Robustness is enhanced by remembering past operation outcomes to guide reliable step-by-step planning and trigger revision of inaccurate dependencies.",
+      "statement": "It further enhances robustness by remembering past operation outcomes to guide reliable step-by-step planning and trigger revision of inaccurate dependencies.",
       "quote": "Secondly, Section 3.2 explains how FFOM further enhances robustness by remembering past operation outcomes to guide reliable step-by-step planning and trigger revision of inaccurate dependencies.",
       "prompt_index": 0,
       "section": "3 Methods"
     },
     {
       "aspect": "mechanism",
-      "statement": "Dependency learning is accelerated by guiding the agent to strategically choose unexperienced items as goals based on difficulty and diversity.",
+      "statement": "It accelerates dependency learning by guiding the agent to strategically select unexperienced items as goals to pursue, based on difficulty and diversity.",
       "quote": "Lastly, Section 3.3 details how DEX accelerates the dependency learning by guiding the agent to strategically select unexperienced items as goals to pursue, based on difficulty and diversity.",
       "prompt_index": 0,
       "section": "3 Methods"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "It dynamically revises learned dependencies through exploration when inaccuracies are detected, and prevents repeated failures by recording and utilizing past plan outcomes to improve robustness.",
+      "quote": "ADL enables dynamic revision of learned dependencies through exploration when inaccuracies are detected (Section 3.1), while FFOM prevents repeated failures by recording and utilizing past plan outcomes (Section 3.2), together improving robustness to incorrect knowledge.",
+      "prompt_index": 10,
+      "section": "1 Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "To enhance learning efficiency, it strategically selects items that appear easier to obtain, prioritizing under-explored items for diversity and those with shorter paths from known items.",
+      "quote": "To further enhance learning efficiency, DEX strategically selects items that appear easier to obtain, prioritizing those under-explored for diversity and those with shorter paths from known items (Section 3.3).",
+      "prompt_index": 10,
+      "section": "1 Introduction"
     }
   ]
 }

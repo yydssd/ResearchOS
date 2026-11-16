@@ -1,0 +1,25 @@
+{
+  "judge_note": "judged from quote alone, blind to the producing model",
+  "verdicts": [
+    {"id": "c01", "verdict": "supported", "reason": "陈述与引文逐字一致，无外加内容"},
+    {"id": "c02", "verdict": "supported", "reason": "陈述为引文的语法修正转述，内容一致"},
+    {"id": "c03", "verdict": "partial", "reason": "把“1D/2D”“两项创新/R-RWKV”换成上位词，并去掉“we incorporate”"},
+    {"id": "c04", "verdict": "supported", "reason": "Current/often 对应 Existing/commonly，其余逐字对应"},
+    {"id": "c05", "verdict": "supported", "reason": "主干逐字对应，仅删去“Instead of…”反面限定"},
+    {"id": "c06", "verdict": "supported", "reason": "各成分均在引文中出现，无新增"},
+    {"id": "c07", "verdict": "supported", "reason": "陈述与引文逐字一致"},
+    {"id": "c08", "verdict": "supported", "reason": "陈述与引文逐字一致"},
+    {"id": "c09", "verdict": "supported", "reason": "逐项对应，仅语序与冠词差异"},
+    {"id": "c10", "verdict": "partial", "reason": "把“multi-head linear attention”泛化为“an attention mechanism”，并去掉执行主体"},
+    {"id": "c11", "verdict": "supported", "reason": "内容一致，仅删去括号内“like a giant LLM”"},
+    {"id": "c12", "verdict": "supported", "reason": "主动改被动，内容一致，仅删“first”"},
+    {"id": "c13", "verdict": "supported", "reason": "内容一致，仅删去“ensure…consistently”"},
+    {"id": "c14", "verdict": "supported", "reason": "主干逐项对应，仅删去对比句与 policy 限定语"},
+    {"id": "c15", "verdict": "supported", "reason": "内容一致，未提 Voyager 但无新增信息"},
+    {"id": "c16", "verdict": "supported", "reason": "内容一致，仅删去“rather than…”反面限定"},
+    {"id": "c17", "verdict": "partial", "reason": "把专名 LTLCrit 换成泛称“the critic”"},
+    {"id": "c18", "verdict": "supported", "reason": "内容一致，仅删去框架名 HAS"},
+    {"id": "c19", "verdict": "supported", "reason": "陈述与引文逐字一致"},
+    {"id": "c20", "verdict": "supported", "reason": "主语 ADL 与陈述“It”可还原，内容一致"}
+  ]
+}

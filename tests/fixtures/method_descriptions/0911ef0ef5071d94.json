@@ -2,114 +2,30 @@
   "points": [
     {
       "aspect": "goal",
-      "statement": "The work aims to handle varied degradations within a unified framework for practical use.",
+      "statement": "The work aims to handle diverse degradations inside a unified framework, which is critical for practical applications.",
       "quote": "All-in-one image restoration, which aims to address diverse degradations within a unified framework, is critical for practical applications.",
-      "prompt_index": 1,
+      "prompt_index": -1,
       "section": "Abstract."
     },
     {
       "aspect": "mechanism",
-      "statement": "The proposed framework is guided by gradient-orientation descriptors to address complex degradation.",
-      "quote": "To address this issue, we propose a novel all-in-one image restoration framework guided by Histograms of Oriented Gradients (HOG), named HOGformer.",
-      "prompt_index": 1,
-      "section": "Abstract."
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A dynamic attention mechanism uses discriminative gradient-orientation cues to adaptively model long-range spatial dependencies.",
-      "quote": "By leveraging the degradation-discriminative capability of HOG descriptors, HOGformer employs a dynamic self-attention mechanism that adaptively attends to long-range spatial dependencies based on degradation-aware HOG cues.",
-      "prompt_index": 1,
-      "section": "Abstract."
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A guided convolution module improves sensitivity to degradations by capturing long-range similarities while preserving global structure.",
-      "quote": "To enhance the degradation sensitivity of attention inputs, we design a HOG-guided local dynamic-range convolution module that captures long-range degradation similarities while maintaining awareness of global structural information.",
-      "prompt_index": 1,
-      "section": "Abstract."
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A feed-forward module increases model capacity for varied degradations via channel and spatial interactions.",
-      "quote": "Furthermore, we propose a dynamic interaction feed-forward module, efficiently increasing the model capacity to adapt to different degradations through channel–spatial interactions.",
-      "prompt_index": 1,
-      "section": "Abstract."
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Gradient-orientation descriptors are observed to inherently characterize and distinguish different degradations.",
-      "quote": "In this work, we observe that the Histogram of Oriented Gradients (HOG) feature descriptor (Dalal and Triggs 2005) inherently characterizes and distinguishes different degradations.",
-      "prompt_index": 8,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Its descriptive strength comes from gradient magnitude and orientation jointly encoding local intensity and directional structure.",
-      "quote": "The descriptive power of HOG arises from its core components, gradient magnitude and orientation, which jointly encode local intensity and directional structure.",
-      "prompt_index": 8,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "Gradient properties provide discriminative cues sensitive to patterns specific to each degradation.",
-      "quote": "These gradient properties offer discriminative cues that are sensitive to degradation-specific patterns.",
-      "prompt_index": 8,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "The proposed transformer handles unified restoration using gradient-orientation guidance.",
-      "quote": "To this end, we propose a novel Histogram of Oriented Gradients Transformer, called HOGformer, for all-in-one image restoration.",
-      "prompt_index": 10,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A core attention mechanism incorporates gradient-orientation descriptors into standard self-attention to improve restoration across varied degradations.",
-      "quote": "The core innovation is a Dynamic HOG-aware Self-Attention (DHOGSA) mechanism that reformulates standard self-attention by incorporating HOG descriptors, significantly enhancing restoration performance across diverse degradations.",
-      "prompt_index": 10,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "The attention integrates descriptors at patch and pixel levels, adaptively emphasizing spatial regions according to perceived degradation.",
-      "quote": "DHOGSA integrates patch-level and pixel-level HOG descriptors, adaptively emphasizing spatial regions based on perceptual degradation.",
-      "prompt_index": 10,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "why_it_works",
-      "statement": "The attention prioritizes key gradient orientations and magnitudes to yield more robust feature representation for unified restoration.",
+      "statement": "The attention mechanism focuses on key gradient orientations and magnitudes to enable more robust feature representation for unified restoration.",
       "quote": "This attention mechanism prioritizes critical gradient orientations and magnitudes, enabling more robust feature representation for all-in-one restoration.",
-      "prompt_index": 10,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A local convolution with pixel-level descriptors captures degradation-related dependencies, while reshaping variants preserve global context and local detail.",
-      "quote": "To capture degradation-related dependencies and enable efficient feature extraction in this attention mechanism, we propose a local dynamic-range convolution using pixel-level HOG descriptors, along with two HOG reshaping methods: bin-wise HOG reshaping (BHOGR) for global context and frequency-wise HOG reshaping (FHOGR) for local detail preservation.",
-      "prompt_index": 10,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "An efficient feed-forward module adapts to varied degradations by promoting global information exchange through shuffle and gating across spatial and channel dimensions.",
-      "quote": "Besides, to make the feed-forward module in the transformer capable of adapting to various degradations, we propose an efficient Dynamic Interaction Feed-Forward (DIFF) module, which promotes global information exchange through shuffle and gated mechanisms across spatial and channel dimensions.",
-      "prompt_index": 11,
-      "section": "1. Introduction"
-    },
-    {
-      "aspect": "mechanism",
-      "statement": "A loss supervises gradient orientation and magnitude to preserve edges and structural integrity.",
-      "quote": "Moreover, we propose a HOG loss that supervises gradient orientation and magnitude to preserve edge and structural integrity.",
-      "prompt_index": 11,
+      "prompt_index": -1,
       "section": "1. Introduction"
     },
     {
       "aspect": "why_it_works",
-      "statement": "The components let the unified model restore varied degraded images and perform well across weather and natural restoration tasks.",
-      "quote": "These components enable HOGformer to effectively restore various degraded images in a unified model, achieving state-of-the-art performance in both adverse weather and natural image restoration tasks.",
-      "prompt_index": 11,
+      "statement": "Gradient properties provide discriminative cues that are sensitive to patterns specific to degradation.",
+      "quote": "These gradient properties offer discriminative cues that are sensitive to degradation-specific patterns.",
+      "prompt_index": -1,
+      "section": "1. Introduction"
+    },
+    {
+      "aspect": "why_it_works",
+      "statement": "The observed phenomena suggest that each degradation has unique and quantifiable effects in the gradient domain.",
+      "quote": "These phenomena suggest that each degradation exerts unique and quantifiable effects in the gradient domain.",
+      "prompt_index": -1,
       "section": "1. Introduction"
     }
   ]

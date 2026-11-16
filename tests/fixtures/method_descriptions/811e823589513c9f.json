@@ -1,25 +1,32 @@
 {
   "points": [
     {
+      "aspect": "goal",
+      "statement": "Capable AI companions for open-world games need agents that can plan, clarify, and remember to operate effectively in dynamic, long-horizon environments.",
+      "quote": "Building truly capable AI companions for open-world games requires more than one-shot instruction following, it requires agents that can plan, clarify, and remember in order to operate effectively in dynamic, long-horizon environments.",
+      "prompt_index": 4,
+      "section": "1. Introduction"
+    },
+    {
       "aspect": "mechanism",
-      "statement": "Tasks come from expert co-play rather than synthetic prompts, are normalized into templates with preconditions/dependencies, and paired with validators under a bounded-knowledge policy forbidding shortcuts.",
+      "statement": "Tasks are elicited from expert co-play, normalized into parametric templates with explicit preconditions and dependency structure, and paired with machine-checkable validators under a bounded-knowledge policy.",
       "quote": "Rather than relying on synthetic prompts, tasks are elicited from formative and summative co-play with expert players, normalized into parametric templates with explicit preconditions and dependency structure, and paired with machine-checkable validators under a bounded-knowledge policy that forbids out-of-world shortcuts.",
       "prompt_index": 2,
       "section": "Abstract."
     },
     {
-      "aspect": "io",
-      "statement": "The harness records plan/act/memory events such as previews, clarifications, memory reads/writes, precondition checks, and repairs, and reports outcomes based on in-world evidence.",
-      "quote": "The harness captures plan/act/memory events-including plan previews, targeted clarifications, memory reads and writes, precondition checks, and repair attempts and reports outcomes relative to the total number of attempted subtasks, derived from in-world evidence.",
-      "prompt_index": 2,
-      "section": "Abstract."
-    },
-    {
       "aspect": "mechanism",
-      "statement": "Real requests from experienced players, not synthetic prompts, are normalized into compact templates with preconditions and slot parameters, then paired with simple validators.",
+      "statement": "Tasks are elicited from expert co-play: experienced players' real requests were normalized into compact templates with explicit preconditions and slot parameters, and paired with simple machine-checkable validators.",
       "quote": "Rather than synthetic prompts, tasks are elicited from expert co-play: during our formative and evaluation sessions, experienced players issued real requests, which we normalized into compact templates with explicit preconditions and a small set of slot parameters, and paired with simple machine-checkable validators.",
       "prompt_index": 5,
       "section": "1. Introduction"
+    },
+    {
+      "aspect": "mechanism",
+      "statement": "The harness records plan, act, and memory events such as plan previews, targeted clarifications, memory reads/writes, precondition checks, and repair attempts, and reports outcomes based on in-world evidence.",
+      "quote": "The harness captures plan/act/memory events-including plan previews, targeted clarifications, memory reads and writes, precondition checks, and repair attempts and reports outcomes relative to the total number of attempted subtasks, derived from in-world evidence.",
+      "prompt_index": 2,
+      "section": "Abstract."
     }
   ]
 }
