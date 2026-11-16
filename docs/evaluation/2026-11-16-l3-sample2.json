@@ -1,0 +1,185 @@
+{
+  "note": "whole-sentence recordings, seed 20261116, max 1 per paper, 10 per domain",
+  "items": [
+    {
+      "paper": "2504.14249",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "The method inspects each input's sub-latent space, identifies key components, and initially reweights them through a gated mechanism.",
+      "quote": "Specifically, we examine the sub-latent space of each input, identifying key components and reweighting them first in a gated manner.",
+      "section": "Abstract.",
+      "id": "b01"
+    },
+    {
+      "paper": "2609.16578",
+      "domain": "image_restoration",
+      "aspect": "goal",
+      "statement": "Restoration scale should be treated as a spatially varying variable rather than a fixed architectural property.",
+      "quote": "We therefore argue that restoration scale itself should be treated as a spatially varying variable.",
+      "section": "1 Introduction",
+      "id": "b02"
+    },
+    {
+      "paper": "2606.22801",
+      "domain": "image_restoration",
+      "aspect": "why_it_works",
+      "statement": "Smooth regions need stable gradual state evolution for global structures, while edges and textured areas benefit from faster dynamics for fine details.",
+      "quote": "For instance, smooth regions generally require stable and gradual state evolution to preserve global structures, whereas edges and textured areas benefit from faster dynamics to recover fine details.",
+      "section": "I Introduction",
+      "id": "b03"
+    },
+    {
+      "paper": "2607.28526",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "Using that state, a module produces degradation-aware prompts to improve channel-wise conditioning in the decoder.",
+      "quote": "Based on this state, a Semantic Ambiguity Rectification (SeAR) module generates degradation-aware prompts to improve channel-wise conditioning in the decoder.",
+      "section": "Abstract.",
+      "id": "b04"
+    },
+    {
+      "paper": "2504.09377",
+      "domain": "image_restoration",
+      "aspect": "why_it_works",
+      "statement": "Gradient properties provide discriminative cues sensitive to patterns specific to each degradation.",
+      "quote": "These gradient properties offer discriminative cues that are sensitive to degradation-specific patterns.",
+      "section": "1. Introduction",
+      "id": "b05"
+    },
+    {
+      "paper": "2511.05873",
+      "domain": "image_restoration",
+      "aspect": "io",
+      "statement": "Combining representations and applying average pooling produces the prompt output.",
+      "quote": "After combining these representations with 𝔻\\mathbb{D}, we apply average pooling to obtain the prompt output.",
+      "section": "Methodology",
+      "id": "b06"
+    },
+    {
+      "paper": "2605.06127",
+      "domain": "image_restoration",
+      "aspect": "goal",
+      "statement": "A needed mechanism should be input-adaptive and spatially adaptive without collapsing the image into a global descriptor or limiting adaptation to static expert parameters.",
+      "quote": "What remains missing is a mechanism that is both input-adaptive and spatially adaptive, without collapsing the image into a global descriptor or restricting adaptation to static expert parameters.",
+      "section": "1 Introduction",
+      "id": "b07"
+    },
+    {
+      "paper": "2608.06832",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "A degradation encoder extracts a global descriptor and a spatial map from a degraded input image.",
+      "quote": "Given a degraded image, the Degradation Encoder extracts a global vector 𝐠\\mathbf{g} and spatial map 𝐌\\mathbf{M}.",
+      "section": "1 Introduction",
+      "id": "b08"
+    },
+    {
+      "paper": "2604.05629",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "Heterogeneous sensor inputs with varying channels and spectral meanings are aligned into matched slots through regularized transport to ensure consistent feature semantics.",
+      "quote": "First, heterogeneous sensor inputs with varying channel counts and spectral meanings are aligned into semantically matched slots via entropy-regularized optimal transport solved with Sinkhorn iterations (50; 11), ensuring consistent feature semantics across modalities.",
+      "section": "1 Introduction",
+      "id": "b09"
+    },
+    {
+      "paper": "2310.18293",
+      "domain": "image_restoration",
+      "aspect": "mechanism",
+      "statement": "Restoration level modulation is achieved through latent space manipulation by tuning a user input parameter.",
+      "quote": "Visual result of restoration level modulation using latent space manipulation, which can achieve by tuning user input parameter.",
+      "section": "4.2 Comparisons with the State-of-the-art Methods",
+      "id": "b10"
+    },
+    {
+      "paper": "2403.08282",
+      "domain": "agent_in_mc",
+      "aspect": "io",
+      "statement": "Agents self-organize to collaboratively navigate toward goals given as images, objects, or audio.",
+      "quote": "Given a navigation goal in the form of images, objects, or audio, collectives of agents autonomously self-organize to undertake collaborative endeavors of navigation like searching and exploring.",
+      "section": "Abstract",
+      "id": "b11"
+    },
+    {
+      "paper": "2411.06736",
+      "domain": "agent_in_mc",
+      "aspect": "goal",
+      "statement": "The proposed agent stores novel events from visited locations to efficiently solve sparse sequential tasks.",
+      "quote": "To address this, we propose MrSteve which stores novel events from visited places for efficient sparse sequential task-solving.",
+      "section": "3 Method",
+      "id": "b12"
+    },
+    {
+      "paper": "2507.03293",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "A symbolic verifier validates each chosen action against temporal safety and efficiency constraints, executing valid ones and asking the actor to replan invalid ones.",
+      "quote": "A rule-based symbolic verifier checks each action against LTL-based safety and efficiency constraints; valid actions are executed by a low-level planner, while invalid ones prompt the actor to replan.",
+      "section": "3 Methods",
+      "id": "b13"
+    },
+    {
+      "paper": "2505.24157",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "Robust planning is achieved by adaptively learning dependencies and revising inaccurate ones through analogy.",
+      "quote": "Firstly, Section 3.1 details how ADL enables robust planning by adaptively learning and revising inaccurate dependencies by analogy.",
+      "section": "3 Methods",
+      "id": "b14"
+    },
+    {
+      "paper": "2606.12852",
+      "domain": "agent_in_mc",
+      "aspect": "why_it_works",
+      "statement": "Jointly exploring, memorizing, and reasoning over causal relations supports efficient decisions in sparse long-horizon tasks.",
+      "quote": "By jointly exploring, memorizing, and reasoning over causal relationships, WISE enables efficient decision-making for sparse long-horizon tasks.",
+      "section": "3 Method",
+      "id": "b15"
+    },
+    {
+      "paper": "2504.17950",
+      "domain": "agent_in_mc",
+      "aspect": "io",
+      "statement": "They use their platform to generate trial examples from successful runs.",
+      "quote": "Using our platform, we generate a dataset of 2,000 trials with LLaMA-70B-3.3-Instruct, including around 200 successful runs, resulting in 16,000 total examples.",
+      "section": "1 Introduction",
+      "id": "b16"
+    },
+    {
+      "paper": "2608.22055",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "A capability consequence local to the peer returns via bounded feedback, after which the requester changes the division of work.",
+      "quote": "A peer-local capability consequence travels back through bounded feedback, after which the requester revises the division of work.",
+      "section": "1. Introduction",
+      "id": "b17"
+    },
+    {
+      "paper": "2508.18722",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "The object detection model is finetuned on a small set of frames pulled from game videos, which keeps data and memory needs low.",
+      "quote": "As shown in Table 1, we finetune the object detection model using only 471 frames extracted from game videos and 24 GB GPU VRAM, whereas other methods typically rely on at least 160M frames with 192 GB VRAM or 990M tokens of text with 64 GB VRAM.",
+      "section": "4.2 Comparison against other methods",
+      "id": "b18"
+    },
+    {
+      "paper": "2405.17424",
+      "domain": "agent_in_mc",
+      "aspect": "why_it_works",
+      "statement": "Rather than generating a descriptive multi-token sentence, it directly produces a token to choose the next action, enabling swifter responses than common language models.",
+      "quote": "Instead of generating a descriptive sentence composed of multiple tokens, LARM directly produces a single token to select the next action, which makes LARM respond more swiftly than common LLMs.",
+      "section": "1 Introduction",
+      "id": "b19"
+    },
+    {
+      "paper": "2405.15414",
+      "domain": "agent_in_mc",
+      "aspect": "mechanism",
+      "statement": "Pragmatic verification assesses object pragmatism by generating environment-relevant functionality annotations and action verify programs.",
+      "quote": "The pragmatic verification evaluates the building 3D object’s pragmatism by generating environment-relevant functionality annotations and action verify programs.",
+      "section": "4 Method",
+      "id": "b20"
+    }
+  ]
+}

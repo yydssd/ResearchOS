@@ -1,0 +1,25 @@
+{
+  "judge_note": "judged from quote alone, blind to the producing model",
+  "verdicts": [
+    {"id": "b01", "verdict": "supported", "reason": "sub-latent 空间、关键成分、门控初加权逐项对应，仅措辞替换"},
+    {"id": "b02", "verdict": "partial", "reason": "引文只作正面主张，未出现\"而非固定架构属性\"这一对比"},
+    {"id": "b03", "verdict": "supported", "reason": "区域—动力学—目的三项与引文逐一对应"},
+    {"id": "b04", "verdict": "supported", "reason": "依据状态、退化感知提示、通道条件均对应，仅省去 SeAR 名"},
+    {"id": "b05", "verdict": "supported", "reason": "判别性线索与降解特异模式对应，无新增"},
+    {"id": "b06", "verdict": "supported", "reason": "先结合表示再平均池化得提示输出，仅省去与 D 结合"},
+    {"id": "b07", "verdict": "supported", "reason": "输入自适应、空间自适应与两个否定限定均出自引文"},
+    {"id": "b08", "verdict": "supported", "reason": "全局向量 g 概括为 descriptor、空间图 M 对应，其余一致"},
+    {"id": "b09", "verdict": "supported", "reason": "槽位对齐、正则化传输、语义一致均对应，略去 entropy/Sinkhorn"},
+    {"id": "b10", "verdict": "partial", "reason": "图注残句，can achieve 被写成 is achieved，弱表述强化"},
+    {"id": "b11", "verdict": "supported", "reason": "目标以图像/物体/音频给出、自组织协同导航均对应"},
+    {"id": "b12", "verdict": "supported", "reason": "存储到访处新事件、服务稀疏序列任务，逐项对应"},
+    {"id": "b13", "verdict": "partial", "reason": "LTL-based 被改写为 temporal，且执行者被误归给验证器"},
+    {"id": "b14", "verdict": "supported", "reason": "自适应学习与类比修正不准确依赖均对应，仅省去 ADL 名"},
+    {"id": "b15", "verdict": "supported", "reason": "探索/记忆/因果推理三动作与稀疏长程效率对应，仅省去 WISE"},
+    {"id": "b16", "verdict": "partial", "reason": "引文只说含约200条成功运行，未说示例取自成功运行"},
+    {"id": "b17", "verdict": "supported", "reason": "对端局部后果、有界反馈、修分配均对应"},
+    {"id": "b18", "verdict": "supported", "reason": "471帧与24GB概括为少量帧与低数据/显存需求，属蕴含"},
+    {"id": "b19", "verdict": "supported", "reason": "对比多token句、直接出token选动作、响应更快均对应"},
+    {"id": "b20", "verdict": "partial", "reason": "略去\"building 3D\"限定，评价对象由建筑3D扩为一般 object"}
+  ]
+}
