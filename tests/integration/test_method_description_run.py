@@ -137,3 +137,20 @@ def test_a_written_point_carries_the_address_of_its_source(db, tmp_path):
     assert profile.points[0].source_url == source.local_path
     assert profile.points[0].source_url
 
+
+def test_the_memo_turns_that_address_into_a_link(db, tmp_path):
+    """A link only the database knows about is not a link. This walks the whole
+    path: describer -> point -> SQL -> memo."""
+    from research_os.storage.repositories import SqlSourceVersionRepository
+
+    run_id = _run(tmp_path, QuoteDescriber())
+
+    with session_scope() as session:
+        profile = SqlMethodProfileRepository(session).list_by_run(run_id)[0]
+        source = SqlSourceVersionRepository(session).get(profile.source_version_id)
+        memo = build_memo_from_run(session, run_id) or ""
+
+    section = memo.split("# Methods", 1)[1].split("\n# ", 1)[0]
+    assert "[source](" in section
+    assert source.local_path in section
+

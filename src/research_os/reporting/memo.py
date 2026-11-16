@@ -253,12 +253,16 @@ def _render_methods_section(graph: RunGraph) -> list[str]:
         lines.append(f"- Setup: {' · '.join(setup_parts) if setup_parts else '_none_'}")
         if profile.points:
             for point in profile.points:
-                lines.append(
-                    f"- {point.aspect}: {point.statement} "
+                location = (
                     f"_[{point.section or point.chunk_id}"
                     + (f" · chars {point.char_start}-{point.char_end}" if point.char_start is not None else "")
                     + "]_"
                 )
+                # After the location, so a reader can go straight to the sentence.
+                # Only when an address was stored: `[source]()` reads as a link
+                # that silently goes nowhere.
+                link = f"([source]({point.source_url}))" if point.source_url else ""
+                lines.append(f"- {point.aspect}: {point.statement} {location}{link}")
         else:
             lines.append("- Description: _not extracted at S2 (the L3 describer arrives in S3)_")
         lines.append(

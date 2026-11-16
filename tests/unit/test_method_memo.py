@@ -69,3 +69,39 @@ def test_a_method_point_shows_where_its_quote_is(db, tmp_path):
     point = MethodPoint(aspect="io", statement="s", quote="q", chunk_id="c",
                         section="4.2", char_start=8120, char_end=8206)
     assert point.char_start == 8120
+
+
+def _methods_section(*points) -> str:
+    from research_os.domain.models import MethodProfile
+    from research_os.reporting.memo import RunGraph, _render_methods_section
+
+    profile = MethodProfile(source_version_id="sv_1", name="LangProp", points=list(points))
+    graph = RunGraph(
+        run_id="run_1", question_text="q", sources=[], evidence=[], claims=[],
+        methods=[profile],
+    )
+    return "\n".join(_render_methods_section(graph))
+
+
+def _point(**kwargs):
+    from research_os.domain.models import MethodPoint
+
+    return MethodPoint(
+        aspect="io", statement="s", quote="q", chunk_id="c", section="4.2",
+        char_start=10, char_end=20, **kwargs,
+    )
+
+
+def test_a_point_links_out_to_its_full_text():
+    """The location tells the reader where; the link is what lets them go there."""
+    section = _methods_section(_point(source_url="https://arxiv.org/abs/2401.00001"))
+
+    assert "chars 10-20]_([source](https://arxiv.org/abs/2401.00001))" in section
+
+
+def test_a_point_without_a_link_stays_unlinked():
+    """No address means no link: an empty `[source]()` would look like a link."""
+    section = _methods_section(_point())
+
+    assert "[source](" not in section
+    assert "chars 10-20]_" in section
