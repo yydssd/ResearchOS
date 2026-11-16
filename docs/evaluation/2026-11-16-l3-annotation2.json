@@ -1,0 +1,95 @@
+{
+  "how_to_fill": "每条填 verdict（supported / partial / unsupported / unclear）并写一行 note：若 partial/unsupported，指出缺的具体是什么。只看 quote，不要查论文，也不要看 2026-11-16-l3-judgement4.json。填完跑：python scripts/score_l3_annotation.py --sheet docs/evaluation/2026-11-16-l3-annotation2.json --judgement docs/evaluation/2026-11-16-l3-judgement4.json",
+  "items": [
+    {
+      "id": "e01",
+      "source_id": "d19",
+      "aspect": "mechanism",
+      "statement": "A mode selector in the solver module switches between exploration and execution modes based on retrieved memory contents.",
+      "quote": "Based on retrieved memory contents, a mode selector within the solver module dynamically switches between Explore and Execute modes.",
+      "verdict": "",
+      "note": ""
+    },
+    {
+      "id": "e02",
+      "source_id": "d01",
+      "aspect": "mechanism",
+      "statement": "A spatial-frequency parallel fusion strategy is proposed to fuse intrinsic degradation awareness and contextualized attention, enhancing spatial-aware local-global interactions and enriching restoration details from the frequency perspective.",
+      "quote": "To fuse the intrinsic degradation awareness and the contextualized attention, a spatial-frequency parallel fusion strategy is proposed for enhancing spatial-aware local-global interactions and enriching the restoration details from the frequency perspective.",
+      "verdict": "",
+      "note": ""
+    },
+    {
+      "id": "e03",
+      "source_id": "d11",
+      "aspect": "mechanism",
+      "statement": "Every program is indexed by its description embedding so that it can be retrieved in similar future situations.",
+      "quote": "Each program is indexed by the embedding of its description, which can be retrieved in similar situations in the future.",
+      "verdict": "",
+      "note": ""
+    },
+    {
+      "id": "e04",
+      "source_id": "d07",
+      "aspect": "mechanism",
+      "statement": "An attention mechanism effectively builds global dependencies with linear computational complexity.",
+      "quote": "First, in Section 3.3, we introduce a recurrent WKV (Re-WKV) attention mechanism that effectively builds global dependencies in 2D images with linear computational complexity.",
+      "verdict": "",
+      "note": ""
+    },
+    {
+      "id": "e05",
+      "source_id": "d06",
+      "aspect": "goal",
+      "statement": "The proposed rectification network targets all-in-one image restoration to mitigate the characterized dual-ambiguity issue.",
+      "quote": "To mitigate this issue, we propose DAR-Net, a Dual-Ambiguity Rectification Network for all-in-one image restoration.",
+      "verdict": "",
+      "note": ""
+    },
+    {
+      "id": "e06",
+      "source_id": "d13",
+      "aspect": "mechanism",
+      "statement": "Actions that led to high returns are reinforced, while actions that led to low returns are suppressed.",
+      "quote": "The key idea is to reinforce actions that resulted in high returns, while suppressing actions with low returns.",
+      "verdict": "",
+      "note": ""
+    },
+    {
+      "id": "e07",
+      "source_id": "d08",
+      "aspect": "mechanism",
+      "statement": "A lightweight residual adaptor injects the queried representation while the original encoder, decoder, and skip connections stay unchanged.",
+      "quote": "The queried representation is injected through a lightweight residual adaptor, while the original encoder, decoder, and skip connections remain unchanged.",
+      "verdict": "",
+      "note": ""
+    },
+    {
+      "id": "e08",
+      "source_id": "d10",
+      "aspect": "goal",
+      "statement": "The proposed method is the first designed for the fusion of degraded and misaligned medical images, so no directly comparable methods exist.",
+      "quote": "Since the method proposed is the first designed for the fusion of degraded and misaligned medical images, there are no directly comparable methods.",
+      "verdict": "",
+      "note": ""
+    },
+    {
+      "id": "e09",
+      "source_id": "d04",
+      "aspect": "why_it_works",
+      "statement": "The restoration level is fixed for the whole image, which is sufficient for global degradation consistent across the image; local degradation might require different per-patch levels.",
+      "quote": "The model also achieve state-of-the-art performance compared with other type methods on raindrop and snow removal, and significantly better than all comparison models on challenging rain+fog dataset, the reason might be that the restoration level is fixed for whole image in our method, which is sufficient for global degradation that degradation level is consistent for whole image, but raindrop and snow images are more on local degradation, that might require different restoration level for each patch to further boost the performance.",
+      "verdict": "",
+      "note": ""
+    },
+    {
+      "id": "e10",
+      "source_id": "d17",
+      "aspect": "goal",
+      "statement": "Creating collaborative AI agents requires ensuring they can efficiently and effectively communicate with collaborators and continuously learn and adapt in real-world embodied tasks.",
+      "quote": "Creating such collaborative AI agents requires ensuring their ability to efficiently and effectively communicate with collaborators and continuously learn and adapt throughout this process in real-world embodied tasks.",
+      "verdict": "",
+      "note": ""
+    }
+  ]
+}
