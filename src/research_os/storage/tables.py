@@ -240,3 +240,6 @@ class MethodPointRow(Base):
     quote: Mapped[str] = mapped_column(Text)
     chunk_id: Mapped[str] = mapped_column(String(64))
     section: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    # Also in `_ADDED_COLUMNS`: `create_all` never ALTERs an existing table, so
+    # databases written before L3 linking would lose the URL on read.
+    source_url: Mapped[str | None] = mapped_column(Text, nullable=True)

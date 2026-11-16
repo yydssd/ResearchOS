@@ -52,3 +52,15 @@ def test_a_point_is_structured_not_prose():
         MethodPoint(aspect="vibes", statement="x", quote="y", chunk_id="c")
     with pytest.raises(ValidationError):
         MethodPoint(aspect="goal", statement="x" * 201, quote="y", chunk_id="c")
+
+
+def test_a_point_keeps_the_link_to_its_source():
+    """A point is long-lived data: joining back to the source version at render
+    time loses the link as soon as that version is pruned, so the link is stored
+    with the point. Absent means absent - never a made-up URL."""
+    point = MethodPoint(
+        aspect="mechanism", statement="s", quote="q", chunk_id="chunk_1",
+        source_url="https://arxiv.org/abs/2401.00001",
+    )
+    assert point.source_url == "https://arxiv.org/abs/2401.00001"
+    assert MethodPoint(aspect="goal", statement="s", quote="q", chunk_id="c").source_url is None

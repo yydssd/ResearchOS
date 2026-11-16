@@ -97,3 +97,22 @@ def test_points_are_replaced_not_appended(db):
 
     assert [point.aspect for point in stored.points] == ["mechanism"]
     assert stored.points[0].quote == "q2"
+
+
+def test_a_point_source_link_survives_the_database(db):
+    """The memo reads profiles back from SQL, so a link kept only in memory would
+    never reach the document the reader sees."""
+    from research_os.domain.models import MethodPoint
+
+    profile = _profile()
+    profile.points = [
+        MethodPoint(aspect="mechanism", statement="Fuse maps by gating.", quote="q1",
+                    chunk_id="chunk_1", section="Method",
+                    source_url="https://arxiv.org/abs/2401.00001")
+    ]
+    with session_scope() as session:
+        SqlMethodProfileRepository(session).upsert(profile, run_id="run_1")
+    with session_scope() as session:
+        stored = SqlMethodProfileRepository(session).get("run_1", "sv_1")
+
+    assert stored.points[0].source_url == "https://arxiv.org/abs/2401.00001"

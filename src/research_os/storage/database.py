@@ -60,6 +60,7 @@ _ADDED_COLUMNS: dict[str, dict[str, str]] = {
     "source_versions": {"source_tier": "VARCHAR(32)"},
     "quantitative_evidence": {"delta": "FLOAT", "unit": "VARCHAR(32)"},
     "claims": {"identity_key": "VARCHAR(256)"},
+    "method_points": {"source_url": "TEXT"},
 }
 
 # Statements that are safe to run on every start-up because each carries its own

@@ -188,6 +188,12 @@ class MethodPoint(BaseModel):
     # 183 of 183 points could carry an offset, 0 did).
     char_start: int | None = None
     char_end: int | None = None
+    # The link to the full text, captured when the point is written. A point is
+    # long-lived data while a source version is not: joining back to the version
+    # at render time would lose the link as soon as that version is pruned, so
+    # the URL is stored beside the offset. None means the source offered neither
+    # a URL nor a local path - it is never a fabricated link.
+    source_url: str | None = None
 
 
 class MethodSetup(BaseModel):
